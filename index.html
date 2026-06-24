@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gudyx Custom - Papelaria Personalizada</title>
-    <!-- Font Awesome -->
+    <title>Gudyx Custom</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -30,9 +29,10 @@
             background: var(--roxo-profundo);
             color: var(--branco-espacial);
             -webkit-font-smoothing: antialiased;
+            padding-bottom: 70px; /* espaço para o rodapé */
         }
 
-        /* ==================== BACKGROUND CÓSMICO ==================== */
+        /* Fundo */
         .bg-container {
             position: fixed; top: -20px; left: -20px; width: calc(100% + 40px); height: calc(100% + 40px);
             z-index: -3;
@@ -45,13 +45,13 @@
             background: radial-gradient(circle at 50% 50%, rgba(26, 10, 51, 0.4) 0%, rgba(11, 4, 28, 0.9) 100%);
         }
 
-        /* ==================== METEOROS (Canvas) ==================== */
+        /* Meteoros */
         #meteorCanvas {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             pointer-events: none;
         }
 
-        /* ==================== TELAS ==================== */
+        /* Telas */
         .screen { display: none; min-height: 100vh; width: 100%; position: relative; animation: fadeSlideIn 0.6s ease forwards; }
         .screen.active { display: flex; }
 
@@ -70,229 +70,119 @@
             100% { opacity: 0; transform: translateX(-50%) translateY(-30px); }
         }
 
-        /* ==================== HOME ==================== */
-        .home-screen {
-            flex-direction: column; padding: 20px; gap: 20px;
-            width: 100%; max-width: 1400px; margin: 0 auto;
-        }
-
-        /* --- Header --- */
-        .header-top { text-align: center; padding: 10px 0 5px; position: relative; }
+        /* HOME */
+        .home-screen { flex-direction: column; padding: 20px; gap: 20px; width: 100%; max-width: 1400px; margin: 0 auto; }
+        .header-top { text-align: center; padding: 20px 0 15px; position: relative; display: flex; flex-direction: column; align-items: center; }
         .header-top::after {
             content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
-            width: 40%; height: 1px;
-            background: linear-gradient(90deg, transparent, var(--ciano-brilhante), var(--rosa-neon), transparent);
+            width: 40%; height: 1px; background: linear-gradient(90deg, transparent, var(--ciano-brilhante), var(--rosa-neon), transparent);
         }
-        .header-top .logo-img {
-            max-height: 250px;
-            width: auto;
-            filter: drop-shadow(0 0 20px rgba(172,40,255,0.4));
-        }
-        .header-top .subtitle {
-            font-size: clamp(0.9rem, 2vw, 1.4rem);
-            font-weight: 300;
-            letter-spacing: 4px;
-            margin-top: 4px;
-            color: #c0b0d0;
-        }
-        .header-top .slogan {
-            font-size: clamp(0.8rem, 1.5vw, 1.1rem);
-            font-weight: 300;
-            opacity: 0.7;
-            margin-top: 2px;
-            font-style: italic;
-            letter-spacing: 1px;
-            color: #a090b0;
-        }
+        .header-top .logo-img { max-height: 250px; width: auto; margin-top: 30px; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(172,40,255,0.4)); }
+        .header-top .subtitle { font-size: clamp(0.9rem, 2vw, 1.4rem); font-weight: 300; letter-spacing: 4px; color: #c0b0d0; }
+        .header-top .slogan { font-size: clamp(0.8rem, 1.5vw, 1.1rem); font-weight: 300; opacity: 0.7; font-style: italic; letter-spacing: 1px; color: #a090b0; }
 
-        /* --- Main area --- */
-        .main-area {
-            display: flex; align-items: flex-start; justify-content: center;
-            gap: 30px; flex: 1; flex-wrap: wrap; padding: 10px 0;
-        }
-
-        /* Mascote + Botão */
-        .mascote-block {
-            display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 0 1 400px;
-        }
-        .mascote-wrapper {
-            position: relative; animation: floatMascote 6s ease-in-out infinite; cursor: pointer;
-        }
+        /* Main */
+        .main-area { display: flex; align-items: flex-start; justify-content: center; gap: 30px; flex: 1; flex-wrap: wrap; padding: 10px 0; }
+        .mascote-block { display: flex; flex-direction: column; align-items: center; gap: 15px; flex: 0 1 400px; }
+        .mascote-wrapper { position: relative; animation: floatMascote 6s ease-in-out infinite; cursor: pointer; }
         .mascote-wrapper:hover { transform: scale(1.05); }
-        .mascote-wrapper img {
-            width: clamp(220px, 35vw, 380px);
-            height: auto; display: block;
-            filter: drop-shadow(0 20px 40px rgba(0,0,0,0.7));
-            border-radius: 50%;
-        }
+        .mascote-wrapper img { width: clamp(220px, 35vw, 380px); height: auto; display: block; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.7)); border-radius: 50%; }
         .mascote-wrapper:hover img { filter: drop-shadow(0 0 50px rgba(172,40,255,0.8)); }
-        .mascote-glow {
-            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 250px; height: 250px; border-radius: 50%;
-            background: radial-gradient(circle, rgba(172,40,255,0.4) 0%, transparent 70%);
-            z-index: -1; animation: pulseGlow 3s ease-in-out infinite; pointer-events: none;
-        }
+        .mascote-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, rgba(172,40,255,0.4) 0%, transparent 70%); z-index: -1; animation: pulseGlow 3s ease-in-out infinite; pointer-events: none; }
 
-        /* Botão Acessar Catálogo */
-        .btn-acessar {
-            padding: 16px 45px; font-size: 1.05rem; font-weight: 700;
-            letter-spacing: 3px; text-transform: uppercase; color: #fff;
-            background: linear-gradient(135deg, #a028ff 0%, var(--ciano-brilhante) 100%);
-            border: none; border-radius: 50px; cursor: pointer;
-            transition: var(--transicao); box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-            position: relative; overflow: hidden;
-        }
-        .btn-acessar::after {
-            content: ''; position: absolute; top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.15), transparent);
-            animation: rotateGlow 6s linear infinite;
-        }
+        /* Botão */
+        .btn-acessar { padding: 16px 45px; font-size: 1.05rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a028ff 0%, var(--ciano-brilhante) 100%); border: none; border-radius: 50px; cursor: pointer; transition: var(--transicao); box-shadow: 0 8px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
+        .btn-acessar::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.15), transparent); animation: rotateGlow 6s linear infinite; }
         .btn-acessar:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(172,40,255,0.8); }
         .btn-acessar span { position: relative; z-index: 1; }
 
-        /* --- Slider de Promoções (Glass + Badge Fogo Roxo) --- */
+        /* Slider */
         .promo-slider-container { flex: 1 1 380px; max-width: 500px; min-width: 280px; }
-        .slider-box {
-            background: var(--vidro-fundo); backdrop-filter: blur(12px);
-            border: 1px solid var(--vidro-borda); border-radius: 24px;
-            overflow: hidden; box-shadow: var(--sombra-neon); position: relative;
-        }
-        /* Badge PROMO com fogo roxo e glass */
+        .slider-box { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 24px; overflow: hidden; box-shadow: var(--sombra-neon); position: relative; }
         .fire-badge {
             position: absolute; top: 12px; right: 12px;
-            background: linear-gradient(135deg, #7a00ff, #d400ff, #00f2fe);
-            color: #fff;
-            padding: 4px 14px; border-radius: 20px; font-weight: 800;
-            font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase;
-            z-index: 2; animation: fireGlow 0.8s ease-in-out infinite alternate;
-            box-shadow: 0 0 20px rgba(172,40,255,0.6);
-            border: 1px solid rgba(0, 242, 254, 0.3);
-            backdrop-filter: blur(6px);
-            background: rgba(122, 0, 255, 0.4);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.2);
+            background: rgba(122, 0, 255, 0.4); backdrop-filter: blur(8px); color: #fff;
+            padding: 4px 14px; border-radius: 20px; font-weight: 800; font-size: 0.8rem;
+            letter-spacing: 1px; text-transform: uppercase; z-index: 2;
+            animation: fireGlow 0.8s ease-in-out infinite alternate;
+            box-shadow: 0 0 20px rgba(172,40,255,0.6); border: 1px solid rgba(255,255,255,0.2);
             text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
-        .slide-item {
-            display: none; padding: 25px 20px; text-align: center; cursor: pointer;
-            animation: fadeSlideIn 0.5s ease;
-        }
+        .slide-item { display: none; padding: 25px 20px; text-align: center; cursor: pointer; animation: fadeSlideIn 0.5s ease; }
         .slide-item.active-slide { display: block; }
-        .slide-item img {
-            width: 100%; max-height: 180px; object-fit: cover;
-            border-radius: 12px; margin-bottom: 12px;
-            border: 1px solid var(--vidro-borda);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
+        .slide-item img { width: 100%; max-height: 180px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--vidro-borda); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
         .slide-item h4 { font-size: 1.2rem; margin: 5px 0; font-weight: 600; }
         .slide-item .desc { font-size: 0.9rem; opacity: 0.7; margin-bottom: 5px; }
-        .slide-item .preco {
-            font-size: 1.6rem; font-weight: 700;
-            color: var(--amarelo-neon); text-shadow: 0 0 20px rgba(255,229,0,0.3);
-        }
+        .slide-item .preco { font-size: 1.6rem; font-weight: 700; color: var(--amarelo-neon); text-shadow: 0 0 20px rgba(255,229,0,0.3); }
         .slider-dots { display: flex; gap: 8px; justify-content: center; padding: 0 0 15px; }
-        .slider-dots .dot {
-            width: 10px; height: 10px; border-radius: 50%;
-            background: rgba(255,255,255,0.2); cursor: pointer; border: none; transition: var(--transicao);
-        }
-        .slider-dots .dot.active-dot {
-            background: var(--ciano-brilhante); transform: scale(1.3);
-            box-shadow: 0 0 15px rgba(0,242,254,0.6);
-        }
+        .slider-dots .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); cursor: pointer; border: none; transition: var(--transicao); }
+        .slider-dots .dot.active-dot { background: var(--ciano-brilhante); transform: scale(1.3); box-shadow: 0 0 15px rgba(0,242,254,0.6); }
 
-        /* --- Mais Vendidos (5 cards, com badge HOT roxo) --- */
+        /* Mais Vendidos (dinâmico) */
         .mais-vendidos-section { width: 100%; padding-top: 15px; border-top: 1px solid var(--vidro-borda); }
-        .mais-vendidos-section .section-title {
-            font-size: 1.3rem; letter-spacing: 4px; text-align: center; margin-bottom: 16px;
-            color: var(--branco-espacial); font-weight: 300;
-        }
-        .grid-vendidos {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px;
-        }
+        .mais-vendidos-section .section-title { font-size: 1.3rem; letter-spacing: 4px; text-align: center; margin-bottom: 16px; color: var(--branco-espacial); font-weight: 300; }
+        .grid-vendidos { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
         .card-vendido {
-            background: var(--vidro-fundo); backdrop-filter: blur(12px);
-            border: 1px solid var(--vidro-borda); border-radius: 20px;
-            padding: 20px 14px; text-align: center; transition: var(--transicao);
-            cursor: pointer; position: relative; display: flex; flex-direction: column;
-            align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda);
+            border-radius: 20px; padding: 20px 14px; text-align: center; transition: var(--transicao);
+            cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-        .card-vendido:hover {
-            background: rgba(172,40,255,0.15); transform: translateY(-6px) scale(1.02);
-            box-shadow: 0 10px 40px rgba(172,40,255,0.4); border-color: var(--ciano-brilhante);
-        }
-        .card-vendido .icon-box {
-            width: 60px; height: 60px; border-radius: 50%;
-            background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center;
-            font-size: 1.8rem; color: var(--ciano-brilhante); border: 1px solid rgba(255,255,255,0.05);
-        }
+        .card-vendido:hover { background: rgba(172,40,255,0.15); transform: translateY(-6px) scale(1.02); box-shadow: 0 10px 40px rgba(172,40,255,0.4); border-color: var(--ciano-brilhante); }
+        .card-vendido .icon-box { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--ciano-brilhante); border: 1px solid rgba(255,255,255,0.05); }
         .card-vendido h4 { font-size: 0.95rem; font-weight: 500; margin-top: 4px; letter-spacing: 0.5px; }
         .card-vendido .preco { font-weight: 700; color: var(--amarelo-neon); font-size: 1.1rem; }
-        /* Badge HOT com fogo roxo e glass */
         .card-vendido .fire-badge-mini {
             position: absolute; top: -8px; left: -8px;
-            background: rgba(122, 0, 255, 0.4);
-            backdrop-filter: blur(8px);
-            color: #fff; padding: 2px 12px; border-radius: 20px;
-            font-weight: 800; font-size: 0.7rem; letter-spacing: 1px;
-            text-transform: uppercase; z-index: 2;
+            background: rgba(122, 0, 255, 0.4); backdrop-filter: blur(8px); color: #fff;
+            padding: 2px 12px; border-radius: 20px; font-weight: 800; font-size: 0.7rem;
+            letter-spacing: 1px; text-transform: uppercase; z-index: 2;
             animation: fireGlow 0.8s ease-in-out infinite alternate;
-            box-shadow: 0 0 15px rgba(172,40,255,0.6);
-            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 0 15px rgba(172,40,255,0.6); border: 1px solid rgba(255,255,255,0.2);
             text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
 
-        /* ==================== CATÁLOGO DINÂMICO ==================== */
+        /* Catálogo dinâmico */
         .listagem-screen { flex-direction: column; align-items: center; padding: 30px 20px; gap: 30px; overflow-y: auto; background: rgba(11,4,28,0.6); }
         .listagem-header { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1100px; }
         .listagem-header h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: 4px; text-shadow: 0 0 30px rgba(172,40,255,0.5); flex: 1; text-align: center; font-weight: 300; }
         .btn-voltar { padding: 10px 28px; font-size: 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 30px; cursor: pointer; transition: var(--transicao); color: #fff; }
         .btn-voltar:hover { border-color: var(--ciano-brilhante); background: rgba(0,242,254,0.1); }
 
-        /* Categorias (tópicos) */
-        .grid-categorias {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;
-            width: 100%; max-width: 1100px;
-        }
+        .grid-categorias { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; }
         .categoria-card {
-            background: var(--vidro-fundo); backdrop-filter: blur(12px);
-            border: 1px solid var(--vidro-borda); border-radius: 20px;
-            padding: 25px 20px; text-align: center; transition: var(--transicao);
+            background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda);
+            border-radius: 20px; padding: 25px 20px; text-align: center; transition: var(--transicao);
             cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 12px;
         }
-        .categoria-card:hover {
-            background: rgba(172,40,255,0.2); transform: translateY(-6px);
-            box-shadow: var(--sombra-hover); border-color: var(--ciano-brilhante);
-        }
-        .categoria-card .categoria-img {
-            width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
-            border: 2px solid var(--vidro-borda);
-        }
+        .categoria-card:hover { background: rgba(172,40,255,0.2); transform: translateY(-6px); box-shadow: var(--sombra-hover); border-color: var(--ciano-brilhante); }
+        .categoria-card .categoria-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--vidro-borda); }
         .categoria-card h4 { font-size: 1.1rem; font-weight: 500; letter-spacing: 1px; }
 
-        /* Produtos dentro da categoria */
-        .produtos-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px;
-            width: 100%; max-width: 900px; margin-top: 20px;
-        }
+        .produtos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; width: 100%; max-width: 900px; margin-top: 20px; }
         .produto-card {
-            background: var(--vidro-fundo); backdrop-filter: blur(8px);
-            border: 1px solid var(--vidro-borda); border-radius: 16px;
-            padding: 15px 10px; text-align: center; transition: var(--transicao);
-            cursor: pointer;
+            background: var(--vidro-fundo); backdrop-filter: blur(8px); border: 1px solid var(--vidro-borda);
+            border-radius: 16px; padding: 15px 10px; text-align: center; transition: var(--transicao);
+            cursor: pointer; position: relative;
         }
-        .produto-card:hover {
-            background: rgba(172,40,255,0.15); transform: translateY(-4px);
-            box-shadow: 0 8px 30px rgba(172,40,255,0.3);
-        }
-        .produto-card img {
-            width: 100%; height: 120px; object-fit: cover; border-radius: 8px;
-            border: 1px solid var(--vidro-borda); margin-bottom: 8px;
-        }
+        .produto-card:hover { background: rgba(172,40,255,0.15); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(172,40,255,0.3); }
+        .produto-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid var(--vidro-borda); margin-bottom: 8px; }
         .produto-card h5 { font-size: 0.95rem; font-weight: 400; }
         .produto-card .preco { font-weight: 700; color: var(--amarelo-neon); font-size: 1rem; }
+        .produto-card .badge-promo {
+            position: absolute; top: 5px; right: 5px;
+            background: rgba(255, 0, 0, 0.7); backdrop-filter: blur(4px);
+            color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 0.6rem;
+            font-weight: 700; text-transform: uppercase;
+        }
+        .produto-card .badge-destaque {
+            position: absolute; top: 5px; left: 5px;
+            background: rgba(0, 242, 254, 0.7); backdrop-filter: blur(4px);
+            color: #0b041c; padding: 2px 8px; border-radius: 12px; font-size: 0.6rem;
+            font-weight: 700; text-transform: uppercase;
+        }
 
-        /* ==================== ADMIN (painel) ==================== */
+        /* Admin */
         #adminScreen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
@@ -313,35 +203,34 @@
             color: #fff; font-size: 0.95rem; margin-bottom: 10px;
         }
         .admin-container input[type="file"] { padding: 5px; }
-        .admin-container button {
-            padding: 10px 20px; border: none; border-radius: 30px;
-            background: linear-gradient(135deg, #a028ff, var(--ciano-brilhante));
-            color: #fff; font-weight: 600; cursor: pointer; transition: var(--transicao);
-            margin-right: 10px;
-        }
+        .admin-container .checkbox-group { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; }
+        .admin-container .checkbox-group label { margin: 0; display: flex; align-items: center; gap: 5px; }
+        .admin-container .checkbox-group input[type="checkbox"] { width: auto; margin: 0; }
+        .admin-container button { padding: 10px 20px; border: none; border-radius: 30px; background: linear-gradient(135deg, #a028ff, var(--ciano-brilhante)); color: #fff; font-weight: 600; cursor: pointer; transition: var(--transicao); margin-right: 10px; }
         .admin-container button:hover { transform: scale(1.05); }
         .admin-container .btn-danger { background: #ff4455; }
         .admin-container .btn-danger:hover { background: #cc1122; }
         .admin-item-list { margin: 20px 0; border-top: 1px solid var(--vidro-borda); padding-top: 15px; }
         .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
         .admin-item-list .item button { padding: 4px 12px; font-size: 0.8rem; background: #ff4455; }
-        .admin-close {
-            position: absolute; top: 20px; right: 30px;
-            font-size: 2rem; color: #fff; cursor: pointer; background: none; border: none;
-        }
-
-        /* Admin trigger */
-        .admin-trigger {
-            position: fixed; bottom: 20px; right: 20px;
-            background: rgba(172,40,255,0.3); backdrop-filter: blur(8px);
-            border: 1px solid var(--vidro-borda); border-radius: 50%;
-            width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; color: #fff; cursor: pointer; z-index: 999;
-            transition: var(--transicao);
-        }
+        .admin-close { position: absolute; top: 20px; right: 30px; font-size: 2rem; color: #fff; cursor: pointer; background: none; border: none; }
+        .admin-trigger { position: fixed; bottom: 80px; right: 20px; background: rgba(172,40,255,0.3); backdrop-filter: blur(8px); border: 1px solid var(--vidro-borda); border-radius: 50%; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: #fff; cursor: pointer; z-index: 999; transition: var(--transicao); }
         .admin-trigger:hover { background: rgba(172,40,255,0.5); transform: scale(1.1); }
 
-        /* ==================== RESPONSIVIDADE ==================== */
+        /* Rodapé */
+        .footer {
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(11, 4, 28, 0.8); backdrop-filter: blur(8px);
+            border-top: 1px solid var(--vidro-borda);
+            padding: 8px 20px; text-align: center;
+            font-size: 0.8rem; color: rgba(255,255,255,0.5);
+            z-index: 10;
+            display: flex; justify-content: space-between; align-items: center;
+            flex-wrap: wrap;
+        }
+        .footer .visit-counter { color: var(--ciano-brilhante); font-weight: 600; }
+
+        /* Responsividade */
         @media (max-width: 900px) {
             .main-area { flex-direction: column; align-items: center; gap: 25px; }
             .mascote-block { flex: 1 1 auto; width: 100%; max-width: 400px; }
@@ -359,28 +248,35 @@
             .categoria-card .categoria-img { width: 60px; height: 60px; }
             .produtos-grid { grid-template-columns: repeat(2, 1fr); }
             .produto-card img { height: 80px; }
+            .footer { flex-direction: column; gap: 4px; padding: 6px 15px; font-size: 0.7rem; }
+        }
+
+        /* Toast do mascote */
+        .mascote-toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: rgba(11,4,28,0.9); backdrop-filter: blur(8px);
+            color: #f0eaff; padding: 12px 24px; border-radius: 30px;
+            font-size: 1rem; z-index: 999; pointer-events: none;
+            border: 1px solid rgba(172,40,255,0.6); box-shadow: 0 0 30px rgba(172,40,255,0.5);
+            animation: toastInOut 4s ease forwards;
         }
     </style>
 </head>
 <body>
 
-    <div class="bg-container" id="bgImage"></div>
+    <div class="bg-container"></div>
     <div class="bg-overlay"></div>
     <canvas id="meteorCanvas"></canvas>
 
-    <!-- ========== HOME ========== -->
+    <!-- HOME -->
     <div class="screen active" id="homeScreen">
         <div class="home-screen">
-
-            <!-- Header -->
             <div class="header-top">
-                <!-- Substitua o src pela sua logo -->
                 <img src="https://i.imgur.com/uvur0Sy.png" alt="Gudyx" class="logo-img">
                 <div class="subtitle">PAPELARIA PERSONALIZADA · GRÁFICA RÁPIDA</div>
                 <div class="slogan">"Onde cada detalhe é um grude de personalidade"</div>
             </div>
 
-            <!-- Main -->
             <div class="main-area">
                 <div class="mascote-block">
                     <div class="mascote-wrapper" id="mascoteWrapper">
@@ -420,94 +316,59 @@
                 </div>
             </div>
 
-            <!-- Mais Vendidos -->
+            <!-- Mais Vendidos (dinâmico) -->
             <div class="mais-vendidos-section">
                 <div class="section-title">MAIS VENDIDOS</div>
-                <div class="grid-vendidos">
-                    <div class="card-vendido" onclick="navegarPara('produtos')">
-                        <div class="fire-badge-mini">HOT</div>
-                        <div class="icon-box"><i class="fas fa-book"></i></div>
-                        <h4>Caderno Cósmico</h4>
-                        <div class="preco">R$ 49,90</div>
-                    </div>
-                    <div class="card-vendido" onclick="navegarPara('produtos')">
-                        <div class="fire-badge-mini">HOT</div>
-                        <div class="icon-box"><i class="fas fa-calendar-alt"></i></div>
-                        <h4>Agenda 2026</h4>
-                        <div class="preco">R$ 69,90</div>
-                    </div>
-                    <div class="card-vendido" onclick="navegarPara('produtos')">
-                        <div class="fire-badge-mini">HOT</div>
-                        <div class="icon-box"><i class="fas fa-mug-hot"></i></div>
-                        <h4>Caneca Galáctica</h4>
-                        <div class="preco">R$ 39,90</div>
-                    </div>
-                    <div class="card-vendido" onclick="navegarPara('produtos')">
-                        <div class="icon-box"><i class="fas fa-pen"></i></div>
-                        <h4>Caneta Neon</h4>
-                        <div class="preco">R$ 19,90</div>
-                    </div>
-                    <div class="card-vendido" onclick="navegarPara('produtos')">
-                        <div class="icon-box"><i class="fas fa-gift"></i></div>
-                        <h4>Kit Presente</h4>
-                        <div class="preco">R$ 129,90</div>
-                    </div>
-                </div>
+                <div class="grid-vendidos" id="maisVendidosGrid"></div>
             </div>
-
         </div>
     </div>
 
-    <!-- ========== ESCOLHA ========== -->
+    <!-- ESCOLHA -->
     <div class="screen" id="escolhaScreen">
         <div class="listagem-screen" style="padding:30px;text-align:center;">
             <h2 style="text-shadow:0 0 30px rgba(172,40,255,0.5); letter-spacing:4px; font-weight:300;">O que você procura?</h2>
             <div style="display:flex;gap:30px;flex-wrap:wrap;justify-content:center;margin-top:20px;">
                 <div class="categoria-card" style="flex:1 1 250px;padding:40px;" onclick="navegarPara('servicos')">
-                    <div class="icon-large" style="font-size:4rem; color:var(--ciano-brilhante);"><i class="fas fa-tools"></i></div>
+                    <div style="font-size:4rem; color:var(--ciano-brilhante);"><i class="fas fa-tools"></i></div>
                     <h3>SERVIÇOS</h3>
                 </div>
                 <div class="categoria-card" style="flex:1 1 250px;padding:40px;" onclick="navegarPara('produtos')">
-                    <div class="icon-large" style="font-size:4rem; color:var(--rosa-neon);"><i class="fas fa-store"></i></div>
+                    <div style="font-size:4rem; color:var(--rosa-neon);"><i class="fas fa-store"></i></div>
                     <h3>PRODUTOS</h3>
                 </div>
             </div>
-            <button class="btn-voltar" onclick="voltarParaHome()" style="margin-top:20px;"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Voltar</button>
+            <button class="btn-voltar" onclick="voltarParaHome()" style="margin-top:20px;"><i class="fas fa-arrow-left"></i> Voltar</button>
         </div>
     </div>
 
-    <!-- ========== SERVIÇOS ========== -->
+    <!-- SERVIÇOS (dinâmico) -->
     <div class="screen" id="servicosScreen">
         <div class="listagem-screen">
             <div class="listagem-header">
-                <button class="btn-voltar" onclick="voltarParaEscolha()"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Voltar</button>
+                <button class="btn-voltar" onclick="voltarParaEscolha()"><i class="fas fa-arrow-left"></i> Voltar</button>
                 <h2>SERVIÇOS</h2>
-                <button class="btn-voltar" onclick="voltarParaHome()"><i class="fas fa-home" style="margin-right:8px;"></i> Início</button>
+                <button class="btn-voltar" onclick="voltarParaHome()"><i class="fas fa-home"></i> Início</button>
             </div>
-            <div class="grid-categorias">
-                <div class="categoria-card"><div class="icon-large" style="font-size:3rem;"><i class="fas fa-print"></i></div><h4>Impressão Digital</h4></div>
-                <div class="categoria-card"><div class="icon-large" style="font-size:3rem;"><i class="fas fa-book"></i></div><h4>Encadernação</h4></div>
-                <div class="categoria-card"><div class="icon-large" style="font-size:3rem;"><i class="fas fa-paint-brush"></i></div><h4>Criação de Arte</h4></div>
-            </div>
+            <div id="servicosCategoriasContainer" class="grid-categorias"></div>
+            <div id="servicosProdutosContainer" class="produtos-grid" style="display:none;"></div>
         </div>
     </div>
 
-    <!-- ========== PRODUTOS (Dinâmico) ========== -->
+    <!-- PRODUTOS (dinâmico) -->
     <div class="screen" id="produtosScreen">
         <div class="listagem-screen">
             <div class="listagem-header">
-                <button class="btn-voltar" onclick="voltarParaEscolha()"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Voltar</button>
+                <button class="btn-voltar" onclick="voltarParaEscolha()"><i class="fas fa-arrow-left"></i> Voltar</button>
                 <h2>PRODUTOS</h2>
-                <button class="btn-voltar" onclick="voltarParaHome()"><i class="fas fa-home" style="margin-right:8px;"></i> Início</button>
+                <button class="btn-voltar" onclick="voltarParaHome()"><i class="fas fa-home"></i> Início</button>
             </div>
-            <!-- Categorias carregadas via JS -->
-            <div id="categoriasContainer" class="grid-categorias"></div>
-            <!-- Produtos da categoria selecionada -->
-            <div id="produtosContainer" class="produtos-grid" style="display:none;"></div>
+            <div id="produtosCategoriasContainer" class="grid-categorias"></div>
+            <div id="produtosProdutosContainer" class="produtos-grid" style="display:none;"></div>
         </div>
     </div>
 
-    <!-- ========== ADMIN ========== -->
+    <!-- ADMIN -->
     <div id="adminScreen">
         <button class="admin-close" onclick="fecharAdmin()">&times;</button>
         <div class="admin-container">
@@ -520,6 +381,11 @@
             <!-- Aba Categorias -->
             <div id="abaCategorias">
                 <h3>Adicionar Categoria</h3>
+                <label>Tipo</label>
+                <select id="catTipo">
+                    <option value="produtos">Produtos</option>
+                    <option value="servicos">Serviços</option>
+                </select>
                 <label>Nome da categoria</label>
                 <input type="text" id="catNome" placeholder="Ex: Caixas Personalizadas">
                 <label>Imagem (opcional)</label>
@@ -530,15 +396,24 @@
 
             <!-- Aba Produtos -->
             <div id="abaProdutos" style="display:none;">
-                <h3>Adicionar Produto</h3>
+                <h3>Adicionar Produto / Serviço</h3>
+                <label>Tipo</label>
+                <select id="prodTipo" onchange="atualizarSelectCategorias()">
+                    <option value="produtos">Produtos</option>
+                    <option value="servicos">Serviços</option>
+                </select>
                 <label>Categoria</label>
                 <select id="prodCategoria"></select>
-                <label>Nome do produto</label>
+                <label>Nome</label>
                 <input type="text" id="prodNome" placeholder="Ex: Caixa Média">
                 <label>Preço (R$)</label>
                 <input type="text" id="prodPreco" placeholder="Ex: 29,90">
                 <label>Imagem (opcional)</label>
                 <input type="file" id="prodImg" accept="image/*">
+                <div class="checkbox-group">
+                    <label><input type="checkbox" id="prodPromocao"> Em Promoção</label>
+                    <label><input type="checkbox" id="prodDestaque"> Destaque</label>
+                </div>
                 <button onclick="adicionarProduto()">Adicionar</button>
                 <div class="admin-item-list" id="listaProdutos"></div>
             </div>
@@ -547,23 +422,63 @@
         </div>
     </div>
 
-    <!-- ========== TRIGGER ADMIN ========== -->
+    <!-- TRIGGER ADMIN -->
     <div class="admin-trigger" onclick="abrirAdmin()">
         <i class="fas fa-cog"></i>
     </div>
 
+    <!-- RODAPÉ -->
+    <footer class="footer">
+        <span>Gudyx Custom © 2026</span>
+        <span class="visit-counter">Visitas: <span id="visitCounter">0</span></span>
+    </footer>
+
     <script>
+        // ==================== DADOS ====================
+        let dados = {
+            categorias: [
+                // tipo: 'produtos' ou 'servicos'
+                { id: 1, tipo: 'produtos', nome: 'Caixas Personalizadas', imagem: '' },
+                { id: 2, tipo: 'produtos', nome: 'Imã de Geladeira', imagem: '' },
+                { id: 3, tipo: 'produtos', nome: 'Plastificação', imagem: '' },
+                { id: 4, tipo: 'produtos', nome: 'Lembrancinhas', imagem: '' },
+                { id: 5, tipo: 'produtos', nome: 'Display de Mesa', imagem: '' },
+                { id: 6, tipo: 'produtos', nome: 'Cards', imagem: '' },
+                { id: 7, tipo: 'produtos', nome: 'Cartão de Visita', imagem: '' },
+                { id: 8, tipo: 'produtos', nome: 'Fotos', imagem: '' },
+                // Serviços
+                { id: 9, tipo: 'servicos', nome: 'Impressão Digital', imagem: '' },
+                { id: 10, tipo: 'servicos', nome: 'Encadernação', imagem: '' },
+                { id: 11, tipo: 'servicos', nome: 'Criação de Arte', imagem: '' }
+            ],
+            produtos: [
+                // { id, categoriaId, nome, preco, imagem, promocao, destaque, cliques }
+            ]
+        };
+
+        if (localStorage.getItem('gudyxDados')) {
+            try {
+                dados = JSON.parse(localStorage.getItem('gudyxDados'));
+            } catch(e) {}
+        } else {
+            salvarDados();
+        }
+
+        function salvarDados() {
+            localStorage.setItem('gudyxDados', JSON.stringify(dados));
+        }
+
         // ==================== NAVEGAÇÃO ====================
         function mostrarTela(id) {
             document.querySelectorAll('.screen').forEach(t => t.classList.remove('active'));
             document.getElementById(id).classList.add('active');
         }
         function abrirCatalogo() { mostrarTela('escolhaScreen'); }
-        function voltarParaHome() { mostrarTela('homeScreen'); resetarSlider(); }
+        function voltarParaHome() { mostrarTela('homeScreen'); resetarSlider(); carregarMaisVendidos(); }
         function voltarParaEscolha() { mostrarTela('escolhaScreen'); }
         function navegarPara(destino) {
-            if (destino === 'servicos') mostrarTela('servicosScreen');
-            else if (destino === 'produtos') { mostrarTela('produtosScreen'); carregarCategorias(); }
+            if (destino === 'servicos') { mostrarTela('servicosScreen'); carregarCategorias('servicos'); }
+            else if (destino === 'produtos') { mostrarTela('produtosScreen'); carregarCategorias('produtos'); }
         }
 
         // ==================== SLIDER ====================
@@ -591,151 +506,190 @@
         });
         iniciarSlider();
 
-        // ==================== MASCOTE ====================
-        const mascoteWrapper = document.getElementById('mascoteWrapper');
-        const msgs = ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe', 'Escolha seu caderno cósmico', 'Feito com alma taurina'];
-        let msgIdx = 0;
-        mascoteWrapper.addEventListener('click', function() {
-            this.style.animation = 'none'; this.offsetHeight; this.style.animation = 'floatMascote 0.6s ease-in-out';
-            const toast = document.createElement('div');
-            toast.textContent = msgs[msgIdx % msgs.length]; msgIdx++;
-            toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(11,4,28,0.9);color:#f0eaff;padding:12px 24px;border-radius:30px;font-size:1rem;z-index:999;pointer-events:none;animation:toastInOut 2.5s ease forwards;backdrop-filter:blur(8px);border:1px solid rgba(172,40,255,0.6);box-shadow:0 0 30px rgba(172,40,255,0.5);';
-            document.body.appendChild(toast);
-            setTimeout(() => { if (toast.parentNode) toast.remove(); }, 2600);
-            setTimeout(() => { this.style.animation = 'floatMascote 6s ease-in-out infinite'; }, 600);
-        });
-
-        // ==================== METEOROS (Canvas) ====================
+        // ==================== METEOROS ====================
         const canvas = document.getElementById('meteorCanvas');
         const ctx = canvas.getContext('2d');
         let width, height, meteors = [];
-
-        function resizeCanvas() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        // Cria meteoros
+        function resizeCanvas() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
         function createMeteor() {
             return {
-                x: Math.random() * width,
-                y: Math.random() * height - height,
-                size: Math.random() * 3 + 1,
-                speed: Math.random() * 6 + 2,
+                x: Math.random() * width, y: Math.random() * height - height,
+                size: Math.random() * 3 + 1, speed: Math.random() * 6 + 2,
                 angle: Math.PI / 4 + (Math.random() - 0.5) * 0.2,
-                tail: Math.random() * 40 + 20,
-                opacity: Math.random() * 0.6 + 0.2,
+                tail: Math.random() * 40 + 20, opacity: Math.random() * 0.6 + 0.2,
                 color: `hsla(${270 + Math.random()*30}, 100%, 70%, `
             };
         }
-
-        // Inicializa com 40 meteoros
         for (let i = 0; i < 40; i++) meteors.push(createMeteor());
-
         function drawMeteors() {
             ctx.clearRect(0, 0, width, height);
             meteors.forEach(m => {
-                const dx = Math.cos(m.angle) * m.speed;
-                const dy = Math.sin(m.angle) * m.speed;
-                m.x += dx;
-                m.y += dy;
-
-                // Desenha o meteoro (cauda)
+                m.x += Math.cos(m.angle) * m.speed;
+                m.y += Math.sin(m.angle) * m.speed;
                 const tailEndX = m.x - Math.cos(m.angle) * m.tail;
                 const tailEndY = m.y - Math.sin(m.angle) * m.tail;
                 const grad = ctx.createLinearGradient(m.x, m.y, tailEndX, tailEndY);
                 grad.addColorStop(0, `hsla(270, 100%, 80%, ${m.opacity})`);
                 grad.addColorStop(1, `hsla(270, 100%, 40%, 0)`);
-                ctx.beginPath();
-                ctx.moveTo(m.x, m.y);
-                ctx.lineTo(tailEndX, tailEndY);
-                ctx.strokeStyle = grad;
-                ctx.lineWidth = m.size * 2;
-                ctx.lineCap = 'round';
-                ctx.stroke();
-
-                // Ponto brilhante
-                ctx.beginPath();
-                ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
+                ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(tailEndX, tailEndY);
+                ctx.strokeStyle = grad; ctx.lineWidth = m.size * 2; ctx.lineCap = 'round'; ctx.stroke();
+                ctx.beginPath(); ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
                 ctx.fillStyle = `hsla(270, 100%, 90%, ${m.opacity})`;
                 ctx.fill();
-
-                // Reset se sair da tela
                 if (m.x > width + 50 || m.y > height + 50) {
-                    Object.assign(m, createMeteor());
-                    m.x = Math.random() * width;
-                    m.y = -Math.random() * 100 - 50;
+                    Object.assign(m, createMeteor()); m.x = Math.random() * width; m.y = -Math.random() * 100 - 50;
                 }
             });
             requestAnimationFrame(drawMeteors);
         }
         drawMeteors();
 
-        // ==================== ADMIN & DADOS ====================
-        let dados = {
-            categorias: [
-                { id: 1, nome: 'Caixas Personalizadas', imagem: '' },
-                { id: 2, nome: 'Imã de Geladeira', imagem: '' },
-                { id: 3, nome: 'Plastificação', imagem: '' },
-                { id: 4, nome: 'Lembrancinhas', imagem: '' },
-                { id: 5, nome: 'Display de Mesa', imagem: '' },
-                { id: 6, nome: 'Cards', imagem: '' },
-                { id: 7, nome: 'Cartão de Visita', imagem: '' },
-                { id: 8, nome: 'Fotos', imagem: '' }
-            ],
-            produtos: [
-                // Exemplo: { id: 1, categoriaId: 1, nome: 'Caixa Média', preco: '29,90', imagem: '' }
-            ]
-        };
-
-        // Carrega do localStorage se existir
-        if (localStorage.getItem('gudyxDados')) {
-            try {
-                dados = JSON.parse(localStorage.getItem('gudyxDados'));
-            } catch(e) {}
-        } else {
-            // Salva dados iniciais
-            salvarDados();
+        // ==================== MASCOTE AUTOMÁTICO ====================
+        // Fala automaticamente a cada 30 segundos
+        function getMensagensMascote() {
+            const msgs = [];
+            // Promoções ativas
+            const promos = dados.produtos.filter(p => p.promocao);
+            if (promos.length > 0) {
+                const p = promos[Math.floor(Math.random() * promos.length)];
+                msgs.push(`Sabia que temos promoção de ${p.nome} por apenas R$ ${p.preco}?`);
+            }
+            // Destaques
+            const destaques = dados.produtos.filter(p => p.destaque && !p.promocao);
+            if (destaques.length > 0) {
+                const d = destaques[Math.floor(Math.random() * destaques.length)];
+                msgs.push(`Confira nosso destaque: ${d.nome}!`);
+            }
+            // Saudação
+            msgs.push('Oi, eu sou Gluudyx! ✦');
+            msgs.push('Amor em cada detalhe');
+            msgs.push('Escolha seu caderno cósmico');
+            msgs.push('Feito com alma taurina');
+            return msgs;
         }
 
-        function salvarDados() {
-            localStorage.setItem('gudyxDados', JSON.stringify(dados));
+        let mascoteMsgIdx = 0;
+        let mascoteMensagens = [];
+
+        function atualizarMensagensMascote() {
+            mascoteMensagens = getMensagensMascote();
         }
 
-        // ==================== PRODUTOS (exibição) ====================
-        let categoriaSelecionada = null;
+        function falarMascote() {
+            if (mascoteMensagens.length === 0) atualizarMensagensMascote();
+            const msg = mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
+            mascoteMsgIdx++;
+            const toast = document.createElement('div');
+            toast.className = 'mascote-toast';
+            toast.textContent = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => { if (toast.parentNode) toast.remove(); }, 4000);
+        }
 
-        function carregarCategorias() {
-            const container = document.getElementById('categoriasContainer');
+        // Inicia falas automáticas a cada 20 segundos
+        setInterval(() => {
+            atualizarMensagensMascote();
+            falarMascote();
+        }, 20000);
+
+        // Também fala ao clicar (opcional)
+        document.getElementById('mascoteWrapper').addEventListener('click', function() {
+            this.style.animation = 'none';
+            this.offsetHeight;
+            this.style.animation = 'floatMascote 0.6s ease-in-out';
+            falarMascote();
+            setTimeout(() => { this.style.animation = 'floatMascote 6s ease-in-out infinite'; }, 600);
+        });
+
+        // ==================== MAIS VENDIDOS (dinâmico) ====================
+        function carregarMaisVendidos() {
+            const grid = document.getElementById('maisVendidosGrid');
+            grid.innerHTML = '';
+            // Ordena por cliques (decrescente) e pega os 5 primeiros
+            const top = [...dados.produtos].sort((a, b) => (b.cliques || 0) - (a.cliques || 0)).slice(0, 5);
+            if (top.length === 0) {
+                grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhum produto com cliques ainda.</p>';
+                return;
+            }
+            top.forEach((prod, index) => {
+                const card = document.createElement('div');
+                card.className = 'card-vendido';
+                card.onclick = () => {
+                    // Ao clicar, incrementa cliques e vai para produtos
+                    prod.cliques = (prod.cliques || 0) + 1;
+                    salvarDados();
+                    navegarPara('produtos');
+                };
+                // Badge HOT para os 3 primeiros
+                let badge = '';
+                if (index < 3) {
+                    badge = `<div class="fire-badge-mini">HOT</div>`;
+                }
+                // Ícone
+                const icon = prod.imagem ? `<img src="${prod.imagem}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:1px solid var(--vidro-borda);">` :
+                    `<div class="icon-box"><i class="fas fa-box"></i></div>`;
+                card.innerHTML = `
+                    ${badge}
+                    ${icon}
+                    <h4>${prod.nome}</h4>
+                    <div class="preco">R$ ${prod.preco}</div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // ==================== CATEGORIAS E PRODUTOS (exibição) ====================
+        let categoriaSelecionada = { tipo: null, id: null };
+
+        function carregarCategorias(tipo) {
+            const container = document.getElementById(tipo === 'produtos' ? 'produtosCategoriasContainer' : 'servicosCategoriasContainer');
             container.innerHTML = '';
-            dados.categorias.forEach(cat => {
+            const cats = dados.categorias.filter(c => c.tipo === tipo);
+            if (cats.length === 0) {
+                container.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhuma categoria cadastrada.</p>';
+                return;
+            }
+            cats.forEach(cat => {
                 const card = document.createElement('div');
                 card.className = 'categoria-card';
                 card.innerHTML = `
-                    ${cat.imagem ? `<img src="${cat.imagem}" class="categoria-img">` : `<div class="icon-large" style="font-size:3rem;"><i class="fas fa-folder"></i></div>`}
+                    ${cat.imagem ? `<img src="${cat.imagem}" class="categoria-img">` : `<div style="font-size:3rem;color:var(--ciano-brilhante);"><i class="fas fa-folder"></i></div>`}
                     <h4>${cat.nome}</h4>
                 `;
-                card.onclick = () => selecionarCategoria(cat.id);
+                card.onclick = () => selecionarCategoria(tipo, cat.id);
                 container.appendChild(card);
             });
-            document.getElementById('produtosContainer').style.display = 'none';
+            // Esconde produtos
+            const prodContainer = document.getElementById(tipo === 'produtos' ? 'produtosProdutosContainer' : 'servicosProdutosContainer');
+            prodContainer.style.display = 'none';
         }
 
-        function selecionarCategoria(id) {
-            categoriaSelecionada = id;
-            const container = document.getElementById('produtosContainer');
+        function selecionarCategoria(tipo, catId) {
+            categoriaSelecionada = { tipo, id: catId };
+            const container = document.getElementById(tipo === 'produtos' ? 'produtosProdutosContainer' : 'servicosProdutosContainer');
             container.style.display = 'grid';
             container.innerHTML = '';
-            const prods = dados.produtos.filter(p => p.categoriaId === id);
+            const prods = dados.produtos.filter(p => p.categoriaId === catId);
             if (prods.length === 0) {
-                container.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhum produto nesta categoria.</p>';
+                container.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhum item nesta categoria.</p>';
             } else {
                 prods.forEach(prod => {
                     const card = document.createElement('div');
                     card.className = 'produto-card';
+                    card.onclick = () => {
+                        // Incrementa cliques
+                        prod.cliques = (prod.cliques || 0) + 1;
+                        salvarDados();
+                        // Recarrega mais vendidos na home
+                        carregarMaisVendidos();
+                        // Opcional: abrir detalhe
+                    };
+                    let badges = '';
+                    if (prod.promocao) badges += `<div class="badge-promo">PROMO</div>`;
+                    if (prod.destaque) badges += `<div class="badge-destaque">DESTAQUE</div>`;
                     card.innerHTML = `
+                        ${badges}
                         ${prod.imagem ? `<img src="${prod.imagem}">` : `<div style="height:120px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:8px;"><i class="fas fa-image" style="font-size:2rem;opacity:0.3;"></i></div>`}
                         <h5>${prod.nome}</h5>
                         <div class="preco">R$ ${prod.preco}</div>
@@ -743,11 +697,10 @@
                     container.appendChild(card);
                 });
             }
-            // Scroll suave
             container.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ==================== ADMIN FUNCTIONS ====================
+        // ==================== ADMIN ====================
         function abrirAdmin() {
             document.getElementById('adminScreen').classList.add('active');
             atualizarListaCategorias();
@@ -757,7 +710,14 @@
 
         function fecharAdmin() {
             document.getElementById('adminScreen').classList.remove('active');
-            carregarCategorias();
+            carregarMaisVendidos();
+            // Se estiver na tela de produtos/serviços, recarrega
+            const activeScreen = document.querySelector('.screen.active');
+            if (activeScreen) {
+                const id = activeScreen.id;
+                if (id === 'produtosScreen') carregarCategorias('produtos');
+                else if (id === 'servicosScreen') carregarCategorias('servicos');
+            }
         }
 
         function abrirAba(aba) {
@@ -768,6 +728,7 @@
 
         // --- Categorias ---
         function adicionarCategoria() {
+            const tipo = document.getElementById('catTipo').value;
             const nome = document.getElementById('catNome').value.trim();
             if (!nome) { alert('Digite o nome da categoria.'); return; }
             const fileInput = document.getElementById('catImg');
@@ -776,7 +737,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     imagem = e.target.result;
-                    const nova = { id: Date.now(), nome, imagem };
+                    const nova = { id: Date.now(), tipo, nome, imagem };
                     dados.categorias.push(nova);
                     salvarDados();
                     document.getElementById('catNome').value = '';
@@ -786,7 +747,7 @@
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                const nova = { id: Date.now(), nome, imagem: '' };
+                const nova = { id: Date.now(), tipo, nome, imagem: '' };
                 dados.categorias.push(nova);
                 salvarDados();
                 document.getElementById('catNome').value = '';
@@ -796,13 +757,13 @@
         }
 
         function removerCategoria(id) {
-            if (!confirm('Remover esta categoria e todos os produtos vinculados?')) return;
+            if (!confirm('Remover esta categoria e todos os itens vinculados?')) return;
             dados.categorias = dados.categorias.filter(c => c.id !== id);
             dados.produtos = dados.produtos.filter(p => p.categoriaId !== id);
             salvarDados();
             atualizarListaCategorias();
             atualizarSelectCategorias();
-            carregarCategorias();
+            carregarMaisVendidos();
         }
 
         function atualizarListaCategorias() {
@@ -812,7 +773,7 @@
                 const item = document.createElement('div');
                 item.className = 'item';
                 item.innerHTML = `
-                    <span>${cat.nome} ${cat.imagem ? '🖼️' : ''}</span>
+                    <span>[${cat.tipo}] ${cat.nome} ${cat.imagem ? '🖼️' : ''}</span>
                     <button onclick="removerCategoria(${cat.id})">Remover</button>
                 `;
                 lista.appendChild(item);
@@ -821,9 +782,12 @@
 
         // --- Produtos ---
         function adicionarProduto() {
+            const tipo = document.getElementById('prodTipo').value;
             const catId = parseInt(document.getElementById('prodCategoria').value);
             const nome = document.getElementById('prodNome').value.trim();
             const preco = document.getElementById('prodPreco').value.trim();
+            const promocao = document.getElementById('prodPromocao').checked;
+            const destaque = document.getElementById('prodDestaque').checked;
             if (!catId || !nome || !preco) { alert('Preencha todos os campos.'); return; }
             const fileInput = document.getElementById('prodImg');
             let imagem = '';
@@ -831,39 +795,45 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     imagem = e.target.result;
-                    const novo = { id: Date.now(), categoriaId: catId, nome, preco, imagem };
+                    const novo = { id: Date.now(), categoriaId: catId, nome, preco, imagem, promocao, destaque, cliques: 0 };
                     dados.produtos.push(novo);
                     salvarDados();
                     document.getElementById('prodNome').value = '';
                     document.getElementById('prodPreco').value = '';
                     fileInput.value = '';
+                    document.getElementById('prodPromocao').checked = false;
+                    document.getElementById('prodDestaque').checked = false;
                     atualizarListaProdutos();
-                    carregarCategorias();
+                    carregarMaisVendidos();
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                const novo = { id: Date.now(), categoriaId: catId, nome, preco, imagem: '' };
+                const novo = { id: Date.now(), categoriaId: catId, nome, preco, imagem: '', promocao, destaque, cliques: 0 };
                 dados.produtos.push(novo);
                 salvarDados();
                 document.getElementById('prodNome').value = '';
                 document.getElementById('prodPreco').value = '';
+                document.getElementById('prodPromocao').checked = false;
+                document.getElementById('prodDestaque').checked = false;
                 atualizarListaProdutos();
-                carregarCategorias();
+                carregarMaisVendidos();
             }
         }
 
         function removerProduto(id) {
-            if (!confirm('Remover este produto?')) return;
+            if (!confirm('Remover este item?')) return;
             dados.produtos = dados.produtos.filter(p => p.id !== id);
             salvarDados();
             atualizarListaProdutos();
-            carregarCategorias();
+            carregarMaisVendidos();
         }
 
         function atualizarSelectCategorias() {
+            const tipo = document.getElementById('prodTipo').value;
             const select = document.getElementById('prodCategoria');
             select.innerHTML = '';
-            dados.categorias.forEach(cat => {
+            const cats = dados.categorias.filter(c => c.tipo === tipo);
+            cats.forEach(cat => {
                 const opt = document.createElement('option');
                 opt.value = cat.id;
                 opt.textContent = cat.nome;
@@ -879,7 +849,7 @@
                 const item = document.createElement('div');
                 item.className = 'item';
                 item.innerHTML = `
-                    <span>${cat ? cat.nome : '?'} → ${prod.nome} (R$ ${prod.preco}) ${prod.imagem ? '🖼️' : ''}</span>
+                    <span>${cat ? cat.nome : '?'} → ${prod.nome} (R$ ${prod.preco}) ${prod.promocao ? '🔥' : ''} ${prod.destaque ? '⭐' : ''} ${prod.imagem ? '🖼️' : ''} cliques: ${prod.cliques||0}</span>
                     <button onclick="removerProduto(${prod.id})">Remover</button>
                 `;
                 lista.appendChild(item);
@@ -893,13 +863,37 @@
             atualizarListaCategorias();
             atualizarSelectCategorias();
             atualizarListaProdutos();
-            carregarCategorias();
+            carregarMaisVendidos();
         }
 
-        // Inicializa exibição
-        carregarCategorias();
+        // ==================== CONTADOR DE VISITAS ====================
+        function contarVisita() {
+            // Verifica se já visitou (primeiro acesso)
+            if (!localStorage.getItem('gudyx_visited')) {
+                let visits = parseInt(localStorage.getItem('gudyx_visits') || '0');
+                visits++;
+                localStorage.setItem('gudyx_visits', visits.toString());
+                localStorage.setItem('gudyx_visited', 'true');
+                document.getElementById('visitCounter').textContent = visits;
+            } else {
+                // Exibe o contador atual
+                const visits = parseInt(localStorage.getItem('gudyx_visits') || '0');
+                document.getElementById('visitCounter').textContent = visits;
+            }
+        }
 
-        // ==================== FECHAR ADMIN COM ESC ====================
+        // ==================== INICIALIZAÇÃO ====================
+        window.onload = function() {
+            contarVisita();
+            carregarMaisVendidos();
+            // Inicia o auto-fala após 3 segundos
+            setTimeout(() => {
+                atualizarMensagensMascote();
+                falarMascote();
+            }, 3000);
+        };
+
+        // Fechar admin com ESC
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') fecharAdmin();
         });
