@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gudyx Custom - Papelaria Personalizada</title>
+    <!-- Font Awesome para ícones vetoriais (sem emojis) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --roxo-profundo: #0b041c;
@@ -33,13 +35,14 @@
         /* ==================== BACKGROUND CÓSMICO ==================== */
         .bg-container {
             position: fixed; top: -20px; left: -20px; width: calc(100% + 40px); height: calc(100% + 40px);
-            z-index: -2; background-image: url('https://i.imgur.com/UDwnKUg.png');
+            z-index: -2; 
+            background-image: url('https://i.imgur.com/UDwnKUg.png');
             background-size: cover; background-position: center; background-repeat: no-repeat;
             filter: blur(5px); transform: scale(1.02);
         }
         .bg-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: linear-gradient(135deg, rgba(11, 4, 28, 0.6) 0%, rgba(26, 10, 51, 0.5) 50%, rgba(11, 4, 28, 0.7) 100%);
+            background: radial-gradient(circle at 50% 50%, rgba(26, 10, 51, 0.4) 0%, rgba(11, 4, 28, 0.9) 100%);
         }
 
         /* ==================== TELAS ==================== */
@@ -50,6 +53,10 @@
         @keyframes floatMascote { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-20px) rotate(2deg); } }
         @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 20px rgba(172, 40, 255, 0.4); } 50% { box-shadow: 0 0 40px rgba(172, 40, 255, 0.8), 0 0 60px rgba(0, 242, 254, 0.3); } }
         @keyframes rotateGlow { 100% { transform: rotate(360deg); } }
+        @keyframes fireGlow {
+            0% { box-shadow: 0 0 15px rgba(255, 50, 0, 0.6), 0 0 30px rgba(255, 100, 0, 0.4); transform: scale(1); }
+            100% { box-shadow: 0 0 30px rgba(255, 0, 0, 1), 0 0 60px rgba(255, 100, 0, 0.8), 0 0 90px rgba(255, 200, 0, 0.5); transform: scale(1.05); }
+        }
         @keyframes toastInOut {
             0% { opacity: 0; transform: translateX(-50%) translateY(-40px); }
             15% { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -61,7 +68,7 @@
         .home-screen {
             flex-direction: column;
             padding: 20px;
-            gap: 15px;
+            gap: 20px;
             width: 100%;
             max-width: 1400px;
             margin: 0 auto;
@@ -71,34 +78,66 @@
         .header-top {
             text-align: center;
             padding: 10px 0 5px;
+            position: relative;
+        }
+        .header-top::after {
+            content: '';
+            position: absolute;
+            bottom: -10px; left: 50%; transform: translateX(-50%);
+            width: 40%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--ciano-brilhante), var(--rosa-neon), transparent);
         }
         .header-top .logo {
-            font-size: clamp(2.2rem, 6vw, 4rem);
+            font-family: 'Poppins', sans-serif;
+            font-size: clamp(2.5rem, 7vw, 4.5rem);
             font-weight: 800;
-            letter-spacing: 4px;
-            background: linear-gradient(135deg, var(--ciano-brilhante), var(--rosa-neon));
+            letter-spacing: 6px;
+            background: linear-gradient(135deg, var(--ciano-brilhante), #a028ff, var(--rosa-neon));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 40px rgba(0, 242, 254, 0.3);
+            text-shadow: 0 0 60px rgba(0, 242, 254, 0.2);
+            position: relative;
+            display: inline-block;
+        }
+        .header-top .logo::before {
+            content: '✦';
+            position: absolute;
+            left: -30px; top: 10px;
+            font-size: 1.5rem;
+            color: var(--ciano-brilhante);
+            -webkit-text-fill-color: var(--ciano-brilhante);
+            opacity: 0.6;
+        }
+        .header-top .logo::after {
+            content: '✦';
+            position: absolute;
+            right: -30px; top: 10px;
+            font-size: 1.5rem;
+            color: var(--rosa-neon);
+            -webkit-text-fill-color: var(--rosa-neon);
+            opacity: 0.6;
         }
         .header-top .subtitle {
-            font-size: clamp(1rem, 2.5vw, 1.8rem);
+            font-size: clamp(0.9rem, 2vw, 1.4rem);
             font-weight: 300;
-            letter-spacing: 2px;
-            margin-top: 2px;
+            letter-spacing: 4px;
+            margin-top: 4px;
+            color: #c0b0d0;
         }
         .header-top .slogan {
-            font-size: clamp(0.9rem, 1.8vw, 1.2rem);
+            font-size: clamp(0.8rem, 1.5vw, 1.1rem);
             font-weight: 300;
-            opacity: 0.8;
+            opacity: 0.7;
             margin-top: 2px;
             font-style: italic;
+            letter-spacing: 1px;
+            color: #a090b0;
         }
 
-        /* --- Main area (mascote + promoções) --- */
+        /* --- Main area --- */
         .main-area {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: center;
             gap: 30px;
             flex: 1;
@@ -106,12 +145,12 @@
             padding: 10px 0;
         }
 
-        /* Mascote + botão */
+        /* Mascote + Botão */
         .mascote-block {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 15px;
             flex: 0 1 350px;
         }
         .mascote-wrapper {
@@ -125,25 +164,24 @@
             height: auto;
             display: block;
             filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.7));
+            border-radius: 50%;
         }
         .mascote-wrapper:hover img { filter: drop-shadow(0 0 50px rgba(172, 40, 255, 0.8)); }
         .mascote-glow {
-            position: absolute;
-            top: 50%; left: 50%;
+            position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 200px; height: 200px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(172, 40, 255, 0.5) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(172, 40, 255, 0.4) 0%, transparent 70%);
             z-index: -1;
             animation: pulseGlow 3s ease-in-out infinite;
             pointer-events: none;
         }
 
-        /* Botão Acessar Catálogo - brilhante */
+        /* Botão Acessar Catálogo */
         .btn-acessar {
-            display: inline-block;
-            padding: 16px 50px;
-            font-size: 1.1rem;
+            padding: 16px 45px;
+            font-size: 1.05rem;
             font-weight: 700;
             letter-spacing: 3px;
             text-transform: uppercase;
@@ -159,189 +197,195 @@
         }
         .btn-acessar::after {
             content: '';
-            position: absolute;
-            top: -50%; left: -50%;
+            position: absolute; top: -50%; left: -50%;
             width: 200%; height: 200%;
             background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.15), transparent);
             animation: rotateGlow 6s linear infinite;
         }
         .btn-acessar:hover {
             transform: translateY(-3px);
-            box-shadow: 0 0 40px rgba(172, 40, 255, 0.7);
+            box-shadow: 0 0 50px rgba(172, 40, 255, 0.8);
         }
+        .btn-acessar span { position: relative; z-index: 1; }
 
-        /* --- Slider de Promoções (Glass + badge PROMO) --- */
+        /* --- Slider de Promoções (Glass + Badge Fogo) --- */
         .promo-slider-container {
-            flex: 1 1 350px;
+            flex: 1 1 380px;
             max-width: 500px;
-            min-width: 260px;
+            min-width: 280px;
         }
         .slider-box {
             background: var(--vidro-fundo);
             backdrop-filter: blur(12px);
             border: 1px solid var(--vidro-borda);
-            border-radius: 20px;
+            border-radius: 24px;
             overflow: hidden;
             box-shadow: var(--sombra-neon);
             position: relative;
         }
-        .slider-box .promo-badge {
+        /* Badge com Efeito de Fogo (sem emoji) */
+        .fire-badge {
             position: absolute;
-            top: 12px;
-            right: 12px;
-            background: linear-gradient(135deg, #7a00ff, #ff00cc);
-            color: #fff;
+            top: 12px; right: 12px;
+            background: linear-gradient(135deg, #ff4d00, #ff0000, #ffcc00);
+            color: #1a0a33;
             padding: 4px 14px;
             border-radius: 20px;
             font-weight: 800;
             font-size: 0.8rem;
             letter-spacing: 1px;
-            box-shadow: 0 0 20px rgba(122, 0, 255, 0.6);
-            z-index: 2;
-            animation: pulseGlow 1.5s ease-in-out infinite;
             text-transform: uppercase;
+            z-index: 2;
+            animation: fireGlow 0.8s ease-in-out infinite alternate;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+            border: 1px solid rgba(255, 200, 0, 0.3);
         }
         .slide-item {
             display: none;
-            padding: 20px;
+            padding: 25px 20px;
             text-align: center;
             cursor: pointer;
             animation: fadeSlideIn 0.5s ease;
         }
         .slide-item.active-slide { display: block; }
         .slide-item img {
-            width: 100%;
-            max-height: 180px;
-            object-fit: cover;
-            border-radius: 12px;
-            margin-bottom: 10px;
+            width: 100%; max-height: 180px; object-fit: cover;
+            border-radius: 12px; margin-bottom: 12px;
             border: 1px solid var(--vidro-borda);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
         }
-        .slide-item h4 {
-            font-size: 1.2rem;
-            margin: 5px 0;
-        }
-        .slide-item .desc {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-bottom: 5px;
-        }
+        .slide-item h4 { font-size: 1.2rem; margin: 5px 0; font-weight: 600; }
+        .slide-item .desc { font-size: 0.9rem; opacity: 0.7; margin-bottom: 5px; }
         .slide-item .preco {
-            font-size: 1.6rem;
-            font-weight: 700;
+            font-size: 1.6rem; font-weight: 700;
             color: var(--amarelo-neon);
-            text-shadow: 0 0 15px rgba(255, 229, 0, 0.3);
+            text-shadow: 0 0 20px rgba(255, 229, 0, 0.3);
         }
         .slider-dots {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            padding: 8px 0 12px;
+            display: flex; gap: 8px; justify-content: center;
+            padding: 0 0 15px;
         }
         .slider-dots .dot {
-            width: 10px; height: 10px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            border: none;
+            width: 10px; height: 10px; border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer; border: none; transition: var(--transicao);
         }
         .slider-dots .dot.active-dot {
-            background: var(--rosa-neon);
-            transform: scale(1.4);
-            box-shadow: 0 0 15px rgba(255, 102, 178, 0.6);
+            background: var(--ciano-brilhante);
+            transform: scale(1.3);
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.6);
         }
 
-        /* --- Mais Vendidos (5 cards, bottom) --- */
+        /* --- Mais Vendidos (5 cards, com badge de fogo) --- */
         .mais-vendidos-section {
             width: 100%;
-            padding-top: 10px;
+            padding-top: 15px;
             border-top: 1px solid var(--vidro-borda);
         }
         .mais-vendidos-section .section-title {
-            font-size: 1.2rem;
-            letter-spacing: 3px;
-            text-align: center;
-            margin-bottom: 12px;
+            font-size: 1.3rem; letter-spacing: 4px;
+            text-align: center; margin-bottom: 16px;
             color: var(--branco-espacial);
+            font-weight: 300;
         }
         .grid-vendidos {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 16px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 20px;
         }
         .card-vendido {
             background: var(--vidro-fundo);
             backdrop-filter: blur(12px);
             border: 1px solid var(--vidro-borda);
-            border-radius: 16px;
-            padding: 16px 12px;
+            border-radius: 20px;
+            padding: 20px 14px;
             text-align: center;
             transition: var(--transicao);
             cursor: pointer;
             position: relative;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
         .card-vendido:hover {
-            background: rgba(172, 40, 255, 0.2);
-            transform: translateY(-4px);
-            box-shadow: var(--sombra-hover);
+            background: rgba(172, 40, 255, 0.15);
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 10px 40px rgba(172, 40, 255, 0.4);
             border-color: var(--ciano-brilhante);
         }
-        .card-vendido .card-emoji { font-size: 2.4rem; }
-        .card-vendido h4 { font-size: 0.95rem; margin-top: 4px; }
+        .card-vendido .icon-box {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8rem;
+            color: var(--ciano-brilhante);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .card-vendido h4 { font-size: 0.95rem; font-weight: 500; margin-top: 4px; letter-spacing: 0.5px; }
         .card-vendido .preco { font-weight: 700; color: var(--amarelo-neon); font-size: 1.1rem; }
-        .card-vendido .hot-badge {
-            position: absolute;
-            top: -8px;
-            left: -8px;
-            background: linear-gradient(135deg, #7a00ff, #ff00cc);
-            color: #fff;
+        
+        /* Badge de fogo HOT */
+        .card-vendido .fire-badge-mini {
+            position: absolute; top: -8px; left: -8px;
+            background: linear-gradient(135deg, #ff4d00, #ff0000, #ffcc00);
+            color: #1a0a33;
             padding: 2px 12px;
             border-radius: 20px;
-            font-weight: 800;
-            font-size: 0.7rem;
+            font-weight: 800; font-size: 0.7rem;
             letter-spacing: 1px;
-            box-shadow: 0 0 15px rgba(122, 0, 255, 0.5);
-            animation: pulseGlow 1.5s ease-in-out infinite;
             text-transform: uppercase;
+            z-index: 2;
+            animation: fireGlow 0.8s ease-in-out infinite alternate;
+            box-shadow: 0 0 15px rgba(255, 0, 0, 0.6);
+            border: 1px solid rgba(255, 200, 0, 0.3);
         }
 
         /* ==================== RESPONSIVIDADE ==================== */
         @media (max-width: 900px) {
-            .main-area { flex-direction: column; gap: 20px; }
-            .mascote-block { flex: 1 1 auto; width: 100%; }
+            .main-area { flex-direction: column; align-items: center; gap: 25px; }
+            .mascote-block { flex: 1 1 auto; width: 100%; max-width: 400px; }
             .promo-slider-container { flex: 1 1 auto; width: 100%; max-width: 100%; }
-            .grid-vendidos { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+            .grid-vendidos { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
         }
 
         @media (max-width: 480px) {
-            .home-screen { padding: 10px; gap: 10px; }
-            .btn-acessar { padding: 12px 24px; font-size: 0.85rem; }
+            .home-screen { padding: 10px; gap: 15px; }
+            .header-top .logo::before, .header-top .logo::after { display: none; }
+            .btn-acessar { padding: 14px 28px; font-size: 0.85rem; letter-spacing: 2px; }
             .slide-item img { max-height: 120px; }
-            .grid-vendidos { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .card-vendido { padding: 12px 8px; }
-            .card-vendido .card-emoji { font-size: 1.8rem; }
+            .grid-vendidos { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .card-vendido { padding: 14px 10px; }
+            .card-vendido .icon-box { width: 45px; height: 45px; font-size: 1.4rem; }
             .card-vendido h4 { font-size: 0.8rem; }
+            .card-vendido .preco { font-size: 1rem; }
         }
 
-        /* ==================== OUTRAS TELAS (catálogo etc) ==================== */
-        .listagem-screen { flex-direction: column; align-items: center; padding: 30px 20px; gap: 30px; overflow-y: auto; background: rgba(11, 4, 28, 0.4); }
+        /* ==================== OUTRAS TELAS (catálogo, etc) ==================== */
+        .listagem-screen { flex-direction: column; align-items: center; padding: 30px 20px; gap: 30px; overflow-y: auto; background: rgba(11, 4, 28, 0.6); }
         .listagem-header { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1100px; }
-        .listagem-header h2 { font-size: clamp(1.3rem, 3vw, 2.2rem); letter-spacing: 3px; text-shadow: 0 0 30px rgba(172, 40, 255, 0.5); flex: 1; text-align: center; }
-        .grid-catalogo { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; }
-        .catalogo-card { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; padding: 22px 18px; text-align: center; transition: var(--transicao); cursor: pointer; display: flex; flex-direction: column; gap: 10px; }
-        .catalogo-card:hover { background: rgba(172, 40, 255, 0.2); transform: translateY(-6px); box-shadow: var(--sombra-hover); border-color: var(--ciano-brilhante); }
-        .catalogo-card .card-emoji { font-size: 2.8rem; }
-        .catalogo-card h4 { letter-spacing: 1px; font-size: 1.05rem; }
+        .listagem-header h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: 4px; text-shadow: 0 0 30px rgba(172, 40, 255, 0.5); flex: 1; text-align: center; font-weight: 300; }
+        .grid-catalogo { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; }
+        .catalogo-card {
+            background: var(--vidro-fundo); backdrop-filter: blur(12px);
+            border: 1px solid var(--vidro-borda); border-radius: 20px;
+            padding: 30px 20px; text-align: center; transition: var(--transicao);
+            cursor: pointer; display: flex; flex-direction: column; gap: 12px;
+        }
+        .catalogo-card:hover {
+            background: rgba(172, 40, 255, 0.2); transform: translateY(-6px);
+            box-shadow: var(--sombra-hover); border-color: var(--ciano-brilhante);
+        }
+        .catalogo-card .icon-large { font-size: 2.8rem; color: var(--ciano-brilhante); }
+        .catalogo-card h4 { letter-spacing: 1px; font-size: 1.1rem; font-weight: 500; }
         .catalogo-card .preco { font-weight: 700; color: var(--amarelo-neon); font-size: 1.2rem; text-shadow: 0 0 10px rgba(255, 229, 0, 0.3); }
-        .catalogo-card .tag { display: inline-block; font-size: 0.7rem; background: var(--ciano-brilhante); color: var(--roxo-profundo); padding: 3px 10px; border-radius: 12px; letter-spacing: 1px; font-weight: 700; }
-        .btn-voltar { padding: 10px 28px; font-size: 0.9rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; cursor: pointer; transition: var(--transicao); color: #fff; }
-        .btn-voltar:hover { border-color: var(--rosa-neon); }
+        .btn-voltar { padding: 10px 28px; font-size: 0.9rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 30px; cursor: pointer; transition: var(--transicao); color: #fff; }
+        .btn-voltar:hover { border-color: var(--ciano-brilhante); background: rgba(0, 242, 254, 0.1); }
 
         @media (max-width: 480px) {
             .listagem-screen { padding: 20px 10px; gap: 20px; }
-            .grid-catalogo { gap: 10px; }
-            .catalogo-card { padding: 16px 12px; }
-            .catalogo-card .card-emoji { font-size: 2.2rem; }
+            .grid-catalogo { gap: 12px; grid-template-columns: repeat(2, 1fr); }
+            .catalogo-card { padding: 20px 12px; }
+            .catalogo-card .icon-large { font-size: 2rem; }
         }
     </style>
 </head>
@@ -354,14 +398,14 @@
     <div class="screen active" id="homeScreen">
         <div class="home-screen">
 
-            <!-- Header: Logo e Frases -->
+            <!-- Header -->
             <div class="header-top">
                 <div class="logo">Gudyx</div>
-                <div class="subtitle">PAPELARIA PERSONALIZADA E GRÁFICA RÁPIDA</div>
+                <div class="subtitle">PAPELARIA PERSONALIZADA · GRÁFICA RÁPIDA</div>
                 <div class="slogan">"Onde cada detalhe é um grude de personalidade"</div>
             </div>
 
-            <!-- Main: Mascote + Botão + Promoções -->
+            <!-- Main -->
             <div class="main-area">
                 <!-- Mascote + Botão -->
                 <div class="mascote-block">
@@ -369,30 +413,30 @@
                         <div class="mascote-glow"></div>
                         <img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx" id="mascoteImg">
                     </div>
-                    <button class="btn-acessar" onclick="abrirCatalogo()">Acessar Catálogo →</button>
+                    <button class="btn-acessar" onclick="abrirCatalogo()"><span>Acessar Catálogo</span></button>
                 </div>
 
-                <!-- Slider de Promoções -->
+                <!-- Promoções (Glass + Badge de Fogo) -->
                 <div class="promo-slider-container">
                     <div class="slider-box">
-                        <div class="promo-badge">🔥 PROMO</div>
+                        <div class="fire-badge">PROMO</div>
                         <div class="slide-item active-slide" onclick="navegarPara('produtos')">
                             <img src="https://i.imgur.com/5qXv9Jp.png" alt="Kit Volta às Aulas">
                             <h4>Kit Volta às Aulas</h4>
-                            <div class="desc">Caderno + estojo + caneta</div>
+                            <div class="desc">Caderno, estojo e caneta exclusiva</div>
                             <div class="preco">R$ 99,90</div>
                         </div>
                         <div class="slide-item" onclick="navegarPara('produtos')">
                             <img src="https://i.imgur.com/8yZx3tS.png" alt="Combo Criativo">
                             <h4>Combo Criativo</h4>
-                            <div class="desc">Bloco + marcadores + adesivos</div>
+                            <div class="desc">Bloco, marcadores e adesivos</div>
                             <div class="preco">R$ 59,90</div>
                         </div>
                         <div class="slide-item" onclick="navegarPara('produtos')">
                             <img src="https://i.imgur.com/2fQd7pL.png" alt="Convites Casamento">
                             <h4>Convites Casamento</h4>
                             <div class="desc">Design exclusivo com envelope</div>
-                            <div class="preco">R$ 3,90/un</div>
+                            <div class="preco">R$ 3,90 / un</div>
                         </div>
                         <div class="slider-dots" id="sliderDots">
                             <button class="dot active-dot" data-index="0"></button>
@@ -403,35 +447,35 @@
                 </div>
             </div>
 
-            <!-- Mais Vendidos (5 cards) -->
+            <!-- Mais Vendidos (5 cards com Badge de Fogo) -->
             <div class="mais-vendidos-section">
-                <div class="section-title">🌌 MAIS VENDIDOS</div>
+                <div class="section-title">MAIS VENDIDOS</div>
                 <div class="grid-vendidos">
                     <div class="card-vendido" onclick="navegarPara('produtos')">
-                        <span class="hot-badge">🔥 HOT</span>
-                        <div class="card-emoji">📒</div>
+                        <div class="fire-badge-mini">HOT</div>
+                        <div class="icon-box"><i class="fas fa-book"></i></div>
                         <h4>Caderno Cósmico</h4>
                         <div class="preco">R$ 49,90</div>
                     </div>
                     <div class="card-vendido" onclick="navegarPara('produtos')">
-                        <span class="hot-badge">🔥 HOT</span>
-                        <div class="card-emoji">📋</div>
+                        <div class="fire-badge-mini">HOT</div>
+                        <div class="icon-box"><i class="fas fa-calendar-alt"></i></div>
                         <h4>Agenda 2026</h4>
                         <div class="preco">R$ 69,90</div>
                     </div>
                     <div class="card-vendido" onclick="navegarPara('produtos')">
-                        <span class="hot-badge">🔥 HOT</span>
-                        <div class="card-emoji">☕</div>
+                        <div class="fire-badge-mini">HOT</div>
+                        <div class="icon-box"><i class="fas fa-mug-hot"></i></div>
                         <h4>Caneca Galáctica</h4>
                         <div class="preco">R$ 39,90</div>
                     </div>
                     <div class="card-vendido" onclick="navegarPara('produtos')">
-                        <div class="card-emoji">🖊️</div>
+                        <div class="icon-box"><i class="fas fa-pen"></i></div>
                         <h4>Caneta Neon</h4>
                         <div class="preco">R$ 19,90</div>
                     </div>
                     <div class="card-vendido" onclick="navegarPara('produtos')">
-                        <div class="card-emoji">🎁</div>
+                        <div class="icon-box"><i class="fas fa-gift"></i></div>
                         <h4>Kit Presente</h4>
                         <div class="preco">R$ 129,90</div>
                     </div>
@@ -441,29 +485,35 @@
         </div>
     </div>
 
-    <!-- TELAS DE CATÁLOGO (permanecem iguais) -->
+    <!-- TELAS DE CATÁLOGO (Sem emojis) -->
     <div class="screen" id="escolhaScreen">
         <div class="listagem-screen" style="padding:30px;text-align:center;">
-            <h2 style="text-shadow:0 0 30px rgba(172,40,255,0.5);">✨ O que você procura? ✨</h2>
+            <h2 style="text-shadow:0 0 30px rgba(172,40,255,0.5); letter-spacing: 4px; font-weight: 300;">O que você procura?</h2>
             <div style="display:flex;gap:30px;flex-wrap:wrap;justify-content:center;margin-top:20px;">
-                <div class="catalogo-card" style="flex:1 1 250px;padding:40px;" onclick="navegarPara('servicos')"><span style="font-size:4rem;">🛠️</span><h3>SERVIÇOS</h3></div>
-                <div class="catalogo-card" style="flex:1 1 250px;padding:40px;" onclick="navegarPara('produtos')"><span style="font-size:4rem;">🛍️</span><h3>PRODUTOS</h3></div>
+                <div class="catalogo-card" style="flex:1 1 250px;padding:40px;" onclick="navegarPara('servicos')">
+                    <div class="icon-large" style="font-size:4rem; color:var(--ciano-brilhante);"><i class="fas fa-tools"></i></div>
+                    <h3>SERVIÇOS</h3>
+                </div>
+                <div class="catalogo-card" style="flex:1 1 250px;padding:40px;" onclick="navegarPara('produtos')">
+                    <div class="icon-large" style="font-size:4rem; color:var(--rosa-neon);"><i class="fas fa-store"></i></div>
+                    <h3>PRODUTOS</h3>
+                </div>
             </div>
-            <button class="btn-voltar" onclick="voltarParaHome()" style="margin-top:20px;">← Voltar</button>
+            <button class="btn-voltar" onclick="voltarParaHome()" style="margin-top:20px;"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Voltar</button>
         </div>
     </div>
 
     <div class="screen" id="servicosScreen">
         <div class="listagem-screen">
             <div class="listagem-header" style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;width:100%;">
-                <button class="btn-voltar" onclick="voltarParaEscolha()">← Voltar</button>
-                <h2>🛠️ SERVIÇOS</h2>
-                <button class="btn-voltar" onclick="voltarParaHome()">🏠 Início</button>
+                <button class="btn-voltar" onclick="voltarParaEscolha()"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Voltar</button>
+                <h2>SERVIÇOS</h2>
+                <button class="btn-voltar" onclick="voltarParaHome()"><i class="fas fa-home" style="margin-right:8px;"></i> Início</button>
             </div>
             <div class="grid-catalogo">
-                <div class="catalogo-card"><span class="card-emoji">🖨️</span><h4>Impressão Digital</h4><span class="preco">R$ 1,50</span></div>
-                <div class="catalogo-card"><span class="card-emoji">📚</span><h4>Encadernação</h4><span class="preco">R$ 15,00</span></div>
-                <div class="catalogo-card"><span class="card-emoji">🎨</span><h4>Criação de Arte</h4><span class="preco">R$ 35,00</span></div>
+                <div class="catalogo-card"><div class="icon-large"><i class="fas fa-print"></i></div><h4>Impressão Digital</h4><div class="preco">R$ 1,50</div></div>
+                <div class="catalogo-card"><div class="icon-large"><i class="fas fa-book"></i></div><h4>Encadernação</h4><div class="preco">R$ 15,00</div></div>
+                <div class="catalogo-card"><div class="icon-large"><i class="fas fa-paint-brush"></i></div><h4>Criação de Arte</h4><div class="preco">R$ 35,00</div></div>
             </div>
         </div>
     </div>
@@ -471,16 +521,16 @@
     <div class="screen" id="produtosScreen">
         <div class="listagem-screen">
             <div class="listagem-header" style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;width:100%;">
-                <button class="btn-voltar" onclick="voltarParaEscolha()">← Voltar</button>
-                <h2>🛍️ PRODUTOS</h2>
-                <button class="btn-voltar" onclick="voltarParaHome()">🏠 Início</button>
+                <button class="btn-voltar" onclick="voltarParaEscolha()"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Voltar</button>
+                <h2>PRODUTOS</h2>
+                <button class="btn-voltar" onclick="voltarParaHome()"><i class="fas fa-home" style="margin-right:8px;"></i> Início</button>
             </div>
             <div class="grid-catalogo">
-                <div class="catalogo-card"><span class="card-emoji">📒</span><h4>Caderno</h4><span class="preco">R$ 49,90</span><span class="badge-neon">BEST</span></div>
-                <div class="catalogo-card"><span class="card-emoji">📋</span><h4>Agenda 2026</h4><span class="preco">R$ 69,90</span></div>
-                <div class="catalogo-card"><span class="card-emoji">☕</span><h4>Caneca</h4><span class="preco">R$ 39,90</span></div>
-                <div class="catalogo-card"><span class="card-emoji">🖊️</span><h4>Caneta Neon</h4><span class="preco">R$ 19,90</span></div>
-                <div class="catalogo-card"><span class="card-emoji">🎁</span><h4>Kit Presente</h4><span class="preco">R$ 129,90</span></div>
+                <div class="catalogo-card"><div class="icon-large"><i class="fas fa-book"></i></div><h4>Caderno</h4><div class="preco">R$ 49,90</div></div>
+                <div class="catalogo-card"><div class="icon-large"><i class="fas fa-calendar-alt"></i></div><h4>Agenda 2026</h4><div class="preco">R$ 69,90</div></div>
+                <div class="catalogo-card"><div class="icon-large"><i class="fas fa-mug-hot"></i></div><h4>Caneca</h4><div class="preco">R$ 39,90</div></div>
+                <div class="catalogo-card"><div class="icon-large"><i class="fas fa-pen"></i></div><h4>Caneta Neon</h4><div class="preco">R$ 19,90</div></div>
+                <div class="catalogo-card"><div class="icon-large"><i class="fas fa-gift"></i></div><h4>Kit Presente</h4><div class="preco">R$ 129,90</div></div>
             </div>
         </div>
     </div>
@@ -496,10 +546,8 @@
         function voltarParaEscolha() { mostrarTela('escolhaScreen'); }
         function navegarPara(destino) { mostrarTela(destino === 'servicos' ? 'servicosScreen' : 'produtosScreen'); }
 
-        // ==================== SLIDER DE PROMOÇÕES ====================
-        let slideAtual = 0;
-        let sliderIntervalo;
-
+        // ==================== SLIDER ====================
+        let slideAtual = 0; let sliderIntervalo;
         function mudarSlide(index) {
             const slides = document.querySelectorAll('.slide-item');
             const dots = document.querySelectorAll('#sliderDots .dot');
@@ -511,17 +559,9 @@
             dots.forEach((d, i) => d.classList.toggle('active-dot', i === index));
             slideAtual = index;
         }
-
         function proximoSlide() { mudarSlide((slideAtual + 1) % 3); }
-
         function iniciarSlider() { sliderIntervalo = setInterval(proximoSlide, 4000); }
-
-        function resetarSlider() {
-            clearInterval(sliderIntervalo);
-            mudarSlide(0);
-            iniciarSlider();
-        }
-
+        function resetarSlider() { clearInterval(sliderIntervalo); mudarSlide(0); iniciarSlider(); }
         document.querySelectorAll('#sliderDots .dot').forEach(dot => {
             dot.addEventListener('click', function() {
                 clearInterval(sliderIntervalo);
@@ -531,13 +571,13 @@
         });
         iniciarSlider();
 
-        // ==================== FALAS DO MASCOTE ====================
+        // ==================== MASCOTE ====================
         const mascoteWrapper = document.getElementById('mascoteWrapper');
         const msgs = [
-            'Oi, eu sou Gluudyx! ✨',
-            'Amor em cada detalhe! 💜',
-            'Escolha seu caderno cósmico! 🌌',
-            'Feito com alma taurina! ♉'
+            'Oi, eu sou Gluudyx! ✦',
+            'Amor em cada detalhe',
+            'Escolha seu caderno cósmico',
+            'Feito com alma taurina'
         ];
         let msgIdx = 0;
         mascoteWrapper.addEventListener('click', function() {
@@ -545,9 +585,8 @@
             this.offsetHeight;
             this.style.animation = 'floatMascote 0.6s ease-in-out';
             const toast = document.createElement('div');
-            toast.textContent = msgs[msgIdx % msgs.length];
-            msgIdx++;
-            toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(11,4,28,0.9);color:#fff;padding:12px 24px;border-radius:30px;font-size:1rem;z-index:999;pointer-events:none;animation:toastInOut 2.5s ease forwards;backdrop-filter:blur(8px);border:1px solid rgba(172,40,255,0.6);box-shadow:0 0 30px rgba(172,40,255,0.5);';
+            toast.textContent = msgs[msgIdx % msgs.length]; msgIdx++;
+            toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(11,4,28,0.9);color:#f0eaff;padding:12px 24px;border-radius:30px;font-size:1rem;z-index:999;pointer-events:none;animation:toastInOut 2.5s ease forwards;backdrop-filter:blur(8px);border:1px solid rgba(172,40,255,0.6);box-shadow:0 0 30px rgba(172,40,255,0.5);';
             document.body.appendChild(toast);
             setTimeout(() => { if (toast.parentNode) toast.remove(); }, 2600);
             setTimeout(() => { this.style.animation = 'floatMascote 6s ease-in-out infinite'; }, 600);
