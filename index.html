@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gudyx Custom - Papelaria Personalizada</title>
+    <style>
+        :root {
+            --roxo-profundo: #0b041c;
+            --roxo-meio: #1a0a33;
+            --ciano-brilhante: #00f2fe;
+            --rosa-neon: #ff66b2;
+            --amarelo-neon: #ffe500;
+            --branco-espacial: #f0eaff;
+            --vidro-fundo: rgba(11, 4, 28, 0.65);
+            --vidro-borda: rgba(172, 40, 255, 0.3);
+            --sombra-neon: 0 0 25px rgba(172, 40, 255, 0.4);
+            --sombra-hover: 0 20px 60px rgba(0, 0, 0, 0.8);
+            --transicao: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background: var(--roxo-profundo);
+            color: var(--branco-espacial);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ==================== BACKGROUND CÓSMICO ==================== */
+        .bg-container {
+            position: fixed; top: -20px; left: -20px; width: calc(100% + 40px); height: calc(100% + 40px);
+            z-index: -2; background-image: url('https://i.imgur.com/UDwnKUg.png'); /* Imagem do usuário */
+            background-size: cover; background-position: center; background-repeat: no-repeat;
+            filter: blur(5px); transform: scale(1.02);
+        }
+        .bg-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: linear-gradient(135deg, rgba(11, 4, 28, 0.6) 0%, rgba(26, 10, 51, 0.5) 50%, rgba(11, 4, 28, 0.7) 100%);
+        }
+
+        /* ==================== TELAS ==================== */
+        .screen { display: none; min-height: 100vh; width: 100%; position: relative; animation: fadeSlideIn 0.6s ease forwards; }
+        .screen.active { display: flex; }
+
+        @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes floatMascote { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-20px) rotate(2deg); } }
+        @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 20px rgba(172, 40, 255, 0.4); } 50% { box-shadow: 0 0 40px rgba(172, 40, 255, 0.8) rgba(0, 242, 254, 0.3); } }
+        @keyframes twinkle { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+        @keyframes comet { 0% { transform: translateX(-100px); opacity: 0; } 10% { opacity: 1; } 90% { opacity: 1; } 100% { transform: translateX(1200px); opacity: 0; } }
+
+        /* ==================== HOME ==================== */
+        .home-screen { flex-direction: column; align-items: center; justify-content: center; padding: 20px; gap: 20px; }
+        .home-content { display: flex; align-items: center; justify-content: center; gap: 30px; width: 100%; max-width: 1300px; flex-wrap: wrap; z-index: 5; }
+
+        .col-lateral { flex: 1 1 280px; max-width: 340px; min-width: 260px; display: flex; flex-direction: column; gap: 16px; }
+        .col-lateral .section-title { font-size: 1.1rem; letter-spacing: 3px; text-align: center; color: var(--branco-espacial); }
+
+        .cartao-gudyx {
+            background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda);
+            border-radius: 20px; padding: 16px 18px; cursor: pointer; transition: var(--transicao);
+            display: flex; align-items: center; gap: 14px; box-shadow: var(--sombra-neon);
+        }
+        .cartao-gudyx:hover { background: rgba(172, 40, 255, 0.2); transform: translateX(6px); border-color: var(--ciano-brilhante); }
+        .cartao-gudyx .card-icon { width: 45px; height: 45px; border-radius: 12px; background: rgba(255, 255, 255, 0.08); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+        .cartao-gudyx .badge-neon { background: var(--rosa-neon); color: var(--roxo-profundo); font-size: 0.7rem; padding: 3px 10px; border-radius: 20px; font-weight: 700; }
+
+        /* --- Mascote --- */
+        .mascote-container { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 8; }
+        .mascote-wrapper { position: relative; animation: floatMascote 6s ease-in-out infinite; cursor: pointer; }
+        .mascote-wrapper:hover { transform: scale(1.05); }
+        .mascote-wrapper img { width: clamp(180px, 28vw, 320px); height: auto; display: block; filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.7)); }
+        .mascote-wrapper:hover img { filter: drop-shadow(0 0 50px rgba(172, 40, 255, 0.8)); }
+        .mascote-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(172, 40, 255, 0.5) 0%, transparent 70%); z-index: -1; animation: pulseGlow 3s ease-in-out infinite; pointer-events: none; }
+        .mascote-label { font-size: 0.9rem; letter-spacing: 2px; margin-top: 10px; text-align: center; font-weight: 300; }
+
+        /* --- Slider --- */
+        .slider-container { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; overflow: hidden; min-height: 260px; display: flex; align-items: center; justify-content: center; }
+        .slide { display: none; padding: 24px 20px; text-align: center; width: 100%; animation: fadeSlideIn 0.5s ease; }
+        .slide.active-slide { display: block; }
+        .slide .preco-novo { font-size: 1.8rem; font-weight: 700; color: var(--amarelo-neon); text-shadow: 0 0 15px rgba(255, 229, 0, 0.3); }
+        .slider-dots { display: flex; gap: 8px; justify-content: center; margin-top: 4px; }
+        .slider-dots .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255, 255, 255, 0.3); cursor: pointer; border: none; }
+        .slider-dots .dot.active-dot { background: var(--rosa-neon); transform: scale(1.4); box-shadow: 0 0 15px rgba(255, 102, 178, 0.6); }
+
+        /* --- Botões --- */
+        .btn-acessar { display: inline-block; padding: 16px 50px; font-size: 1.1rem; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a028ff 0%, var(--ciano-brilhante) 100%); border: none; border-radius: 50px; cursor: pointer; transition: var(--transicao); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); }
+        .btn-acessar:hover { transform: translateY(-3px); box-shadow: 0 0 40px rgba(172, 40, 255, 0.7); }
+        .btn-voltar { padding: 10px 28px; font-size: 0.9rem; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px; cursor: pointer; transition: var(--transicao); color: #fff; }
+        .btn-voltar:hover { border-color: var(--rosa-neon); }
+
+        /* --- Listagens e Grid --- */
+        .listagem-screen { flex-direction: column; align-items: center; padding: 30px 20px; gap: 30px; overflow-y: auto; background: rgba(11, 4, 28, 0.4); }
+        .listagem-header { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1100px; }
+        .listagem-header h2 { font-size: clamp(1.3rem, 3vw, 2.2rem); letter-spacing: 3px; text-shadow: 0 0 30px rgba(172, 40, 255, 0.5); flex: 1; text-align: center; }
+        
+        .grid-catalogo { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; }
+        .catalogo-card { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; padding: 22px 18px; text-align: center; transition: var(--transicao); cursor: pointer; display: flex; flex-direction: column; gap: 10px; }
+        .catalogo-card:hover { background: rgba(172, 40, 255, 0.2); transform: translateY(-6px); box-shadow: var(--sombra-hover); border-color: var(--ciano-brilhante); }
+        .catalogo-card .card-emoji { font-size: 2.8rem; }
+        .catalogo-card h4 { letter-spacing: 1px; font-size: 1.05rem; }
+        .catalogo-card .preco { font-weight: 700; color: var(--amarelo-neon); font-size: 1.2rem; text-shadow: 0 0 10px rgba(255, 229, 0, 0.3); }
+        .catalogo-card .tag { display: inline-block; font-size: 0.7rem; background: var(--ciano-brilhante); color: var(--roxo-profundo); padding: 3px 10px; border-radius: 12px; letter-spacing: 1px; font-weight: 700; }
+
+        /* ==================== RESPONSIVIDADE MELHORADA ==================== */
+        @media (max-width: 900px) {
+            .home-content { flex-direction: column; gap: 20px; }
+            .col-lateral { max-width: 100%; width: 100%; flex: 1 1 auto; flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .col-lateral .section-title { width: 100%; }
+            .cartao-gudyx { flex: 1 1 140px; flex-direction: column; text-align: center; gap: 8px; padding: 14px 10px; }
+            .slider-container { min-height: 200px; width: 100%; }
+            .mascote-wrapper img { width: clamp(140px, 35vw, 220px); }
+            .mascote-glow { width: 150px; height: 150px; }
+            .btn-acessar { padding: 14px 36px; font-size: 0.95rem; }
+            .grid-catalogo { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+        }
+
+        @media (max-width: 480px) {
+            .home-screen { padding: 15px; gap: 15px; }
+            .col-lateral { min-width: 100%; flex-direction: column; }
+            .cartao-gudyx { flex: 1 1 100%; flex-direction: row; text-align: left; padding: 12px 14px; }
+            .slider-container { min-height: 160px; }
+            .slider-dots .dot { width: 8px; height: 8px; }
+            .mascote-wrapper img { width: clamp(110px, 40vw, 140px); }
+            .mascote-glow { width: 110px; height: 110px; }
+            .mascote-label { font-size: 0.7rem; }
+            .btn-acessar { padding: 12px 24px; font-size: 0.8rem; letter-spacing: 2px; }
+            .btn-voltar { padding: 6px 16px; font-size: 0.7rem; }
+            
+            /* Ajuste dos cards de escolha no mobile */
+            div[onclick*="navegarPara"] { flex: 1 1 100% !important; padding: 25px !important; }
+            
+            .listagem-screen { padding: 20px 10px; gap: 20px; }
+            .listagem-header { gap: 10px; }
+            .listagem-header h2 { font-size: 1.1rem; }
+            .grid-catalogo { gap: 10px; }
+            .catalogo-card { padding: 16px 12px; }
+            .catalogo-card .card-emoji { font-size: 2.2rem; }
+            .catalogo-card h4 { font-size: 0.9rem; }
+            .slide { padding: 16px 10px; }
+            .slide .preco-novo { font-size: 1.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-container" id="bgImage"></div>
+    <div class="bg-overlay"></div>
+
+    <!-- TELA 1: HOME -->
+    <div class="screen active" id="homeScreen">
+        <div class="home-screen">
+            <div class="home-content">
+                <div class="col-lateral">
+                    <p class="section-title">🌌 MAIS VENDIDOS</p>
+                    <div class="cartao-gudyx" onclick="navegarPara('produtos')">
+                        <div class="card-icon">📒</div>
+                        <div><h4>Caderno Cósmico</h4><span style="font-size:0.75rem;opacity:0.7;">Capa dura roxo neon</span></div>
+                        <span class="badge-neon">🔥 TOP 1</span>
+                    </div>
+                    <div class="cartao-gudyx" onclick="navegarPara('produtos')">
+                        <div class="card-icon">📋</div>
+                        <div><h4>Agenda Galáctica</h4><span style="font-size:0.75rem;opacity:0.7;">Design exclusivo 2026</span></div>
+                        <span class="badge-neon">⭐ TOP 2</span>
+                    </div>
+                </div>
+
+                <div class="mascote-container">
+                    <div class="mascote-wrapper" id="mascoteWrapper">
+                        <div class="mascote-glow"></div>
+                        <!-- Imagem do usuário -->
+                        <img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx" id="mascoteImg">
+                    </div>
+                    <p class="mascote-label">✦ GUDYX CUSTOM ✦</p>
+                </div>
+
+                <div class="col-lateral">
+                    <p class="section-title">✨ PROMOÇÕES</p>
+                    <div class="slider-container" id="sliderContainer">
+                        <div class="slide active-slide"><h3>Kit Volta às Aulas</h3><p class="preco-novo">R$ 99,90</p></div>
+                        <div class="slide"><h3>Combo Criativo</h3><p class="preco-novo">R$ 59,90</p></div>
+                        <div class="slide"><h3>Convites Casamento</h3><p class="preco-novo">R$ 3,90/un</p></div>
+                    </div>
+                    <div class="slider-dots" id="sliderDots">
+                        <button class="dot active-dot" data-index="0"></button>
+                        <button class="dot" data-index="1"></button>
+                        <button class="dot" data-index="2"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div style="margin-top: 5px;">
+                <button class="btn-acessar" onclick="abrirCatalogo()">Acessar Catálogo →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TELAS DE CATÁLOGO -->
+    <div class="screen" id="escolhaScreen">
+        <div class="listagem-screen" style="padding:30px;text-align:center;">
+            <h2 style="text-shadow:0 0 30px rgba(172,40,255,0.5);">✨ O que você procura? ✨</h2>
+            <div style="display:flex;gap:30px;flex-wrap:wrap;justify-content:center;margin-top:20px;">
+                <div class="catalogo-card" style="flex:1 1 250px;padding:40px;" onclick="navegarPara('servicos')"><span style="font-size:4rem;">🛠️</span><h3>SERVIÇOS</h3></div>
+                <div class="catalogo-card" style="flex:1 1 250px;padding:40px;" onclick="navegarPara('produtos')"><span style="font-size:4rem;">🛍️</span><h3>PRODUTOS</h3></div>
+            </div>
+            <button class="btn-voltar" onclick="voltarParaHome()" style="margin-top:20px;">← Voltar</button>
+        </div>
+    </div>
+
+    <div class="screen" id="servicosScreen">
+        <div class="listagem-screen">
+            <div class="listagem-header" style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;width:100%;">
+                <button class="btn-voltar" onclick="voltarParaEscolha()">← Voltar</button>
+                <h2>🛠️ SERVIÇOS</h2>
+                <button class="btn-voltar" onclick="voltarParaHome()">🏠 Início</button>
+            </div>
+            <div class="grid-catalogo">
+                <div class="catalogo-card"><span class="card-emoji">🖨️</span><h4>Impressão Digital</h4><span class="preco">R$ 1,50</span></div>
+                <div class="catalogo-card"><span class="card-emoji">📚</span><h4>Encadernação</h4><span class="preco">R$ 15,00</span></div>
+                <div class="catalogo-card"><span class="card-emoji">🎨</span><h4>Criação de Arte</h4><span class="preco">R$ 35,00</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="screen" id="produtosScreen">
+        <div class="listagem-screen">
+            <div class="listagem-header" style="display:flex;justify-content:center;gap:20px;flex-wrap:wrap;width:100%;">
+                <button class="btn-voltar" onclick="voltarParaEscolha()">← Voltar</button>
+                <h2>🛍️ PRODUTOS</h2>
+                <button class="btn-voltar" onclick="voltarParaHome()">🏠 Início</button>
+            </div>
+            <div class="grid-catalogo">
+                <div class="catalogo-card"><span class="card-emoji">📒</span><h4>Caderno</h4><span class="preco">R$ 49,90</span><span class="badge-neon">BEST</span></div>
+                <div class="catalogo-card"><span class="card-emoji">📋</span><h4>Agenda 2026</h4><span class="preco">R$ 69,90</span></div>
+                <div class="catalogo-card"><span class="card-emoji">☕</span><h4>Caneca</h4><span class="preco">R$ 39,90</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function mostrarTela(id) { document.querySelectorAll('.screen').forEach(t => t.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function abrirCatalogo() { mostrarTela('escolhaScreen'); }
+        function voltarParaHome() { mostrarTela('homeScreen'); resetarSlider(); }
+        function voltarParaEscolha() { mostrarTela('escolhaScreen'); }
+        function navegarPara(destino) { mostrarTela(destino === 'servicos' ? 'servicosScreen' : 'produtosScreen'); }
+
+        // ==================== SLIDER ====================
+        let slideAtual = 0; let sliderIntervalo;
+        function mudarSlide(index) {
+            document.querySelectorAll('#sliderContainer .slide').forEach((s, i) => s.classList.toggle('active-slide', i === index));
+            document.querySelectorAll('#sliderDots .dot').forEach((d, i) => d.classList.toggle('active-dot', i === index));
+            slideAtual = index;
+        }
+        function proximoSlide() { mudarSlide((slideAtual + 1) % 3); }
+        function iniciarSlider() { sliderIntervalo = setInterval(proximoSlide, 4000); }
+        function resetarSlider() { clearInterval(sliderIntervalo); mudarSlide(0); iniciarSlider(); }
+        document.querySelectorAll('#sliderDots .dot').forEach(dot => dot.addEventListener('click', function() { clearInterval(sliderIntervalo); mudarSlide(parseInt(this.getAttribute('data-index'))); iniciarSlider(); }));
+        iniciarSlider();
+
+        // ==================== FALAS DO MASCOTE ====================
+        const mascoteWrapper = document.getElementById('mascoteWrapper');
+        const msgs = [
+            'Oi, eu sou Gluudyx! ✨',
+            'Amor em cada detalhe! 💜',
+            'Escolha seu caderno cósmico! 🌌',
+            'Feito com alma taurina! ♉'
+        ];
+        let msgIdx = 0;
+        mascoteWrapper.addEventListener('click', function() {
+            this.style.animation = 'none'; this.offsetHeight; this.style.animation = 'floatMascote 0.6s ease-in-out';
+            const toast = document.createElement('div');
+            toast.textContent = msgs[msgIdx % msgs.length]; msgIdx++;
+            toast.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(11,4,28,0.9);color:#fff;padding:12px 24px;border-radius:30px;font-size:1rem;z-index:999;pointer-events:none;animation:toastInOut 2.5s ease forwards;backdrop-filter:blur(8px);border:1px solid rgba(172,40,255,0.6);box-shadow:0 0 30px rgba(172,40,255,0.5);';
+            document.body.appendChild(toast);
+            setTimeout(() => { if (toast.parentNode) toast.remove(); }, 2600);
+            setTimeout(() => { this.style.animation = 'floatMascote 6s ease-in-out infinite'; }, 600);
+        });
+    </script>
+    <style>
+        @keyframes toastInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-40px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            75% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-30px); }
+        }
+    </style>
+</body>
+</html>
