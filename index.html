@@ -112,8 +112,8 @@
         .header-top .slogan { font-size: clamp(0.8rem, 1.5vw, 1.1rem); font-weight: 300; opacity: 0.7; font-style: italic; letter-spacing: 1px; color: #a090b0; }
 
         /* Main */
-        .main-area { display: flex; align-items: flex-start; justify-content: center; gap: 30px; flex: 1; flex-wrap: wrap; padding: 10px 0; }
-        .mascote-block { display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; }
+        .main-area { display: flex; align-items: flex-start; justify-content: center; gap: 10px; flex: 1; flex-wrap: wrap; padding: 10px 0; }
+        .mascote-block { display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; flex: 0 0 420px; margin-left: 30px; }
         .mascote-wrapper { position: relative; animation: floatMascote 6s ease-in-out infinite; cursor: pointer; }
         .mascote-wrapper:hover { transform: scale(1.05); }
         .mascote-wrapper img { width: clamp(220px, 35vw, 380px); height: auto; display: block; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.7)); border-radius: 50%; }
@@ -146,8 +146,8 @@
         .btn-acessar:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(172,40,255,0.8); }
         .btn-acessar span { position: relative; z-index: 1; }
 
-        /* Slider com eletricidade roxa */
-        .promo-slider-container { flex: 1 1 400px; max-width: 520px; min-width: 300px; }
+        /* Slider com eletricidade roxa - RESPIRADO DA BORDA */
+        .promo-slider-container { flex: 0 1 520px; max-width: 580px; min-width: 300px; margin-left: auto; margin-right: 30px; padding-left: 20px; }
         .slider-box {
             background: var(--vidro-fundo); backdrop-filter: blur(12px);
             border: 1px solid var(--vidro-borda);
@@ -257,29 +257,14 @@
             flex-wrap: wrap;
         }
         .footer .visit-counter { color: var(--ciano-brilhante); font-weight: 600; }
-        .footer a { color: var(--ciano-brilhante); text-decoration: none; font-weight: 600; }
-
-        /* ================= EMPURRA A PROMOÇÃO PARA A DIREITA (DESKTOP) ================= */
-        @media (min-width: 901px) {
-            .promo-slider-container {
-                margin-left: auto;
-                padding-left: 20px;
-                flex: 0 1 520px;
-                max-width: 600px;
-            }
-            .mascote-block {
-                flex: 0 0 420px;
-            }
-        }
 
         /* ================= RESPONSIVIDADE ================= */
         @media (max-width: 900px) {
             .fala-container { right: -40px; width: 160px; font-size: 0.75rem; top: 5px; }
             .fala-container::before { top: 12px; }
-            .main-area { justify-content: center; }
-            .promo-slider-container { margin-left: 0; padding-left: 0; }
-            .mascote-block { flex: 1 1 auto; width: 100%; max-width: 400px; }
-            .promo-slider-container { flex: 1 1 auto; width: 100%; max-width: 100%; }
+            .main-area { justify-content: center; gap: 20px; }
+            .mascote-block { flex: 1 1 auto; width: 100%; max-width: 400px; margin-left: 0; }
+            .promo-slider-container { margin-left: 0; margin-right: 0; padding-left: 0; flex: 1 1 auto; width: 100%; max-width: 100%; }
         }
         @media (max-width: 600px) {
             .fala-container { right: -20px; width: 130px; font-size: 0.7rem; top: -5px; }
@@ -366,21 +351,28 @@
         </div>
     </div>
 
-    <!-- ESCOLHA -->
+    <!-- ESCOLHA (Lado a lado e estiloso) -->
     <div class="screen" id="escolhaScreen">
         <div class="listagem-screen" style="padding:30px;text-align:center;">
-            <h2 style="text-shadow:0 0 30px rgba(172,40,255,0.5); letter-spacing:4px; font-weight:300;">O que você procura?</h2>
-            <div style="display:flex;gap:30px;flex-wrap:wrap;justify-content:center;margin-top:20px;">
-                <div class="categoria-card" style="flex:1 1 250px;padding:40px;" onclick="navegarPara('servicos')">
-                    <div style="font-size:4rem; color:var(--ciano-brilhante);"><i class="fas fa-tools"></i></div>
-                    <h3>SERVIÇOS</h3>
+            <h2 style="text-shadow:0 0 30px rgba(172,40,255,0.5); letter-spacing:4px; font-weight:300; font-size:clamp(1.5rem, 3vw, 2.2rem);">✨ O que você procura?</h2>
+            
+            <div style="display:flex; gap:30px; flex-wrap:wrap; justify-content:center; align-items:stretch; margin-top:30px; max-width:700px; width:100%;">
+                
+                <div class="categoria-card" style="flex:1 1 280px; padding:50px 30px; border-radius:24px; transition:var(--transicao);" onclick="navegarPara('servicos')">
+                    <div style="font-size:5rem; color:var(--ciano-brilhante); filter:drop-shadow(0 0 20px rgba(0,242,254,0.5));"><i class="fas fa-tools"></i></div>
+                    <h3 style="font-size:1.6rem; letter-spacing:2px; margin-top:15px; font-weight:600; background:linear-gradient(135deg, var(--ciano-brilhante), #a028ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">SERVIÇOS</h3>
+                    <p style="opacity:0.6; font-size:0.9rem; margin-top:5px; -webkit-text-fill-color:#f0eaff;">Personalização e criação</p>
                 </div>
-                <div class="categoria-card" style="flex:1 1 250px;padding:40px;" onclick="navegarPara('produtos')">
-                    <div style="font-size:4rem; color:var(--rosa-neon);"><i class="fas fa-store"></i></div>
-                    <h3>PRODUTOS</h3>
+
+                <div class="categoria-card" style="flex:1 1 280px; padding:50px 30px; border-radius:24px; transition:var(--transicao);" onclick="navegarPara('produtos')">
+                    <div style="font-size:5rem; color:var(--rosa-neon); filter:drop-shadow(0 0 20px rgba(255,102,178,0.5));"><i class="fas fa-store"></i></div>
+                    <h3 style="font-size:1.6rem; letter-spacing:2px; margin-top:15px; font-weight:600; background:linear-gradient(135deg, var(--rosa-neon), #a028ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">PRODUTOS</h3>
+                    <p style="opacity:0.6; font-size:0.9rem; margin-top:5px; -webkit-text-fill-color:#f0eaff;">Papelaria e itens exclusivos</p>
                 </div>
+
             </div>
-            <button class="btn-voltar" onclick="voltarParaHome()" style="margin-top:20px;"><i class="fas fa-arrow-left"></i> Voltar</button>
+            
+            <button class="btn-voltar" onclick="voltarParaHome()" style="margin-top:40px;"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Voltar</button>
         </div>
     </div>
 
@@ -410,12 +402,9 @@
         </div>
     </div>
 
-    <!-- RODAPÉ -->
+    <!-- RODAPÉ (Sem link do Admin) -->
     <footer class="footer">
         <span>Gudyx Custom © 2026</span>
-        <span>
-            <a href="admin.html">🔧 Admin</a>
-        </span>
         <span class="visit-counter">Visitas: <span id="visitCounter">0</span></span>
     </footer>
 
@@ -659,7 +648,6 @@
                     if (prod.promocao) badges += `<div class="badge-promo">PROMO</div>`;
                     if (prod.destaque) badges += `<div class="badge-destaque">DESTAQUE</div>`;
                     
-                    // Preço: se tiver promoção, mostra o preço promocional e o original riscado
                     let precoHtml = '';
                     if (prod.promocao && prod.precoPromo) {
                         precoHtml = `
