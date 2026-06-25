@@ -72,8 +72,8 @@
         /* Balão de fala */
         .fala-container {
             position: absolute;
-            top: -30px;
-            right: -200px;
+            top: -10px;
+            right: -140px;
             width: 220px;
             background: rgba(11,4,28,0.85);
             backdrop-filter: blur(8px);
@@ -107,10 +107,7 @@
         /* HOME */
         .home-screen { flex-direction: column; padding: 20px; gap: 20px; width: 100%; max-width: 1400px; margin: 0 auto; }
         .header-top { text-align: center; padding: 20px 0 15px; position: relative; display: flex; flex-direction: column; align-items: center; }
-        .header-top::after {
-            content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%);
-            width: 40%; height: 1px; background: linear-gradient(90deg, transparent, var(--ciano-brilhante), var(--rosa-neon), transparent);
-        }
+        /* REMOVI A LINHA DECORATIVA */
         .header-top .logo-img { max-height: 250px; width: auto; margin-top: 30px; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(172,40,255,0.4)); }
         .header-top .subtitle { font-size: clamp(0.9rem, 2vw, 1.4rem); font-weight: 300; letter-spacing: 4px; color: #c0b0d0; }
         .header-top .slogan { font-size: clamp(0.8rem, 1.5vw, 1.1rem); font-weight: 300; opacity: 0.7; font-style: italic; letter-spacing: 1px; color: #a090b0; }
@@ -242,6 +239,12 @@
             color: #0b041c; padding: 2px 8px; border-radius: 12px; font-size: 0.6rem;
             font-weight: 700; text-transform: uppercase;
         }
+        .produto-card .descricao { font-size: 0.8rem; opacity: 0.7; margin-bottom: 4px; }
+        .produto-card .preco-promo {
+            font-weight: 700; color: var(--rosa-neon); font-size: 1rem;
+            text-decoration: line-through; margin-right: 5px;
+        }
+        .produto-card .preco-atual { font-weight: 700; color: var(--amarelo-neon); font-size: 1rem; }
 
         /* Rodapé */
         .footer {
@@ -255,13 +258,14 @@
             flex-wrap: wrap;
         }
         .footer .visit-counter { color: var(--ciano-brilhante); font-weight: 600; }
+        .footer a { color: var(--ciano-brilhante); text-decoration: none; font-weight: 600; }
 
         /* Responsividade */
         @media (max-width: 900px) {
-            .fala-container { right: -150px; width: 180px; font-size: 0.8rem; }
+            .fala-container { right: -100px; width: 180px; font-size: 0.8rem; }
         }
         @media (max-width: 600px) {
-            .fala-container { right: -100px; width: 140px; font-size: 0.7rem; top: -20px; }
+            .fala-container { right: -80px; width: 140px; font-size: 0.7rem; top: -20px; }
         }
         @media (max-width: 480px) {
             .fala-container { right: 0; top: -40px; width: 120px; font-size: 0.65rem; }
@@ -390,6 +394,9 @@
     <!-- RODAPÉ -->
     <footer class="footer">
         <span>Gudyx Custom © 2026</span>
+        <span>
+            <a href="admin.html">🔧 Admin</a>
+        </span>
         <span class="visit-counter">Visitas: <span id="visitCounter">0</span></span>
     </footer>
 
@@ -405,7 +412,6 @@
                     dados = { categorias: [], produtos: [] };
                 }
             } else {
-                // Dados iniciais (opcional)
                 dados = {
                     categorias: [
                         { id: 1, tipo: 'produtos', nome: 'Caixas Personalizadas', imagem: '' },
@@ -537,19 +543,16 @@
             mascoteMsgIdx++;
             falaContainer.textContent = msg;
             falaContainer.classList.add('falando');
-            // Remove a classe depois de 4 segundos
             setTimeout(() => {
                 falaContainer.classList.remove('falando');
             }, 4000);
         }
 
-        // Auto fala a cada 10 segundos
         setInterval(() => {
             atualizarMensagensMascote();
             falarMascote();
         }, 10000);
 
-        // Fala ao clicar
         document.getElementById('mascoteWrapper').addEventListener('click', function() {
             this.style.animation = 'none';
             this.offsetHeight;
@@ -636,11 +639,24 @@
                     let badges = '';
                     if (prod.promocao) badges += `<div class="badge-promo">PROMO</div>`;
                     if (prod.destaque) badges += `<div class="badge-destaque">DESTAQUE</div>`;
+                    // Preço: se tiver promoção, mostra o preço promocional e o original riscado
+                    let precoHtml = '';
+                    if (prod.promocao && prod.precoPromo) {
+                        precoHtml = `
+                            <div>
+                                <span class="preco-promo">R$ ${prod.preco}</span>
+                                <span class="preco-atual">R$ ${prod.precoPromo}</span>
+                            </div>
+                        `;
+                    } else {
+                        precoHtml = `<div class="preco">R$ ${prod.preco}</div>`;
+                    }
                     card.innerHTML = `
                         ${badges}
                         ${prod.imagem ? `<img src="${prod.imagem}">` : `<div style="height:120px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:8px;"><i class="fas fa-image" style="font-size:2rem;opacity:0.3;"></i></div>`}
                         <h5>${prod.nome}</h5>
-                        <div class="preco">R$ ${prod.preco}</div>
+                        ${prod.descricao ? `<div class="descricao">${prod.descricao.substring(0,60)}${prod.descricao.length > 60 ? '...' : ''}</div>` : ''}
+                        ${precoHtml}
                     `;
                     container.appendChild(card);
                 });
@@ -662,12 +678,11 @@
             }
         }
 
-        // ==================== ESCUTAR MUDANÇAS NO LOCALSTORAGE ====================
+        // ==================== ESCUTAR MUDANÇAS ====================
         window.addEventListener('storage', function(e) {
             if (e.key === 'gudyxDados') {
                 carregarDados();
                 carregarMaisVendidos();
-                // Se estiver na tela de produtos/serviços, recarrega categorias
                 const activeScreen = document.querySelector('.screen.active');
                 if (activeScreen) {
                     const id = activeScreen.id;
@@ -681,7 +696,6 @@
         carregarDados();
         contarVisita();
         carregarMaisVendidos();
-        // Primeira fala após 3 segundos
         setTimeout(() => {
             atualizarMensagensMascote();
             falarMascote();
