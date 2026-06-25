@@ -29,27 +29,15 @@
             background: var(--roxo-profundo);
             color: var(--branco-espacial);
             -webkit-font-smoothing: antialiased;
-            padding-bottom: 70px;
+            padding-bottom: 80px;
         }
 
         /* Fundo */
-        .bg-container {
-            position: fixed; top: -20px; left: -20px; width: calc(100% + 40px); height: calc(100% + 40px);
-            z-index: -3;
-            background-image: url('https://i.imgur.com/UDwnKUg.png');
-            background-size: cover; background-position: center; background-repeat: no-repeat;
-            filter: blur(5px); transform: scale(1.02);
-        }
-        .bg-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2;
-            background: radial-gradient(circle at 50% 50%, rgba(26, 10, 51, 0.4) 0%, rgba(11, 4, 28, 0.9) 100%);
-        }
+        .bg-container { position: fixed; top: -20px; left: -20px; width: calc(100% + 40px); height: calc(100% + 40px); z-index: -3; background-image: url('https://i.imgur.com/UDwnKUg.png'); background-size: cover; background-position: center; background-repeat: no-repeat; filter: blur(5px); transform: scale(1.02); }
+        .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at 50% 50%, rgba(26, 10, 51, 0.4) 0%, rgba(11, 4, 28, 0.9) 100%); }
 
         /* Meteoros */
-        #meteorCanvas {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            pointer-events: none;
-        }
+        #meteorCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
 
         /* Telas */
         .screen { display: none; min-height: 100vh; width: 100%; position: relative; animation: fadeSlideIn 0.6s ease forwards; }
@@ -59,50 +47,14 @@
         @keyframes floatMascote { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-25px) rotate(2deg); } }
         @keyframes pulseGlow { 0%, 100% { box-shadow: 0 0 20px rgba(172, 40, 255, 0.4); } 50% { box-shadow: 0 0 40px rgba(172, 40, 255, 0.8), 0 0 60px rgba(0, 242, 254, 0.3); } }
         @keyframes rotateGlow { 100% { transform: rotate(360deg); } }
-        @keyframes fireGlow {
-            0% { box-shadow: 0 0 15px rgba(172, 40, 255, 0.6), 0 0 30px rgba(200, 0, 255, 0.4); transform: scale(1); }
-            100% { box-shadow: 0 0 30px rgba(172, 40, 255, 1), 0 0 60px rgba(200, 0, 255, 0.8), 0 0 90px rgba(0, 242, 254, 0.5); transform: scale(1.05); }
-        }
-        @keyframes eletricidade {
-            0% { box-shadow: 0 0 10px rgba(172, 40, 255, 0.2), inset 0 0 10px rgba(172, 40, 255, 0.2); }
-            50% { box-shadow: 0 0 30px rgba(172, 40, 255, 0.8), inset 0 0 20px rgba(172, 40, 255, 0.5), 0 0 60px rgba(200, 0, 255, 0.6); }
-            100% { box-shadow: 0 0 10px rgba(172, 40, 255, 0.2), inset 0 0 10px rgba(172, 40, 255, 0.2); }
-        }
+        @keyframes fireGlow { 0% { box-shadow: 0 0 15px rgba(172, 40, 255, 0.6), 0 0 30px rgba(200, 0, 255, 0.4); transform: scale(1); } 100% { box-shadow: 0 0 30px rgba(172, 40, 255, 1), 0 0 60px rgba(200, 0, 255, 0.8), 0 0 90px rgba(0, 242, 254, 0.5); transform: scale(1.05); } }
+        @keyframes eletricidade { 0% { box-shadow: 0 0 10px rgba(172, 40, 255, 0.2), inset 0 0 10px rgba(172, 40, 255, 0.2); } 50% { box-shadow: 0 0 30px rgba(172, 40, 255, 0.8), inset 0 0 20px rgba(172, 40, 255, 0.5), 0 0 60px rgba(200, 0, 255, 0.6); } 100% { box-shadow: 0 0 10px rgba(172, 40, 255, 0.2), inset 0 0 10px rgba(172, 40, 255, 0.2); } }
+        @keyframes toastInOut { 0% { opacity: 0; transform: translateX(-50%) translateY(-40px); } 15% { opacity: 1; transform: translateX(-50%) translateY(0); } 75% { opacity: 1; transform: translateX(-50%) translateY(0); } 100% { opacity: 0; transform: translateX(-50%) translateY(-30px); } }
 
-        /* Balão de fala - MAIS PRÓXIMO DO MASCOTE */
-        .fala-container {
-            position: absolute;
-            top: 15px;
-            right: -60px;
-            width: 200px;
-            background: rgba(11,4,28,0.85);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(172,40,255,0.6);
-            border-radius: 16px;
-            padding: 10px 14px;
-            font-size: 0.85rem;
-            color: #f0eaff;
-            box-shadow: 0 0 30px rgba(172,40,255,0.4);
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.4s ease, transform 0.4s ease;
-            transform: translateX(10px);
-            z-index: 9999;
-            text-align: center;
-        }
-        .fala-container::before {
-            content: '';
-            position: absolute;
-            left: -12px;
-            top: 16px;
-            border: 6px solid transparent;
-            border-right-color: rgba(11,4,28,0.85);
-            border-left: 0;
-        }
-        .fala-container.falando {
-            opacity: 1;
-            transform: translateX(0);
-        }
+        /* Balão de fala */
+        .fala-container { position: absolute; top: 15px; right: -60px; width: 200px; background: rgba(11,4,28,0.85); backdrop-filter: blur(8px); border: 1px solid rgba(172,40,255,0.6); border-radius: 16px; padding: 10px 14px; font-size: 0.85rem; color: #f0eaff; box-shadow: 0 0 30px rgba(172,40,255,0.4); pointer-events: none; opacity: 0; transition: opacity 0.4s ease, transform 0.4s ease; transform: translateX(10px); z-index: 9999; text-align: center; }
+        .fala-container::before { content: ''; position: absolute; left: -12px; top: 16px; border: 6px solid transparent; border-right-color: rgba(11,4,28,0.85); border-left: 0; }
+        .fala-container.falando { opacity: 1; transform: translateX(0); }
 
         /* HOME */
         .home-screen { flex-direction: column; padding: 20px; gap: 20px; width: 100%; max-width: 1400px; margin: 0 auto; }
@@ -121,85 +73,37 @@
         .mascote-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, rgba(172,40,255,0.4) 0%, transparent 70%); z-index: -1; animation: pulseGlow 3s ease-in-out infinite; pointer-events: none; }
 
         /* Botão Acessar Catálogo */
-        .btn-acessar {
-            padding: 22px 60px;
-            font-size: 1.4rem;
-            font-weight: 700;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            color: #fff;
-            background: linear-gradient(135deg, #a028ff 0%, var(--ciano-brilhante) 100%);
-            border: none;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: var(--transicao);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-            position: relative;
-            overflow: hidden;
-        }
-        .btn-acessar::after {
-            content: ''; position: absolute; top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.15), transparent);
-            animation: rotateGlow 6s linear infinite;
-        }
+        .btn-acessar { padding: 22px 60px; font-size: 1.4rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a028ff 0%, var(--ciano-brilhante) 100%); border: none; border-radius: 60px; cursor: pointer; transition: var(--transicao); box-shadow: 0 8px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
+        .btn-acessar::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.15), transparent); animation: rotateGlow 6s linear infinite; }
         .btn-acessar:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(172,40,255,0.8); }
         .btn-acessar span { position: relative; z-index: 1; }
 
-        /* Slider com eletricidade roxa - RESPIRADO DA BORDA */
+        /* Slider Dinâmico (eletricidade roxa) */
         .promo-slider-container { flex: 0 1 520px; max-width: 580px; min-width: 300px; margin-left: auto; margin-right: 30px; padding-left: 20px; }
-        .slider-box {
-            background: var(--vidro-fundo); backdrop-filter: blur(12px);
-            border: 1px solid var(--vidro-borda);
-            border-radius: 24px;
-            overflow: hidden;
-            animation: eletricidade 2s ease-in-out infinite;
-            position: relative;
-        }
-        .fire-badge {
-            position: absolute; top: 12px; right: 12px;
-            background: rgba(122, 0, 255, 0.4); backdrop-filter: blur(8px); color: #fff;
-            padding: 4px 14px; border-radius: 20px; font-weight: 800; font-size: 0.8rem;
-            letter-spacing: 1px; text-transform: uppercase; z-index: 2;
-            animation: fireGlow 0.8s ease-in-out infinite alternate;
-            box-shadow: 0 0 20px rgba(172,40,255,0.6); border: 1px solid rgba(255,255,255,0.2);
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
-        .slide-item { display: none; padding: 25px 20px; text-align: center; cursor: pointer; animation: fadeSlideIn 0.5s ease; }
-        .slide-item.active-slide { display: block; }
-        .slide-item img { width: 100%; max-height: 180px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--vidro-borda); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
-        .slide-item h4 { font-size: 1.2rem; margin: 5px 0; font-weight: 600; }
-        .slide-item .desc { font-size: 0.9rem; opacity: 0.7; margin-bottom: 5px; }
-        .slide-item .preco { font-size: 1.6rem; font-weight: 700; color: var(--amarelo-neon); text-shadow: 0 0 20px rgba(255,229,0,0.3); }
-        .slider-dots { display: flex; gap: 8px; justify-content: center; padding: 0 0 15px; }
-        .slider-dots .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); cursor: pointer; border: none; transition: var(--transicao); }
-        .slider-dots .dot.active-dot { background: var(--ciano-brilhante); transform: scale(1.3); box-shadow: 0 0 15px rgba(0,242,254,0.6); }
+        .slider-box { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 24px; overflow: hidden; animation: eletricidade 2s ease-in-out infinite; position: relative; }
+        .fire-badge { position: absolute; top: 12px; right: 12px; background: rgba(122, 0, 255, 0.4); backdrop-filter: blur(8px); color: #fff; padding: 4px 14px; border-radius: 20px; font-weight: 800; font-size: 0.8rem; letter-spacing: 1px; text-transform: uppercase; z-index: 2; animation: fireGlow 0.8s ease-in-out infinite alternate; box-shadow: 0 0 20px rgba(172,40,255,0.6); border: 1px solid rgba(255,255,255,0.2); text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+        #dynamicSliderContainer .slide-item { display: none; padding: 25px 20px; text-align: center; cursor: pointer; animation: fadeSlideIn 0.5s ease; }
+        #dynamicSliderContainer .slide-item.active-slide { display: block; }
+        #dynamicSliderContainer .slide-item img { width: 100%; max-height: 180px; object-fit: cover; border-radius: 12px; margin-bottom: 12px; border: 1px solid var(--vidro-borda); box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+        #dynamicSliderContainer .slide-item h4 { font-size: 1.2rem; margin: 5px 0; font-weight: 600; }
+        #dynamicSliderContainer .slide-item .desc { font-size: 0.9rem; opacity: 0.7; margin-bottom: 5px; }
+        #dynamicSliderContainer .slide-item .preco { font-size: 1.6rem; font-weight: 700; color: var(--amarelo-neon); text-shadow: 0 0 20px rgba(255,229,0,0.3); }
+        #sliderDots { display: flex; gap: 8px; justify-content: center; padding: 0 0 15px; }
+        #sliderDots .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.2); cursor: pointer; border: none; transition: var(--transicao); }
+        #sliderDots .dot.active-dot { background: var(--ciano-brilhante); transform: scale(1.3); box-shadow: 0 0 15px rgba(0,242,254,0.6); }
 
         /* Mais Vendidos */
         .mais-vendidos-section { width: 100%; padding-top: 15px; border-top: 1px solid var(--vidro-borda); }
         .mais-vendidos-section .section-title { font-size: 1.3rem; letter-spacing: 4px; text-align: center; margin-bottom: 16px; color: var(--branco-espacial); font-weight: 300; }
         .grid-vendidos { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
-        .card-vendido {
-            background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda);
-            border-radius: 20px; padding: 20px 14px; text-align: center; transition: var(--transicao);
-            cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
+        .card-vendido { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; padding: 20px 14px; text-align: center; transition: var(--transicao); cursor: pointer; position: relative; display: flex; flex-direction: column; align-items: center; gap: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .card-vendido:hover { background: rgba(172,40,255,0.15); transform: translateY(-6px) scale(1.02); box-shadow: 0 10px 40px rgba(172,40,255,0.4); border-color: var(--ciano-brilhante); }
         .card-vendido .icon-box { width: 60px; height: 60px; border-radius: 50%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--ciano-brilhante); border: 1px solid rgba(255,255,255,0.05); }
         .card-vendido h4 { font-size: 0.95rem; font-weight: 500; margin-top: 4px; letter-spacing: 0.5px; }
         .card-vendido .preco { font-weight: 700; color: var(--amarelo-neon); font-size: 1.1rem; }
-        .card-vendido .fire-badge-mini {
-            position: absolute; top: -8px; left: -8px;
-            background: rgba(122, 0, 255, 0.4); backdrop-filter: blur(8px); color: #fff;
-            padding: 2px 12px; border-radius: 20px; font-weight: 800; font-size: 0.7rem;
-            letter-spacing: 1px; text-transform: uppercase; z-index: 2;
-            animation: fireGlow 0.8s ease-in-out infinite alternate;
-            box-shadow: 0 0 15px rgba(172,40,255,0.6); border: 1px solid rgba(255,255,255,0.2);
-            text-shadow: 0 0 10px rgba(255,255,255,0.3);
-        }
+        .card-vendido .fire-badge-mini { position: absolute; top: -8px; left: -8px; background: rgba(122, 0, 255, 0.4); backdrop-filter: blur(8px); color: #fff; padding: 2px 12px; border-radius: 20px; font-weight: 800; font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; z-index: 2; animation: fireGlow 0.8s ease-in-out infinite alternate; box-shadow: 0 0 15px rgba(172,40,255,0.6); border: 1px solid rgba(255,255,255,0.2); text-shadow: 0 0 10px rgba(255,255,255,0.3); }
 
-        /* Catálogo dinâmico */
+        /* Catálogo */
         .listagem-screen { flex-direction: column; align-items: center; padding: 30px 20px; gap: 30px; overflow-y: auto; background: rgba(11,4,28,0.6); }
         .listagem-header { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1100px; }
         .listagem-header h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: 4px; text-shadow: 0 0 30px rgba(172,40,255,0.5); flex: 1; text-align: center; font-weight: 300; }
@@ -207,58 +111,48 @@
         .btn-voltar:hover { border-color: var(--ciano-brilhante); background: rgba(0,242,254,0.1); }
 
         .grid-categorias { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; }
-        .categoria-card {
-            background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda);
-            border-radius: 20px; padding: 25px 20px; text-align: center; transition: var(--transicao);
-            cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 12px;
-        }
+        .categoria-card { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; padding: 25px 20px; text-align: center; transition: var(--transicao); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 12px; }
         .categoria-card:hover { background: rgba(172,40,255,0.2); transform: translateY(-6px); box-shadow: var(--sombra-hover); border-color: var(--ciano-brilhante); }
         .categoria-card .categoria-img { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 2px solid var(--vidro-borda); }
         .categoria-card h4 { font-size: 1.1rem; font-weight: 500; letter-spacing: 1px; }
 
         .produtos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 15px; width: 100%; max-width: 900px; margin-top: 20px; }
-        .produto-card {
-            background: var(--vidro-fundo); backdrop-filter: blur(8px); border: 1px solid var(--vidro-borda);
-            border-radius: 16px; padding: 15px 10px; text-align: center; transition: var(--transicao);
-            cursor: pointer; position: relative;
-        }
+        .produto-card { background: var(--vidro-fundo); backdrop-filter: blur(8px); border: 1px solid var(--vidro-borda); border-radius: 16px; padding: 15px 10px; text-align: center; transition: var(--transicao); cursor: pointer; position: relative; }
         .produto-card:hover { background: rgba(172,40,255,0.15); transform: translateY(-4px); box-shadow: 0 8px 30px rgba(172,40,255,0.3); }
         .produto-card img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; border: 1px solid var(--vidro-borda); margin-bottom: 8px; }
         .produto-card h5 { font-size: 0.95rem; font-weight: 400; }
         .produto-card .preco { font-weight: 700; color: var(--amarelo-neon); font-size: 1rem; }
-        .produto-card .badge-promo {
-            position: absolute; top: 5px; right: 5px;
-            background: rgba(255, 0, 0, 0.7); backdrop-filter: blur(4px);
-            color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 0.6rem;
-            font-weight: 700; text-transform: uppercase;
-        }
-        .produto-card .badge-destaque {
-            position: absolute; top: 5px; left: 5px;
-            background: rgba(0, 242, 254, 0.7); backdrop-filter: blur(4px);
-            color: #0b041c; padding: 2px 8px; border-radius: 12px; font-size: 0.6rem;
-            font-weight: 700; text-transform: uppercase;
-        }
+        .produto-card .badge-promo { position: absolute; top: 5px; right: 5px; background: rgba(255, 0, 0, 0.7); backdrop-filter: blur(4px); color: #fff; padding: 2px 8px; border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
+        .produto-card .badge-destaque { position: absolute; top: 5px; left: 5px; background: rgba(0, 242, 254, 0.7); backdrop-filter: blur(4px); color: #0b041c; padding: 2px 8px; border-radius: 12px; font-size: 0.6rem; font-weight: 700; text-transform: uppercase; }
         .produto-card .descricao { font-size: 0.8rem; opacity: 0.7; margin-bottom: 4px; }
-        .produto-card .preco-promo {
-            font-weight: 700; color: var(--rosa-neon); font-size: 1rem;
-            text-decoration: line-through; margin-right: 5px;
-        }
+        .produto-card .preco-promo { font-weight: 700; color: var(--rosa-neon); font-size: 1rem; text-decoration: line-through; margin-right: 5px; }
         .produto-card .preco-atual { font-weight: 700; color: var(--amarelo-neon); font-size: 1rem; }
 
+        /* MODAL (Detalhes do Produto) */
+        #productModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 99999; display: none; justify-content: center; align-items: center; padding: 20px; }
+        #productModal.active { display: flex; }
+        .modal-box { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 24px; max-width: 600px; width: 100%; padding: 30px; position: relative; box-shadow: 0 0 60px rgba(172,40,255,0.5); max-height: 90vh; overflow-y: auto; }
+        .modal-box .close-modal { position: absolute; top: 10px; right: 20px; font-size: 2rem; cursor: pointer; color: #fff; background: none; border: none; transition: var(--transicao); }
+        .modal-box .close-modal:hover { transform: rotate(90deg); color: var(--rosa-neon); }
+        .modal-box .modal-img { width: 100%; max-height: 250px; object-fit: contain; border-radius: 16px; margin-bottom: 15px; background: rgba(255,255,255,0.05); }
+        .modal-box h2 { font-size: 1.8rem; margin-bottom: 5px; }
+        .modal-box .modal-desc { font-size: 1rem; opacity: 0.8; margin-bottom: 10px; }
+        .modal-box .modal-price { font-size: 1.6rem; font-weight: 700; color: var(--amarelo-neon); }
+        .modal-box .modal-price-old { color: var(--rosa-neon); text-decoration: line-through; font-size: 1.2rem; margin-right: 10px; }
+        .modal-box .btn-whatsapp { display: inline-block; margin-top: 20px; padding: 12px 30px; background: #25D366; color: #fff; border-radius: 50px; font-weight: 700; border: none; cursor: pointer; transition: var(--transicao); font-size: 1.1rem; text-decoration: none; }
+        .modal-box .btn-whatsapp:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(37, 211, 102, 0.6); }
+
+        /* Float WhatsApp & Back to Top */
+        .float-wa { position: fixed; bottom: 80px; right: 20px; background: #25D366; color: #fff; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 50; text-decoration: none; transition: var(--transicao); }
+        .float-wa:hover { transform: scale(1.1); }
+        .btn-top { position: fixed; bottom: 150px; right: 20px; background: rgba(172,40,255,0.5); backdrop-filter: blur(8px); color: #fff; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; z-index: 50; transition: var(--transicao); opacity: 0; visibility: hidden; border: 1px solid var(--vidro-borda); }
+        .btn-top.visible { opacity: 1; visibility: visible; }
+        .btn-top:hover { background: rgba(172,40,255,0.8); }
+
         /* Rodapé */
-        .footer {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            background: rgba(11, 4, 28, 0.8); backdrop-filter: blur(8px);
-            border-top: 1px solid var(--vidro-borda);
-            padding: 8px 20px; text-align: center;
-            font-size: 0.8rem; color: rgba(255,255,255,0.5);
-            z-index: 10;
-            display: flex; justify-content: space-between; align-items: center;
-            flex-wrap: wrap;
-        }
+        .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(11, 4, 28, 0.8); backdrop-filter: blur(8px); border-top: 1px solid var(--vidro-borda); padding: 8px 20px; text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.5); z-index: 10; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .footer .visit-counter { color: var(--ciano-brilhante); font-weight: 600; }
 
-        /* ================= RESPONSIVIDADE ================= */
         @media (max-width: 900px) {
             .fala-container { right: -40px; width: 160px; font-size: 0.75rem; top: 5px; }
             .fala-container::before { top: 12px; }
@@ -269,6 +163,8 @@
         @media (max-width: 600px) {
             .fala-container { right: -20px; width: 130px; font-size: 0.7rem; top: -5px; }
             .fala-container::before { top: 8px; }
+            .float-wa { width: 50px; height: 50px; font-size: 1.5rem; bottom: 70px; }
+            .btn-top { width: 40px; height: 40px; font-size: 1rem; bottom: 130px; }
         }
         @media (max-width: 480px) {
             .fala-container { right: 0; top: -25px; width: 100px; font-size: 0.6rem; }
@@ -284,15 +180,28 @@
             .categoria-card .categoria-img { width: 60px; height: 60px; }
             .produtos-grid { grid-template-columns: repeat(2, 1fr); }
             .produto-card img { height: 80px; }
+            .modal-box { padding: 20px; }
+            .modal-box h2 { font-size: 1.4rem; }
             .footer { flex-direction: column; gap: 4px; padding: 6px 15px; font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
-    <!-- Fundos -->
     <div class="bg-container"></div>
     <div class="bg-overlay"></div>
     <canvas id="meteorCanvas"></canvas>
+
+    <!-- MODAL -->
+    <div id="productModal">
+        <div class="modal-box">
+            <button class="close-modal" onclick="fecharModal()">×</button>
+            <img id="modalImg" class="modal-img" src="" alt="">
+            <h2 id="modalTitle">Título</h2>
+            <p id="modalDesc" class="modal-desc">Descrição</p>
+            <div id="modalPriceContainer"></div>
+            <a id="modalWaBtn" class="btn-whatsapp" href="#" target="_blank"><i class="fab fa-whatsapp"></i> Comprar Agora</a>
+        </div>
+    </div>
 
     <!-- HOME -->
     <div class="screen active" id="homeScreen">
@@ -316,34 +225,12 @@
                 <div class="promo-slider-container">
                     <div class="slider-box">
                         <div class="fire-badge">PROMO</div>
-                        <div class="slide-item active-slide" onclick="navegarPara('produtos')">
-                            <img src="https://placehold.co/400x180/0b041c/00f2fe?text=Kit+Volta+%C3%A0s+Aulas" alt="Kit Volta às Aulas">
-                            <h4>Kit Volta às Aulas</h4>
-                            <div class="desc">Caderno, estojo e caneta exclusiva</div>
-                            <div class="preco">R$ 99,90</div>
-                        </div>
-                        <div class="slide-item" onclick="navegarPara('produtos')">
-                            <img src="https://placehold.co/400x180/0b041c/ff66b2?text=Combo+Criativo" alt="Combo Criativo">
-                            <h4>Combo Criativo</h4>
-                            <div class="desc">Bloco, marcadores e adesivos</div>
-                            <div class="preco">R$ 59,90</div>
-                        </div>
-                        <div class="slide-item" onclick="navegarPara('produtos')">
-                            <img src="https://placehold.co/400x180/0b041c/ffe500?text=Convites+Casamento" alt="Convites Casamento">
-                            <h4>Convites Casamento</h4>
-                            <div class="desc">Design exclusivo com envelope</div>
-                            <div class="preco">R$ 3,90 / un</div>
-                        </div>
-                        <div class="slider-dots" id="sliderDots">
-                            <button class="dot active-dot" data-index="0"></button>
-                            <button class="dot" data-index="1"></button>
-                            <button class="dot" data-index="2"></button>
-                        </div>
+                        <div id="dynamicSliderContainer"></div>
+                        <div id="sliderDots"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- Mais Vendidos -->
             <div class="mais-vendidos-section">
                 <div class="section-title">MAIS VENDIDOS</div>
                 <div class="grid-vendidos" id="maisVendidosGrid"></div>
@@ -351,27 +238,22 @@
         </div>
     </div>
 
-    <!-- ESCOLHA (Lado a lado e estiloso) -->
+    <!-- ESCOLHA -->
     <div class="screen" id="escolhaScreen">
         <div class="listagem-screen" style="padding:30px;text-align:center;">
             <h2 style="text-shadow:0 0 30px rgba(172,40,255,0.5); letter-spacing:4px; font-weight:300; font-size:clamp(1.5rem, 3vw, 2.2rem);">✨ O que você procura?</h2>
-            
             <div style="display:flex; gap:30px; flex-wrap:wrap; justify-content:center; align-items:stretch; margin-top:30px; max-width:700px; width:100%;">
-                
-                <div class="categoria-card" style="flex:1 1 280px; padding:50px 30px; border-radius:24px; transition:var(--transicao);" onclick="navegarPara('servicos')">
+                <div class="categoria-card" style="flex:1 1 280px; padding:50px 30px; border-radius:24px;" onclick="navegarPara('servicos')">
                     <div style="font-size:5rem; color:var(--ciano-brilhante); filter:drop-shadow(0 0 20px rgba(0,242,254,0.5));"><i class="fas fa-tools"></i></div>
                     <h3 style="font-size:1.6rem; letter-spacing:2px; margin-top:15px; font-weight:600; background:linear-gradient(135deg, var(--ciano-brilhante), #a028ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">SERVIÇOS</h3>
                     <p style="opacity:0.6; font-size:0.9rem; margin-top:5px; -webkit-text-fill-color:#f0eaff;">Personalização e criação</p>
                 </div>
-
-                <div class="categoria-card" style="flex:1 1 280px; padding:50px 30px; border-radius:24px; transition:var(--transicao);" onclick="navegarPara('produtos')">
+                <div class="categoria-card" style="flex:1 1 280px; padding:50px 30px; border-radius:24px;" onclick="navegarPara('produtos')">
                     <div style="font-size:5rem; color:var(--rosa-neon); filter:drop-shadow(0 0 20px rgba(255,102,178,0.5));"><i class="fas fa-store"></i></div>
                     <h3 style="font-size:1.6rem; letter-spacing:2px; margin-top:15px; font-weight:600; background:linear-gradient(135deg, var(--rosa-neon), #a028ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">PRODUTOS</h3>
                     <p style="opacity:0.6; font-size:0.9rem; margin-top:5px; -webkit-text-fill-color:#f0eaff;">Papelaria e itens exclusivos</p>
                 </div>
-
             </div>
-            
             <button class="btn-voltar" onclick="voltarParaHome()" style="margin-top:40px;"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Voltar</button>
         </div>
     </div>
@@ -402,23 +284,24 @@
         </div>
     </div>
 
-    <!-- RODAPÉ (Sem link do Admin) -->
+    <!-- FLOATING ELEMENTS -->
+    <a href="https://wa.me/5511999999999?text=Olá! Quero conhecer os produtos Gudyx!" class="float-wa" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    <div class="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
+
     <footer class="footer">
         <span>Gudyx Custom © 2026</span>
         <span class="visit-counter">Visitas: <span id="visitCounter">0</span></span>
     </footer>
 
     <script>
-        // ==================== DADOS ====================
-        let dados = { categorias: [], produtos: [] };
+        let dados = { categorias: [], produtos: [], frases: [] };
 
         function carregarDados() {
             if (localStorage.getItem('gudyxDados')) {
                 try {
                     dados = JSON.parse(localStorage.getItem('gudyxDados'));
-                } catch(e) {
-                    dados = { categorias: [], produtos: [] };
-                }
+                    if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe', 'Escolha seu caderno cósmico', 'Feito com alma taurina'];
+                } catch(e) { dados = { categorias: [], produtos: [], frases: [] }; }
             } else {
                 dados = {
                     categorias: [
@@ -434,192 +317,163 @@
                         { id: 10, tipo: 'servicos', nome: 'Encadernação', imagem: '' },
                         { id: 11, tipo: 'servicos', nome: 'Criação de Arte', imagem: '' }
                     ],
-                    produtos: []
+                    produtos: [],
+                    frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe', 'Escolha seu caderno cósmico', 'Feito com alma taurina']
                 };
                 localStorage.setItem('gudyxDados', JSON.stringify(dados));
             }
         }
 
-        // ==================== NAVEGAÇÃO ====================
-        function mostrarTela(id) {
-            document.querySelectorAll('.screen').forEach(t => t.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
-        }
+        function mostrarTela(id) { document.querySelectorAll('.screen').forEach(t => t.classList.remove('active')); document.getElementById(id).classList.add('active'); }
         function abrirCatalogo() { mostrarTela('escolhaScreen'); }
         function voltarParaHome() { mostrarTela('homeScreen'); resetarSlider(); carregarMaisVendidos(); }
         function voltarParaEscolha() { mostrarTela('escolhaScreen'); }
-        function navegarPara(destino) {
-            if (destino === 'servicos') { mostrarTela('servicosScreen'); carregarCategorias('servicos'); }
-            else if (destino === 'produtos') { mostrarTela('produtosScreen'); carregarCategorias('produtos'); }
+        function navegarPara(destino) { if (destino === 'servicos') { mostrarTela('servicosScreen'); carregarCategorias('servicos'); } else if (destino === 'produtos') { mostrarTela('produtosScreen'); carregarCategorias('produtos'); } }
+
+        // MODAL FUNCTIONS
+        function abrirModal(prodId) {
+            const prod = dados.produtos.find(p => p.id === prodId);
+            if(!prod) return;
+            prod.cliques = (prod.cliques || 0) + 1;
+            localStorage.setItem('gudyxDados', JSON.stringify(dados));
+            carregarMaisVendidos();
+
+            document.getElementById('modalImg').src = prod.imagem || 'https://placehold.co/400x250/0b041c/00f2fe?text=Sem+Imagem';
+            document.getElementById('modalTitle').textContent = prod.nome;
+            document.getElementById('modalDesc').textContent = prod.descricao || 'Descrição não cadastrada.';
+            
+            let priceHtml = '';
+            if (prod.promocao && prod.precoPromo) {
+                priceHtml = `<span class="modal-price-old">R$ ${prod.preco}</span> <span class="modal-price">R$ ${prod.precoPromo}</span>`;
+            } else {
+                priceHtml = `<span class="modal-price">R$ ${prod.preco}</span>`;
+            }
+            document.getElementById('modalPriceContainer').innerHTML = priceHtml;
+
+            const msg = encodeURIComponent(`Olá! Quero comprar o item: ${prod.nome} - Preço: ${prod.promocao ? 'R$ '+prod.precoPromo : 'R$ '+prod.preco}`);
+            document.getElementById('modalWaBtn').href = `https://wa.me/5511999999999?text=${msg}`;
+
+            document.getElementById('productModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
-        // ==================== SLIDER ====================
+        function fecharModal() {
+            document.getElementById('productModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        document.getElementById('productModal').addEventListener('click', function(e) { if(e.target === this) fecharModal(); });
+
+        // SLIDER
         let slideAtual = 0; let sliderIntervalo;
-        function mudarSlide(index) {
-            const slides = document.querySelectorAll('.slide-item');
-            const dots = document.querySelectorAll('#sliderDots .dot');
-            slides.forEach((s, i) => {
-                s.classList.toggle('active-slide', i === index);
-                s.style.transform = i === index ? 'scale(1)' : 'scale(0.95)';
-                s.style.opacity = i === index ? '1' : '0.3';
+        function iniciarSlider() {
+            const container = document.getElementById('dynamicSliderContainer');
+            const dotsContainer = document.getElementById('sliderDots');
+            container.innerHTML = '';
+            dotsContainer.innerHTML = '';
+            
+            const sliderItems = dados.produtos.filter(p => p.exibirSlider);
+            if(sliderItems.length === 0) {
+                container.innerHTML = '<div style="padding:30px;text-align:center;opacity:0.6;">Nenhum item marcado para o slider.</div>';
+                return;
+            }
+
+            sliderItems.forEach((p, index) => {
+                const slide = document.createElement('div');
+                slide.className = 'slide-item' + (index === 0 ? ' active-slide' : '');
+                slide.onclick = () => { abrirModal(p.id); };
+                slide.innerHTML = `
+                    <img src="${p.imagem || 'https://placehold.co/400x180/0b041c/00f2fe?text=Slider'}" alt="${p.nome}">
+                    <h4>${p.nome}</h4>
+                    <div class="desc">${p.descricao ? p.descricao.substring(0,30)+'...' : ''}</div>
+                    <div class="preco">${p.promocao && p.precoPromo ? 'R$ '+p.precoPromo : 'R$ '+p.preco}</div>
+                `;
+                container.appendChild(slide);
+
+                const dot = document.createElement('button');
+                dot.className = 'dot' + (index === 0 ? ' active-dot' : '');
+                dot.dataset.index = index;
+                dot.onclick = function() {
+                    clearInterval(sliderIntervalo);
+                    mudarSlide(parseInt(this.dataset.index));
+                    iniciarSliderLoop();
+                };
+                dotsContainer.appendChild(dot);
             });
+            slideAtual = 0;
+            iniciarSliderLoop();
+        }
+
+        function mudarSlide(index) {
+            const slides = document.querySelectorAll('#dynamicSliderContainer .slide-item');
+            const dots = document.querySelectorAll('#sliderDots .dot');
+            slides.forEach((s, i) => { s.classList.toggle('active-slide', i === index); s.style.transform = i === index ? 'scale(1)' : 'scale(0.95)'; s.style.opacity = i === index ? '1' : '0.3'; });
             dots.forEach((d, i) => d.classList.toggle('active-dot', i === index));
             slideAtual = index;
         }
-        function proximoSlide() { mudarSlide((slideAtual + 1) % 3); }
-        function iniciarSlider() { sliderIntervalo = setInterval(proximoSlide, 4000); }
-        function resetarSlider() { clearInterval(sliderIntervalo); mudarSlide(0); iniciarSlider(); }
-        document.querySelectorAll('#sliderDots .dot').forEach(dot => {
-            dot.addEventListener('click', function() {
-                clearInterval(sliderIntervalo);
-                mudarSlide(parseInt(this.getAttribute('data-index')));
-                iniciarSlider();
-            });
-        });
-        iniciarSlider();
-
-        // ==================== METEOROS ====================
-        const canvas = document.getElementById('meteorCanvas');
-        const ctx = canvas.getContext('2d');
-        let width, height, meteors = [];
-        function resizeCanvas() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
-        window.addEventListener('resize', resizeCanvas); resizeCanvas();
-        function createMeteor() {
-            return {
-                x: Math.random() * width, y: Math.random() * height - height,
-                size: Math.random() * 3 + 1, speed: Math.random() * 6 + 2,
-                angle: Math.PI / 4 + (Math.random() - 0.5) * 0.2,
-                tail: Math.random() * 40 + 20, opacity: Math.random() * 0.6 + 0.2,
-                color: `hsla(${270 + Math.random()*30}, 100%, 70%, `
-            };
+        function proximoSlide() { 
+            const total = document.querySelectorAll('#dynamicSliderContainer .slide-item').length;
+            if(total > 0) mudarSlide((slideAtual + 1) % total);
         }
-        for (let i = 0; i < 40; i++) meteors.push(createMeteor());
-        function drawMeteors() {
-            ctx.clearRect(0, 0, width, height);
-            meteors.forEach(m => {
-                m.x += Math.cos(m.angle) * m.speed;
-                m.y += Math.sin(m.angle) * m.speed;
-                const tailEndX = m.x - Math.cos(m.angle) * m.tail;
-                const tailEndY = m.y - Math.sin(m.angle) * m.tail;
-                const grad = ctx.createLinearGradient(m.x, m.y, tailEndX, tailEndY);
-                grad.addColorStop(0, `hsla(270, 100%, 80%, ${m.opacity})`);
-                grad.addColorStop(1, `hsla(270, 100%, 40%, 0)`);
-                ctx.beginPath(); ctx.moveTo(m.x, m.y); ctx.lineTo(tailEndX, tailEndY);
-                ctx.strokeStyle = grad; ctx.lineWidth = m.size * 2; ctx.lineCap = 'round'; ctx.stroke();
-                ctx.beginPath(); ctx.arc(m.x, m.y, m.size, 0, Math.PI * 2);
-                ctx.fillStyle = `hsla(270, 100%, 90%, ${m.opacity})`;
-                ctx.fill();
-                if (m.x > width + 50 || m.y > height + 50) {
-                    Object.assign(m, createMeteor()); m.x = Math.random() * width; m.y = -Math.random() * 100 - 50;
-                }
-            });
-            requestAnimationFrame(drawMeteors);
-        }
-        drawMeteors();
+        function iniciarSliderLoop() { clearInterval(sliderIntervalo); sliderIntervalo = setInterval(proximoSlide, 4000); }
+        function resetarSlider() { clearInterval(sliderIntervalo); iniciarSlider(); }
 
-        // ==================== MASCOTE COM BALÃO ====================
-        let mascoteMsgIdx = 0;
-        let mascoteMensagens = [];
+        // MASCOTE
+        let mascoteMsgIdx = 0; let mascoteMensagens = [];
         const falaContainer = document.getElementById('falaContainer');
-
         function getMensagensMascote() {
             const msgs = [];
             const promos = dados.produtos.filter(p => p.promocao);
-            if (promos.length > 0) {
-                const p = promos[Math.floor(Math.random() * promos.length)];
-                msgs.push(`Sabia que temos promoção de ${p.nome} por apenas R$ ${p.precoPromo}?`);
-            }
+            if (promos.length > 0) { const p = promos[Math.floor(Math.random() * promos.length)]; msgs.push(`Sabia que temos promoção de ${p.nome} por apenas R$ ${p.precoPromo}?`); }
             const destaques = dados.produtos.filter(p => p.destaque && !p.promocao);
-            if (destaques.length > 0) {
-                const d = destaques[Math.floor(Math.random() * destaques.length)];
-                msgs.push(`Confira nosso destaque: ${d.nome}!`);
+            if (destaques.length > 0) { const d = destaques[Math.floor(Math.random() * destaques.length)]; msgs.push(`Confira nosso destaque: ${d.nome}!`); }
+            if(dados.frases && dados.frases.length > 0) {
+                const f = dados.frases[Math.floor(Math.random() * dados.frases.length)];
+                msgs.push(f);
+            } else {
+                msgs.push('Oi, eu sou Gluudyx! ✦');
             }
-            msgs.push('Oi, eu sou Gluudyx! ✦');
-            msgs.push('Amor em cada detalhe');
-            msgs.push('Escolha seu caderno cósmico');
-            msgs.push('Feito com alma taurina');
             return msgs;
         }
-
-        function atualizarMensagensMascote() {
-            mascoteMensagens = getMensagensMascote();
-        }
-
+        function atualizarMensagensMascote() { mascoteMensagens = getMensagensMascote(); }
         function falarMascote() {
             if (mascoteMensagens.length === 0) atualizarMensagensMascote();
             const msg = mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
             mascoteMsgIdx++;
-            falaContainer.textContent = msg;
-            falaContainer.classList.add('falando');
-            setTimeout(() => {
-                falaContainer.classList.remove('falando');
-            }, 4000);
+            falaContainer.textContent = msg; falaContainer.classList.add('falando');
+            setTimeout(() => { falaContainer.classList.remove('falando'); }, 4000);
         }
-
-        setInterval(() => {
-            atualizarMensagensMascote();
-            falarMascote();
-        }, 10000);
-
+        setInterval(() => { atualizarMensagensMascote(); falarMascote(); }, 10000);
         document.getElementById('mascoteWrapper').addEventListener('click', function() {
-            this.style.animation = 'none';
-            this.offsetHeight;
-            this.style.animation = 'floatMascote 0.6s ease-in-out';
+            this.style.animation = 'none'; this.offsetHeight; this.style.animation = 'floatMascote 0.6s ease-in-out';
             falarMascote();
             setTimeout(() => { this.style.animation = 'floatMascote 6s ease-in-out infinite'; }, 600);
         });
 
-        // ==================== MAIS VENDIDOS ====================
+        // VENDIDOS
         function carregarMaisVendidos() {
-            const grid = document.getElementById('maisVendidosGrid');
-            grid.innerHTML = '';
+            const grid = document.getElementById('maisVendidosGrid'); grid.innerHTML = '';
             const top = [...dados.produtos].sort((a, b) => (b.cliques || 0) - (a.cliques || 0)).slice(0, 5);
-            if (top.length === 0) {
-                grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhum produto com cliques ainda.</p>';
-                return;
-            }
+            if (top.length === 0) { grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhum produto com cliques ainda.</p>'; return; }
             top.forEach((prod, index) => {
-                const card = document.createElement('div');
-                card.className = 'card-vendido';
-                card.onclick = () => {
-                    prod.cliques = (prod.cliques || 0) + 1;
-                    localStorage.setItem('gudyxDados', JSON.stringify(dados));
-                    navegarPara('produtos');
-                };
-                let badge = '';
-                if (index < 3) {
-                    badge = `<div class="fire-badge-mini">HOT</div>`;
-                }
-                const icon = prod.imagem ? `<img src="${prod.imagem}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:1px solid var(--vidro-borda);">` :
-                    `<div class="icon-box"><i class="fas fa-box"></i></div>`;
-                card.innerHTML = `
-                    ${badge}
-                    ${icon}
-                    <h4>${prod.nome}</h4>
-                    <div class="preco">R$ ${prod.preco}</div>
-                `;
+                const card = document.createElement('div'); card.className = 'card-vendido';
+                card.onclick = () => { abrirModal(prod.id); };
+                let badge = ''; if (index < 3) { badge = `<div class="fire-badge-mini">HOT</div>`; }
+                const icon = prod.imagem ? `<img src="${prod.imagem}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:1px solid var(--vidro-borda);">` : `<div class="icon-box"><i class="fas fa-box"></i></div>`;
+                card.innerHTML = `${badge}${icon}<h4>${prod.nome}</h4><div class="preco">R$ ${prod.preco}</div>`;
                 grid.appendChild(card);
             });
         }
 
-        // ==================== CATEGORIAS E PRODUTOS ====================
+        // CATEGORIAS
         let categoriaSelecionada = { tipo: null, id: null };
-
         function carregarCategorias(tipo) {
             const container = document.getElementById(tipo === 'produtos' ? 'produtosCategoriasContainer' : 'servicosCategoriasContainer');
             container.innerHTML = '';
             const cats = dados.categorias.filter(c => c.tipo === tipo);
-            if (cats.length === 0) {
-                container.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhuma categoria cadastrada.</p>';
-                return;
-            }
+            if (cats.length === 0) { container.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhuma categoria cadastrada.</p>'; return; }
             cats.forEach(cat => {
-                const card = document.createElement('div');
-                card.className = 'categoria-card';
-                card.innerHTML = `
-                    ${cat.imagem ? `<img src="${cat.imagem}" class="categoria-img">` : `<div style="font-size:3rem;color:var(--ciano-brilhante);"><i class="fas fa-folder"></i></div>`}
-                    <h4>${cat.nome}</h4>
-                `;
+                const card = document.createElement('div'); card.className = 'categoria-card';
+                card.innerHTML = `${cat.imagem ? `<img src="${cat.imagem}" class="categoria-img">` : `<div style="font-size:3rem;color:var(--ciano-brilhante);"><i class="fas fa-folder"></i></div>`}<h4>${cat.nome}</h4>`;
                 card.onclick = () => selecionarCategoria(tipo, cat.id);
                 container.appendChild(card);
             });
@@ -630,35 +484,18 @@
         function selecionarCategoria(tipo, catId) {
             categoriaSelecionada = { tipo, id: catId };
             const container = document.getElementById(tipo === 'produtos' ? 'produtosProdutosContainer' : 'servicosProdutosContainer');
-            container.style.display = 'grid';
-            container.innerHTML = '';
+            container.style.display = 'grid'; container.innerHTML = '';
             const prods = dados.produtos.filter(p => p.categoriaId === catId);
-            if (prods.length === 0) {
-                container.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhum item nesta categoria.</p>';
-            } else {
+            if (prods.length === 0) { container.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhum item nesta categoria.</p>'; }
+            else {
                 prods.forEach(prod => {
-                    const card = document.createElement('div');
-                    card.className = 'produto-card';
-                    card.onclick = () => {
-                        prod.cliques = (prod.cliques || 0) + 1;
-                        localStorage.setItem('gudyxDados', JSON.stringify(dados));
-                        carregarMaisVendidos();
-                    };
-                    let badges = '';
-                    if (prod.promocao) badges += `<div class="badge-promo">PROMO</div>`;
-                    if (prod.destaque) badges += `<div class="badge-destaque">DESTAQUE</div>`;
-                    
+                    const card = document.createElement('div'); card.className = 'produto-card';
+                    card.onclick = () => { abrirModal(prod.id); };
+                    let badges = ''; if (prod.promocao) badges += `<div class="badge-promo">PROMO</div>`; if (prod.destaque) badges += `<div class="badge-destaque">DESTAQUE</div>`;
                     let precoHtml = '';
                     if (prod.promocao && prod.precoPromo) {
-                        precoHtml = `
-                            <div>
-                                <span class="preco-promo">R$ ${prod.preco}</span>
-                                <span class="preco-atual">R$ ${prod.precoPromo}</span>
-                            </div>
-                        `;
-                    } else {
-                        precoHtml = `<div class="preco">R$ ${prod.preco}</div>`;
-                    }
+                        precoHtml = `<div><span class="preco-promo">R$ ${prod.preco}</span> <span class="preco-atual">R$ ${prod.precoPromo}</span></div>`;
+                    } else { precoHtml = `<div class="preco">R$ ${prod.preco}</div>`; }
                     card.innerHTML = `
                         ${badges}
                         ${prod.imagem ? `<img src="${prod.imagem}">` : `<div style="height:120px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:8px;"><i class="fas fa-image" style="font-size:2rem;opacity:0.3;"></i></div>`}
@@ -672,42 +509,30 @@
             container.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // ==================== CONTADOR DE VISITAS ====================
+        // VISITAS & TOP BUTTON
         function contarVisita() {
             if (!localStorage.getItem('gudyx_visited')) {
-                let visits = parseInt(localStorage.getItem('gudyx_visits') || '0');
-                visits++;
-                localStorage.setItem('gudyx_visits', visits.toString());
-                localStorage.setItem('gudyx_visited', 'true');
+                let visits = parseInt(localStorage.getItem('gudyx_visits') || '0'); visits++;
+                localStorage.setItem('gudyx_visits', visits.toString()); localStorage.setItem('gudyx_visited', 'true');
                 document.getElementById('visitCounter').textContent = visits;
-            } else {
-                const visits = parseInt(localStorage.getItem('gudyx_visits') || '0');
-                document.getElementById('visitCounter').textContent = visits;
-            }
+            } else { const visits = parseInt(localStorage.getItem('gudyx_visits') || '0'); document.getElementById('visitCounter').textContent = visits; }
         }
+        window.addEventListener('scroll', () => {
+            const btn = document.querySelector('.btn-top');
+            if (window.scrollY > 300) { btn.classList.add('visible'); } else { btn.classList.remove('visible'); }
+        });
 
-        // ==================== ESCUTAR MUDANÇAS ====================
+        // STORAGE LISTENER
         window.addEventListener('storage', function(e) {
-            if (e.key === 'gudyxDados') {
-                carregarDados();
-                carregarMaisVendidos();
+            if (e.key === 'gudyxDados') { carregarDados(); carregarMaisVendidos(); resetarSlider();
                 const activeScreen = document.querySelector('.screen.active');
-                if (activeScreen) {
-                    const id = activeScreen.id;
-                    if (id === 'produtosScreen') carregarCategorias('produtos');
-                    else if (id === 'servicosScreen') carregarCategorias('servicos');
-                }
+                if (activeScreen) { const id = activeScreen.id; if (id === 'produtosScreen') carregarCategorias('produtos'); else if (id === 'servicosScreen') carregarCategorias('servicos'); }
             }
         });
 
-        // ==================== INICIALIZAÇÃO ====================
-        carregarDados();
-        contarVisita();
-        carregarMaisVendidos();
-        setTimeout(() => {
-            atualizarMensagensMascote();
-            falarMascote();
-        }, 3000);
+        // INIT
+        carregarDados(); contarVisita(); carregarMaisVendidos(); resetarSlider();
+        setTimeout(() => { atualizarMensagensMascote(); falarMascote(); }, 3000);
     </script>
 </body>
 </html>
