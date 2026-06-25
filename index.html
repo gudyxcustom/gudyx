@@ -6,6 +6,7 @@
     <title>Gudyx Custom - Catálogo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* ================= ESTILOS GERAIS ================= */
         :root {
             --roxo-profundo: #0b041c;
             --roxo-meio: #1a0a33;
@@ -23,20 +24,6 @@
             --cor-sombra-balao: rgba(172,40,255,0.4);
         }
 
-        body.light-mode {
-            --roxo-profundo: #f5f0ff;
-            --roxo-meio: #e8e0f5;
-            --branco-espacial: #1a0a33;
-            --vidro-fundo: rgba(255, 255, 255, 0.65);
-            --vidro-borda: rgba(172, 40, 255, 0.2);
-            --sombra-neon: 0 0 25px rgba(172, 40, 255, 0.1);
-            --sombra-hover: 0 20px 60px rgba(0, 0, 0, 0.1);
-            --bg-body: #f5f0ff;
-            --cor-texto: #1a0a33;
-            --cor-sombra-balao: rgba(172,40,255,0.2);
-            --vidro-fundo: rgba(255, 255, 255, 0.7);
-        }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -47,16 +34,11 @@
             color: var(--cor-texto);
             -webkit-font-smoothing: antialiased;
             padding-bottom: 80px;
-            transition: background 0.4s ease, color 0.4s ease;
         }
 
         .bg-container { position: fixed; top: -20px; left: -20px; width: calc(100% + 40px); height: calc(100% + 40px); z-index: -3; background-image: url('https://i.imgur.com/UDwnKUg.png'); background-size: cover; background-position: center; background-repeat: no-repeat; filter: blur(5px); transform: scale(1.02); }
-        body.light-mode .bg-container { filter: blur(5px) opacity(0.3); }
         .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at 50% 50%, rgba(26, 10, 51, 0.4) 0%, rgba(11, 4, 28, 0.9) 100%); }
-        body.light-mode .bg-overlay { background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.8) 0%, rgba(240, 234, 255, 0.9) 100%); }
-
         #meteorCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; display: block; }
-        body.light-mode #meteorCanvas { opacity: 0.2; }
 
         .screen { display: none; min-height: 100vh; width: 100%; position: relative; animation: fadeSlideIn 0.6s ease forwards; }
         .screen.active { display: flex; }
@@ -71,28 +53,33 @@
 
         .logo-wrapper { position: relative; display: inline-block; margin-bottom: 5px; }
         .logo-img { max-height: 250px; width: auto; filter: drop-shadow(0 0 30px rgba(172, 40, 255, 0.8)) drop-shadow(0 0 60px rgba(0, 242, 254, 0.4)); position: relative; z-index: 2; }
-        body.light-mode .logo-img { filter: drop-shadow(0 0 20px rgba(172, 40, 255, 0.3)) drop-shadow(0 0 40px rgba(0, 242, 254, 0.2)); }
 
         .fala-container { position: absolute; top: 15px; right: -60px; width: 200px; background: rgba(11,4,28,0.85); backdrop-filter: blur(8px); border: 1px solid rgba(172,40,255,0.6); border-radius: 16px; padding: 10px 14px; font-size: 0.85rem; color: #f0eaff; box-shadow: 0 0 30px var(--cor-sombra-balao); pointer-events: none; opacity: 0; transition: opacity 0.4s ease, transform 0.4s ease; transform: translateX(10px); z-index: 9999; text-align: center; }
         .fala-container::before { content: ''; position: absolute; left: -12px; top: 16px; border: 6px solid transparent; border-right-color: rgba(11,4,28,0.85); border-left: 0; }
         .fala-container.falando { opacity: 1; transform: translateX(0); }
-        body.light-mode .fala-container { background: rgba(255,255,255,0.9); color: #1a0a33; border-color: rgba(172,40,255,0.3); }
-        body.light-mode .fala-container::before { border-right-color: rgba(255,255,255,0.9); }
 
         .home-screen { flex-direction: column; padding: 20px; gap: 20px; width: 100%; max-width: 1400px; margin: 0 auto; }
         .header-top { text-align: center; padding: 10px 0 5px; position: relative; display: flex; flex-direction: column; align-items: center; }
-        #themeToggle { position: absolute; top: 10px; right: 20px; background: var(--vidro-fundo); border: 1px solid var(--vidro-borda); border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--cor-texto); font-size: 1.2rem; transition: var(--transicao); z-index: 10; }
-        #themeToggle:hover { transform: scale(1.1); }
         .header-top .subtitle { font-size: clamp(1.2rem, 3vw, 1.8rem); font-weight: 500; letter-spacing: 4px; color: var(--cor-texto); text-shadow: 0 0 15px rgba(172, 40, 255, 0.8); margin-top: 5px; }
         .header-top .slogan { font-size: clamp(1rem, 2vw, 1.3rem); font-weight: 300; opacity: 0.9; font-style: italic; letter-spacing: 2px; color: var(--cor-texto); text-shadow: 0 0 10px rgba(172, 40, 255, 0.6); margin-top: 2px; }
 
         .main-area { display: flex; align-items: flex-start; justify-content: center; gap: 10px; flex: 1; flex-wrap: wrap; padding: 10px 0; }
         .mascote-block { display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; flex: 0 0 420px; margin-left: 30px; }
-        .mascote-wrapper { position: relative; animation: floatMascote 6s ease-in-out infinite; cursor: pointer; }
-        .mascote-wrapper:hover { transform: scale(1.05); }
-        .mascote-wrapper img { width: clamp(220px, 35vw, 380px); height: auto; display: block; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.7)); border-radius: 50%; }
+        .mascote-wrapper { position: relative; animation: floatMascote 6s ease-in-out infinite; cursor: pointer; transition: transform 0.3s; }
+        .mascote-wrapper img { width: clamp(220px, 35vw, 380px); height: auto; display: block; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.7)); border-radius: 50%; transition: transform 0.3s; }
         .mascote-wrapper:hover img { filter: drop-shadow(0 0 50px rgba(172,40,255,0.8)); }
+        
+        /* Efeitos de irritação do mascote */
+        .mascote-wrapper.irritado-1 img { transform: rotate(-5deg) scale(0.95); filter: drop-shadow(0 0 30px rgba(255, 68, 68, 0.6)); transition: 0.2s; }
+        .mascote-wrapper.irritado-2 img { transform: rotate(10deg) scale(0.9); filter: drop-shadow(0 0 50px rgba(255, 0, 0, 0.8)); transition: 0.2s; }
+        .mascote-wrapper.fugindo { animation: fugaMascote 0.8s ease forwards; }
+        @keyframes fugaMascote { 0% { transform: translateX(0) scale(1); opacity: 1; } 50% { transform: translateX(100px) scale(1.2) rotate(20deg); opacity: 1; } 100% { transform: translateX(300px) scale(0.5) rotate(40deg); opacity: 0; } }
+        .mascote-wrapper.voltando { animation: voltaMascote 0.6s ease forwards; }
+        @keyframes voltaMascote { 0% { transform: translateX(300px) scale(0.5) rotate(40deg); opacity: 0; } 100% { transform: translateX(0) scale(1) rotate(0); opacity: 1; } }
+
         .mascote-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, rgba(172,40,255,0.4) 0%, transparent 70%); z-index: -1; animation: pulseGlow 3s ease-in-out infinite; pointer-events: none; }
+        .mascote-wrapper.irritado-1 .mascote-glow { background: radial-gradient(circle, rgba(255,68,68,0.4) 0%, transparent 70%); }
+        .mascote-wrapper.irritado-2 .mascote-glow { background: radial-gradient(circle, rgba(255,0,0,0.6) 0%, transparent 70%); }
 
         .btn-acessar { padding: 22px 60px; font-size: 1.4rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a028ff 0%, var(--ciano-brilhante) 100%); border: none; border-radius: 60px; cursor: pointer; transition: var(--transicao); box-shadow: 0 8px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
         .btn-acessar::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.15), transparent); animation: rotateGlow 6s linear infinite; }
@@ -123,7 +110,6 @@
         .card-vendido .fire-badge-mini { position: absolute; top: -8px; left: -8px; background: rgba(122, 0, 255, 0.4); backdrop-filter: blur(8px); color: #fff; padding: 2px 12px; border-radius: 20px; font-weight: 800; font-size: 0.7rem; letter-spacing: 1px; text-transform: uppercase; z-index: 2; animation: fireGlow 0.8s ease-in-out infinite alternate; box-shadow: 0 0 15px rgba(172,40,255,0.6); border: 1px solid rgba(255,255,255,0.2); text-shadow: 0 0 10px rgba(255,255,255,0.3); }
 
         .listagem-screen { flex-direction: column; align-items: center; padding: 30px 20px; gap: 20px; overflow-y: auto; background: rgba(11,4,28,0.6); }
-        body.light-mode .listagem-screen { background: rgba(255,255,255,0.4); }
         .listagem-header { display: flex; align-items: center; gap: 15px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1100px; }
         .listagem-header h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); letter-spacing: 4px; text-shadow: 0 0 30px rgba(172,40,255,0.5); flex: 1; text-align: center; font-weight: 300; }
         .search-box { display: flex; gap: 10px; width: 100%; max-width: 400px; margin: 10px auto; align-items: center; background: var(--vidro-fundo); border: 1px solid var(--vidro-borda); border-radius: 30px; padding: 5px 15px; backdrop-filter: blur(8px); }
@@ -132,8 +118,6 @@
         .search-box input::placeholder { color: var(--cor-texto); opacity: 0.5; }
         .btn-voltar { padding: 10px 28px; font-size: 0.9rem; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 30px; cursor: pointer; transition: var(--transicao); color: #fff; }
         .btn-voltar:hover { border-color: var(--ciano-brilhante); background: rgba(0,242,254,0.1); }
-        body.light-mode .btn-voltar { color: #1a0a33; background: rgba(0,0,0,0.05); }
-        body.light-mode .btn-voltar:hover { background: rgba(172,40,255,0.1); }
 
         .grid-categorias { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; width: 100%; max-width: 1100px; }
         .categoria-card { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; padding: 25px 20px; text-align: center; transition: var(--transicao); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 12px; }
@@ -154,16 +138,13 @@
         .produto-card .preco-promo { font-weight: 700; color: var(--rosa-neon); font-size: 1rem; text-decoration: line-through; margin-right: 5px; }
         .produto-card .preco-atual { font-weight: 700; color: var(--amarelo-neon); font-size: 1rem; }
 
-        /* BOTÃO ADICIONAR AO CARRINHO */
         .btn-add-cart { display: inline-block; margin-top: 8px; padding: 8px 16px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; border-radius: 20px; border: none; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: var(--transicao); }
         .btn-add-cart:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(172,40,255,0.4); }
         .btn-add-cart:disabled { background: #555; cursor: not-allowed; transform: none; }
 
-        /* BOTÃO WHATSAPP NOS CARDS (para compra direta) */
         .btn-wa-card { display: inline-block; margin-top: 8px; padding: 8px 16px; background: #25D366; color: #fff; border-radius: 20px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: var(--transicao); border: none; cursor: pointer; margin-left: 5px; }
         .btn-wa-card:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(37, 211, 102, 0.4); }
 
-        /* MODAL GALERIA */
         #productModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); z-index: 99999; display: none; justify-content: center; align-items: center; padding: 20px; }
         #productModal.active { display: flex; }
         .modal-box { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 24px; max-width: 600px; width: 100%; padding: 30px; position: relative; box-shadow: 0 0 60px rgba(172,40,255,0.5); max-height: 90vh; overflow-y: auto; }
@@ -176,7 +157,6 @@
         .modal-box .modal-price { font-size: 1.6rem; font-weight: 700; color: var(--amarelo-neon); }
         .modal-box .modal-price-old { color: var(--rosa-neon); text-decoration: line-through; font-size: 1.2rem; margin-right: 10px; }
         
-        /* QUANTIDADE NO MODAL */
         .quantidade-container { display: flex; align-items: center; gap: 15px; margin: 15px 0; }
         .quantidade-container label { font-weight: 600; font-size: 1rem; }
         .qtd-control { display: flex; align-items: center; gap: 10px; }
@@ -193,13 +173,11 @@
 
         .modal-box .stock-status { margin-top: 5px; font-size: 0.9rem; opacity: 0.8; }
 
-        /* ============ CARRINHO LATERAL (DRAWER) ============ */
         #cartDrawerOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 99999; display: none; opacity: 0; transition: opacity 0.4s ease; }
         #cartDrawerOverlay.active { display: block; opacity: 1; }
 
         #cartDrawer { position: fixed; top: 0; right: -420px; width: 400px; max-width: 90vw; height: 100vh; background: var(--vidro-fundo); backdrop-filter: blur(16px); border-left: 1px solid var(--vidro-borda); z-index: 100000; transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.6); }
         #cartDrawer.open { right: 0; }
-        body.light-mode #cartDrawer { background: rgba(255,255,255,0.92); }
 
         .cart-drawer-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; border-bottom: 1px solid var(--vidro-borda); }
         .cart-drawer-header h3 { font-size: 1.4rem; font-weight: 600; }
@@ -229,7 +207,6 @@
         .cart-drawer-footer .cart-actions .btn-clear-cart { padding: 12px 20px; background: #ff4455; color: #fff; border-radius: 50px; font-weight: 700; border: none; cursor: pointer; transition: var(--transicao); font-size: 1rem; flex: 0.5; text-align: center; }
         .cart-drawer-footer .cart-actions .btn-clear-cart:hover { transform: scale(1.05); }
 
-        /* CARRINHO FLUTUANTE (botão para abrir o drawer) */
         .float-cart { position: fixed; bottom: 30px; right: 20px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 9998; cursor: pointer; transition: var(--transicao); }
         .float-cart:hover { transform: scale(1.1); }
         .cart-badge { position: absolute; top: -5px; right: -5px; background: #ff4455; color: #fff; border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; font-weight: 700; }
@@ -239,7 +216,6 @@
         .btn-top:hover { background: rgba(172,40,255,0.8); }
 
         .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(11, 4, 28, 0.8); backdrop-filter: blur(8px); border-top: 1px solid var(--vidro-borda); padding: 8px 20px; text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.5); z-index: 10; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
-        body.light-mode .footer { background: rgba(255,255,255,0.8); color: #1a0a33; }
         .footer .visit-counter { color: var(--ciano-brilhante); font-weight: 600; }
 
         @media (max-width: 900px) {
@@ -289,7 +265,6 @@
             <p id="modalDesc" class="modal-desc">Descrição</p>
             <div id="modalPriceContainer"></div>
             
-            <!-- QUANTIDADE NO MODAL -->
             <div class="quantidade-container">
                 <label>Quantidade:</label>
                 <div class="qtd-control">
@@ -342,7 +317,6 @@
     <div class="screen active" id="homeScreen">
         <div class="home-screen">
             <div class="header-top">
-                <div id="themeToggle" onclick="toggleTheme()"><i class="fas fa-moon"></i></div>
                 <div class="logo-wrapper">
                     <img src="https://i.imgur.com/uvur0Sy.png" alt="Gudyx" class="logo-img">
                 </div>
@@ -355,7 +329,7 @@
                     <div class="mascote-wrapper" id="mascoteWrapper">
                         <div class="mascote-glow"></div>
                         <img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx" id="mascoteImg">
-                        <div class="fala-container" id="falaContainer">Olá, eu sou o Gluudyx!</div>
+                        <div class="fala-container" id="falaContainer">Olá, sou o Gluudyx! ✨</div>
                     </div>
                     <button class="btn-acessar" onclick="abrirCatalogo()"><span>Acessar Catálogo</span></button>
                 </div>
@@ -441,6 +415,13 @@
         let quantidadeModal = 1;
         let produtoModalAtual = null;
 
+        // ================= CONTROLE DE IRRITAÇÃO DO MASCOTE =================
+        let cliqueCount = 0;
+        let ultimoCliqueTime = 0;
+        let estaFugindo = false;
+        let estaVoltando = false;
+        let timeoutIrritacao = null;
+
         function carregarDados() {
             if (localStorage.getItem('gudyxDados')) {
                 try {
@@ -468,7 +449,6 @@
                 localStorage.setItem('gudyxDados', JSON.stringify(dados));
             }
 
-            // Carrega carrinho com validação de 24h
             carregarCarrinho();
         }
 
@@ -478,13 +458,11 @@
 
         // ================= CARRINHO COM VALIDADE 24H + SESSION =================
         function carregarCarrinho() {
-            // Tenta carregar do sessionStorage (zera ao fechar o navegador)
             let sessionCart = sessionStorage.getItem('gudyxCarrinho');
             
             if (sessionCart) {
                 try {
                     const data = JSON.parse(sessionCart);
-                    // Verifica se passou 24h
                     if (data.timestamp && (Date.now() - data.timestamp) < 24 * 60 * 60 * 1000) {
                         carrinho = data.items || [];
                     } else {
@@ -498,7 +476,6 @@
                 carrinho = [];
             }
 
-            // Se o carrinho estiver vazio, tenta do localStorage (fallback)
             if (carrinho.length === 0) {
                 let localCart = localStorage.getItem('gudyxCarrinho');
                 if (localCart) {
@@ -506,7 +483,6 @@
                         const data = JSON.parse(localCart);
                         if (data.timestamp && (Date.now() - data.timestamp) < 24 * 60 * 60 * 1000) {
                             carrinho = data.items || [];
-                            // Salva no sessionStorage para manter
                             sessionStorage.setItem('gudyxCarrinho', JSON.stringify({ items: carrinho, timestamp: Date.now() }));
                         } else {
                             localStorage.removeItem('gudyxCarrinho');
@@ -522,12 +498,10 @@
         }
 
         function salvarCarrinho() {
-            // Salva no sessionStorage (zera ao fechar o navegador)
             sessionStorage.setItem('gudyxCarrinho', JSON.stringify({ 
                 items: carrinho, 
                 timestamp: Date.now() 
             }));
-            // Também salva no localStorage (fallback, mas com timestamp)
             localStorage.setItem('gudyxCarrinho', JSON.stringify({ 
                 items: carrinho, 
                 timestamp: Date.now() 
@@ -541,23 +515,6 @@
         function voltarParaHome() { mostrarTela('homeScreen'); resetarSlider(); carregarMaisVendidos(); }
         function voltarParaEscolha() { mostrarTela('escolhaScreen'); }
         function navegarPara(destino) { if (destino === 'servicos') { mostrarTela('servicosScreen'); carregarCategorias('servicos'); } else if (destino === 'produtos') { mostrarTela('produtosScreen'); carregarCategorias('produtos'); } }
-
-        // ================= MODO CLARO/ESCURO =================
-        function toggleTheme() {
-            document.body.classList.toggle('light-mode');
-            const icon = document.querySelector('#themeToggle i');
-            if(document.body.classList.contains('light-mode')) {
-                icon.className = 'fas fa-sun';
-                localStorage.setItem('gudyx_theme', 'light');
-            } else {
-                icon.className = 'fas fa-moon';
-                localStorage.setItem('gudyx_theme', 'dark');
-            }
-        }
-        if(localStorage.getItem('gudyx_theme') === 'light') {
-            document.body.classList.add('light-mode');
-            document.querySelector('#themeToggle i').className = 'fas fa-sun';
-        }
 
         // ================= METEOROS =================
         const canvas = document.getElementById('meteorCanvas');
@@ -622,14 +579,12 @@
             } else { priceHtml = `<span class="modal-price">R$ ${prod.preco}</span>`; }
             document.getElementById('modalPriceContainer').innerHTML = priceHtml;
 
-            // Galeria
             const gallery = document.getElementById('modalGallery'); gallery.innerHTML = '';
             const imagens = prod.imagens && Array.isArray(prod.imagens) && prod.imagens.length > 0 ? prod.imagens : [prod.imagem || 'https://placehold.co/400x250/0b041c/00f2fe?text=Sem+Imagem'];
             imagens.forEach(img => {
                 const imgEl = document.createElement('img'); imgEl.src = img; gallery.appendChild(imgEl);
             });
 
-            // Botões
             const modalCartBtn = document.getElementById('modalAddCartBtn');
             const modalWaBtn = document.getElementById('modalWaBtn');
             const stockSpan = document.getElementById('modalStockStatus');
@@ -677,7 +632,6 @@
             }
             salvarCarrinho();
             
-            // Feedback visual
             const el = document.querySelector(`.produto-card[data-id="${prodId}"] .btn-add-cart`);
             if(el) { el.textContent = '✓ Adicionado!'; setTimeout(() => el.textContent = 'Adicionar', 2000); }
         }
@@ -797,11 +751,6 @@
             
             const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
-            
-            // Opcional: limpar carrinho após enviar
-            // carrinho = [];
-            // salvarCarrinho();
-            // fecharDrawer();
         }
 
         function comprarWhatsAppModal() {
@@ -859,33 +808,166 @@
         function iniciarSliderLoop() { clearInterval(sliderIntervalo); sliderIntervalo = setInterval(proximoSlide, 4000); }
         function resetarSlider() { clearInterval(sliderIntervalo); iniciarSlider(); }
 
-        // ================= MASCOTE =================
-        let mascoteMsgIdx = 0; let mascoteMensagens = [];
+        // ================= MASCOTE COM PERSONALIDADE =================
+        let mascoteMsgIdx = 0;
+        let mascoteMensagens = [];
         const falaContainer = document.getElementById('falaContainer');
+        const mascoteWrapper = document.getElementById('mascoteWrapper');
+
+        // Piadas e frases engraçadas do Gluudyx
+        const piadas = [
+            "Por que o caderno foi ao médico? Porque estava com febre de 39,9! 📓🤒",
+            "Qual o doce favorito do Gluudyx? Pé de moleque! Porque ele é grudento! 🍬",
+            "Você sabia que eu sou feito de cola? Por isso sou tão apegado a você! 🥰",
+            "O que o lápis disse para a borracha? 'Você apaga meus erros, mas não apaga meu amor!' ✏️💕",
+            "Por que a caneta não gostou do papel? Porque ele era muito riscado! 🖊️📄",
+            "Qual a fruta preferida do Gluudyx? A uva! Porque ela é 'uva' piada! 🍇😂",
+            "Eu sou como um imã... atraio boas energias e clientes! 🧲✨",
+            "Se você me der um clique, eu te dou um sorriso! 😄",
+            "Meu sonho é ser um papel de parede... para ficar colado em você! 🖼️💖",
+            "Você é mais doce que um caderno de receitas! 🍪📔"
+        ];
+
+        // Frases de irritação (níveis)
+        const frasesIrritacao = [
+            "Para com isso! 😤 Você tá me deixando nervoso!",
+            "Gluudyx está bravo com você! 😡 Agora vai ter que me pedir desculpas!",
+            "JÁ CHEGA! VOU EMBORA! 🚀 Até nunca mais! (brincadeira... tô voltando 😜)"
+        ];
+
         function getMensagensMascote() {
             const msgs = [];
+            
+            // 1. Produtos em promoção
             const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p));
-            if (promos.length > 0) { const p = promos[Math.floor(Math.random() * promos.length)]; msgs.push(`Sabia que temos promoção de ${p.nome} por apenas R$ ${p.precoPromo}?`); }
-            const destaques = dados.produtos.filter(p => p.destaque && !isPromoActive(p) && isEmEstoque(p));
-            if (destaques.length > 0) { const d = destaques[Math.floor(Math.random() * destaques.length)]; msgs.push(`Confira nosso destaque: ${d.nome}!`); }
-            if(dados.frases && dados.frases.length > 0) { const f = dados.frases[Math.floor(Math.random() * dados.frases.length)]; msgs.push(f); }
-            else { msgs.push('Oi, eu sou Gluudyx! ✦'); }
+            if (promos.length > 0) {
+                const p = promos[Math.floor(Math.random() * promos.length)];
+                msgs.push(`🔥 ${p.nome} está em promoção por apenas R$ ${p.precoPromo}! Corre que o estoque não espera!`);
+            }
+
+            // 2. Produtos mais acessados (top 3)
+            const top = [...dados.produtos].sort((a, b) => (b.cliques || 0) - (a.cliques || 0)).slice(0, 3);
+            if (top.length > 0 && top[0].cliques > 0) {
+                const p = top[Math.floor(Math.random() * top.length)];
+                msgs.push(`🏆 ${p.nome} é o produto mais acessado do momento! Já conferiu?`);
+            }
+
+            // 3. Piadas e frases engraçadas (sempre coloca algumas)
+            const piada = piadas[Math.floor(Math.random() * piadas.length)];
+            msgs.push(piada);
+
+            // 4. Se não tiver nada, mensagem padrão
+            if (msgs.length === 0) {
+                msgs.push('Olá, sou o Gluudyx! Explore nosso catálogo. ✨');
+            }
+
             return msgs;
         }
-        function atualizarMensagensMascote() { mascoteMensagens = getMensagensMascote(); }
-        function falarMascote() {
+
+        function atualizarMensagensMascote() {
+            mascoteMensagens = getMensagensMascote();
+        }
+
+        function falarMascote(msgPersonalizada = null) {
+            if (estaFugindo || estaVoltando) return;
+            
             if (mascoteMensagens.length === 0) atualizarMensagensMascote();
-            const msg = mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
+            const msg = msgPersonalizada || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
             mascoteMsgIdx++;
-            falaContainer.textContent = msg; falaContainer.classList.add('falando');
+            falaContainer.textContent = msg;
+            falaContainer.classList.add('falando');
             setTimeout(() => { falaContainer.classList.remove('falando'); }, 4000);
         }
-        setInterval(() => { atualizarMensagensMascote(); falarMascote(); }, 10000);
-        document.getElementById('mascoteWrapper').addEventListener('click', function() {
-            this.style.animation = 'none'; this.offsetHeight; this.style.animation = 'floatMascote 0.6s ease-in-out';
-            falarMascote();
-            setTimeout(() => { this.style.animation = 'floatMascote 6s ease-in-out infinite'; }, 600);
-        });
+
+        // Sistema de cliques e irritação
+        function lidarComCliqueMascote() {
+            if (estaFugindo || estaVoltando) return;
+
+            const agora = Date.now();
+            const intervalo = 2000; // 2 segundos entre cliques para contar como "sequência"
+            
+            // Se passou mais de 2 segundos desde o último clique, reseta a contagem
+            if (agora - ultimoCliqueTime > intervalo) {
+                cliqueCount = 0;
+            }
+            
+            cliqueCount++;
+            ultimoCliqueTime = agora;
+            
+            // Limpa timeout anterior se existir
+            if (timeoutIrritacao) {
+                clearTimeout(timeoutIrritacao);
+                timeoutIrritacao = null;
+            }
+
+            // Níveis de irritação
+            if (cliqueCount === 1) {
+                // Primeiro clique: fala normal ou piada
+                const random = Math.random();
+                if (random < 0.3) {
+                    falarMascote('Opa! Clicou em mim? Que honra! 😊');
+                } else if (random < 0.6) {
+                    falarMascote('Você é fofo(a) de ficar me clicando! 🥰');
+                } else {
+                    falarMascote(piadas[Math.floor(Math.random() * piadas.length)]);
+                }
+                mascoteWrapper.classList.remove('irritado-1', 'irritado-2');
+            } 
+            else if (cliqueCount === 2) {
+                // Segundo clique: irritação nível 1
+                mascoteWrapper.classList.add('irritado-1');
+                mascoteWrapper.classList.remove('irritado-2');
+                falarMascote('Para com isso! 😤 Você tá me deixando nervoso!');
+            }
+            else if (cliqueCount === 3) {
+                // Terceiro clique: irritação nível 2
+                mascoteWrapper.classList.remove('irritado-1');
+                mascoteWrapper.classList.add('irritado-2');
+                falarMascote('Gluudyx está bravo com você! 😡 Agora vai ter que me pedir desculpas!');
+            }
+            else if (cliqueCount >= 4) {
+                // Quarto clique ou mais: FUGA!
+                mascoteWrapper.classList.remove('irritado-1', 'irritado-2');
+                estaFugindo = true;
+                mascoteWrapper.classList.add('fugindo');
+                falarMascote('JÁ CHEGA! VOU EMBORA! 🚀 Até nunca mais! (brincadeira... tô voltando 😜)');
+                
+                // Volta depois de 3 segundos
+                setTimeout(() => {
+                    mascoteWrapper.classList.remove('fugindo');
+                    mascoteWrapper.classList.add('voltando');
+                    estaFugindo = false;
+                    estaVoltando = true;
+                    
+                    setTimeout(() => {
+                        mascoteWrapper.classList.remove('voltando');
+                        estaVoltando = false;
+                        cliqueCount = 0;
+                        falarMascote('Ufa! Que susto! Voltei... mas não me irrita mais, tá? 😅');
+                    }, 600);
+                }, 3000);
+                
+                return; // Para a execução aqui
+            }
+
+            // Reseta o estado de irritação depois de 5 segundos sem cliques
+            timeoutIrritacao = setTimeout(() => {
+                cliqueCount = 0;
+                mascoteWrapper.classList.remove('irritado-1', 'irritado-2');
+                timeoutIrritacao = null;
+            }, 5000);
+        }
+
+        // Configura o evento de clique no mascote
+        mascoteWrapper.addEventListener('click', lidarComCliqueMascote);
+
+        // Inicia o intervalo automático de fala
+        setInterval(() => {
+            if (!estaFugindo && !estaVoltando) {
+                atualizarMensagensMascote();
+                falarMascote();
+            }
+        }, 12000);
 
         // ================= VENDIDOS =================
         function carregarMaisVendidos() {
@@ -939,7 +1021,6 @@
                     if (promoAtiva && prod.precoPromo) { precoHtml = `<div><span class="preco-promo">R$ ${prod.preco}</span> <span class="preco-atual">R$ ${prod.precoPromo}</span></div>`; } 
                     else { precoHtml = `<div class="preco">R$ ${prod.preco}</div>`; }
                     
-                    // Botões
                     const btnAdd = estoqueOk ? 
                         `<button class="btn-add-cart" onclick="addToCart(${prod.id})"><i class="fas fa-cart-plus"></i> Adicionar</button>` : 
                         `<button class="btn-add-cart" disabled>Esgotado</button>`;
