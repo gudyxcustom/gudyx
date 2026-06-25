@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Gudyx Custom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0b041c;
+            color: #f0eaff;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .admin-container {
+            background: rgba(11, 4, 28, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(172, 40, 255, 0.3);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 700px;
+            width: 100%;
+        }
+        h1 { text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
+        label { display: block; margin: 10px 0 5px; font-size: 0.9rem; opacity: 0.8; }
+        input, select, textarea {
+            width: 100%; padding: 10px; border-radius: 10px;
+            border: 1px solid rgba(172, 40, 255, 0.3);
+            background: rgba(255,255,255,0.05);
+            color: #fff; font-size: 0.95rem; margin-bottom: 10px;
+        }
+        input[type="file"] { padding: 5px; }
+        .checkbox-group { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; }
+        .checkbox-group label { margin: 0; display: flex; align-items: center; gap: 5px; }
+        .checkbox-group input[type="checkbox"] { width: auto; margin: 0; }
+        button {
+            padding: 10px 20px; border: none; border-radius: 30px;
+            background: linear-gradient(135deg, #a028ff, #00f2fe);
+            color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s;
+            margin-right: 10px;
+        }
+        button:hover { transform: scale(1.05); }
+        .btn-danger { background: #ff4455; }
+        .btn-danger:hover { background: #cc1122; }
+        .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
+        .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .admin-item-list .item button { padding: 4px 12px; font-size: 0.8rem; background: #ff4455; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tabs button { flex: 1; background: rgba(255,255,255,0.1); }
+        .tabs button.active { background: linear-gradient(135deg, #a028ff, #00f2fe); }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: #00f2fe; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <h1>⚙️ Painel Admin Gudyx</h1>
+        <div class="tabs">
+            <button onclick="abrirAba('categorias')" id="tabCategorias" class="active">Categorias</button>
+            <button onclick="abrirAba('produtos')" id="tabProdutos">Itens</button>
+        </div>
+
+        <!-- ABA CATEGORIAS -->
+        <div id="abaCategorias">
+            <h3>Adicionar Categoria</h3>
+            <label>Tipo</label>
+            <select id="catTipo">
+                <option value="produtos">Produtos</option>
+                <option value="servicos">Serviços</option>
+            </select>
+            <label>Nome da categoria</label>
+            <input type="text" id="catNome" placeholder="Ex: Caixas Personalizadas">
+            <label>Imagem (opcional)</label>
+            <input type="file" id="catImg" accept="image/*">
+            <button onclick="adicionarCategoria()">Adicionar</button>
+            <div class="admin-item-list" id="listaCategorias"></div>
+        </div>
+
+        <!-- ABA ITENS -->
+        <div id="abaProdutos" style="display:none;">
+            <h3>Adicionar Item (Produto/Serviço)</h3>
+            <label>Tipo</label>
+            <select id="prodTipo" onchange="atualizarSelectCategorias()">
+                <option value="produtos">Produtos</option>
+                <option value="servicos">Serviços</option>
+            </select>
+            <label>Categoria</label>
+            <select id="prodCategoria"></select>
+            <label>Nome</label>
+            <input type="text" id="prodNome" placeholder="Ex: Caixa Média">
+            <label>Preço (R$)</label>
+            <input type="text" id="prodPreco" placeholder="Ex: 29,90">
+            <label>Imagem (opcional)</label>
+            <input type="file" id="prodImg" accept="image/*">
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="prodPromocao"> Em Promoção</label>
+                <label><input type="checkbox" id="prodDestaque"> Destaque</label>
+            </div>
+            <button onclick="adicionarProduto()">Adicionar</button>
+            <div class="admin-item-list" id="listaProdutos"></div>
+        </div>
+
+        <button class="btn-danger" onclick="limparDados()" style="margin-top:20px;">Limpar todos os dados</button>
+        <a href="index.html" class="back-link">← Voltar para o site</a>
+    </div>
+
+    <script>
+        // ==================== DADOS ====================
+        let dados = { categorias: [], produtos: [] };
+
+        function carregarDados() {
+            if (localStorage.getItem('gudyxDados')) {
+                try {
+                    dados = JSON.parse(localStorage.getItem('gudyxDados'));
+                } catch(e) {
+                    dados = { categorias: [], produtos: [] };
+                }
+            } else {
+                dados = {
+                    categorias: [
+                        { id: 1, tipo: 'produtos', nome: 'Caixas Personalizadas', imagem: '' },
+                        { id: 2, tipo: 'produtos', nome: 'Imã de Geladeira', imagem: '' },
+                        { id: 3, tipo: 'produtos', nome: 'Plastificação', imagem: '' },
+                        { id: 4, tipo: 'produtos', nome: 'Lembrancinhas', imagem: '' },
+                        { id: 5, tipo: 'produtos', nome: 'Display de Mesa', imagem: '' },
+                        { id: 6, tipo: 'produtos', nome: 'Cards', imagem: '' },
+                        { id: 7, tipo: 'produtos', nome: 'Cartão de Visita', imagem: '' },
+                        { id: 8, tipo: 'produtos', nome: 'Fotos', imagem: '' },
+                        { id: 9, tipo: 'servicos', nome: 'Impressão Digital', imagem: '' },
+                        { id: 10, tipo: 'servicos', nome: 'Encadernação', imagem: '' },
+                        { id: 11, tipo: 'servicos', nome: 'Criação de Arte', imagem: '' }
+                    ],
+                    produtos: []
+                };
+                localStorage.setItem('gudyxDados', JSON.stringify(dados));
+            }
+        }
+
+        function salvarDados() {
+            localStorage.setItem('gudyxDados', JSON.stringify(dados));
+        }
+
+        // ==================== NAVEGAÇÃO ABAS ====================
+        function abrirAba(aba) {
+            document.getElementById('abaCategorias').style.display = aba === 'categorias' ? 'block' : 'none';
+            document.getElementById('abaProdutos').style.display = aba === 'produtos' ? 'block' : 'none';
+            document.getElementById('tabCategorias').classList.toggle('active', aba === 'categorias');
+            document.getElementById('tabProdutos').classList.toggle('active', aba === 'produtos');
+            if (aba === 'produtos') atualizarSelectCategorias();
+        }
+
+        // ==================== CATEGORIAS ====================
+        function adicionarCategoria() {
+            const tipo = document.getElementById('catTipo').value;
+            const nome = document.getElementById('catNome').value.trim();
+            if (!nome) { alert('Digite o nome da categoria.'); return; }
+            const fileInput = document.getElementById('catImg');
+            let imagem = '';
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagem = e.target.result;
+                    const nova = { id: Date.now(), tipo, nome, imagem };
+                    dados.categorias.push(nova);
+                    salvarDados();
+                    document.getElementById('catNome').value = '';
+                    fileInput.value = '';
+                    atualizarListaCategorias();
+                    atualizarSelectCategorias();
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                const nova = { id: Date.now(), tipo, nome, imagem: '' };
+                dados.categorias.push(nova);
+                salvarDados();
+                document.getElementById('catNome').value = '';
+                atualizarListaCategorias();
+                atualizarSelectCategorias();
+            }
+        }
+
+        function removerCategoria(id) {
+            if (!confirm('Remover esta categoria e todos os itens vinculados?')) return;
+            dados.categorias = dados.categorias.filter(c => c.id !== id);
+            dados.produtos = dados.produtos.filter(p => p.categoriaId !== id);
+            salvarDados();
+            atualizarListaCategorias();
+            atualizarSelectCategorias();
+        }
+
+        function atualizarListaCategorias() {
+            const lista = document.getElementById('listaCategorias');
+            lista.innerHTML = '';
+            dados.categorias.forEach(cat => {
+                const item = document.createElement('div');
+                item.className = 'item';
+                item.innerHTML = `
+                    <span>[${cat.tipo}] ${cat.nome} ${cat.imagem ? '🖼️' : ''}</span>
+                    <button onclick="removerCategoria(${cat.id})">Remover</button>
+                `;
+                lista.appendChild(item);
+            });
+        }
+
+        // ==================== ITENS ====================
+        function adicionarProduto() {
+            const tipo = document.getElementById('prodTipo').value;
+            const catId = parseInt(document.getElementById('prodCategoria').value);
+            const nome = document.getElementById('prodNome').value.trim();
+            const preco = document.getElementById('prodPreco').value.trim();
+            const promocao = document.getElementById('prodPromocao').checked;
+            const destaque = document.getElementById('prodDestaque').checked;
+            if (!catId || !nome || !preco) { alert('Preencha todos os campos.'); return; }
+            const fileInput = document.getElementById('prodImg');
+            let imagem = '';
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagem = e.target.result;
+                    const novo = { id: Date.now(), categoriaId: catId, nome, preco, imagem, promocao, destaque, cliques: 0 };
+                    dados.produtos.push(novo);
+                    salvarDados();
+                    document.getElementById('prodNome').value = '';
+                    document.getElementById('prodPreco').value = '';
+                    fileInput.value = '';
+                    document.getElementById('prodPromocao').checked = false;
+                    document.getElementById('prodDestaque').checked = false;
+                    atualizarListaProdutos();
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                const novo = { id: Date.now(), categoriaId: catId, nome, preco, imagem: '', promocao, destaque, cliques: 0 };
+                dados.produtos.push(novo);
+                salvarDados();
+                document.getElementById('prodNome').value = '';
+                document.getElementById('prodPreco').value = '';
+                document.getElementById('prodPromocao').checked = false;
+                document.getElementById('prodDestaque').checked = false;
+                atualizarListaProdutos();
+            }
+        }
+
+        function removerProduto(id) {
+            if (!confirm('Remover este item?')) return;
+            dados.produtos = dados.produtos.filter(p => p.id !== id);
+            salvarDados();
+            atualizarListaProdutos();
+        }
+
+        function atualizarSelectCategorias() {
+            const tipo = document.getElementById('prodTipo').value;
+            const select = document.getElementById('prodCategoria');
+            select.innerHTML = '';
+            const cats = dados.categorias.filter(c => c.tipo === tipo);
+            cats.forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat.id;
+                opt.textContent = cat.nome;
+                select.appendChild(opt);
+            });
+        }
+
+        function atualizarListaProdutos() {
+            const lista = document.getElementById('listaProdutos');
+            lista.innerHTML = '';
+            dados.produtos.forEach(prod => {
+                const cat = dados.categorias.find(c => c.id === prod.categoriaId);
+                const item = document.createElement('div');
+                item.className = 'item';
+                item.innerHTML = `
+                    <span>${cat ? cat.nome : '?'} → ${prod.nome} (R$ ${prod.preco}) ${prod.promocao ? '🔥' : ''} ${prod.destaque ? '⭐' : ''} ${prod.imagem ? '🖼️' : ''}</span>
+                    <button onclick="removerProduto(${prod.id})">Remover</button>
+                `;
+                lista.appendChild(item);
+            });
+        }
+
+        function limparDados() {
+            if (!confirm('Isso apagará TODOS os dados. Continuar?')) return;
+            dados = { categorias: [], produtos: [] };
+            salvarDados();
+            atualizarListaCategorias();
+            atualizarSelectCategorias();
+            atualizarListaProdutos();
+        }
+
+        // ==================== INICIALIZAÇÃO ====================
+        carregarDados();
+        atualizarListaCategorias();
+        atualizarSelectCategorias();
+        atualizarListaProdutos();
+    </script>
+</body>
+</html>
