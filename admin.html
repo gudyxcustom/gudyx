@@ -67,7 +67,6 @@
             <button onclick="abrirAba('produtos')" id="tabProdutos">Itens</button>
         </div>
 
-        <!-- ABA CATEGORIAS -->
         <div id="abaCategorias">
             <h3>Adicionar Categoria</h3>
             <label>Tipo</label>
@@ -83,7 +82,6 @@
             <div class="admin-item-list" id="listaCategorias"></div>
         </div>
 
-        <!-- ABA ITENS -->
         <div id="abaProdutos" style="display:none;">
             <h3>Adicionar Item (Produto/Serviço)</h3>
             <label>Tipo</label>
@@ -105,7 +103,6 @@
                 <label><input type="checkbox" id="prodPromocao" onchange="togglePromoFields()"> Em Promoção</label>
                 <label><input type="checkbox" id="prodDestaque"> Destaque</label>
             </div>
-            <!-- Campos extras para promoção -->
             <div id="promoFields" class="hidden">
                 <label>Desconto (%)</label>
                 <input type="number" id="prodDesconto" placeholder="Ex: 20" min="0" max="100">
@@ -121,7 +118,6 @@
     </div>
 
     <script>
-        // ==================== DADOS ====================
         let dados = { categorias: [], produtos: [] };
 
         function carregarDados() {
@@ -156,7 +152,6 @@
             localStorage.setItem('gudyxDados', JSON.stringify(dados));
         }
 
-        // ==================== NAVEGAÇÃO ABAS ====================
         function abrirAba(aba) {
             document.getElementById('abaCategorias').style.display = aba === 'categorias' ? 'block' : 'none';
             document.getElementById('abaProdutos').style.display = aba === 'produtos' ? 'block' : 'none';
@@ -170,7 +165,6 @@
             document.getElementById('promoFields').classList.toggle('hidden', !checked);
         }
 
-        // ==================== CATEGORIAS ====================
         function adicionarCategoria() {
             const tipo = document.getElementById('catTipo').value;
             const nome = document.getElementById('catNome').value.trim();
@@ -223,7 +217,6 @@
             });
         }
 
-        // ==================== ITENS ====================
         function adicionarProduto() {
             const tipo = document.getElementById('prodTipo').value;
             const catId = parseInt(document.getElementById('prodCategoria').value);
@@ -239,7 +232,6 @@
             if (promocao) {
                 desconto = parseFloat(document.getElementById('prodDesconto').value) || 0;
                 descPromo = document.getElementById('prodDescPromo').value.trim();
-                // Calcula o preço promocional baseado no %
                 let precoNum = parseFloat(preco.replace(',', '.'));
                 if (!isNaN(precoNum) && desconto > 0) {
                     precoPromo = (precoNum * (1 - desconto / 100)).toFixed(2).replace('.', ',');
@@ -331,7 +323,6 @@
             atualizarListaProdutos();
         }
 
-        // ==================== INICIALIZAÇÃO ====================
         carregarDados();
         atualizarListaCategorias();
         atualizarSelectCategorias();
