@@ -36,7 +36,7 @@
         .bg-container { position: fixed; top: -20px; left: -20px; width: calc(100% + 40px); height: calc(100% + 40px); z-index: -3; background-image: url('https://i.imgur.com/UDwnKUg.png'); background-size: cover; background-position: center; background-repeat: no-repeat; filter: blur(5px); transform: scale(1.02); }
         .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at 50% 50%, rgba(26, 10, 51, 0.4) 0%, rgba(11, 4, 28, 0.9) 100%); }
 
-        /* METEOROS (Garantido) */
+        /* METEOROS */
         #meteorCanvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; display: block; }
 
         /* Telas */
@@ -59,26 +59,13 @@
             100% { box-shadow: 0 0 15px #00f2fe, inset 0 0 15px #00f2fe, 0 0 30px #a028ff; border-color: #00f2fe; }
         }
 
-        /* GOSMA ROXA CAINDO DA LOGO */
-        .logo-wrapper { position: relative; display: inline-block; margin-bottom: 20px; }
+        /* LOGO (sem gosma) */
+        .logo-wrapper { position: relative; display: inline-block; margin-bottom: 5px; }
         .logo-img { 
             max-height: 330px; 
             width: auto; 
             filter: drop-shadow(0 0 30px rgba(172, 40, 255, 0.8)) drop-shadow(0 0 60px rgba(0, 242, 254, 0.4));
             position: relative; z-index: 2;
-        }
-        .logo-wrapper::after {
-            content: ''; position: absolute; bottom: -30px; left: 45%; transform: translateX(-50%);
-            width: 30px; height: 40px;
-            background: linear-gradient(to bottom, rgba(172, 40, 255, 0.9), rgba(212, 0, 255, 0.6));
-            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-            filter: drop-shadow(0 0 15px rgba(172, 40, 255, 0.6));
-            z-index: 1;
-            animation: gosmaCaindo 2.5s ease-in-out infinite alternate;
-        }
-        @keyframes gosmaCaindo {
-            0% { transform: translateX(-50%) scaleY(0.6) translateY(0px); opacity: 0.5; border-radius: 50%; }
-            100% { transform: translateX(-50%) scaleY(1.2) translateY(15px); opacity: 1; border-radius: 40% 40% 50% 50% / 60% 60% 40% 40%; }
         }
 
         /* Balão de fala */
@@ -88,9 +75,27 @@
 
         /* HOME */
         .home-screen { flex-direction: column; padding: 20px; gap: 20px; width: 100%; max-width: 1400px; margin: 0 auto; }
-        .header-top { text-align: center; padding: 20px 0 15px; position: relative; display: flex; flex-direction: column; align-items: center; }
-        .header-top .subtitle { font-size: clamp(0.9rem, 2vw, 1.4rem); font-weight: 300; letter-spacing: 4px; color: #c0b0d0; margin-top: 5px; }
-        .header-top .slogan { font-size: clamp(0.8rem, 1.5vw, 1.1rem); font-weight: 300; opacity: 0.7; font-style: italic; letter-spacing: 1px; color: #a090b0; }
+        .header-top { text-align: center; padding: 10px 0 5px; position: relative; display: flex; flex-direction: column; align-items: center; }
+        
+        /* SUBTÍTULO E SLOGAN MAIS DESTACADOS */
+        .header-top .subtitle { 
+            font-size: clamp(1.2rem, 3vw, 1.8rem); 
+            font-weight: 500; 
+            letter-spacing: 4px; 
+            color: #ffffff; 
+            text-shadow: 0 0 15px rgba(172, 40, 255, 0.8), 0 0 30px rgba(0, 242, 254, 0.5);
+            margin-top: 5px; 
+        }
+        .header-top .slogan { 
+            font-size: clamp(1rem, 2vw, 1.3rem); 
+            font-weight: 300; 
+            opacity: 0.9; 
+            font-style: italic; 
+            letter-spacing: 2px; 
+            color: #ffffff; 
+            text-shadow: 0 0 10px rgba(172, 40, 255, 0.6);
+            margin-top: 2px; 
+        }
 
         /* Main */
         .main-area { display: flex; align-items: flex-start; justify-content: center; gap: 10px; flex: 1; flex-wrap: wrap; padding: 10px 0; }
@@ -368,7 +373,7 @@
         function voltarParaEscolha() { mostrarTela('escolhaScreen'); }
         function navegarPara(destino) { if (destino === 'servicos') { mostrarTela('servicosScreen'); carregarCategorias('servicos'); } else if (destino === 'produtos') { mostrarTela('produtosScreen'); carregarCategorias('produtos'); } }
 
-        // ================= METEOROS (Garantido) =================
+        // ================= METEOROS =================
         const canvas = document.getElementById('meteorCanvas');
         const ctx = canvas.getContext('2d');
         let width, height, meteors = [];
@@ -498,7 +503,7 @@
         function iniciarSliderLoop() { clearInterval(sliderIntervalo); sliderIntervalo = setInterval(proximoSlide, 4000); }
         function resetarSlider() { clearInterval(sliderIntervalo); iniciarSlider(); }
 
-        // ================= MASCOTE (Prioridade Promoção) =================
+        // ================= MASCOTE =================
         let mascoteMsgIdx = 0; let mascoteMensagens = [];
         const falaContainer = document.getElementById('falaContainer');
         function getMensagensMascote() {
