@@ -81,7 +81,7 @@
         }
         @keyframes floatMascote {
             0%, 100% { transform: translateY(0) rotate(-2deg); }
-            50% { transform: translateY(-25px) rotate(2deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
         }
         @keyframes pulseGlow {
             0%, 100% { box-shadow: 0 0 20px rgba(172,40,255,0.4); }
@@ -328,12 +328,27 @@
             font-size: 0.8rem;
         }
 
-        /* ========== MASCOTE COM EXPRESSÕES ========== */
+        /* ========== MASCOTE COM EXPRESSÕES E FLUTUAÇÃO ========== */
+        .mascote-wrapper {
+            animation: floatMascote 4s ease-in-out infinite !important;
+            transition: transform 0.3s ease;
+        }
         .mascote-wrapper.feliz img { filter: drop-shadow(0 0 40px rgba(0, 242, 254, 0.6)); }
         .mascote-wrapper.triste img { filter: drop-shadow(0 0 30px rgba(100, 100, 255, 0.4)) brightness(0.8); }
         .mascote-wrapper.surpreso img { transform: scale(1.1); filter: drop-shadow(0 0 50px rgba(255, 229, 0, 0.7)); }
         .mascote-wrapper.irritado-1 img { transform: rotate(-5deg) scale(0.95); filter: drop-shadow(0 0 30px rgba(255, 68, 68, 0.6)); }
         .mascote-wrapper.irritado-2 img { transform: rotate(10deg) scale(0.9); filter: drop-shadow(0 0 50px rgba(255, 0, 0, 0.8)); }
+        .mascote-wrapper.fugindo { animation: fugaMascote 0.8s ease forwards !important; }
+        @keyframes fugaMascote {
+            0% { transform: translateX(0) scale(1); opacity: 1; }
+            50% { transform: translateX(100px) scale(1.2) rotate(20deg); opacity: 1; }
+            100% { transform: translateX(300px) scale(0.5) rotate(40deg); opacity: 0; }
+        }
+        .mascote-wrapper.voltando { animation: voltaMascote 0.6s ease forwards !important; }
+        @keyframes voltaMascote {
+            0% { transform: translateX(300px) scale(0.5) rotate(40deg); opacity: 0; }
+            100% { transform: translateX(0) scale(1) rotate(0); opacity: 1; }
+        }
 
         /* ========== BOTÃO WHATSAPP PULSANTE ========== */
         .float-wa {
@@ -425,7 +440,6 @@
         }
         .mascote-wrapper {
             position: relative;
-            animation: floatMascote 6s ease-in-out infinite;
             cursor: pointer;
             transition: transform 0.3s;
         }
@@ -1573,6 +1587,8 @@
         const TEMPO_INTERVALO_AUTO = 15000;
         const TEMPO_INTERVALO_CLIQUE = 2000;
         const TEMPO_RESET_IRRITACAO = 5000;
+        const TEMPO_FUGA = 3000;
+        const TEMPO_VOLTA = 600;
 
         let dados = { categorias: [], produtos: [], frases: [] };
         let carrinho = [];
@@ -1585,6 +1601,8 @@
         let cliqueCount = 0;
         let ultimoCliqueTime = 0;
         let estaFalando = false;
+        let estaFugindo = false;
+        let estaVoltando = false;
         let timeoutFala = null;
         let timeoutIrritacao = null;
         let mascoteMsgIdx = 0;
@@ -1605,23 +1623,27 @@
 
         function getMensagensMascote() {
             const msgs = [];
+            // 1. Produtos em promoção
             const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p));
             if (promos.length > 0) {
                 const p = promos[Math.floor(Math.random() * promos.length)];
-                msgs.push(`🔥 ${p.nome} em promoção por R$ ${p.precoPromo}!`);
+                msgs.push(`🔥 ${p.nome} em promoção por R$ ${p.precoPromo}! Corre!`);
             }
+            // 2. Produtos mais acessados (top 3)
             const top = [...dados.produtos].sort((a,b) => (b.cliques||0) - (a.cliques||0)).slice(0,3);
             if (top.length > 0 && top[0].cliques > 0) {
                 const p = top[Math.floor(Math.random() * top.length)];
                 msgs.push(`🏆 ${p.nome} é o mais acessado! Já viu?`);
             }
+            // 3. Piadas
             msgs.push(piadas[Math.floor(Math.random() * piadas.length)]);
+            // 4. Fallback
             if (msgs.length === 0) msgs.push('Olá, sou o Gluudyx! ✨');
             return msgs;
         }
 
         function falarMascote(msg = null) {
-            if (estaFalando) return;
+            if (estaFalando || estaFugindo || estaVoltando) return;
             if (timeoutFala) {
                 clearTimeout(timeoutFala);
                 timeoutFala = null;
@@ -1643,12 +1665,14 @@
 
         function mostrarExpressao(expressao) {
             const wrapper = document.getElementById('mascoteWrapper');
-            wrapper.classList.remove('feliz', 'triste', 'surpreso', 'irritado-1', 'irritado-2');
+            wrapper.classList.remove('feliz', 'triste', 'surpreso', 'irritado-1', 'irritado-2', 'fugindo', 'voltando');
             if (expressao) wrapper.classList.add(expressao);
         }
 
         function lidarComCliqueMascote() {
             if (estaFalando) return;
+            if (estaFugindo || estaVoltando) return;
+
             const agora = Date.now();
             if (agora - ultimoCliqueTime > TEMPO_INTERVALO_CLIQUE) cliqueCount = 0;
             cliqueCount++;
@@ -1658,32 +1682,65 @@
                 timeoutIrritacao = null;
             }
 
+            // Pausa a flutuação momentaneamente para aplicar a expressão
+            const wrapper = document.getElementById('mascoteWrapper');
+            wrapper.style.animation = 'none';
+            wrapper.offsetHeight; // Força reflow
+
             if (cliqueCount === 1) {
-                mostrarExpressao('feliz');
+                wrapper.className = 'mascote-wrapper feliz';
                 const rand = Math.random();
                 if (rand < 0.3) falarMascote('Opa! Clicou em mim? 😊');
                 else if (rand < 0.6) falarMascote('Você é fofo(a)! 🥰');
                 else falarMascote(piadas[Math.floor(Math.random() * piadas.length)]);
-            } else if (cliqueCount === 2) {
-                mostrarExpressao('irritado-1');
-                falarMascote('Para com isso! 😤 Me deixa nervoso!');
-            } else if (cliqueCount === 3) {
-                mostrarExpressao('irritado-2');
-                falarMascote('Gluudyx está bravo com você! 😡');
-            } else if (cliqueCount >= 4) {
-                mostrarExpressao('irritado-2');
-                falarMascote('JÁ CHEGA! EU VOU EMBORA! 🚀 (brincadeira... tô aqui ainda 😜)');
-                cliqueCount = 0;
                 setTimeout(() => {
-                    mostrarExpressao('feliz');
-                    falarMascote('Ufa! Que susto! Voltei... não me irrita mais, tá? 😅');
-                }, 3000);
+                    wrapper.className = 'mascote-wrapper';
+                    wrapper.style.animation = 'floatMascote 4s ease-in-out infinite';
+                }, 1500);
+            } else if (cliqueCount === 2) {
+                wrapper.className = 'mascote-wrapper irritado-1';
+                falarMascote('Para com isso! 😤 Me deixa nervoso!');
+                setTimeout(() => {
+                    wrapper.className = 'mascote-wrapper';
+                    wrapper.style.animation = 'floatMascote 4s ease-in-out infinite';
+                }, 2000);
+            } else if (cliqueCount === 3) {
+                wrapper.className = 'mascote-wrapper irritado-2';
+                falarMascote('Gluudyx está bravo com você! 😡');
+                setTimeout(() => {
+                    wrapper.className = 'mascote-wrapper';
+                    wrapper.style.animation = 'floatMascote 4s ease-in-out infinite';
+                }, 2000);
+            } else if (cliqueCount >= 4) {
+                estaFugindo = true;
+                wrapper.className = 'mascote-wrapper fugindo';
+                falarMascote('JÁ CHEGA! VOU EMBORA! 🚀 (brincadeira... tô voltando 😜)');
+                setTimeout(() => {
+                    wrapper.className = 'mascote-wrapper voltando';
+                    estaFugindo = false;
+                    estaVoltando = true;
+                    setTimeout(() => {
+                        wrapper.className = 'mascote-wrapper';
+                        wrapper.style.animation = 'floatMascote 4s ease-in-out infinite';
+                        estaVoltando = false;
+                        cliqueCount = 0;
+                        setTimeout(() => {
+                            wrapper.className = 'mascote-wrapper feliz';
+                            falarMascote('Ufa! Que susto! Voltei... não me irrita mais, tá? 😅');
+                            setTimeout(() => {
+                                wrapper.className = 'mascote-wrapper';
+                                wrapper.style.animation = 'floatMascote 4s ease-in-out infinite';
+                            }, 1500);
+                        }, 300);
+                    }, TEMPO_VOLTA);
+                }, TEMPO_FUGA);
                 return;
             }
 
             timeoutIrritacao = setTimeout(() => {
                 cliqueCount = 0;
-                mostrarExpressao('feliz');
+                wrapper.className = 'mascote-wrapper';
+                wrapper.style.animation = 'floatMascote 4s ease-in-out infinite';
                 timeoutIrritacao = null;
             }, TEMPO_RESET_IRRITACAO);
         }
@@ -1691,7 +1748,7 @@
         document.getElementById('mascoteWrapper').addEventListener('click', lidarComCliqueMascote);
 
         setInterval(() => {
-            if (!estaFalando) {
+            if (!estaFalando && !estaFugindo && !estaVoltando) {
                 mascoteMensagens = getMensagensMascote();
                 falarMascote();
             }
