@@ -13,6 +13,7 @@
         input, select, textarea { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid rgba(172, 40, 255, 0.3); background: rgba(255,255,255,0.05); color: #fff; font-size: 0.95rem; margin-bottom: 10px; font-family: inherit; }
         textarea { resize: vertical; min-height: 60px; }
         input[type="file"] { padding: 5px; }
+        input[type="datetime-local"] { color-scheme: dark; }
         .checkbox-group { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
         .checkbox-group label { margin: 0; display: flex; align-items: center; gap: 5px; }
         .checkbox-group input[type="checkbox"] { width: auto; margin: 0; }
@@ -69,9 +70,15 @@
                 <label><input type="checkbox" id="prodDestaque"> Destaque</label>
                 <label><input type="checkbox" id="prodSlider"> Exibir no Slider</label>
             </div>
+            <!-- Campos extras para promoção (incluindo Data/Hora) -->
             <div id="promoFields" class="hidden">
                 <label>Desconto (%)</label><input type="number" id="prodDesconto" placeholder="Ex: 20" min="0" max="100">
-                <label>Descrição da Promoção</label><textarea id="prodDescPromo" placeholder="Ex: Leve 2 pague 1"></textarea>
+                <label>Início da Promoção</label>
+                <input type="datetime-local" id="prodPromoStart">
+                <label>Fim da Promoção</label>
+                <input type="datetime-local" id="prodPromoEnd">
+                <label>Descrição da Promoção</label>
+                <textarea id="prodDescPromo" placeholder="Ex: Leve 2 pague 1"></textarea>
             </div>
             <button onclick="salvarProduto()">Salvar Item</button>
             <div class="admin-item-list" id="listaProdutos"></div>
@@ -187,6 +194,8 @@
             const promocao = document.getElementById('prodPromocao').checked;
             const destaque = document.getElementById('prodDestaque').checked;
             const exibirSlider = document.getElementById('prodSlider').checked;
+            const promoStart = document.getElementById('prodPromoStart').value;
+            const promoEnd = document.getElementById('prodPromoEnd').value;
             let precoPromo = '', desconto = 0;
             if(promocao) {
                 desconto = parseFloat(document.getElementById('prodDesconto').value) || 0;
@@ -199,9 +208,9 @@
             function processarProd(imagem) {
                 if(id) {
                     const idx = dados.produtos.findIndex(p => p.id == id);
-                    if(idx > -1) dados.produtos[idx] = { ...dados.produtos[idx], categoriaId: catId, nome, descricao, preco, imagem: imagem || dados.produtos[idx].imagem, promocao, destaque, exibirSlider, precoPromo, desconto };
+                    if(idx > -1) dados.produtos[idx] = { ...dados.produtos[idx], categoriaId: catId, nome, descricao, preco, imagem: imagem || dados.produtos[idx].imagem, promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd };
                 } else {
-                    dados.produtos.push({ id: Date.now(), categoriaId: catId, nome, descricao, preco, imagem: imagem || '', promocao, destaque, exibirSlider, precoPromo, desconto, cliques: 0 });
+                    dados.produtos.push({ id: Date.now(), categoriaId: catId, nome, descricao, preco, imagem: imagem || '', promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, cliques: 0 });
                 }
                 salvarDados(); limparFormularioProduto(); atualizarListaProdutos();
             }
@@ -228,6 +237,8 @@
             if(p.promocao) {
                 document.getElementById('prodDesconto').value = p.desconto || 0;
                 document.getElementById('prodDescPromo').value = p.descPromo || '';
+                document.getElementById('prodPromoStart').value = p.promoStart || '';
+                document.getElementById('prodPromoEnd').value = p.promoEnd || '';
                 document.getElementById('promoFields').classList.remove('hidden');
             } else { document.getElementById('promoFields').classList.add('hidden'); }
         }
@@ -240,6 +251,7 @@
             document.getElementById('prodPreco').value = ''; document.getElementById('prodImg').value = '';
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false;
             document.getElementById('prodDesconto').value = ''; document.getElementById('prodDescPromo').value = '';
+            document.getElementById('prodPromoStart').value = ''; document.getElementById('prodPromoEnd').value = '';
             document.getElementById('promoFields').classList.add('hidden');
         }
 
