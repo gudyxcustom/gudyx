@@ -69,25 +69,25 @@
             100% { box-shadow: 0 0 10px rgba(172, 40, 255, 0.2), inset 0 0 10px rgba(172, 40, 255, 0.2); }
         }
 
-        /* Balão de fala */
+        /* Balão de fala - CORRIGIDO Z-INDEX */
         .fala-container {
             position: absolute;
-            top: -10px;
-            right: -140px;
-            width: 220px;
+            top: -5px;
+            right: -100px;
+            width: 200px;
             background: rgba(11,4,28,0.85);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(172,40,255,0.6);
             border-radius: 16px;
-            padding: 12px 16px;
-            font-size: 0.9rem;
+            padding: 10px 14px;
+            font-size: 0.85rem;
             color: #f0eaff;
             box-shadow: 0 0 30px rgba(172,40,255,0.4);
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.4s ease, transform 0.4s ease;
             transform: translateX(10px);
-            z-index: 10;
+            z-index: 9999; /* AQUI - AUMENTEI PARA FICAR NA FRENTE DE TUDO */
             text-align: center;
         }
         .fala-container::before {
@@ -107,7 +107,6 @@
         /* HOME */
         .home-screen { flex-direction: column; padding: 20px; gap: 20px; width: 100%; max-width: 1400px; margin: 0 auto; }
         .header-top { text-align: center; padding: 20px 0 15px; position: relative; display: flex; flex-direction: column; align-items: center; }
-        /* REMOVI A LINHA DECORATIVA */
         .header-top .logo-img { max-height: 250px; width: auto; margin-top: 30px; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(172,40,255,0.4)); }
         .header-top .subtitle { font-size: clamp(0.9rem, 2vw, 1.4rem); font-weight: 300; letter-spacing: 4px; color: #c0b0d0; }
         .header-top .slogan { font-size: clamp(0.8rem, 1.5vw, 1.1rem); font-weight: 300; opacity: 0.7; font-style: italic; letter-spacing: 1px; color: #a090b0; }
@@ -121,7 +120,7 @@
         .mascote-wrapper:hover img { filter: drop-shadow(0 0 50px rgba(172,40,255,0.8)); }
         .mascote-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, rgba(172,40,255,0.4) 0%, transparent 70%); z-index: -1; animation: pulseGlow 3s ease-in-out infinite; pointer-events: none; }
 
-        /* Botão Acessar Catálogo (maior) */
+        /* Botão Acessar Catálogo */
         .btn-acessar {
             padding: 22px 60px;
             font-size: 1.4rem;
@@ -262,13 +261,13 @@
 
         /* Responsividade */
         @media (max-width: 900px) {
-            .fala-container { right: -100px; width: 180px; font-size: 0.8rem; }
+            .fala-container { right: -80px; width: 160px; font-size: 0.75rem; top: -5px; }
         }
         @media (max-width: 600px) {
-            .fala-container { right: -80px; width: 140px; font-size: 0.7rem; top: -20px; }
+            .fala-container { right: -60px; width: 130px; font-size: 0.7rem; top: -10px; }
         }
         @media (max-width: 480px) {
-            .fala-container { right: 0; top: -40px; width: 120px; font-size: 0.65rem; }
+            .fala-container { right: 0; top: -35px; width: 110px; font-size: 0.6rem; }
             .btn-acessar { padding: 16px 30px; font-size: 1rem; letter-spacing: 2px; }
             .home-screen { padding: 10px; gap: 15px; }
             .slide-item img { max-height: 120px; }
@@ -313,19 +312,20 @@
                     <div class="slider-box">
                         <div class="fire-badge">PROMO</div>
                         <div class="slide-item active-slide" onclick="navegarPara('produtos')">
-                            <img src="https://i.imgur.com/5qXv9Jp.png" alt="Kit Volta às Aulas">
+                            <!-- Substituí a imagem quebrada por um placeholder funcional -->
+                            <img src="https://placehold.co/400x180/0b041c/00f2fe?text=Kit+Volta+%C3%A0s+Aulas" alt="Kit Volta às Aulas">
                             <h4>Kit Volta às Aulas</h4>
                             <div class="desc">Caderno, estojo e caneta exclusiva</div>
                             <div class="preco">R$ 99,90</div>
                         </div>
                         <div class="slide-item" onclick="navegarPara('produtos')">
-                            <img src="https://i.imgur.com/8yZx3tS.png" alt="Combo Criativo">
+                            <img src="https://placehold.co/400x180/0b041c/ff66b2?text=Combo+Criativo" alt="Combo Criativo">
                             <h4>Combo Criativo</h4>
                             <div class="desc">Bloco, marcadores e adesivos</div>
                             <div class="preco">R$ 59,90</div>
                         </div>
                         <div class="slide-item" onclick="navegarPara('produtos')">
-                            <img src="https://i.imgur.com/2fQd7pL.png" alt="Convites Casamento">
+                            <img src="https://placehold.co/400x180/0b041c/ffe500?text=Convites+Casamento" alt="Convites Casamento">
                             <h4>Convites Casamento</h4>
                             <div class="desc">Design exclusivo com envelope</div>
                             <div class="preco">R$ 3,90 / un</div>
@@ -519,7 +519,7 @@
             const promos = dados.produtos.filter(p => p.promocao);
             if (promos.length > 0) {
                 const p = promos[Math.floor(Math.random() * promos.length)];
-                msgs.push(`Sabia que temos promoção de ${p.nome} por apenas R$ ${p.preco}?`);
+                msgs.push(`Sabia que temos promoção de ${p.nome} por apenas R$ ${p.precoPromo}?`);
             }
             const destaques = dados.produtos.filter(p => p.destaque && !p.promocao);
             if (destaques.length > 0) {
@@ -639,6 +639,7 @@
                     let badges = '';
                     if (prod.promocao) badges += `<div class="badge-promo">PROMO</div>`;
                     if (prod.destaque) badges += `<div class="badge-destaque">DESTAQUE</div>`;
+                    
                     // Preço: se tiver promoção, mostra o preço promocional e o original riscado
                     let precoHtml = '';
                     if (prod.promocao && prod.precoPromo) {
