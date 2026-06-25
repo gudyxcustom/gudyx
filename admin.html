@@ -13,7 +13,6 @@
         input, select, textarea { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid rgba(172, 40, 255, 0.3); background: rgba(255,255,255,0.05); color: #fff; font-size: 0.95rem; margin-bottom: 10px; font-family: inherit; }
         textarea { resize: vertical; min-height: 60px; }
         input[type="file"] { padding: 5px; }
-        input[type="datetime-local"] { color-scheme: dark; }
         .checkbox-group { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
         .checkbox-group label { margin: 0; display: flex; align-items: center; gap: 5px; }
         .checkbox-group input[type="checkbox"] { width: auto; margin: 0; }
@@ -32,19 +31,31 @@
         .back-link:hover { text-decoration: underline; }
         .hidden { display: none !important; }
         .backup-area { margin: 20px 0; padding: 15px; border: 1px dashed var(--vidro-borda); border-radius: 16px; }
+        #passwordOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column; }
+        #passwordOverlay.hidden { display:none; }
+        #passwordOverlay input { max-width:300px; margin:10px auto; }
     </style>
 </head>
 <body>
-    <div class="admin-container">
+    <!-- TELA DE SENHA -->
+    <div id="passwordOverlay">
+        <h2 style="color:#fff;">🔒 Acesso Restrito</h2>
+        <p style="opacity:0.6;margin-bottom:10px;">Digite a senha do Admin</p>
+        <input type="password" id="adminPassInput" placeholder="Senha">
+        <button onclick="checkPassword()">Entrar</button>
+        <p id="passError" style="color:#ff4455;font-size:0.8rem;margin-top:10px;display:none;">Senha incorreta!</p>
+    </div>
+
+    <div id="adminContent" class="admin-container" style="display:none;">
         <h1>⚙️ Painel Admin Gudyx</h1>
         <div class="tabs">
             <button onclick="abrirAba('categorias')" id="tabCategorias" class="active">Categorias</button>
             <button onclick="abrirAba('produtos')" id="tabProdutos">Itens</button>
             <button onclick="abrirAba('frases')" id="tabFrases">Frases</button>
+            <button onclick="abrirAba('relatorios')" id="tabRelatorios">Relatórios</button>
             <button onclick="abrirAba('backup')" id="tabBackup">Backup</button>
         </div>
 
-        <!-- CATEGORIAS -->
         <div id="abaCategorias">
             <h3>Adicionar / Editar Categoria</h3>
             <input type="hidden" id="editCatId">
@@ -55,7 +66,6 @@
             <div class="admin-item-list" id="listaCategorias"></div>
         </div>
 
-        <!-- ITENS -->
         <div id="abaProdutos" style="display:none;">
             <h3>Adicionar / Editar Item</h3>
             <input type="hidden" id="editProdId">
@@ -64,27 +74,23 @@
             <label>Nome</label><input type="text" id="prodNome" placeholder="Ex: Caixa Média">
             <label>Descrição</label><textarea id="prodDescricao" placeholder="Descrição completa"></textarea>
             <label>Preço Original (R$)</label><input type="text" id="prodPreco" placeholder="Ex: 29,90">
-            <label>Imagem</label><input type="file" id="prodImg" accept="image/*">
+            <label>Estoque (Quantidade)</label><input type="number" id="prodEstoque" placeholder="Ex: 10" min="0">
+            <label>Imagens (Múltiplas - segure CTRL)</label><input type="file" id="prodImg" accept="image/*" multiple>
             <div class="checkbox-group">
                 <label><input type="checkbox" id="prodPromocao" onchange="togglePromoFields()"> Em Promoção</label>
                 <label><input type="checkbox" id="prodDestaque"> Destaque</label>
                 <label><input type="checkbox" id="prodSlider"> Exibir no Slider</label>
             </div>
-            <!-- Campos extras para promoção (incluindo Data/Hora) -->
             <div id="promoFields" class="hidden">
                 <label>Desconto (%)</label><input type="number" id="prodDesconto" placeholder="Ex: 20" min="0" max="100">
-                <label>Início da Promoção</label>
-                <input type="datetime-local" id="prodPromoStart">
-                <label>Fim da Promoção</label>
-                <input type="datetime-local" id="prodPromoEnd">
-                <label>Descrição da Promoção</label>
-                <textarea id="prodDescPromo" placeholder="Ex: Leve 2 pague 1"></textarea>
+                <label>Início da Promoção</label><input type="datetime-local" id="prodPromoStart">
+                <label>Fim da Promoção</label><input type="datetime-local" id="prodPromoEnd">
+                <label>Descrição da Promoção</label><textarea id="prodDescPromo" placeholder="Ex: Leve 2 pague 1"></textarea>
             </div>
             <button onclick="salvarProduto()">Salvar Item</button>
             <div class="admin-item-list" id="listaProdutos"></div>
         </div>
 
-        <!-- FRASES -->
         <div id="abaFrases" style="display:none;">
             <h3>Frases do Gluudyx</h3>
             <p style="opacity:0.6; font-size:0.8rem;">Digite uma frase por linha. O mascote vai sortear entre elas.</p>
@@ -92,7 +98,11 @@
             <button onclick="salvarFrases()">Salvar Frases</button>
         </div>
 
-        <!-- BACKUP -->
+        <div id="abaRelatorios" style="display:none;">
+            <h3>📊 Relatórios de Cliques</h3>
+            <div id="relatorioContainer"></div>
+        </div>
+
         <div id="abaBackup" style="display:none;">
             <h3>Backup e Restauração</h3>
             <div class="backup-area">
@@ -109,14 +119,32 @@
     </div>
 
     <script>
+        // ================= SENHA DO ADMIN =================
+        // Senha padrão: gudyx2026
+        function checkPassword() {
+            const input = document.getElementById('adminPassInput').value;
+            // Armazena um hash simples (btoa = base64) para não deixar a senha no código fonte limpo
+            const hash = btoa("gudyx2026"); 
+            if(btoa(input) === hash) {
+                document.getElementById('passwordOverlay').classList.add('hidden');
+                document.getElementById('adminContent').style.display = 'block';
+                carregarDados();
+                atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
+                document.getElementById('frasesInput').value = dados.frases.join('\n');
+                togglePromoFields();
+                carregarRelatorios();
+            } else {
+                document.getElementById('passError').style.display = 'block';
+            }
+        }
+        // Permite enter no input de senha
+        document.getElementById('adminPassInput').addEventListener('keypress', function(e){ if(e.key === 'Enter') checkPassword(); });
+
+        // ================= DADOS =================
         let dados = { categorias: [], produtos: [], frases: [] };
-        
         function carregarDados() {
             if (localStorage.getItem('gudyxDados')) {
-                try {
-                    dados = JSON.parse(localStorage.getItem('gudyxDados'));
-                    if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'];
-                } catch(e) { dados = { categorias: [], produtos: [], frases: [] }; }
+                try { dados = JSON.parse(localStorage.getItem('gudyxDados')); if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe']; } catch(e) { dados = { categorias: [], produtos: [], frases: [] }; }
             } else {
                 dados = { categorias: [], produtos: [], frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'] };
                 localStorage.setItem('gudyxDados', JSON.stringify(dados));
@@ -125,54 +153,32 @@
         function salvarDados() { localStorage.setItem('gudyxDados', JSON.stringify(dados)); }
 
         function abrirAba(aba) {
-            document.querySelectorAll('#abaCategorias, #abaProdutos, #abaFrases, #abaBackup').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('#abaCategorias, #abaProdutos, #abaFrases, #abaRelatorios, #abaBackup').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.tabs button').forEach(el => el.classList.remove('active'));
             if(aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
             if(aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); }
             if(aba === 'frases') { document.getElementById('abaFrases').style.display = 'block'; document.getElementById('tabFrases').classList.add('active'); document.getElementById('frasesInput').value = dados.frases.join('\n'); }
+            if(aba === 'relatorios') { document.getElementById('abaRelatorios').style.display = 'block'; document.getElementById('tabRelatorios').classList.add('active'); carregarRelatorios(); }
             if(aba === 'backup') { document.getElementById('abaBackup').style.display = 'block'; document.getElementById('tabBackup').classList.add('active'); }
         }
 
         // ================= CATEGORIAS =================
         function salvarCategoria() {
             const id = document.getElementById('editCatId').value;
-            const tipo = document.getElementById('catTipo').value;
-            const nome = document.getElementById('catNome').value.trim();
+            const tipo = document.getElementById('catTipo').value; const nome = document.getElementById('catNome').value.trim();
             if(!nome) return alert('Digite o nome.');
             const fileInput = document.getElementById('catImg');
-
             function processarCat(imagem) {
-                if(id) {
-                    const idx = dados.categorias.findIndex(c => c.id == id);
-                    if(idx > -1) { dados.categorias[idx] = { ...dados.categorias[idx], tipo, nome, imagem: imagem || dados.categorias[idx].imagem }; }
-                } else {
-                    dados.categorias.push({ id: Date.now(), tipo, nome, imagem: imagem || '' });
-                }
+                if(id) { const idx = dados.categorias.findIndex(c => c.id == id); if(idx > -1) dados.categorias[idx] = { ...dados.categorias[idx], tipo, nome, imagem: imagem || dados.categorias[idx].imagem }; }
+                else { dados.categorias.push({ id: Date.now(), tipo, nome, imagem: imagem || '' }); }
                 salvarDados(); document.getElementById('editCatId').value = ''; document.getElementById('catNome').value = ''; document.getElementById('catImg').value = '';
                 atualizarListaCategorias(); atualizarSelectCategorias();
             }
-
-            if(fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => processarCat(e.target.result);
-                reader.readAsDataURL(fileInput.files[0]);
-            } else { processarCat(null); }
+            if(fileInput.files && fileInput.files[0]) { const reader = new FileReader(); reader.onload = (e) => processarCat(e.target.result); reader.readAsDataURL(fileInput.files[0]); } 
+            else { processarCat(null); }
         }
-
-        function editarCategoria(id) {
-            const cat = dados.categorias.find(c => c.id === id);
-            document.getElementById('editCatId').value = cat.id;
-            document.getElementById('catTipo').value = cat.tipo;
-            document.getElementById('catNome').value = cat.nome;
-        }
-
-        function removerCategoria(id) {
-            if(!confirm('Remover categoria e itens?')) return;
-            dados.categorias = dados.categorias.filter(c => c.id !== id);
-            dados.produtos = dados.produtos.filter(p => p.categoriaId !== id);
-            salvarDados(); atualizarListaCategorias(); atualizarSelectCategorias();
-        }
-
+        function editarCategoria(id) { const cat = dados.categorias.find(c => c.id === id); document.getElementById('editCatId').value = cat.id; document.getElementById('catTipo').value = cat.tipo; document.getElementById('catNome').value = cat.nome; }
+        function removerCategoria(id) { if(!confirm('Remover categoria e itens?')) return; dados.categorias = dados.categorias.filter(c => c.id !== id); dados.produtos = dados.produtos.filter(p => p.categoriaId !== id); salvarDados(); atualizarListaCategorias(); atualizarSelectCategorias(); }
         function atualizarListaCategorias() {
             const lista = document.getElementById('listaCategorias'); lista.innerHTML = '';
             dados.categorias.forEach(cat => {
@@ -191,6 +197,7 @@
             const nome = document.getElementById('prodNome').value.trim();
             const descricao = document.getElementById('prodDescricao').value.trim();
             const preco = document.getElementById('prodPreco').value.trim();
+            const estoque = parseInt(document.getElementById('prodEstoque').value) || 0;
             const promocao = document.getElementById('prodPromocao').checked;
             const destaque = document.getElementById('prodDestaque').checked;
             const exibirSlider = document.getElementById('prodSlider').checked;
@@ -204,21 +211,22 @@
             }
             if(!catId || !nome || !preco) return alert('Preencha nome e preço.');
             const fileInput = document.getElementById('prodImg');
-
-            function processarProd(imagem) {
+            function processarProd(imagens) {
                 if(id) {
                     const idx = dados.produtos.findIndex(p => p.id == id);
-                    if(idx > -1) dados.produtos[idx] = { ...dados.produtos[idx], categoriaId: catId, nome, descricao, preco, imagem: imagem || dados.produtos[idx].imagem, promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd };
+                    if(idx > -1) dados.produtos[idx] = { ...dados.produtos[idx], categoriaId: catId, nome, descricao, preco, estoque, imagens: imagens || dados.produtos[idx].imagens || [], promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd };
                 } else {
-                    dados.produtos.push({ id: Date.now(), categoriaId: catId, nome, descricao, preco, imagem: imagem || '', promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, cliques: 0 });
+                    dados.produtos.push({ id: Date.now(), categoriaId: catId, nome, descricao, preco, estoque, imagens: imagens || [], promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, cliques: 0 });
                 }
-                salvarDados(); limparFormularioProduto(); atualizarListaProdutos();
+                salvarDados(); limparFormularioProduto(); atualizarListaProdutos(); carregarRelatorios();
             }
-
-            if(fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => processarProd(e.target.result);
-                reader.readAsDataURL(fileInput.files[0]);
+            if(fileInput.files && fileInput.files.length > 0) {
+                const imagens = []; let count = 0;
+                for(let f of fileInput.files) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => { imagens.push(e.target.result); count++; if(count === fileInput.files.length) processarProd(imagens); };
+                    reader.readAsDataURL(f);
+                }
             } else { processarProd(null); }
         }
 
@@ -226,29 +234,24 @@
             const p = dados.produtos.find(p => p.id === id);
             document.getElementById('editProdId').value = p.id;
             document.getElementById('prodTipo').value = dados.categorias.find(c => c.id === p.categoriaId)?.tipo || 'produtos';
-            atualizarSelectCategorias();
-            document.getElementById('prodCategoria').value = p.categoriaId;
-            document.getElementById('prodNome').value = p.nome;
-            document.getElementById('prodDescricao').value = p.descricao || '';
-            document.getElementById('prodPreco').value = p.preco;
-            document.getElementById('prodPromocao').checked = p.promocao || false;
-            document.getElementById('prodDestaque').checked = p.destaque || false;
-            document.getElementById('prodSlider').checked = p.exibirSlider || false;
+            atualizarSelectCategorias(); document.getElementById('prodCategoria').value = p.categoriaId;
+            document.getElementById('prodNome').value = p.nome; document.getElementById('prodDescricao').value = p.descricao || '';
+            document.getElementById('prodPreco').value = p.preco; document.getElementById('prodEstoque').value = p.estoque || 0;
+            document.getElementById('prodPromocao').checked = p.promocao || false; document.getElementById('prodDestaque').checked = p.destaque || false; document.getElementById('prodSlider').checked = p.exibirSlider || false;
             if(p.promocao) {
-                document.getElementById('prodDesconto').value = p.desconto || 0;
-                document.getElementById('prodDescPromo').value = p.descPromo || '';
-                document.getElementById('prodPromoStart').value = p.promoStart || '';
-                document.getElementById('prodPromoEnd').value = p.promoEnd || '';
+                document.getElementById('prodDesconto').value = p.desconto || 0; document.getElementById('prodDescPromo').value = p.descPromo || '';
+                document.getElementById('prodPromoStart').value = p.promoStart || ''; document.getElementById('prodPromoEnd').value = p.promoEnd || '';
                 document.getElementById('promoFields').classList.remove('hidden');
             } else { document.getElementById('promoFields').classList.add('hidden'); }
         }
 
-        function removerProduto(id) { if(confirm('Remover?')) { dados.produtos = dados.produtos.filter(p => p.id !== id); salvarDados(); atualizarListaProdutos(); } }
+        function removerProduto(id) { if(confirm('Remover?')) { dados.produtos = dados.produtos.filter(p => p.id !== id); salvarDados(); atualizarListaProdutos(); carregarRelatorios(); } }
 
         function limparFormularioProduto() {
             document.getElementById('editProdId').value = '';
             document.getElementById('prodNome').value = ''; document.getElementById('prodDescricao').value = '';
-            document.getElementById('prodPreco').value = ''; document.getElementById('prodImg').value = '';
+            document.getElementById('prodPreco').value = ''; document.getElementById('prodEstoque').value = '';
+            document.getElementById('prodImg').value = '';
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false;
             document.getElementById('prodDesconto').value = ''; document.getElementById('prodDescPromo').value = '';
             document.getElementById('prodPromoStart').value = ''; document.getElementById('prodPromoEnd').value = '';
@@ -258,9 +261,7 @@
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
             const select = document.getElementById('prodCategoria'); select.innerHTML = '';
-            dados.categorias.filter(c => c.tipo === tipo).forEach(cat => {
-                const opt = document.createElement('option'); opt.value = cat.id; opt.textContent = cat.nome; select.appendChild(opt);
-            });
+            dados.categorias.filter(c => c.tipo === tipo).forEach(cat => { const opt = document.createElement('option'); opt.value = cat.id; opt.textContent = cat.nome; select.appendChild(opt); });
         }
 
         function atualizarListaProdutos() {
@@ -268,7 +269,7 @@
             dados.produtos.forEach(p => {
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
                 const item = document.createElement('div'); item.className = 'item';
-                let info = `${cat ? cat.nome : '?'} → ${p.nome} (R$ ${p.preco})`;
+                let info = `${cat ? cat.nome : '?'} → ${p.nome} (R$ ${p.preco}) | Estoque: ${p.estoque || 0}`;
                 if(p.promocao) info += ` 🔥 ${p.desconto||0}% OFF`;
                 if(p.exibirSlider) info += ` 📺`;
                 item.innerHTML = `<span>${info}</span><div><button class="btn-edit" onclick="editarProduto(${p.id})">✏️</button><button onclick="removerProduto(${p.id})">Remover</button></div>`;
@@ -277,11 +278,22 @@
         }
 
         // ================= FRASES =================
-        function salvarFrases() {
-            const text = document.getElementById('frasesInput').value;
-            dados.frases = text.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-            salvarDados();
-            alert('Frases salvas!');
+        function salvarFrases() { dados.frases = document.getElementById('frasesInput').value.split('\n').map(s => s.trim()).filter(s => s.length > 0); salvarDados(); alert('Frases salvas!'); }
+
+        // ================= RELATÓRIOS =================
+        function carregarRelatorios() {
+            const container = document.getElementById('relatorioContainer');
+            const sorted = [...dados.produtos].sort((a,b) => (b.cliques||0) - (a.cliques||0));
+            if(sorted.length === 0) { container.innerHTML = '<p style="opacity:0.6;">Nenhum clique registrado ainda.</p>'; return; }
+            let html = '<ul style="list-style:none;padding:0;">';
+            sorted.slice(0, 20).forEach((p, i) => {
+                html += `<li style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;">
+                    <span>${i+1}. ${p.nome}</span>
+                    <span style="color:var(--ciano-brilhante);">${p.cliques || 0} cliques</span>
+                </li>`;
+            });
+            html += '</ul>';
+            container.innerHTML = html;
         }
 
         // ================= BACKUP =================
@@ -292,7 +304,6 @@
             const a = document.createElement('a'); a.href = url; a.download = 'gudyx_backup.json';
             document.body.appendChild(a); a.click(); document.body.removeChild(a);
         }
-
         function importarBackup() {
             const fileInput = document.getElementById('importFile');
             if(!fileInput.files || !fileInput.files[0]) return alert('Selecione um arquivo JSON.');
@@ -302,11 +313,11 @@
                     const data = JSON.parse(e.target.result);
                     if(!data.categorias || !data.produtos) return alert('Arquivo inválido.');
                     if(confirm('Isso substituirá TODOS os dados atuais. Continuar?')) {
-                        dados = data;
-                        if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦'];
+                        dados = data; if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦'];
                         salvarDados();
                         atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
                         document.getElementById('frasesInput').value = dados.frases.join('\n');
+                        carregarRelatorios();
                         alert('Backup restaurado com sucesso!');
                     }
                 } catch(err) { alert('Erro ao ler o arquivo.'); }
@@ -314,17 +325,12 @@
             reader.readAsText(fileInput.files[0]);
         }
 
-        // ================= UTILITÁRIOS =================
         function limparDados() {
             if(!confirm('Apagar TODOS os dados?')) return;
             dados = { categorias: [], produtos: [], frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'] };
             salvarDados(); atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
-            document.getElementById('frasesInput').value = dados.frases.join('\n');
+            document.getElementById('frasesInput').value = dados.frases.join('\n'); carregarRelatorios();
         }
-
-        carregarDados(); atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
-        document.getElementById('frasesInput').value = dados.frases.join('\n');
-        togglePromoFields();
     </script>
 </body>
 </html>
