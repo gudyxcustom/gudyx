@@ -382,6 +382,146 @@
         .modal-page .modal-box .close-modal-page { position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer; background:none; border:none; color:var(--cor-texto); transition:var(--transicao); }
         .modal-page .modal-box .close-modal-page:hover { transform:rotate(90deg); color:var(--rosa-neon); }
 
+        /* ===== MINI CHAT DO MASCOTE ===== */
+        #chatButton {
+            position: fixed;
+            bottom: 160px;
+            left: 20px;
+            z-index: 9999;
+            background: linear-gradient(135deg, #a028ff, #00f2fe);
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            cursor: pointer;
+            transition: var(--transicao);
+            animation: pulseChat 2s ease-in-out infinite;
+        }
+        #chatButton:hover { transform: scale(1.1); }
+        @keyframes pulseChat {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.08); box-shadow: 0 0 40px rgba(172,40,255,0.5); }
+            100% { transform: scale(1); }
+        }
+        #chatModal {
+            position: fixed;
+            bottom: 230px;
+            left: 20px;
+            width: 340px;
+            max-width: 90vw;
+            background: var(--vidro-fundo);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--vidro-borda);
+            border-radius: 24px;
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 0 40px rgba(0,0,0,0.6);
+            max-height: 500px;
+        }
+        #chatModal.active { display: flex; }
+        .chat-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--vidro-borda);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(11,4,28,0.8);
+            border-radius: 24px 24px 0 0;
+        }
+        .chat-header h4 { font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
+        .chat-header .close-chat { font-size: 1.5rem; cursor: pointer; background: none; border: none; color: var(--cor-texto); transition: var(--transicao); }
+        .chat-header .close-chat:hover { transform: rotate(90deg); color: var(--rosa-neon); }
+        .chat-body {
+            flex: 1;
+            padding: 15px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 350px;
+        }
+        .chat-msg {
+            padding: 10px 14px;
+            border-radius: 16px;
+            max-width: 85%;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+        .chat-msg.gluudyx {
+            background: rgba(172,40,255,0.2);
+            border: 1px solid rgba(172,40,255,0.3);
+            align-self: flex-start;
+            border-radius: 16px 16px 16px 0;
+        }
+        .chat-msg.user {
+            background: rgba(0,242,254,0.2);
+            border: 1px solid rgba(0,242,254,0.3);
+            align-self: flex-end;
+            border-radius: 16px 16px 0 16px;
+        }
+        .chat-footer {
+            padding: 10px 20px;
+            border-top: 1px solid var(--vidro-borda);
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            background: rgba(11,4,28,0.5);
+            border-radius: 0 0 24px 24px;
+        }
+        .chat-footer .quick-btn {
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--vidro-borda);
+            border-radius: 20px;
+            color: var(--cor-texto);
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: var(--transicao);
+        }
+        .chat-footer .quick-btn:hover { background: rgba(172,40,255,0.2); }
+
+        /* ===== FAQ ===== */
+        #faqModal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 999999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        #faqModal.active { display: flex; }
+        .faq-box {
+            background: var(--vidro-fundo);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--vidro-borda);
+            border-radius: 24px;
+            max-width: 700px;
+            width: 100%;
+            padding: 40px;
+            position: relative;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 0 60px rgba(172,40,255,0.4);
+        }
+        .faq-box .close-faq { position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer; background:none; border:none; color:var(--cor-texto); transition:var(--transicao); }
+        .faq-box .close-faq:hover { transform:rotate(90deg); color:var(--rosa-neon); }
+        .faq-box h2 { font-size:1.8rem; margin-bottom:20px; }
+        .faq-item { margin-bottom:15px; border-bottom:1px solid var(--vidro-borda); padding-bottom:10px; }
+        .faq-item .faq-q { font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+        .faq-item .faq-q i { transition:var(--transicao); }
+        .faq-item .faq-q.open i { transform:rotate(180deg); }
+        .faq-item .faq-a { display:none; padding-top:8px; opacity:0.8; font-size:0.95rem; }
+        .faq-item .faq-a.open { display:block; }
+
         /* ===== RESPONSIVIDADE ===== */
         @media (max-width:900px) {
             .fala-container { right:-40px; width:160px; font-size:0.75rem; top:5px; }
@@ -389,6 +529,7 @@
             .main-area { justify-content:center; gap:20px; }
             .mascote-block { flex:1 1 auto; width:100%; max-width:400px; margin-left:0; }
             .promo-slider-container { margin-left:0; margin-right:0; padding-left:0; flex:1 1 auto; width:100%; max-width:100%; }
+            #chatModal { width: 300px; bottom: 200px; }
         }
         @media (max-width:600px) {
             .fala-container { right:-20px; width:130px; font-size:0.7rem; top:-5px; }
@@ -404,6 +545,8 @@
             #socialProofContainer { bottom:80px; left:10px; }
             #peekingHead img { width:60px; height:60px; }
             .peeking-fala { font-size:0.7rem; max-width:150px; padding:6px 10px; }
+            #chatButton { width:50px; height:50px; font-size:1.5rem; bottom:130px; left:15px; }
+            #chatModal { width: 280px; bottom: 190px; left: 15px; }
         }
         @media (max-width:480px) {
             .fala-container { right:0; top:-25px; width:100px; font-size:0.6rem; }
@@ -554,6 +697,69 @@
         </div>
     </div>
 
+    <!-- ===== MINI CHAT ===== -->
+    <div id="chatButton" onclick="toggleChat()">
+        <i class="fas fa-comment-dots"></i>
+    </div>
+    <div id="chatModal">
+        <div class="chat-header">
+            <h4><img src="https://i.imgur.com/Y5H9zqr.png" style="width:30px;height:30px;border-radius:50%;"> Gluudyx</h4>
+            <button class="close-chat" onclick="toggleChat()">×</button>
+        </div>
+        <div class="chat-body" id="chatBody">
+            <div class="chat-msg gluudyx">Oi! Sou o Gluudyx 😄 Como posso te ajudar?</div>
+        </div>
+        <div class="chat-footer" id="chatFooter">
+            <button class="quick-btn" onclick="chatResposta('produtos')">Quais produtos?</button>
+            <button class="quick-btn" onclick="chatResposta('promocoes')">Promoções</button>
+            <button class="quick-btn" onclick="chatResposta('duvidas')">Dúvidas</button>
+            <button class="quick-btn" onclick="chatResposta('contato')">Contato</button>
+        </div>
+    </div>
+
+    <!-- ===== FAQ ===== -->
+    <div id="faqModal">
+        <div class="faq-box">
+            <button class="close-faq" onclick="fecharFAQ()">×</button>
+            <h2>❓ Dúvidas Frequentes</h2>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFAQ(this)">
+                    <span>⏰ Qual o prazo de produção?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-a">A produção leva de 2 a 5 dias úteis, dependendo da complexidade do pedido.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFAQ(this)">
+                    <span>💳 Quais formas de pagamento?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-a">Aceitamos PIX, cartão de crédito (via Mercado Pago) e dinheiro na retirada.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFAQ(this)">
+                    <span>📦 Como retirar meus produtos?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-a">Retirada na loja: Rua das Flores, 123 - São Paulo, SP. Sem agendamento.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFAQ(this)">
+                    <span>🖼️ Posso enviar minha própria arte?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-a">Sim! Você pode enviar sua arte e nós personalizamos o produto com ela.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-q" onclick="toggleFAQ(this)">
+                    <span>🚀 Como faço meu orçamento?</span>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-a">Adicione os produtos no carrinho e clique em "Enviar orçamento" para receber o valor pelo WhatsApp.</div>
+            </div>
+        </div>
+    </div>
+
     <!-- ===== BOTÕES FLUTUANTES ===== -->
     <div class="float-cart" onclick="abrirDrawer()">
         <i class="fas fa-shopping-cart"></i>
@@ -693,6 +899,7 @@
         <span>
             <a href="#" onclick="abrirModalSobre();return false;" style="color:var(--cor-texto);text-decoration:none;margin-right:15px;">Sobre</a>
             <a href="#" onclick="abrirModalContato();return false;" style="color:var(--cor-texto);text-decoration:none;">Contato</a>
+            <a href="#" onclick="abrirFAQ();return false;" style="color:var(--cor-texto);text-decoration:none;">FAQ</a>
         </span>
         <span class="visit-counter">Visitas: <span id="visitCounter">0</span></span>
     </footer>
@@ -1100,6 +1307,45 @@
             }
         }, 12000);
 
+        // ================= MASCOTE REAGIR AO SCROLL =================
+        let jaFalouScroll = {};
+
+        function verificarScroll() {
+            if (estaSumido || estaFugindo || estaVoltando || estaContando || estaFalando) return;
+
+            const sections = {
+                'mais-vendidos': {
+                    el: document.getElementById('maisVendidosGrid'),
+                    msg: '🏆 Olha só, esses são os queridinhos do pessoal!'
+                },
+                'promo-slider-container': {
+                    el: document.querySelector('.promo-slider-container'),
+                    msg: '🔥 Fique de olho nessa seção, tem promoção rolando!'
+                },
+                'produtosScreen': {
+                    el: document.getElementById('produtosScreen'),
+                    msg: '📦 Navegando pelos produtos? Tem muita coisa legal por aqui!'
+                }
+            };
+
+            for (const [key, data] of Object.entries(sections)) {
+                if (!data.el) continue;
+                const rect = data.el.getBoundingClientRect();
+                if (rect.top < window.innerHeight && rect.bottom > 0) {
+                    if (!jaFalouScroll[key]) {
+                        jaFalouScroll[key] = true;
+                        mostrarExpressao('feliz');
+                        falarMascote(data.msg);
+                        setTimeout(() => {
+                            jaFalouScroll[key] = false;
+                        }, 30000); // só fala de novo depois de 30s
+                    }
+                }
+            }
+        }
+
+        window.addEventListener('scroll', verificarScroll);
+
         // ================= CUPONS DE DESCONTO =================
         let cupomAtual = null;
         const cuponsValidos = {
@@ -1400,7 +1646,6 @@
         }
 
         // ================= DEMAIS FUNÇÕES (CARRINHO, FAVORITOS, MODAL, ETC.) =================
-        // (Mantidas as funções existentes, apenas adaptadas para os novos campos)
 
         function carregarDados() {
             if (localStorage.getItem('gudyxDados')) {
@@ -2066,6 +2311,66 @@
                     else if (id === 'servicosScreen') carregarCategorias('servicos');
                 }
             }
+        });
+
+        // ================= MINI CHAT =================
+        function toggleChat() {
+            const modal = document.getElementById('chatModal');
+            modal.classList.toggle('active');
+            if (modal.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        function chatResposta(opcao) {
+            const body = document.getElementById('chatBody');
+            const respostas = {
+                produtos: 'Temos uma variedade incrível! 🎨 Caixas personalizadas, imãs, cartões, displays e muito mais. Dá uma olhada no catálogo! 📦',
+                promocoes: '🔥 No momento temos promoções em caixas personalizadas e imãs! Corre que o estoque não espera!',
+                duvidas: 'Claro! Pode perguntar sobre produção, pagamento, retirada... estou aqui para ajudar! 😄',
+                contato: '📞 Meu WhatsApp é (11) 99999-9999. Fique à vontade para chamar!'
+            };
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-msg user';
+            userMsg.textContent = opcao === 'produtos' ? 'Quais produtos?' :
+                                  opcao === 'promocoes' ? 'Promoções' :
+                                  opcao === 'duvidas' ? 'Dúvidas' : 'Contato';
+            body.appendChild(userMsg);
+
+            setTimeout(() => {
+                const gluMsg = document.createElement('div');
+                gluMsg.className = 'chat-msg gluudyx';
+                gluMsg.textContent = respostas[opcao] || 'Hmm, não entendi. Pode me perguntar de novo? 😅';
+                body.appendChild(gluMsg);
+                body.scrollTop = body.scrollHeight;
+            }, 600);
+            body.scrollTop = body.scrollHeight;
+        }
+
+        // ================= FAQ =================
+        function abrirFAQ() {
+            document.getElementById('faqModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        function fecharFAQ() {
+            document.getElementById('faqModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        function toggleFAQ(el) {
+            const answer = el.parentElement.querySelector('.faq-a');
+            const icon = el.querySelector('i');
+            answer.classList.toggle('open');
+            el.classList.toggle('open');
+            if (answer.classList.contains('open')) {
+                icon.className = 'fas fa-chevron-up';
+            } else {
+                icon.className = 'fas fa-chevron-down';
+            }
+        }
+        document.getElementById('faqModal').addEventListener('click', function(e) {
+            if (e.target === this) fecharFAQ();
         });
 
         // ================= MODAIS SOBRE E CONTATO =================
