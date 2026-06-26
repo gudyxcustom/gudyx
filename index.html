@@ -728,13 +728,12 @@
         let estaFugindo = false;
         let estaVoltando = false;
         let estaSumido = false;
-        let estaContando = false; // impede cliques durante contagem
+        let estaContando = false;
         let timeoutFala = null;
         let timeoutIrritacao = null;
         let mascoteMsgIdx = 0;
         let mascoteMensagens = [];
 
-        // Piadas e frases engraçadas do Gluudyx
         const piadas = [
             "Por que o caderno foi ao médico? Porque estava com febre de 39,9! 📓🤒",
             "Qual o doce favorito do Gluudyx? Pé de moleque! Porque ele é grudento! 🍬",
@@ -770,33 +769,42 @@
             mascoteMensagens = getMensagensMascote();
         }
 
-        // Função de fala normal (com bloqueio)
+        // Função de fala normal (sem bloqueio de clique)
         function falarMascote(msgPersonalizada = null) {
-            if (estaFalando || estaFugindo || estaVoltando || estaSumido || estaContando) return;
+            if (estaFugindo || estaVoltando || estaSumido || estaContando) return;
+            
+            if (timeoutFala) {
+                clearTimeout(timeoutFala);
+                timeoutFala = null;
+            }
+            
             if (mascoteMensagens.length === 0) atualizarMensagensMascote();
             const msg = msgPersonalizada || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
             mascoteMsgIdx++;
             falaContainer.textContent = msg;
             falaContainer.classList.add('falando');
             estaFalando = true;
-            if (timeoutFala) clearTimeout(timeoutFala);
+            
             timeoutFala = setTimeout(() => {
                 falaContainer.classList.remove('falando');
                 estaFalando = false;
                 timeoutFala = null;
-            }, 4000); // 4 segundos
+            }, 4000);
         }
 
         // Função para contagem regressiva (ignora bloqueio)
         function falarContagem(mensagem) {
+            if (timeoutFala) {
+                clearTimeout(timeoutFala);
+                timeoutFala = null;
+            }
             falaContainer.textContent = mensagem;
             falaContainer.classList.add('falando');
-            if (timeoutFala) clearTimeout(timeoutFala);
             timeoutFala = setTimeout(() => {
                 falaContainer.classList.remove('falando');
                 estaFalando = false;
                 timeoutFala = null;
-            }, 900); // 0.9s para cada número
+            }, 900);
         }
 
         function mostrarExpressao(expressao) {
@@ -805,9 +813,9 @@
             if (expressao) wrapper.classList.add(expressao);
         }
 
-        // Evento de clique no mascote (com bounce e irritação)
+        // Evento de clique no mascote (com bounce, irritação e fuga)
         document.getElementById('mascoteWrapper').addEventListener('click', function() {
-            // === BOUNCE ORIGINAL (preservado) ===
+            // === BOUNCE ORIGINAL ===
             this.style.animation = 'none';
             this.offsetHeight;
             this.style.animation = 'floatMascote 0.6s ease-in-out';
@@ -817,9 +825,16 @@
 
             // === SISTEMA DE IRRITAÇÃO E FUGA ===
             if (estaSumido) return;
-            if (estaFalando) return; // não interrompe fala atual
             if (estaFugindo || estaVoltando) return;
-            if (estaContando) return; // bloqueia durante contagem
+            if (estaContando) return;
+
+            // Cancela qualquer fala em andamento
+            if (timeoutFala) {
+                clearTimeout(timeoutFala);
+                timeoutFala = null;
+                estaFalando = false;
+            }
+            falaContainer.classList.remove('falando');
 
             const agora = Date.now();
             const intervalo = 2000;
@@ -868,11 +883,10 @@
                 let index = 0;
                 const intervaloContagem = setInterval(() => {
                     if (index < mensagens.length) {
-                        falarContagem(mensagens[index]); // usa função especial
+                        falarContagem(mensagens[index]);
                         index++;
                     } else {
                         clearInterval(intervaloContagem);
-                        // Fim da contagem: inicia a fuga
                         estaContando = false;
                         estaFugindo = true;
                         wrapper.classList.add('fugindo');
@@ -881,14 +895,12 @@
                         const alerta = document.getElementById('alertaContainer');
                         alerta.classList.add('active');
 
-                        // Aviso antes de voltar
                         setTimeout(() => {
                             if (!estaSumido) {
                                 falarMascote('Tô voltando... mas não me irrita! 😅');
                             }
                         }, 2000);
 
-                        // Volta depois de 3 segundos (se não clicar)
                         const timeoutVolta = setTimeout(() => {
                             if (!estaSumido) {
                                 alerta.classList.remove('active');
@@ -906,7 +918,6 @@
                             }
                         }, 3000);
 
-                        // Se clicar durante a fuga, SOME!
                         const listenerFuga = function(e) {
                             if (estaFugindo) {
                                 clearTimeout(timeoutVolta);
@@ -921,7 +932,7 @@
                         };
                         wrapper.addEventListener('click', listenerFuga);
                     }
-                }, 1000); // intervalo de 1s entre cada número
+                }, 1000);
                 return;
             }
 
