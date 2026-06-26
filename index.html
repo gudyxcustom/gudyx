@@ -78,7 +78,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== MASCOTE ORIGINAL ===== */
+        /* ===== MASCOTE ORIGINAL (HOME) ===== */
         @keyframes floatMascote { 0%,100% { transform:translateY(0) rotate(-2deg); } 50% { transform:translateY(-25px) rotate(2deg); } }
         @keyframes pulseGlow { 0%,100% { box-shadow:0 0 20px rgba(172,40,255,0.4); } 50% { box-shadow:0 0 40px rgba(172,40,255,0.8), 0 0 60px rgba(0,242,254,0.3); } }
         @keyframes rotateGlow { 100% { transform:rotate(360deg); } }
@@ -522,6 +522,58 @@
         .faq-item .faq-a { display:none; padding-top:8px; opacity:0.8; font-size:0.95rem; }
         .faq-item .faq-a.open { display:block; }
 
+        /* ===== MINI MASCOTE (aparece em todas as telas) ===== */
+        #miniMascote {
+            position: fixed;
+            bottom: 170px;
+            right: 20px;
+            z-index: 9999;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s;
+            animation: miniFloat 3s ease-in-out infinite;
+        }
+        #miniMascote:hover { transform: scale(1.05); }
+        #miniMascote img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--ciano-brilhante);
+            box-shadow: 0 0 30px rgba(172,40,255,0.6);
+            transition: filter 0.3s;
+        }
+        #miniMascote .mini-fala {
+            background: rgba(11,4,28,0.9);
+            backdrop-filter: blur(8px);
+            border: 1px solid var(--vidro-borda);
+            border-radius: 12px;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+            color: #fff;
+            margin-bottom: 5px;
+            text-align: center;
+            max-width: 160px;
+            box-shadow: 0 0 15px rgba(172,40,255,0.3);
+            position: relative;
+            display: none;
+        }
+        #miniMascote .mini-fala::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(11,4,28,0.9);
+        }
+        #miniMascote .mini-fala.falando { display: block; }
+        @keyframes miniFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
         /* ===== RESPONSIVIDADE ===== */
         @media (max-width:900px) {
             .fala-container { right:-40px; width:160px; font-size:0.75rem; top:5px; }
@@ -530,6 +582,8 @@
             .mascote-block { flex:1 1 auto; width:100%; max-width:400px; margin-left:0; }
             .promo-slider-container { margin-left:0; margin-right:0; padding-left:0; flex:1 1 auto; width:100%; max-width:100%; }
             #chatModal { width: 300px; bottom: 200px; }
+            #miniMascote img { width: 50px; height: 50px; }
+            #miniMascote .mini-fala { font-size: 0.65rem; max-width: 120px; }
         }
         @media (max-width:600px) {
             .fala-container { right:-20px; width:130px; font-size:0.7rem; top:-5px; }
@@ -547,6 +601,9 @@
             .peeking-fala { font-size:0.7rem; max-width:150px; padding:6px 10px; }
             #chatButton { width:50px; height:50px; font-size:1.5rem; bottom:130px; left:15px; }
             #chatModal { width: 280px; bottom: 190px; left: 15px; }
+            #miniMascote { bottom: 140px; right: 15px; }
+            #miniMascote img { width: 45px; height: 45px; }
+            #miniMascote .mini-fala { font-size: 0.6rem; max-width: 100px; }
         }
         @media (max-width:480px) {
             .fala-container { right:0; top:-25px; width:100px; font-size:0.6rem; }
@@ -760,6 +817,12 @@
         </div>
     </div>
 
+    <!-- ===== MINI MASCOTE (TODAS AS TELAS) ===== -->
+    <div id="miniMascote" onclick="miniMascoteFalar()">
+        <div class="mini-fala" id="miniFala">Olá! 👋</div>
+        <img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx mini">
+    </div>
+
     <!-- ===== BOTÕES FLUTUANTES ===== -->
     <div class="float-cart" onclick="abrirDrawer()">
         <i class="fas fa-shopping-cart"></i>
@@ -916,7 +979,7 @@
         let produtoModalAtual = null;
         let viewMode = 'grid';
 
-        // ================= CONTROLE DO MASCOTE =================
+        // ================= CONTROLE DO MASCOTE (ORIGINAL) =================
         let cliqueCount = 0;
         let ultimoCliqueTime = 0;
         let estaFalando = false;
@@ -1167,7 +1230,7 @@
             falarMascote(msg);
         }
 
-        // ================= EVENTO DE CLIQUE NO MASCOTE =================
+        // ================= EVENTO DE CLIQUE NO MASCOTE (ORIGINAL) =================
         document.getElementById('mascoteWrapper').addEventListener('click', function() {
             this.style.animation = 'none';
             this.offsetHeight;
@@ -1346,6 +1409,101 @@
 
         window.addEventListener('scroll', verificarScroll);
 
+        // ================= MINI MASCOTE (TODAS AS TELAS) =================
+        let miniFalaTimeout = null;
+
+        function miniMascoteFalar(msgPersonalizada = null) {
+            const miniFala = document.getElementById('miniFala');
+            if (miniFalaTimeout) {
+                clearTimeout(miniFalaTimeout);
+                miniFalaTimeout = null;
+            }
+            let msg = msgPersonalizada;
+            if (!msg) {
+                // Frases aleatórias para o mini mascote
+                const frasesMini = [
+                    "Olá! 👋",
+                    "Estou aqui para ajudar! 😊",
+                    "Tem produto em promoção! 🔥",
+                    "Gostou do que viu? 💜",
+                    "Me clica para mais dicas! 🧠",
+                    "Você tem bom gosto! ✨"
+                ];
+                msg = frasesMini[Math.floor(Math.random() * frasesMini.length)];
+            }
+            miniFala.textContent = msg;
+            miniFala.classList.add('falando');
+            miniFalaTimeout = setTimeout(() => {
+                miniFala.classList.remove('falando');
+                miniFalaTimeout = null;
+            }, 3500);
+        }
+
+        // Mini mascote reage a cliques em produtos
+        function miniMascoteReage(acao, produtoNome = null) {
+            const frasesMiniReacao = {
+                abrirModal: `👀 Olha só! "${produtoNome || 'esse produto'}" é ótimo!`,
+                addCart: `🛒 "${produtoNome || 'Esse item'}" no carrinho! Boa compra!`,
+                favoritar: `❤️ Você favoritou "${produtoNome || 'esse item'}"! Acertou!`,
+                comprar: `💰 "${produtoNome || 'Esse item'}"? Excelente escolha!`
+            };
+            const msg = frasesMiniReacao[acao] || '😄 Obrigado pela interação!';
+            miniMascoteFalar(msg);
+        }
+
+        // Sobrescrever funções para integrar mini mascote
+        const originalAddToCart = addToCart;
+        function addToCart(prodId, qtd = 1) {
+            const prod = dados.produtos.find(p => p.id === prodId);
+            if (!prod || !isEmEstoque(prod)) return alert('Produto esgotado!');
+            const existing = carrinho.find(c => c.id === prodId);
+            const precoUnit = isPromoActive(prod) ? prod.precoPromo : prod.preco;
+            if (existing) {
+                if (existing.quantidade + qtd > getEstoque(prod)) return alert('Estoque máximo atingido!');
+                existing.quantidade += qtd;
+            } else {
+                carrinho.push({ id: prodId, quantidade: qtd, preco: precoUnit, nome: prod.nome, imagem: prod.imagem || '' });
+            }
+            salvarCarrinho();
+            mascoteReage('addCart', prod.nome);
+            miniMascoteReage('addCart', prod.nome);
+            const el = document.querySelector(`.produto-card[data-id="${prodId}"] .btn-add-cart`);
+            if (el) { el.textContent = '✓ Adicionado!'; setTimeout(() => el.textContent = 'Adicionar', 2000); }
+        }
+
+        // Sobrescrever abrirModal
+        const originalAbrirModal = abrirModal;
+        function abrirModal(prodId) {
+            const prod = dados.produtos.find(p => p.id === prodId);
+            if (!prod) return;
+            originalAbrirModal(prodId);
+            miniMascoteReage('abrirModal', prod.nome);
+        }
+
+        // Sobrescrever toggleFavorito
+        const originalToggleFavorito = toggleFavorito;
+        function toggleFavorito(prodId) {
+            const prod = dados.produtos.find(p => p.id === prodId);
+            if (favoritos.includes(prodId)) {
+                favoritos = favoritos.filter(id => id !== prodId);
+                salvarFavoritos();
+                atualizarFavoritosUI();
+                mascoteReage('removerFavorito', prod ? prod.nome : null);
+                miniMascoteReage('removerFavorito', prod ? prod.nome : null);
+            } else {
+                favoritos.push(prodId);
+                salvarFavoritos();
+                atualizarFavoritosUI();
+                mascoteReage('favoritar', prod ? prod.nome : null);
+                miniMascoteReage('favoritar', prod ? prod.nome : null);
+            }
+        }
+
+        // Inicializar mini mascote com fala
+        setTimeout(() => {
+            miniMascoteFalar('Olá! Sou o Gluudyx! 😄');
+        }, 3000);
+
         // ================= CUPONS DE DESCONTO =================
         let cupomAtual = null;
         const cuponsValidos = {
@@ -1421,7 +1579,8 @@
             salvarAvaliacoes();
             document.getElementById('avaliacaoComentario').value = '';
             renderizarAvaliacoes(id);
-            mascoteReage('addCart', produtoModalAtual.nome); // reage como carinho
+            mascoteReage('addCart', produtoModalAtual.nome);
+            miniMascoteReage('addCart', produtoModalAtual.nome);
         }
 
         function renderizarAvaliacoes(prodId) {
@@ -1797,6 +1956,7 @@
             }
             salvarCarrinho();
             mascoteReage('addCart', prod.nome);
+            miniMascoteReage('addCart', prod.nome);
             const el = document.querySelector(`.produto-card[data-id="${prodId}"] .btn-add-cart`);
             if (el) { el.textContent = '✓ Adicionado!'; setTimeout(() => el.textContent = 'Adicionar', 2000); }
         }
@@ -1868,11 +2028,13 @@
                 salvarFavoritos();
                 atualizarFavoritosUI();
                 mascoteReage('removerFavorito', prod ? prod.nome : null);
+                miniMascoteReage('removerFavorito', prod ? prod.nome : null);
             } else {
                 favoritos.push(prodId);
                 salvarFavoritos();
                 atualizarFavoritosUI();
                 mascoteReage('favoritar', prod ? prod.nome : null);
+                miniMascoteReage('favoritar', prod ? prod.nome : null);
             }
         }
 
@@ -1979,6 +2141,8 @@
             // Carrega avaliações e sugestões
             renderizarAvaliacoes(prodId);
             renderizarSugestoes(prodId);
+            // Mini mascote reage
+            miniMascoteReage('abrirModal', prod.nome);
         }
 
         function fecharModal() {
