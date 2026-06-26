@@ -376,109 +376,86 @@
         .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(11, 4, 28, 0.8); backdrop-filter: blur(8px); border-top: 1px solid var(--vidro-borda); padding: 8px 20px; text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.5); z-index: 10; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .footer .visit-counter { color: var(--ciano-brilhante); font-weight: 600; }
 
-        /* ========== PROVA SOCIAL ========== */
-        #socialProofContainer {
+        /* ========== RASTRO DE FUGA ========== */
+        #trailContainer {
             position: fixed;
-            bottom: 100px;
-            left: 20px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-width: 320px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
+            z-index: 9998;
+            display: none;
         }
-        .social-proof-item {
-            background: var(--vidro-fundo);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--vidro-borda);
-            border-radius: 16px;
-            padding: 12px 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideInProof 0.5s ease forwards;
-            pointer-events: auto;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-        }
-        .social-proof-item .proof-text {
-            font-size: 0.85rem;
-            line-height: 1.3;
-        }
-        .social-proof-item .proof-text strong { color: var(--ciano-brilhante); }
-        @keyframes slideInProof {
-            from { transform: translateX(-60px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes slideOutProof {
-            from { transform: translateX(0); opacity: 1; }
-            to { transform: translateX(-60px); opacity: 0; }
+        #trailContainer.active {
+            display: block;
         }
 
-        /* ========== POPUP PRIMEIRA COMPRA ========== */
-        #firstVisitPopup {
+        /* ========== CABEÇA ESPIANDO ========== */
+        #peekingHead {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(8px);
+            bottom: 20px;
+            right: 20px;
             z-index: 99999;
             display: none;
-            justify-content: center;
+            cursor: pointer;
+            flex-direction: column;
             align-items: center;
-            animation: fadeInPopup 0.5s ease;
+            animation: peekingFloat 2s ease-in-out infinite;
+            transition: transform 0.3s;
         }
-        #firstVisitPopup.active { display: flex; }
-        @keyframes fadeInPopup {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
+        #peekingHead.active {
+            display: flex;
         }
-        .popup-box {
-            background: var(--vidro-fundo);
-            backdrop-filter: blur(16px);
+        #peekingHead:hover {
+            transform: scale(1.05);
+        }
+        @keyframes peekingFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        #peekingHead img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid var(--ciano-brilhante);
+            box-shadow: 0 0 30px rgba(172,40,255,0.6);
+        }
+        .peeking-fala {
+            background: rgba(11,4,28,0.9);
+            backdrop-filter: blur(8px);
             border: 1px solid var(--vidro-borda);
-            border-radius: 24px;
-            padding: 40px;
-            max-width: 450px;
-            width: 90%;
+            border-radius: 16px;
+            padding: 8px 14px;
+            font-size: 0.8rem;
+            color: #fff;
+            margin-bottom: 10px;
             text-align: center;
-            box-shadow: 0 0 60px rgba(172,40,255,0.4);
+            max-width: 200px;
+            box-shadow: 0 0 20px rgba(172,40,255,0.4);
             position: relative;
         }
-        .popup-box h2 { font-size: 1.8rem; margin-bottom: 10px; color: var(--amarelo-neon); }
-        .popup-box p { font-size: 1rem; opacity: 0.8; margin-bottom: 20px; }
-        .popup-box .cupom-box {
-            background: rgba(255,255,255,0.05);
-            border: 1px dashed var(--ciano-brilhante);
-            border-radius: 12px;
-            padding: 12px;
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: var(--ciano-brilhante);
-            margin-bottom: 20px;
-            cursor: pointer;
-        }
-        .popup-box .btn-fechar-popup {
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: var(--cor-texto);
-            padding: 8px 20px;
-            border-radius: 30px;
-            cursor: pointer;
-            transition: var(--transicao);
-            font-size: 0.9rem;
-        }
-        .popup-box .btn-fechar-popup:hover { background: rgba(255,255,255,0.2); }
-        .popup-box .close-popup-icon {
+        .peeking-fala::after {
+            content: '';
             position: absolute;
-            top: 15px; right: 20px;
-            font-size: 1.8rem;
-            cursor: pointer;
-            background: none;
-            border: none;
-            color: var(--cor-texto);
-            transition: var(--transicao);
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 6px solid transparent;
+            border-top-color: rgba(11,4,28,0.9);
         }
-        .popup-box .close-popup-icon:hover { transform: rotate(90deg); color: var(--rosa-neon); }
+
+        @media (max-width: 600px) {
+            #peekingHead img {
+                width: 60px;
+                height: 60px;
+            }
+            .peeking-fala {
+                font-size: 0.7rem;
+                max-width: 150px;
+                padding: 6px 10px;
+            }
+        }
 
         @media (max-width: 900px) {
             .fala-container { right: -40px; width: 160px; font-size: 0.75rem; top: 5px; }
@@ -610,6 +587,17 @@
     <!-- SINAL DE ALERTA GIGANTE -->
     <div id="alertaContainer">
         <div class="alerta-sinal">⚠️</div>
+    </div>
+
+    <!-- RASTRO DE FUGA -->
+    <div id="trailContainer">
+        <canvas id="trailCanvas"></canvas>
+    </div>
+
+    <!-- CABEÇA ESPIANDO -->
+    <div id="peekingHead" onclick="trazerMascoteDeVolta()">
+        <div class="peeking-fala">Oi, Você quer que o Gluudyx volte?</div>
+        <img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx cabeça">
     </div>
 
     <!-- HOME -->
@@ -746,6 +734,142 @@
             "Meu sonho é ser um papel de parede... para ficar colado em você! 🖼️💖",
             "Você é mais doce que um caderno de receitas! 🍪📔"
         ];
+
+        // ================= SISTEMA DE PERSISTÊNCIA (30 MINUTOS) =================
+        const RESET_INTERVAL = 30 * 60 * 1000; // 30 minutos em ms
+
+        function salvarEstadoMascote() {
+            const estado = {
+                cliqueCount: cliqueCount,
+                ultimoCliqueTime: ultimoCliqueTime,
+                estaSumido: estaSumido,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('gudyx_mascote_state', JSON.stringify(estado));
+        }
+
+        function carregarEstadoMascote() {
+            const saved = localStorage.getItem('gudyx_mascote_state');
+            if (saved) {
+                try {
+                    const estado = JSON.parse(saved);
+                    if (Date.now() - estado.timestamp < RESET_INTERVAL) {
+                        cliqueCount = estado.cliqueCount || 0;
+                        ultimoCliqueTime = estado.ultimoCliqueTime || 0;
+                        estaSumido = estado.estaSumido || false;
+                        if (estaSumido) {
+                            // Se estava sumido, mostra a cabeça espiando
+                            document.getElementById('peekingHead').classList.add('active');
+                            document.getElementById('mascoteWrapper').classList.add('somiu');
+                        }
+                    } else {
+                        // Passou 30 min, reseta
+                        localStorage.removeItem('gudyx_mascote_state');
+                        cliqueCount = 0;
+                        ultimoCliqueTime = 0;
+                        estaSumido = false;
+                    }
+                } catch(e) {
+                    localStorage.removeItem('gudyx_mascote_state');
+                }
+            }
+        }
+
+        // ================= RASTRO DE FUGA =================
+        let trailParticles = [];
+        let trailAnimationId = null;
+        const trailCanvas = document.getElementById('trailCanvas');
+        const trailCtx = trailCanvas.getContext('2d');
+
+        function initTrailCanvas() {
+            trailCanvas.width = window.innerWidth;
+            trailCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', initTrailCanvas);
+        initTrailCanvas();
+
+        function criarRastro(x, y) {
+            const numParticles = 20;
+            for (let i = 0; i < numParticles; i++) {
+                trailParticles.push({
+                    x: x + (Math.random() - 0.5) * 20,
+                    y: y + (Math.random() - 0.5) * 20,
+                    vx: (Math.random() - 0.5) * 4,
+                    vy: (Math.random() - 0.5) * 4 - 2,
+                    life: 1.0,
+                    decay: 0.015 + Math.random() * 0.02,
+                    size: 4 + Math.random() * 6,
+                    color: `hsla(${270 + Math.random()*30}, 100%, 70%, `
+                });
+            }
+        }
+
+        function animarRastro() {
+            if (!document.getElementById('trailContainer').classList.contains('active')) {
+                if (trailAnimationId) {
+                    cancelAnimationFrame(trailAnimationId);
+                    trailAnimationId = null;
+                }
+                return;
+            }
+            trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+            
+            for (let i = trailParticles.length - 1; i >= 0; i--) {
+                const p = trailParticles[i];
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life -= p.decay;
+                if (p.life <= 0) {
+                    trailParticles.splice(i, 1);
+                    continue;
+                }
+                trailCtx.beginPath();
+                trailCtx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+                trailCtx.fillStyle = p.color + p.life + ')';
+                trailCtx.fill();
+            }
+            trailAnimationId = requestAnimationFrame(animarRastro);
+        }
+
+        function iniciarRastro() {
+            const container = document.getElementById('trailContainer');
+            container.classList.add('active');
+            // Cria partículas na posição atual do mascote
+            const rect = document.getElementById('mascoteWrapper').getBoundingClientRect();
+            const cx = rect.left + rect.width / 2;
+            const cy = rect.top + rect.height / 2;
+            criarRastro(cx, cy);
+            if (!trailAnimationId) {
+                animarRastro();
+            }
+        }
+
+        function pararRastro() {
+            document.getElementById('trailContainer').classList.remove('active');
+            trailParticles = [];
+            if (trailAnimationId) {
+                cancelAnimationFrame(trailAnimationId);
+                trailAnimationId = null;
+            }
+            trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+        }
+
+        // ================= CABEÇA ESPIANDO =================
+        function trazerMascoteDeVolta() {
+            document.getElementById('peekingHead').classList.remove('active');
+            document.getElementById('mascoteWrapper').classList.remove('somiu');
+            estaSumido = false;
+            cliqueCount = 0;
+            ultimoCliqueTime = 0;
+            salvarEstadoMascote();
+            // Fala de volta
+            falarMascote('Oi! Voltei! Vamos falar de promoções e piadas? 😄');
+            // Focar em promoções e piadas
+            setTimeout(() => {
+                atualizarMensagensMascote();
+                falarMascote();
+            }, 3000);
+        }
 
         function getMensagensMascote() {
             const msgs = [];
@@ -892,6 +1016,9 @@
                         wrapper.classList.add('fugindo');
                         falarMascote('TCHAU! 👋');
 
+                        // Inicia o rastro
+                        iniciarRastro();
+
                         const alerta = document.getElementById('alertaContainer');
                         alerta.classList.add('active');
 
@@ -903,6 +1030,7 @@
 
                         const timeoutVolta = setTimeout(() => {
                             if (!estaSumido) {
+                                pararRastro();
                                 alerta.classList.remove('active');
                                 wrapper.classList.remove('fugindo');
                                 wrapper.classList.add('voltando');
@@ -914,13 +1042,16 @@
                                     cliqueCount = 0;
                                     mostrarExpressao('feliz');
                                     falarMascote('Ufa! Que susto! Voltei... mas não me irrita mais, tá? 😅');
+                                    salvarEstadoMascote();
                                 }, 600);
                             }
                         }, 3000);
 
+                        // Se clicar durante a fuga, SOME!
                         const listenerFuga = function(e) {
                             if (estaFugindo) {
                                 clearTimeout(timeoutVolta);
+                                pararRastro();
                                 alerta.classList.remove('active');
                                 wrapper.classList.remove('fugindo');
                                 wrapper.classList.add('somiu');
@@ -928,6 +1059,9 @@
                                 estaSumido = true;
                                 wrapper.removeEventListener('click', listenerFuga);
                                 falarMascote('😶 ... (Gluudyx sumiu...)');
+                                // Mostra cabeça espiando
+                                document.getElementById('peekingHead').classList.add('active');
+                                salvarEstadoMascote();
                             }
                         };
                         wrapper.addEventListener('click', listenerFuga);
@@ -940,7 +1074,10 @@
                 cliqueCount = 0;
                 mostrarExpressao('feliz');
                 timeoutIrritacao = null;
+                salvarEstadoMascote();
             }, 5000);
+            
+            salvarEstadoMascote();
         });
 
         // Intervalo automático de fala (a cada 12 segundos)
@@ -980,6 +1117,7 @@
 
             carregarCarrinho();
             carregarFavoritos();
+            carregarEstadoMascote();
         }
 
         function salvarDados() {
