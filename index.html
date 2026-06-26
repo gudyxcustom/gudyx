@@ -71,6 +71,55 @@
         .mascote-wrapper:hover img { filter: drop-shadow(0 0 50px rgba(172,40,255,0.8)); }
         .mascote-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, rgba(172,40,255,0.4) 0%, transparent 70%); z-index: -1; animation: pulseGlow 3s ease-in-out infinite; pointer-events: none; }
 
+        /* ========== EXPRESSÕES DO MASCOTE ========== */
+        .mascote-wrapper.feliz img { filter: drop-shadow(0 0 40px rgba(0, 242, 254, 0.6)); }
+        .mascote-wrapper.triste img { filter: drop-shadow(0 0 30px rgba(100, 100, 255, 0.4)) brightness(0.8); }
+        .mascote-wrapper.surpreso img { transform: scale(1.1); filter: drop-shadow(0 0 50px rgba(255, 229, 0, 0.7)); }
+        .mascote-wrapper.irritado-1 img { transform: rotate(-5deg) scale(0.95); filter: drop-shadow(0 0 30px rgba(255, 68, 68, 0.6)); }
+        .mascote-wrapper.irritado-2 img { transform: rotate(10deg) scale(0.9); filter: drop-shadow(0 0 50px rgba(255, 0, 0, 0.8)); }
+        .mascote-wrapper.fugindo { animation: fugaMascote 0.8s ease forwards; }
+        @keyframes fugaMascote {
+            0% { transform: translateX(0) scale(1); opacity: 1; }
+            50% { transform: translateX(100px) scale(1.2) rotate(20deg); opacity: 1; }
+            100% { transform: translateX(300px) scale(0.5) rotate(40deg); opacity: 0; }
+        }
+        .mascote-wrapper.voltando { animation: voltaMascote 0.6s ease forwards; }
+        @keyframes voltaMascote {
+            0% { transform: translateX(300px) scale(0.5) rotate(40deg); opacity: 0; }
+            100% { transform: translateX(0) scale(1) rotate(0); opacity: 1; }
+        }
+        .mascote-wrapper.somiu { display: none !important; }
+
+        /* ========== SINAL DE ALERTA GIGANTE ========== */
+        #alertaContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+        #alertaContainer.active {
+            display: flex;
+        }
+        .alerta-sinal {
+            font-size: clamp(12rem, 50vw, 30rem);
+            color: #ff4455;
+            text-shadow: 0 0 60px #ff4455, 0 0 120px #ff4455, 0 0 200px rgba(255, 68, 68, 0.5);
+            animation: alertaPulse 0.5s ease-in-out infinite alternate;
+            opacity: 0.8;
+            font-family: 'Arial Black', sans-serif;
+            font-weight: 900;
+        }
+        @keyframes alertaPulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
         .btn-acessar { padding: 22px 60px; font-size: 1.4rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a028ff 0%, var(--ciano-brilhante) 100%); border: none; border-radius: 60px; cursor: pointer; transition: var(--transicao); box-shadow: 0 8px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
         .btn-acessar::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.15), transparent); animation: rotateGlow 6s linear infinite; }
         .btn-acessar:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(172,40,255,0.8); }
@@ -597,6 +646,11 @@
         <i class="fab fa-whatsapp"></i>
     </a>
 
+    <!-- SINAL DE ALERTA GIGANTE -->
+    <div id="alertaContainer">
+        <div class="alerta-sinal">⚠️</div>
+    </div>
+
     <!-- HOME -->
     <div class="screen active" id="homeScreen">
         <div class="home-screen">
@@ -706,6 +760,66 @@
         let produtoModalAtual = null;
         let viewMode = 'grid';
 
+        // ================= CONTROLE DO MASCOTE =================
+        let cliqueCount = 0;
+        let ultimoCliqueTime = 0;
+        let estaFalando = false;
+        let estaFugindo = false;
+        let estaVoltando = false;
+        let estaSumido = false;
+        let timeoutFala = null;
+        let timeoutIrritacao = null;
+        let mascoteMsgIdx = 0;
+        let mascoteMensagens = [];
+
+        // ================= PIAVAS E FRASES =================
+        const piadas = [
+            "Por que o caderno foi ao médico? Porque estava com febre de 39,9! 📓🤒",
+            "Qual o doce favorito do Gluudyx? Pé de moleque! Porque ele é grudento! 🍬",
+            "Você sabia que eu sou feito de cola? Por isso sou tão apegado a você! 🥰",
+            "O que o lápis disse para a borracha? 'Você apaga meus erros, mas não apaga meu amor!' ✏️💕",
+            "Por que a caneta não gostou do papel? Porque ele era muito riscado! 🖊️📄",
+            "Qual a fruta preferida do Gluudyx? A uva! Porque ela é 'uva' piada! 🍇😂",
+            "Eu sou como um imã... atraio boas energias e clientes! 🧲✨",
+            "Se você me der um clique, eu te dou um sorriso! 😄",
+            "Meu sonho é ser um papel de parede... para ficar colado em você! 🖼️💖",
+            "Você é mais doce que um caderno de receitas! 🍪📔"
+        ];
+
+        const frasesIrritacao = [
+            "Para com isso! 😤 Você tá me deixando nervoso!",
+            "Gluudyx está bravo com você! 😡 Agora vai ter que me pedir desculpas!",
+            "JÁ CHEGA! VOU EMBORA! 🚀 Até nunca mais! (brincadeira... tô voltando 😜)"
+        ];
+
+        function getMensagensMascote() {
+            const msgs = [];
+            
+            // 1. Produtos em promoção
+            const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p));
+            if (promos.length > 0) {
+                const p = promos[Math.floor(Math.random() * promos.length)];
+                msgs.push(`🔥 ${p.nome} está em promoção por apenas R$ ${p.precoPromo}! Corre!`);
+            }
+
+            // 2. Produtos mais acessados (top 3)
+            const top = [...dados.produtos].sort((a, b) => (b.cliques || 0) - (a.cliques || 0)).slice(0, 3);
+            if (top.length > 0 && top[0].cliques > 0) {
+                const p = top[Math.floor(Math.random() * top.length)];
+                msgs.push(`🏆 ${p.nome} é o produto mais acessado do momento! Já viu?`);
+            }
+
+            // 3. Piadas
+            msgs.push(piadas[Math.floor(Math.random() * piadas.length)]);
+
+            // 4. Se não tiver nada, mensagem padrão
+            if (msgs.length === 0) {
+                msgs.push('Olá, sou o Gluudyx! Explore nosso catálogo. ✨');
+            }
+
+            return msgs;
+        }
+
         function carregarDados() {
             if (localStorage.getItem('gudyxDados')) {
                 try {
@@ -741,7 +855,7 @@
             localStorage.setItem('gudyxDados', JSON.stringify(dados));
         }
 
-        // ================= CARRINHO COM VALIDADE 24H + SESSION =================
+        // ================= CARRINHO =================
         function carregarCarrinho() {
             let sessionCart = sessionStorage.getItem('gudyxCarrinho');
             
@@ -813,16 +927,8 @@
         function toggleFavorito(prodId) {
             if (favoritos.includes(prodId)) {
                 favoritos = favoritos.filter(id => id !== prodId);
-                // Reação do mascote ao remover favorito (opcional)
-                if (typeof falarMascote === 'function') {
-                    // Pode adicionar uma fala opcional aqui se quiser
-                }
             } else {
                 favoritos.push(prodId);
-                // Reação do mascote ao adicionar favorito (opcional)
-                if (typeof falarMascote === 'function') {
-                    // Pode adicionar uma fala opcional aqui se quiser
-                }
             }
             salvarFavoritos();
             atualizarFavoritosUI();
@@ -1181,62 +1287,144 @@
         function iniciarSliderLoop() { clearInterval(sliderIntervalo); sliderIntervalo = setInterval(proximoSlide, 4000); }
         function resetarSlider() { clearInterval(sliderIntervalo); iniciarSlider(); }
 
-        // ================= MASCOTE - APENAS PROMOÇÕES E MAIS ACESSADOS =================
-        let mascoteMsgIdx = 0; let mascoteMensagens = [];
-        const falaContainer = document.getElementById('falaContainer');
-
-        function getMensagensMascote() {
-            const msgs = [];
-            
-            // 1. Produtos em promoção
-            const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p));
-            if (promos.length > 0) {
-                const p = promos[Math.floor(Math.random() * promos.length)];
-                msgs.push(`🔥 ${p.nome} está em promoção por apenas R$ ${p.precoPromo}! Corre!`);
-            }
-
-            // 2. Produtos mais acessados (top 3)
-            const top = [...dados.produtos].sort((a, b) => (b.cliques || 0) - (a.cliques || 0)).slice(0, 3);
-            if (top.length > 0 && top[0].cliques > 0) {
-                const p = top[Math.floor(Math.random() * top.length)];
-                msgs.push(`🏆 ${p.nome} é o produto mais acessado do momento! Já viu?`);
-            }
-
-            // 3. Se não tiver nada, mensagem padrão
-            if (msgs.length === 0) {
-                msgs.push('Olá, sou o Gluudyx! Explore nosso catálogo. ✨');
-            }
-
-            return msgs;
-        }
-
+        // ================= MASCOTE - NOVO SISTEMA =================
         function atualizarMensagensMascote() {
             mascoteMensagens = getMensagensMascote();
         }
 
-        function falarMascote() {
-            if (mascoteMensagens.length === 0) atualizarMensagensMascote();
-            const msg = mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
-            mascoteMsgIdx++;
-            falaContainer.textContent = msg;
-            falaContainer.classList.add('falando');
-            setTimeout(() => { falaContainer.classList.remove('falando'); }, 4000);
+        function falarMascote(msg = null) {
+            if (estaFalando || estaFugindo || estaVoltando || estaSumido) return;
+            if (timeoutFala) {
+                clearTimeout(timeoutFala);
+                timeoutFala = null;
+            }
+            if (!msg) {
+                if (mascoteMensagens.length === 0) atualizarMensagensMascote();
+                msg = mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
+                mascoteMsgIdx++;
+            }
+            estaFalando = true;
+            document.getElementById('falaContainer').textContent = msg;
+            document.getElementById('falaContainer').classList.add('falando');
+            timeoutFala = setTimeout(() => {
+                document.getElementById('falaContainer').classList.remove('falando');
+                estaFalando = false;
+                timeoutFala = null;
+            }, 4000);
         }
 
-        setInterval(() => {
-            atualizarMensagensMascote();
-            falarMascote();
-        }, 10000);
+        function mostrarExpressao(expressao) {
+            const wrapper = document.getElementById('mascoteWrapper');
+            wrapper.classList.remove('feliz', 'triste', 'surpreso', 'irritado-1', 'irritado-2', 'fugindo', 'voltando');
+            if (expressao) wrapper.classList.add(expressao);
+        }
 
-        document.getElementById('mascoteWrapper').addEventListener('click', function() {
-            this.style.animation = 'none';
-            this.offsetHeight;
-            this.style.animation = 'floatMascote 0.6s ease-in-out';
-            falarMascote();
-            setTimeout(() => {
-                this.style.animation = 'floatMascote 6s ease-in-out infinite';
-            }, 600);
-        });
+        function lidarComCliqueMascote() {
+            if (estaSumido) return;
+            if (estaFalando) return;
+            if (estaFugindo || estaVoltando) return;
+
+            const agora = Date.now();
+            if (agora - ultimoCliqueTime > 2000) cliqueCount = 0;
+            cliqueCount++;
+            ultimoCliqueTime = agora;
+            if (timeoutIrritacao) {
+                clearTimeout(timeoutIrritacao);
+                timeoutIrritacao = null;
+            }
+
+            const wrapper = document.getElementById('mascoteWrapper');
+
+            if (cliqueCount === 1) {
+                mostrarExpressao('feliz');
+                const rand = Math.random();
+                if (rand < 0.3) falarMascote('Opa! Clicou em mim? 😊');
+                else if (rand < 0.6) falarMascote('Você é fofo(a)! 🥰');
+                else falarMascote(piadas[Math.floor(Math.random() * piadas.length)]);
+            } else if (cliqueCount === 2) {
+                mostrarExpressao('irritado-1');
+                falarMascote('Para com isso! 😤 Me deixa nervoso!');
+            } else if (cliqueCount === 3) {
+                mostrarExpressao('irritado-2');
+                falarMascote('Gluudyx está bravo com você! 😡');
+            } else if (cliqueCount >= 4) {
+                // FUGA!
+                mostrarExpressao(null);
+                wrapper.classList.add('fugindo');
+                estaFugindo = true;
+                falarMascote('JÁ CHEGA! VOU EMBORA! 🚀');
+
+                // Sinal de alerta gigante
+                const alerta = document.getElementById('alertaContainer');
+                alerta.classList.add('active');
+
+                // Aviso antes de voltar
+                setTimeout(() => {
+                    if (!estaSumido) {
+                        falarMascote('Tô voltando... mas não me irrita! 😅');
+                    }
+                }, 2000);
+
+                // Volta depois de 3 segundos (se não for clicado)
+                const timeoutVolta = setTimeout(() => {
+                    if (!estaSumido) {
+                        alerta.classList.remove('active');
+                        wrapper.classList.remove('fugindo');
+                        wrapper.classList.add('voltando');
+                        estaFugindo = false;
+                        estaVoltando = true;
+                        setTimeout(() => {
+                            wrapper.classList.remove('voltando');
+                            estaVoltando = false;
+                            cliqueCount = 0;
+                            mostrarExpressao('feliz');
+                            falarMascote('Ufa! Voltei! 😅');
+                            timeoutIrritacao = setTimeout(() => {
+                                cliqueCount = 0;
+                                mostrarExpressao('feliz');
+                                timeoutIrritacao = null;
+                            }, 5000);
+                        }, 600);
+                    }
+                }, 3000);
+
+                // Se clicar durante a fuga, SOME!
+                const listenerFuga = function(e) {
+                    if (estaFugindo) {
+                        clearTimeout(timeoutVolta);
+                        alerta.classList.remove('active');
+                        wrapper.classList.remove('fugindo');
+                        wrapper.classList.add('somiu');
+                        estaFugindo = false;
+                        estaSumido = true;
+                        // Remove o evento para não acumular
+                        wrapper.removeEventListener('click', listenerFuga);
+                        // Mostra uma mensagem final (opcional)
+                        falarMascote('😶 ... (Gluudyx sumiu...)');
+                    }
+                };
+                wrapper.addEventListener('click', listenerFuga);
+
+                return;
+            }
+
+            timeoutIrritacao = setTimeout(() => {
+                cliqueCount = 0;
+                mostrarExpressao('feliz');
+                timeoutIrritacao = null;
+            }, 5000);
+        }
+
+        // Configura o evento de clique no mascote
+        document.getElementById('mascoteWrapper').addEventListener('click', lidarComCliqueMascote);
+
+        // Inicia o intervalo automático de fala
+        setInterval(() => {
+            if (!estaFalando && !estaFugindo && !estaVoltando && !estaSumido) {
+                mascoteMensagens = getMensagensMascote();
+                falarMascote();
+            }
+        }, 12000);
 
         // ================= VENDIDOS =================
         function carregarMaisVendidos() {
