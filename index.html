@@ -549,6 +549,37 @@
             to { transform: translateX(-60px); opacity: 0; }
         }
 
+        /* ========== ALERTA GIGANTE CORRIGIDO ========== */
+        #alertaContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 99999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            background: rgba(0,0,0,0.2);
+        }
+        #alertaContainer.active {
+            display: flex;
+        }
+        .alerta-sinal {
+            font-size: clamp(12rem, 50vw, 30rem);
+            color: #ff4455;
+            text-shadow: 0 0 60px #ff4455, 0 0 120px #ff4455, 0 0 200px rgba(255, 68, 68, 0.5);
+            animation: alertaPulse 0.5s ease-in-out infinite alternate;
+            opacity: 0.8;
+            font-family: 'Arial Black', sans-serif;
+            font-weight: 900;
+        }
+        @keyframes alertaPulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
         @media (max-width: 900px) {
             .fala-container { right: -40px; width: 160px; font-size: 0.75rem; top: 5px; }
             .fala-container::before { top: 12px; }
@@ -678,7 +709,7 @@
         <i class="fab fa-whatsapp"></i>
     </a>
 
-    <!-- SINAL DE ALERTA GIGANTE -->
+    <!-- SINAL DE ALERTA GIGANTE (CORRIGIDO) -->
     <div id="alertaContainer">
         <div class="alerta-sinal">⚠️</div>
     </div>
@@ -816,27 +847,16 @@
         let mascoteMsgIdx = 0;
         let mascoteMensagens = [];
 
-        const piadas = [
-            "Por que o caderno foi ao médico? Porque estava com febre de 39,9! 📓🤒",
-            "Qual o doce favorito do Gluudyx? Pé de moleque! Porque ele é grudento! 🍬",
-            "Você sabia que eu sou feito de cola? Por isso sou tão apegado a você! 🥰",
-            "O que o lápis disse para a borracha? 'Você apaga meus erros, mas não apaga meu amor!' ✏️💕",
-            "Por que a caneta não gostou do papel? Porque ele era muito riscado! 🖊️📄",
-            "Qual a fruta preferida do Gluudyx? A uva! Porque ela é 'uva' piada! 🍇😂",
-            "Eu sou como um imã... atraio boas energias e clientes! 🧲✨",
-            "Se você me der um clique, eu te dou um sorriso! 😄",
-            "Meu sonho é ser um papel de parede... para ficar colado em você! 🖼️💖",
-            "Você é mais doce que um caderno de receitas! 🍪📔"
-        ];
-
         // ================= SISTEMA DE PERSISTÊNCIA (30 MINUTOS) =================
-        const RESET_INTERVAL = 30 * 60 * 1000; // 30 minutos em ms
+        const RESET_INTERVAL = 30 * 60 * 1000; // 30 minutos
+        let ultimaIrritacaoTimestamp = 0; // momento da última irritação (fuga)
 
         function salvarEstadoMascote() {
             const estado = {
                 cliqueCount: cliqueCount,
                 ultimoCliqueTime: ultimoCliqueTime,
                 estaSumido: estaSumido,
+                ultimaIrritacaoTimestamp: ultimaIrritacaoTimestamp,
                 timestamp: Date.now()
             };
             localStorage.setItem('gudyx_mascote_state', JSON.stringify(estado));
@@ -851,17 +871,17 @@
                         cliqueCount = estado.cliqueCount || 0;
                         ultimoCliqueTime = estado.ultimoCliqueTime || 0;
                         estaSumido = estado.estaSumido || false;
+                        ultimaIrritacaoTimestamp = estado.ultimaIrritacaoTimestamp || 0;
                         if (estaSumido) {
-                            // Se estava sumido, mostra a cabeça espiando
                             document.getElementById('peekingHead').classList.add('active');
                             document.getElementById('mascoteWrapper').classList.add('somiu');
                         }
                     } else {
-                        // Passou 30 min, reseta
                         localStorage.removeItem('gudyx_mascote_state');
                         cliqueCount = 0;
                         ultimoCliqueTime = 0;
                         estaSumido = false;
+                        ultimaIrritacaoTimestamp = 0;
                     }
                 } catch(e) {
                     localStorage.removeItem('gudyx_mascote_state');
@@ -883,7 +903,7 @@
         initTrailCanvas();
 
         function criarRastro(x, y) {
-            const numParticles = 60; // Mais partículas
+            const numParticles = 60;
             const colors = ['hsla(270, 100%, 70%, ', 'hsla(200, 100%, 70%, ', 'hsla(330, 100%, 70%, '];
             for (let i = 0; i < numParticles; i++) {
                 trailParticles.push({
@@ -892,7 +912,7 @@
                     vx: (Math.random() - 0.5) * 6,
                     vy: (Math.random() - 0.5) * 6 - 3,
                     life: 1.0,
-                    decay: 0.005 + Math.random() * 0.01, // Vida mais longa (~2s)
+                    decay: 0.005 + Math.random() * 0.01,
                     size: 4 + Math.random() * 8,
                     color: colors[Math.floor(Math.random() * colors.length)]
                 });
@@ -908,11 +928,8 @@
                 return;
             }
             trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
-            
-            // Efeito de brilho
             trailCtx.shadowBlur = 20;
             trailCtx.shadowColor = 'rgba(172, 40, 255, 0.5)';
-
             for (let i = trailParticles.length - 1; i >= 0; i--) {
                 const p = trailParticles[i];
                 p.x += p.vx;
@@ -933,7 +950,6 @@
         function iniciarRastro() {
             const container = document.getElementById('trailContainer');
             container.classList.add('active');
-            // Cria partículas na posição atual do mascote
             const rect = document.getElementById('mascoteWrapper').getBoundingClientRect();
             const cx = rect.left + rect.width / 2;
             const cy = rect.top + rect.height / 2;
@@ -961,10 +977,10 @@
             estaSumido = false;
             cliqueCount = 0;
             ultimoCliqueTime = 0;
+            // Define a última irritação como agora para iniciar a recarga de 30 min
+            ultimaIrritacaoTimestamp = Date.now();
             salvarEstadoMascote();
-            // Fala de volta
             falarMascote('Oi! Voltei! Vamos falar de promoções e piadas? 😄');
-            // Focar em promoções e piadas
             setTimeout(() => {
                 atualizarMensagensMascote();
                 falarMascote();
@@ -996,19 +1012,16 @@
         // Função de fala normal (sem bloqueio de clique)
         function falarMascote(msgPersonalizada = null) {
             if (estaFugindo || estaVoltando || estaSumido || estaContando) return;
-            
             if (timeoutFala) {
                 clearTimeout(timeoutFala);
                 timeoutFala = null;
             }
-            
             if (mascoteMensagens.length === 0) atualizarMensagensMascote();
             const msg = msgPersonalizada || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
             mascoteMsgIdx++;
             falaContainer.textContent = msg;
             falaContainer.classList.add('falando');
             estaFalando = true;
-            
             timeoutFala = setTimeout(() => {
                 falaContainer.classList.remove('falando');
                 estaFalando = false;
@@ -1037,6 +1050,19 @@
             if (expressao) wrapper.classList.add(expressao);
         }
 
+        const piadas = [
+            "Por que o caderno foi ao médico? Porque estava com febre de 39,9! 📓🤒",
+            "Qual o doce favorito do Gluudyx? Pé de moleque! Porque ele é grudento! 🍬",
+            "Você sabia que eu sou feito de cola? Por isso sou tão apegado a você! 🥰",
+            "O que o lápis disse para a borracha? 'Você apaga meus erros, mas não apaga meu amor!' ✏️💕",
+            "Por que a caneta não gostou do papel? Porque ele era muito riscado! 🖊️📄",
+            "Qual a fruta preferida do Gluudyx? A uva! Porque ela é 'uva' piada! 🍇😂",
+            "Eu sou como um imã... atraio boas energias e clientes! 🧲✨",
+            "Se você me der um clique, eu te dou um sorriso! 😄",
+            "Meu sonho é ser um papel de parede... para ficar colado em você! 🖼️💖",
+            "Você é mais doce que um caderno de receitas! 🍪📔"
+        ];
+
         // Evento de clique no mascote (com bounce, irritação e fuga)
         document.getElementById('mascoteWrapper').addEventListener('click', function() {
             // === BOUNCE ORIGINAL ===
@@ -1060,19 +1086,32 @@
             }
             falaContainer.classList.remove('falando');
 
+            // Verifica se está no período de recarga (30 min desde a última irritação)
             const agora = Date.now();
-            const intervalo = 2000;
-            if (agora - ultimoCliqueTime > intervalo) cliqueCount = 0;
-            cliqueCount++;
-            ultimoCliqueTime = agora;
-            if (timeoutIrritacao) {
-                clearTimeout(timeoutIrritacao);
-                timeoutIrritacao = null;
+            const emRecarga = (ultimaIrritacaoTimestamp > 0) && (agora - ultimaIrritacaoTimestamp < RESET_INTERVAL);
+            
+            if (!emRecarga) {
+                // Pode irritar normalmente
+                const intervalo = 2000;
+                if (agora - ultimoCliqueTime > intervalo) cliqueCount = 0;
+                cliqueCount++;
+                ultimoCliqueTime = agora;
+                if (timeoutIrritacao) {
+                    clearTimeout(timeoutIrritacao);
+                    timeoutIrritacao = null;
+                }
+            } else {
+                // Em recarga: não incrementa cliqueCount, só fala piadas/promoções
+                // Mas podemos ainda permitir que o clique mostre uma fala normal
+                cliqueCount = 0; // opcional, mas mantido
             }
 
             const wrapper = document.getElementById('mascoteWrapper');
 
-            if (cliqueCount === 1) {
+            // Se estiver em recarga, sempre age como cliqueCount = 1 (fala normal)
+            const effectiveClique = emRecarga ? 1 : cliqueCount;
+
+            if (effectiveClique === 1) {
                 mostrarExpressao('feliz');
                 const rand = Math.random();
                 if (rand < 0.3) falarMascote('Opa! Clicou em mim? Que honra! 😊');
@@ -1080,17 +1119,17 @@
                 else falarMascote(piadas[Math.floor(Math.random() * piadas.length)]);
                 wrapper.classList.remove('irritado-1', 'irritado-2');
             } 
-            else if (cliqueCount === 2) {
+            else if (effectiveClique === 2) {
                 mostrarExpressao('irritado-1');
                 wrapper.classList.remove('irritado-2');
                 falarMascote('Para com isso! 😤 Você tá me deixando nervoso!');
             }
-            else if (cliqueCount === 3) {
+            else if (effectiveClique === 3) {
                 mostrarExpressao('irritado-2');
                 wrapper.classList.remove('irritado-1');
                 falarMascote('Gluudyx está bravo com você! 😡 Agora vai ter que me pedir desculpas!');
             }
-            else if (cliqueCount >= 4) {
+            else if (effectiveClique >= 4) {
                 // === CONTAGEM REGRESSIVA (5...1) ===
                 mostrarExpressao(null);
                 wrapper.classList.remove('irritado-1', 'irritado-2');
@@ -1116,32 +1155,31 @@
                         wrapper.classList.add('fugindo');
                         falarMascote('TCHAU! 👋');
 
-                        // Inicia o rastro
                         iniciarRastro();
 
                         const alerta = document.getElementById('alertaContainer');
                         alerta.classList.add('active');
 
-                        // Após a animação de fuga (0.8s + um pouco), o mascote some e a cabeça aparece
+                        // Após a animação de fuga, o mascote some e a cabeça aparece
                         setTimeout(() => {
                             if (!estaSumido) {
                                 pararRastro();
                                 alerta.classList.remove('active');
                                 wrapper.classList.remove('fugindo');
-                                // Some o mascote
                                 wrapper.classList.add('somiu');
                                 estaFugindo = false;
                                 estaSumido = true;
-                                // Aparece a cabeça espiando
                                 document.getElementById('peekingHead').classList.add('active');
+                                // Define a última irritação para iniciar a recarga de 30 min
+                                ultimaIrritacaoTimestamp = Date.now();
                                 salvarEstadoMascote();
                             }
-                        }, 2500); // 2.5s para dar tempo de ver o rastro e o alerta
+                        }, 2500);
 
-                        // Se clicar durante a fuga (antes de sumir), SOME imediatamente e cabeça aparece
+                        // Se clicar durante a fuga, SOME imediatamente
                         const listenerFuga = function(e) {
                             if (estaFugindo) {
-                                clearTimeout(timeoutVolta); // Não há mais timeoutVolta, mas podemos limpar o setTimeout acima se quisermos
+                                clearTimeout(timeoutVolta); // não há mais timeoutVolta, mas limpa o setTimeout acima se necessário
                                 pararRastro();
                                 alerta.classList.remove('active');
                                 wrapper.classList.remove('fugindo');
@@ -1151,6 +1189,7 @@
                                 wrapper.removeEventListener('click', listenerFuga);
                                 falarMascote('😶 ... (Gluudyx sumiu...)');
                                 document.getElementById('peekingHead').classList.add('active');
+                                ultimaIrritacaoTimestamp = Date.now();
                                 salvarEstadoMascote();
                             }
                         };
@@ -1160,14 +1199,15 @@
                 return;
             }
 
-            timeoutIrritacao = setTimeout(() => {
-                cliqueCount = 0;
-                mostrarExpressao('feliz');
-                timeoutIrritacao = null;
+            if (!emRecarga) {
+                timeoutIrritacao = setTimeout(() => {
+                    cliqueCount = 0;
+                    mostrarExpressao('feliz');
+                    timeoutIrritacao = null;
+                    salvarEstadoMascote();
+                }, 5000);
                 salvarEstadoMascote();
-            }, 5000);
-            
-            salvarEstadoMascote();
+            }
         });
 
         // Intervalo automático de fala (a cada 12 segundos)
@@ -1217,7 +1257,6 @@
         // ================= CARRINHO =================
         function carregarCarrinho() {
             let sessionCart = sessionStorage.getItem('gudyxCarrinho');
-            
             if (sessionCart) {
                 try {
                     const data = JSON.parse(sessionCart);
@@ -1233,7 +1272,6 @@
             } else {
                 carrinho = [];
             }
-
             if (carrinho.length === 0) {
                 let localCart = localStorage.getItem('gudyxCarrinho');
                 if (localCart) {
@@ -1250,20 +1288,13 @@
                     }
                 }
             }
-
             atualizarBadgeCarrinho();
             renderizarDrawer();
         }
 
         function salvarCarrinho() {
-            sessionStorage.setItem('gudyxCarrinho', JSON.stringify({ 
-                items: carrinho, 
-                timestamp: Date.now() 
-            }));
-            localStorage.setItem('gudyxCarrinho', JSON.stringify({ 
-                items: carrinho, 
-                timestamp: Date.now() 
-            }));
+            sessionStorage.setItem('gudyxCarrinho', JSON.stringify({ items: carrinho, timestamp: Date.now() }));
+            localStorage.setItem('gudyxCarrinho', JSON.stringify({ items: carrinho, timestamp: Date.now() }));
             atualizarBadgeCarrinho();
             renderizarDrawer();
         }
@@ -1361,30 +1392,24 @@
             produtoModalAtual = prod;
             quantidadeModal = 1;
             document.getElementById('qtdModal').textContent = '1';
-
             prod.cliques = (prod.cliques || 0) + 1;
             salvarDados();
             carregarMaisVendidos();
-
             document.getElementById('modalTitle').textContent = prod.nome;
             document.getElementById('modalDesc').textContent = prod.descricao || 'Descrição não cadastrada.';
-            
             let priceHtml = ''; const promoAtiva = isPromoActive(prod);
             if (promoAtiva && prod.precoPromo) {
                 priceHtml = `<span class="modal-price-old">R$ ${prod.preco}</span> <span class="modal-price">R$ ${prod.precoPromo}</span>`;
             } else { priceHtml = `<span class="modal-price">R$ ${prod.preco}</span>`; }
             document.getElementById('modalPriceContainer').innerHTML = priceHtml;
-
             const gallery = document.getElementById('modalGallery'); gallery.innerHTML = '';
             const imagens = prod.imagens && Array.isArray(prod.imagens) && prod.imagens.length > 0 ? prod.imagens : [prod.imagem || 'https://placehold.co/400x250/0b041c/00f2fe?text=Sem+Imagem'];
             imagens.forEach(img => {
                 const imgEl = document.createElement('img'); imgEl.src = img; gallery.appendChild(imgEl);
             });
-
             const modalCartBtn = document.getElementById('modalAddCartBtn');
             const modalWaBtn = document.getElementById('modalWaBtn');
             const stockSpan = document.getElementById('modalStockStatus');
-            
             if(!isEmEstoque(prod)) {
                 modalCartBtn.disabled = true; modalCartBtn.textContent = 'Esgotado';
                 modalWaBtn.style.opacity = '0.5'; modalWaBtn.style.pointerEvents = 'none';
@@ -1397,7 +1422,6 @@
                 stockSpan.style.color = 'var(--ciano-brilhante)';
                 modalCartBtn.onclick = () => { addToCart(prod.id, quantidadeModal); fecharModal(); };
             }
-
             document.getElementById('productModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
@@ -1409,25 +1433,15 @@
         function addToCart(prodId, qtd = 1) {
             const prod = dados.produtos.find(p => p.id === prodId);
             if(!prod || !isEmEstoque(prod)) return alert('Produto esgotado!');
-            
             const existing = carrinho.find(c => c.id === prodId);
-            const promoAtiva = isPromoActive(prod);
-            const precoUnit = promoAtiva ? prod.precoPromo : prod.preco;
-            
+            const precoUnit = isPromoActive(prod) ? prod.precoPromo : prod.preco;
             if(existing) {
                 if(existing.quantidade + qtd > getEstoque(prod)) return alert('Estoque máximo atingido!');
                 existing.quantidade += qtd;
             } else {
-                carrinho.push({ 
-                    id: prodId, 
-                    quantidade: qtd, 
-                    preco: precoUnit, 
-                    nome: prod.nome,
-                    imagem: prod.imagem || ''
-                });
+                carrinho.push({ id: prodId, quantidade: qtd, preco: precoUnit, nome: prod.nome, imagem: prod.imagem || '' });
             }
             salvarCarrinho();
-            
             const el = document.querySelector(`.produto-card[data-id="${prodId}"] .btn-add-cart`);
             if(el) { el.textContent = '✓ Adicionado!'; setTimeout(() => el.textContent = 'Adicionar', 2000); }
         }
@@ -1481,16 +1495,13 @@
         function renderizarDrawer() {
             const body = document.getElementById('cartDrawerBody');
             const totalEl = document.getElementById('cartDrawerTotal');
-            
             if(carrinho.length === 0) {
                 body.innerHTML = '<div class="cart-empty">Seu carrinho está vazio.</div>';
                 totalEl.textContent = 'Total: R$ 0,00';
                 return;
             }
-            
             let html = '';
             let total = 0;
-            
             carrinho.forEach(item => {
                 const subtotal = parseFloat(item.preco.replace(',', '.')) * item.quantidade;
                 total += subtotal;
@@ -1511,7 +1522,6 @@
                     </div>
                 `;
             });
-            
             body.innerHTML = html;
             totalEl.textContent = `Total: R$ ${total.toFixed(2)}`;
             atualizarBadgeCarrinho();
@@ -1570,10 +1580,8 @@
         // ================= ENVIAR ORÇAMENTO POR WHATSAPP =================
         function enviarOrcamentoWhatsApp() {
             if(carrinho.length === 0) return alert('Seu carrinho está vazio!');
-            
             let msg = '*Gudyx Custom - Orçamento*\n\n';
             let total = 0;
-            
             carrinho.forEach(item => {
                 const subtotal = parseFloat(item.preco.replace(',', '.')) * item.quantidade;
                 total += subtotal;
@@ -1582,11 +1590,9 @@
                 msg += `   Preço unit.: R$ ${item.preco}\n`;
                 msg += `   Subtotal: R$ ${subtotal.toFixed(2)}\n\n`;
             });
-            
             msg += `💰 *Total: R$ ${total.toFixed(2)}*\n\n`;
             msg += `📱 *Meu contato:* (11) 99999-9999\n\n`;
             msg += `Pode me enviar o orçamento?`;
-            
             const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
             window.open(url, '_blank');
         }
@@ -1594,12 +1600,10 @@
         function comprarWhatsAppModal() {
             const prod = produtoModalAtual;
             if(!prod || !isEmEstoque(prod)) return alert('Produto esgotado!');
-            
             const qtd = parseInt(document.getElementById('qtdModal').textContent);
             const promoAtiva = isPromoActive(prod);
             const precoMostrar = promoAtiva ? 'R$ ' + prod.precoPromo : 'R$ ' + prod.preco;
             const total = (parseFloat((promoAtiva ? prod.precoPromo : prod.preco).replace(',', '.')) * qtd).toFixed(2);
-            
             const msg = encodeURIComponent(
                 `*Gudyx Custom - Catálogo*\n\n` +
                 `🛒 *Produto:* ${prod.nome}\n` +
@@ -1609,7 +1613,6 @@
                 `📱 *Meu contato:* (11) 99999-9999\n\n` +
                 `Pode me enviar o orçamento?`
             );
-            
             window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`, '_blank');
             fecharModal();
         }
@@ -1662,7 +1665,6 @@
 
         // ================= CATEGORIAS E PRODUTOS =================
         let categoriaSelecionada = { tipo: null, id: null };
-        
         function carregarCategorias(tipo) {
             const container = document.getElementById(tipo === 'produtos' ? 'produtosCategoriasContainer' : 'servicosCategoriasContainer');
             container.innerHTML = '';
@@ -1697,19 +1699,9 @@
                     let precoHtml = '';
                     if (promoAtiva && prod.precoPromo) { precoHtml = `<div><span class="preco-promo">R$ ${prod.preco}</span> <span class="preco-atual">R$ ${prod.precoPromo}</span></div>`; } 
                     else { precoHtml = `<div class="preco">R$ ${prod.preco}</div>`; }
-                    
-                    const btnAdd = estoqueOk ? 
-                        `<button class="btn-add-cart" onclick="addToCart(${prod.id})"><i class="fas fa-cart-plus"></i> Adicionar</button>` : 
-                        `<button class="btn-add-cart" disabled>Esgotado</button>`;
-                    
-                    const msg = encodeURIComponent(
-                        `*Gudyx Custom - Catálogo*\n\n` +
-                        `🛒 *Produto:* ${prod.nome}\n` +
-                        `💰 *Preço:* ${promoAtiva ? 'R$ ' + prod.precoPromo : 'R$ ' + prod.preco}\n\n` +
-                        `Quero comprar este produto!`
-                    );
+                    const btnAdd = estoqueOk ? `<button class="btn-add-cart" onclick="addToCart(${prod.id})"><i class="fas fa-cart-plus"></i> Adicionar</button>` : `<button class="btn-add-cart" disabled>Esgotado</button>`;
+                    const msg = encodeURIComponent(`*Gudyx Custom - Catálogo*\n\n🛒 *Produto:* ${prod.nome}\n💰 *Preço:* ${promoAtiva ? 'R$ ' + prod.precoPromo : 'R$ ' + prod.preco}\n\nQuero comprar este produto!`);
                     const waBtn = `<a href="https://wa.me/${WA_NUMBER}?text=${msg}" target="_blank" class="btn-wa-card"><i class="fab fa-whatsapp"></i> Comprar</a>`;
-                    
                     card.innerHTML = `
                         ${badges}
                         ${prod.imagem ? `<img src="${prod.imagem}">` : `<div style="height:110px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:8px;"><i class="fas fa-image" style="font-size:2rem;opacity:0.3;"></i></div>`}
@@ -1733,12 +1725,10 @@
             const term = input.value.toLowerCase();
             const container = document.getElementById(tipo === 'produtos' ? 'produtosProdutosContainer' : 'servicosProdutosContainer');
             container.style.display = 'grid';
-            
             let prods = dados.produtos.filter(p => p.categoriaId === categoriaSelecionada.id);
             if(term) {
                 prods = prods.filter(p => p.nome.toLowerCase().includes(term) || (p.descricao && p.descricao.toLowerCase().includes(term)));
             }
-            
             container.innerHTML = '';
             if (prods.length === 0) { container.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhum item encontrado.</p>'; }
             else {
@@ -1751,19 +1741,9 @@
                     let precoHtml = '';
                     if (promoAtiva && prod.precoPromo) { precoHtml = `<div><span class="preco-promo">R$ ${prod.preco}</span> <span class="preco-atual">R$ ${prod.precoPromo}</span></div>`; } 
                     else { precoHtml = `<div class="preco">R$ ${prod.preco}</div>`; }
-                    
-                    const btnAdd = estoqueOk ? 
-                        `<button class="btn-add-cart" onclick="addToCart(${prod.id})"><i class="fas fa-cart-plus"></i> Adicionar</button>` : 
-                        `<button class="btn-add-cart" disabled>Esgotado</button>`;
-                    
-                    const msg = encodeURIComponent(
-                        `*Gudyx Custom - Catálogo*\n\n` +
-                        `🛒 *Produto:* ${prod.nome}\n` +
-                        `💰 *Preço:* ${promoAtiva ? 'R$ ' + prod.precoPromo : 'R$ ' + prod.preco}\n\n` +
-                        `Quero comprar este produto!`
-                    );
+                    const btnAdd = estoqueOk ? `<button class="btn-add-cart" onclick="addToCart(${prod.id})"><i class="fas fa-cart-plus"></i> Adicionar</button>` : `<button class="btn-add-cart" disabled>Esgotado</button>`;
+                    const msg = encodeURIComponent(`*Gudyx Custom - Catálogo*\n\n🛒 *Produto:* ${prod.nome}\n💰 *Preço:* ${promoAtiva ? 'R$ ' + prod.precoPromo : 'R$ ' + prod.preco}\n\nQuero comprar este produto!`);
                     const waBtn = `<a href="https://wa.me/${WA_NUMBER}?text=${msg}" target="_blank" class="btn-wa-card"><i class="fab fa-whatsapp"></i> Comprar</a>`;
-                    
                     card.innerHTML = `
                         ${badges}
                         ${prod.imagem ? `<img src="${prod.imagem}">` : `<div style="height:110px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,0.05);border-radius:8px;"><i class="fas fa-image" style="font-size:2rem;opacity:0.3;"></i></div>`}
