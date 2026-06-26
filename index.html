@@ -510,42 +510,6 @@
         }
         .popup-box .close-popup-icon:hover { transform: rotate(90deg); color: var(--rosa-neon); }
 
-        @media (max-width: 900px) {
-            .fala-container { right: -40px; width: 160px; font-size: 0.75rem; top: 5px; }
-            .fala-container::before { top: 12px; }
-            .main-area { justify-content: center; gap: 20px; }
-            .mascote-block { flex: 1 1 auto; width: 100%; max-width: 400px; margin-left: 0; }
-            .promo-slider-container { margin-left: 0; margin-right: 0; padding-left: 0; flex: 1 1 auto; width: 100%; max-width: 100%; }
-        }
-        @media (max-width: 600px) {
-            .fala-container { right: -20px; width: 130px; font-size: 0.7rem; top: -5px; }
-            .fala-container::before { top: 8px; }
-            .float-cart { width: 50px; height: 50px; font-size: 1.5rem; bottom: 20px; right: 15px; }
-            .cart-badge { width: 20px; height: 20px; font-size: 0.7rem; }
-            .btn-top { width: 35px; height: 35px; font-size: 1rem; bottom: 85px; }
-            .produtos-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-            .produto-card img { height: 100px; }
-            #cartDrawer { width: 100vw; max-width: 100vw; right: -100vw; }
-            #cartDrawer.open { right: 0; }
-            .float-wa { width: 50px; height: 50px; font-size: 1.5rem; bottom: 85px; right: 15px; }
-            #socialProofContainer { bottom: 80px; left: 10px; }
-            #peekingHead img { width: 60px; height: 60px; }
-            .peeking-fala { font-size: 0.7rem; max-width: 150px; padding: 6px 10px; }
-        }
-        @media (max-width: 480px) {
-            .fala-container { right: 0; top: -25px; width: 100px; font-size: 0.6rem; }
-            .fala-container::before { top: 6px; left: -10px; }
-            .btn-acessar { padding: 16px 30px; font-size: 1rem; letter-spacing: 2px; }
-            .home-screen { padding: 10px; gap: 15px; }
-            .slide-item img { max-height: 120px; }
-            .grid-vendidos { grid-template-columns: repeat(2, 1fr); gap: 12px; }
-            .card-vendido { padding: 14px 10px; }
-            .modal-box { padding: 20px; }
-            .modal-box h2 { font-size: 1.4rem; }
-            .modal-gallery img { height: 150px; }
-            .footer { flex-direction: column; gap: 4px; padding: 6px 15px; font-size: 0.7rem; }
-        }
-
         /* ========== PROVA SOCIAL ========== */
         #socialProofContainer {
             position: fixed;
@@ -583,6 +547,42 @@
         @keyframes slideOutProof {
             from { transform: translateX(0); opacity: 1; }
             to { transform: translateX(-60px); opacity: 0; }
+        }
+
+        @media (max-width: 900px) {
+            .fala-container { right: -40px; width: 160px; font-size: 0.75rem; top: 5px; }
+            .fala-container::before { top: 12px; }
+            .main-area { justify-content: center; gap: 20px; }
+            .mascote-block { flex: 1 1 auto; width: 100%; max-width: 400px; margin-left: 0; }
+            .promo-slider-container { margin-left: 0; margin-right: 0; padding-left: 0; flex: 1 1 auto; width: 100%; max-width: 100%; }
+        }
+        @media (max-width: 600px) {
+            .fala-container { right: -20px; width: 130px; font-size: 0.7rem; top: -5px; }
+            .fala-container::before { top: 8px; }
+            .float-cart { width: 50px; height: 50px; font-size: 1.5rem; bottom: 20px; right: 15px; }
+            .cart-badge { width: 20px; height: 20px; font-size: 0.7rem; }
+            .btn-top { width: 35px; height: 35px; font-size: 1rem; bottom: 85px; }
+            .produtos-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .produto-card img { height: 100px; }
+            #cartDrawer { width: 100vw; max-width: 100vw; right: -100vw; }
+            #cartDrawer.open { right: 0; }
+            .float-wa { width: 50px; height: 50px; font-size: 1.5rem; bottom: 85px; right: 15px; }
+            #socialProofContainer { bottom: 80px; left: 10px; }
+            #peekingHead img { width: 60px; height: 60px; }
+            .peeking-fala { font-size: 0.7rem; max-width: 150px; padding: 6px 10px; }
+        }
+        @media (max-width: 480px) {
+            .fala-container { right: 0; top: -25px; width: 100px; font-size: 0.6rem; }
+            .fala-container::before { top: 6px; left: -10px; }
+            .btn-acessar { padding: 16px 30px; font-size: 1rem; letter-spacing: 2px; }
+            .home-screen { padding: 10px; gap: 15px; }
+            .slide-item img { max-height: 120px; }
+            .grid-vendidos { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+            .card-vendido { padding: 14px 10px; }
+            .modal-box { padding: 20px; }
+            .modal-box h2 { font-size: 1.4rem; }
+            .modal-gallery img { height: 150px; }
+            .footer { flex-direction: column; gap: 4px; padding: 6px 15px; font-size: 0.7rem; }
         }
     </style>
 </head>
@@ -883,17 +883,18 @@
         initTrailCanvas();
 
         function criarRastro(x, y) {
-            const numParticles = 20;
+            const numParticles = 60; // Mais partículas
+            const colors = ['hsla(270, 100%, 70%, ', 'hsla(200, 100%, 70%, ', 'hsla(330, 100%, 70%, '];
             for (let i = 0; i < numParticles; i++) {
                 trailParticles.push({
-                    x: x + (Math.random() - 0.5) * 20,
-                    y: y + (Math.random() - 0.5) * 20,
-                    vx: (Math.random() - 0.5) * 4,
-                    vy: (Math.random() - 0.5) * 4 - 2,
+                    x: x + (Math.random() - 0.5) * 30,
+                    y: y + (Math.random() - 0.5) * 30,
+                    vx: (Math.random() - 0.5) * 6,
+                    vy: (Math.random() - 0.5) * 6 - 3,
                     life: 1.0,
-                    decay: 0.015 + Math.random() * 0.02,
-                    size: 4 + Math.random() * 6,
-                    color: `hsla(${270 + Math.random()*30}, 100%, 70%, `
+                    decay: 0.005 + Math.random() * 0.01, // Vida mais longa (~2s)
+                    size: 4 + Math.random() * 8,
+                    color: colors[Math.floor(Math.random() * colors.length)]
                 });
             }
         }
@@ -908,6 +909,10 @@
             }
             trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
             
+            // Efeito de brilho
+            trailCtx.shadowBlur = 20;
+            trailCtx.shadowColor = 'rgba(172, 40, 255, 0.5)';
+
             for (let i = trailParticles.length - 1; i >= 0; i--) {
                 const p = trailParticles[i];
                 p.x += p.vx;
@@ -946,6 +951,7 @@
                 trailAnimationId = null;
             }
             trailCtx.clearRect(0, 0, trailCanvas.width, trailCanvas.height);
+            trailCtx.shadowBlur = 0;
         }
 
         // ================= CABEÇA ESPIANDO =================
@@ -1116,35 +1122,26 @@
                         const alerta = document.getElementById('alertaContainer');
                         alerta.classList.add('active');
 
+                        // Após a animação de fuga (0.8s + um pouco), o mascote some e a cabeça aparece
                         setTimeout(() => {
-                            if (!estaSumido) {
-                                falarMascote('Tô voltando... mas não me irrita! 😅');
-                            }
-                        }, 2000);
-
-                        const timeoutVolta = setTimeout(() => {
                             if (!estaSumido) {
                                 pararRastro();
                                 alerta.classList.remove('active');
                                 wrapper.classList.remove('fugindo');
-                                wrapper.classList.add('voltando');
+                                // Some o mascote
+                                wrapper.classList.add('somiu');
                                 estaFugindo = false;
-                                estaVoltando = true;
-                                setTimeout(() => {
-                                    wrapper.classList.remove('voltando');
-                                    estaVoltando = false;
-                                    cliqueCount = 0;
-                                    mostrarExpressao('feliz');
-                                    falarMascote('Ufa! Que susto! Voltei... mas não me irrita mais, tá? 😅');
-                                    salvarEstadoMascote();
-                                }, 600);
+                                estaSumido = true;
+                                // Aparece a cabeça espiando
+                                document.getElementById('peekingHead').classList.add('active');
+                                salvarEstadoMascote();
                             }
-                        }, 3000);
+                        }, 2500); // 2.5s para dar tempo de ver o rastro e o alerta
 
-                        // Se clicar durante a fuga, SOME!
+                        // Se clicar durante a fuga (antes de sumir), SOME imediatamente e cabeça aparece
                         const listenerFuga = function(e) {
                             if (estaFugindo) {
-                                clearTimeout(timeoutVolta);
+                                clearTimeout(timeoutVolta); // Não há mais timeoutVolta, mas podemos limpar o setTimeout acima se quisermos
                                 pararRastro();
                                 alerta.classList.remove('active');
                                 wrapper.classList.remove('fugindo');
@@ -1153,7 +1150,6 @@
                                 estaSumido = true;
                                 wrapper.removeEventListener('click', listenerFuga);
                                 falarMascote('😶 ... (Gluudyx sumiu...)');
-                                // Mostra cabeça espiando
                                 document.getElementById('peekingHead').classList.add('active');
                                 salvarEstadoMascote();
                             }
