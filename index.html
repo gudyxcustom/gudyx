@@ -6,7 +6,6 @@
     <title>Gudyx Custom - Catálogo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* ========== ESTILOS ORIGINAIS (MANTIDOS) ========== */
         :root {
             --roxo-profundo: #0b041c;
             --roxo-meio: #1a0a33;
@@ -71,7 +70,6 @@
         .mascote-wrapper:hover img { filter: drop-shadow(0 0 50px rgba(172,40,255,0.8)); }
         .mascote-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, rgba(172,40,255,0.4) 0%, transparent 70%); z-index: -1; animation: pulseGlow 3s ease-in-out infinite; pointer-events: none; }
 
-        /* ========== EXPRESSÕES DO MASCOTE ========== */
         .mascote-wrapper.feliz img { filter: drop-shadow(0 0 40px rgba(0, 242, 254, 0.6)); }
         .mascote-wrapper.triste img { filter: drop-shadow(0 0 30px rgba(100, 100, 255, 0.4)) brightness(0.8); }
         .mascote-wrapper.surpreso img { transform: scale(1.1); filter: drop-shadow(0 0 50px rgba(255, 229, 0, 0.7)); }
@@ -82,36 +80,6 @@
         .mascote-wrapper.voltando { animation: voltaMascote 0.6s ease forwards; }
         @keyframes voltaMascote { 0% { transform: translateX(300px) scale(0.5) rotate(40deg); opacity: 0; } 100% { transform: translateX(0) scale(1) rotate(0); opacity: 1; } }
         .mascote-wrapper.somiu { display: none !important; }
-
-        /* ========== SINAL DE ALERTA GIGANTE ========== */
-        #alertaContainer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 99999;
-            display: none;
-            justify-content: center;
-            align-items: center;
-            pointer-events: none;
-        }
-        #alertaContainer.active {
-            display: flex;
-        }
-        .alerta-sinal {
-            font-size: clamp(12rem, 50vw, 30rem);
-            color: #ff4455;
-            text-shadow: 0 0 60px #ff4455, 0 0 120px #ff4455, 0 0 200px rgba(255, 68, 68, 0.5);
-            animation: alertaPulse 0.5s ease-in-out infinite alternate;
-            opacity: 0.8;
-            font-family: 'Arial Black', sans-serif;
-            font-weight: 900;
-        }
-        @keyframes alertaPulse {
-            0% { transform: scale(1); opacity: 0.6; }
-            100% { transform: scale(1.1); opacity: 1; }
-        }
 
         .btn-acessar { padding: 22px 60px; font-size: 1.4rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a028ff 0%, var(--ciano-brilhante) 100%); border: none; border-radius: 60px; cursor: pointer; transition: var(--transicao); box-shadow: 0 8px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
         .btn-acessar::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.15), transparent); animation: rotateGlow 6s linear infinite; }
@@ -753,14 +721,14 @@
         let produtoModalAtual = null;
         let viewMode = 'grid';
 
-        // ================= CONTROLE DO MASCOTE (MANTIDO DO SEU ORIGINAL) =================
+        // ================= CONTROLE DO MASCOTE =================
         let cliqueCount = 0;
         let ultimoCliqueTime = 0;
         let estaFalando = false;
         let estaFugindo = false;
         let estaVoltando = false;
         let estaSumido = false;
-        let estaContando = false; // Flag para bloquear cliques durante contagem regressiva
+        let estaContando = false; // impede cliques durante contagem
         let timeoutFala = null;
         let timeoutIrritacao = null;
         let mascoteMsgIdx = 0;
@@ -782,30 +750,19 @@
 
         function getMensagensMascote() {
             const msgs = [];
-            
-            // 1. Produtos em promoção
             const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p));
             if (promos.length > 0) {
                 const p = promos[Math.floor(Math.random() * promos.length)];
                 msgs.push(`🔥 ${p.nome} está em promoção por apenas R$ ${p.precoPromo}! Corre que o estoque não espera!`);
             }
-
-            // 2. Produtos mais acessados (top 3)
-            const top = [...dados.produtos].sort((a, b) => (b.cliques || 0) - (a.cliques || 0)).slice(0, 3);
+            const top = [...dados.produtos].sort((a,b) => (b.cliques||0) - (a.cliques||0)).slice(0,3);
             if (top.length > 0 && top[0].cliques > 0) {
                 const p = top[Math.floor(Math.random() * top.length)];
                 msgs.push(`🏆 ${p.nome} é o produto mais acessado do momento! Já conferiu?`);
             }
-
-            // 3. Piadas e frases engraçadas (sempre coloca algumas)
             const piada = piadas[Math.floor(Math.random() * piadas.length)];
             msgs.push(piada);
-
-            // 4. Se não tiver nada, mensagem padrão
-            if (msgs.length === 0) {
-                msgs.push('Olá, sou o Gluudyx! Explore nosso catálogo. ✨');
-            }
-
+            if (msgs.length === 0) msgs.push('Olá, sou o Gluudyx! Explore nosso catálogo. ✨');
             return msgs;
         }
 
@@ -813,15 +770,33 @@
             mascoteMensagens = getMensagensMascote();
         }
 
+        // Função de fala normal (com bloqueio)
         function falarMascote(msgPersonalizada = null) {
             if (estaFalando || estaFugindo || estaVoltando || estaSumido || estaContando) return;
-            
             if (mascoteMensagens.length === 0) atualizarMensagensMascote();
             const msg = msgPersonalizada || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
             mascoteMsgIdx++;
             falaContainer.textContent = msg;
             falaContainer.classList.add('falando');
-            setTimeout(() => { falaContainer.classList.remove('falando'); }, 4000);
+            estaFalando = true;
+            if (timeoutFala) clearTimeout(timeoutFala);
+            timeoutFala = setTimeout(() => {
+                falaContainer.classList.remove('falando');
+                estaFalando = false;
+                timeoutFala = null;
+            }, 4000); // 4 segundos
+        }
+
+        // Função para contagem regressiva (ignora bloqueio)
+        function falarContagem(mensagem) {
+            falaContainer.textContent = mensagem;
+            falaContainer.classList.add('falando');
+            if (timeoutFala) clearTimeout(timeoutFala);
+            timeoutFala = setTimeout(() => {
+                falaContainer.classList.remove('falando');
+                estaFalando = false;
+                timeoutFala = null;
+            }, 900); // 0.9s para cada número
         }
 
         function mostrarExpressao(expressao) {
@@ -830,9 +805,9 @@
             if (expressao) wrapper.classList.add(expressao);
         }
 
-        // Sistema de cliques e irritação (preservando o bounce original)
+        // Evento de clique no mascote (com bounce e irritação)
         document.getElementById('mascoteWrapper').addEventListener('click', function() {
-            // === BOUNCE ORIGINAL ===
+            // === BOUNCE ORIGINAL (preservado) ===
             this.style.animation = 'none';
             this.offsetHeight;
             this.style.animation = 'floatMascote 0.6s ease-in-out';
@@ -840,11 +815,11 @@
                 this.style.animation = 'floatMascote 6s ease-in-out infinite';
             }, 600);
 
-            // === IRRITAÇÃO E FUGA (ADICIONAL) ===
+            // === SISTEMA DE IRRITAÇÃO E FUGA ===
             if (estaSumido) return;
-            if (estaFalando) return;
+            if (estaFalando) return; // não interrompe fala atual
             if (estaFugindo || estaVoltando) return;
-            if (estaContando) return; // Bloqueia cliques durante a contagem
+            if (estaContando) return; // bloqueia durante contagem
 
             const agora = Date.now();
             const intervalo = 2000;
@@ -877,26 +852,32 @@
                 falarMascote('Gluudyx está bravo com você! 😡 Agora vai ter que me pedir desculpas!');
             }
             else if (cliqueCount >= 4) {
-                // === CONTAGEM REGRESSIVA ANTES DE SAIR ===
+                // === CONTAGEM REGRESSIVA (5...1) ===
                 mostrarExpressao(null);
                 wrapper.classList.remove('irritado-1', 'irritado-2');
                 estaContando = true;
-                falarMascote('JÁ CHEGA! VOU EMBORA! 🚀 Contagem regressiva: 5...');
 
-                let count = 5;
-                const interval = setInterval(() => {
-                    count--;
-                    if (count > 0) {
-                        falarMascote(`Tchau em ${count}...`);
+                const mensagens = [
+                    'JÁ CHEGA! VOU EMBORA! 🚀 5...',
+                    'Tchau em 4...',
+                    'Tchau em 3...',
+                    'Tchau em 2...',
+                    'Tchau em 1...'
+                ];
+
+                let index = 0;
+                const intervaloContagem = setInterval(() => {
+                    if (index < mensagens.length) {
+                        falarContagem(mensagens[index]); // usa função especial
+                        index++;
                     } else {
-                        clearInterval(interval);
+                        clearInterval(intervaloContagem);
+                        // Fim da contagem: inicia a fuga
                         estaContando = false;
-                        // Agora ele sai de verdade
                         estaFugindo = true;
                         wrapper.classList.add('fugindo');
                         falarMascote('TCHAU! 👋');
 
-                        // Sinal de alerta gigante
                         const alerta = document.getElementById('alertaContainer');
                         alerta.classList.add('active');
 
@@ -907,7 +888,7 @@
                             }
                         }, 2000);
 
-                        // Volta depois de 3 segundos (se não for clicado)
+                        // Volta depois de 3 segundos (se não clicar)
                         const timeoutVolta = setTimeout(() => {
                             if (!estaSumido) {
                                 alerta.classList.remove('active');
@@ -915,7 +896,6 @@
                                 wrapper.classList.add('voltando');
                                 estaFugindo = false;
                                 estaVoltando = true;
-                                
                                 setTimeout(() => {
                                     wrapper.classList.remove('voltando');
                                     estaVoltando = false;
@@ -941,8 +921,7 @@
                         };
                         wrapper.addEventListener('click', listenerFuga);
                     }
-                }, 1000);
-
+                }, 1000); // intervalo de 1s entre cada número
                 return;
             }
 
@@ -953,7 +932,7 @@
             }, 5000);
         });
 
-        // Inicia o intervalo automático de fala (original)
+        // Intervalo automático de fala (a cada 12 segundos)
         setInterval(() => {
             if (!estaFalando && !estaFugindo && !estaVoltando && !estaSumido && !estaContando) {
                 atualizarMensagensMascote();
