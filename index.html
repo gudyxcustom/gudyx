@@ -65,11 +65,84 @@
 
         .main-area { display: flex; align-items: flex-start; justify-content: center; gap: 10px; flex: 1; flex-wrap: wrap; padding: 10px 0; }
         .mascote-block { display: flex; flex-direction: column; align-items: center; gap: 15px; position: relative; flex: 0 0 420px; margin-left: 30px; }
-        .mascote-wrapper { position: relative; animation: floatMascote 6s ease-in-out infinite; cursor: pointer; }
+        .mascote-wrapper { position: relative; animation: floatMascote 6s ease-in-out infinite; cursor: pointer; transition: transform 0.3s; }
         .mascote-wrapper:hover { transform: scale(1.05); }
-        .mascote-wrapper img { width: clamp(220px, 35vw, 380px); height: auto; display: block; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.7)); border-radius: 50%; }
+        .mascote-wrapper img { width: clamp(220px, 35vw, 380px); height: auto; display: block; filter: drop-shadow(0 20px 40px rgba(0,0,0,0.7)); border-radius: 50%; transition: transform 0.3s; }
         .mascote-wrapper:hover img { filter: drop-shadow(0 0 50px rgba(172,40,255,0.8)); }
         .mascote-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, rgba(172,40,255,0.4) 0%, transparent 70%); z-index: -1; animation: pulseGlow 3s ease-in-out infinite; pointer-events: none; }
+
+        /* ========== EXPRESSÕES E ANIMAÇÕES DO MASCOTE ========== */
+        .mascote-wrapper.feliz img { filter: drop-shadow(0 0 40px rgba(0, 242, 254, 0.6)); }
+        .mascote-wrapper.triste img { filter: drop-shadow(0 0 30px rgba(100, 100, 255, 0.4)) brightness(0.8); }
+        .mascote-wrapper.surpreso img { transform: scale(1.1); filter: drop-shadow(0 0 50px rgba(255, 229, 0, 0.7)); }
+        
+        /* ANIMAÇÕES DE IRRITAÇÃO (TREMEDEIRA) */
+        .mascote-wrapper.irritado-1 img { 
+            transform: rotate(-5deg) scale(0.95); 
+            filter: drop-shadow(0 0 30px rgba(255, 68, 68, 0.6)); 
+            animation: tremer 0.2s ease-in-out infinite alternate;
+        }
+        .mascote-wrapper.irritado-2 img { 
+            transform: rotate(10deg) scale(0.9); 
+            filter: drop-shadow(0 0 50px rgba(255, 0, 0, 0.8)); 
+            animation: tremerForte 0.15s ease-in-out infinite alternate;
+        }
+        @keyframes tremer {
+            0% { transform: rotate(-5deg) scale(0.95) translateX(-2px); }
+            100% { transform: rotate(5deg) scale(0.95) translateX(2px); }
+        }
+        @keyframes tremerForte {
+            0% { transform: rotate(10deg) scale(0.9) translateX(-4px); }
+            100% { transform: rotate(-10deg) scale(0.9) translateX(4px); }
+        }
+
+        /* ANIMAÇÕES DE FUGA E VOLTA */
+        .mascote-wrapper.fugindo { 
+            animation: fugaMascote 0.8s ease forwards !important; 
+        }
+        @keyframes fugaMascote {
+            0% { transform: translateX(0) scale(1); opacity: 1; }
+            50% { transform: translateX(100px) scale(1.2) rotate(20deg); opacity: 1; }
+            100% { transform: translateX(300px) scale(0.5) rotate(40deg); opacity: 0; }
+        }
+        .mascote-wrapper.voltando { 
+            animation: voltaMascote 0.6s ease forwards !important; 
+        }
+        @keyframes voltaMascote {
+            0% { transform: translateX(300px) scale(0.5) rotate(40deg); opacity: 0; }
+            100% { transform: translateX(0) scale(1) rotate(0); opacity: 1; }
+        }
+        .mascote-wrapper.somiu { display: none !important; }
+
+        /* ========== SINAL DE ALERTA GIGANTE ========== */
+        #alertaContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+        #alertaContainer.active {
+            display: flex;
+        }
+        .alerta-sinal {
+            font-size: clamp(12rem, 50vw, 30rem);
+            color: #ff4455;
+            text-shadow: 0 0 60px #ff4455, 0 0 120px #ff4455, 0 0 200px rgba(255, 68, 68, 0.5);
+            animation: alertaPulse 0.5s ease-in-out infinite alternate;
+            opacity: 0.8;
+            font-family: 'Arial Black', sans-serif;
+            font-weight: 900;
+        }
+        @keyframes alertaPulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
 
         .btn-acessar { padding: 22px 60px; font-size: 1.4rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a028ff 0%, var(--ciano-brilhante) 100%); border: none; border-radius: 60px; cursor: pointer; transition: var(--transicao); box-shadow: 0 8px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
         .btn-acessar::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.15), transparent); animation: rotateGlow 6s linear infinite; }
@@ -163,6 +236,7 @@
 
         .modal-box .stock-status { margin-top: 5px; font-size: 0.9rem; opacity: 0.8; }
 
+        /* ========== CARRINHO DRAWER ========== */
         #cartDrawerOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 99999; display: none; opacity: 0; transition: opacity 0.4s ease; }
         #cartDrawerOverlay.active { display: block; opacity: 1; }
 
@@ -197,16 +271,277 @@
         .cart-drawer-footer .cart-actions .btn-clear-cart { padding: 12px 20px; background: #ff4455; color: #fff; border-radius: 50px; font-weight: 700; border: none; cursor: pointer; transition: var(--transicao); font-size: 1rem; flex: 0.5; text-align: center; }
         .cart-drawer-footer .cart-actions .btn-clear-cart:hover { transform: scale(1.05); }
 
+        /* ========== FAVORITOS DRAWER ========== */
+        #favDrawerOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); z-index: 99998; display: none; opacity: 0; transition: opacity 0.4s ease; }
+        #favDrawerOverlay.active { display: block; opacity: 1; }
+        #favDrawer { position: fixed; top: 0; right: -420px; width: 400px; max-width: 90vw; height: 100vh; background: var(--vidro-fundo); backdrop-filter: blur(16px); border-left: 1px solid var(--vidro-borda); z-index: 99999; transition: right 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94); display: flex; flex-direction: column; box-shadow: -10px 0 40px rgba(0,0,0,0.6); }
+        #favDrawer.open { right: 0; }
+
+        /* ========== FAVORITOS ========== */
+        .btn-favorite {
+            position: absolute;
+            top: 8px; left: 8px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            border: none;
+            border-radius: 50%;
+            width: 32px; height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transicao);
+            color: #fff;
+            z-index: 5;
+        }
+        .btn-favorite:hover { transform: scale(1.1); }
+        .btn-favorite.active { color: #ff4455; }
+        .btn-favorite.active i { color: #ff4455; }
+
+        /* ========== BARRA DE CATEGORIAS FIXA ========== */
+        #stickyCategories {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--vidro-fundo);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--vidro-borda);
+            padding: 10px 15px;
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            white-space: nowrap;
+            -webkit-overflow-scrolling: touch;
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            border-radius: 0 0 20px 20px;
+        }
+        #stickyCategories button {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--vidro-borda);
+            border-radius: 30px;
+            padding: 6px 18px;
+            color: var(--cor-texto);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transicao);
+            flex-shrink: 0;
+        }
+        #stickyCategories button:hover { background: rgba(172,40,255,0.2); }
+        #stickyCategories button.active { background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; border-color: transparent; }
+        #stickyCategories::-webkit-scrollbar { height: 4px; }
+        #stickyCategories::-webkit-scrollbar-thumb { background: var(--vidro-borda); border-radius: 10px; }
+
+        /* ========== MODO LISTA ========== */
+        .view-toggle {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-left: auto;
+        }
+        .view-toggle button {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--vidro-borda);
+            border-radius: 8px;
+            padding: 6px 12px;
+            color: var(--cor-texto);
+            cursor: pointer;
+            transition: var(--transicao);
+            font-size: 1rem;
+        }
+        .view-toggle button.active {
+            background: rgba(172,40,255,0.3);
+            border-color: var(--ciano-brilhante);
+        }
+        .view-toggle button:hover { background: rgba(172,40,255,0.2); }
+        .produtos-grid.lista {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .produtos-grid.lista .produto-card {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 15px;
+            padding: 12px 18px;
+            text-align: left;
+            border-radius: 12px;
+        }
+        .produtos-grid.lista .produto-card img {
+            width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+            border-radius: 8px;
+        }
+        .produtos-grid.lista .produto-card .info-lista {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .produtos-grid.lista .produto-card .info-lista h5 { font-size: 1.1rem; }
+        .produtos-grid.lista .produto-card .info-lista .descricao { font-size: 0.9rem; }
+        .produtos-grid.lista .produto-card .info-lista .preco { font-size: 1.2rem; }
+        .produtos-grid.lista .produto-card .botoes-lista {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .produtos-grid.lista .produto-card .botoes-lista .btn-add-cart,
+        .produtos-grid.lista .produto-card .botoes-lista .btn-wa-card {
+            margin-top: 0;
+            padding: 6px 14px;
+            font-size: 0.8rem;
+        }
+
+        /* ========== BOTÕES FLUTUANTES ========== */
         .float-cart { position: fixed; bottom: 30px; right: 20px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 9998; cursor: pointer; transition: var(--transicao); }
         .float-cart:hover { transform: scale(1.1); }
         .cart-badge { position: absolute; top: -5px; right: -5px; background: #ff4455; color: #fff; border-radius: 50%; width: 24px; height: 24px; font-size: 0.8rem; display: flex; align-items: center; justify-content: center; font-weight: 700; }
 
-        .btn-top { position: fixed; bottom: 100px; right: 20px; background: rgba(172,40,255,0.5); backdrop-filter: blur(8px); color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; z-index: 50; transition: var(--transicao); opacity: 0; visibility: hidden; border: 1px solid var(--vidro-borda); }
+        /* ========== WHATSAPP FLUTUANTE PULSANTE ========== */
+        .float-wa {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: #25D366;
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            z-index: 50;
+            text-decoration: none;
+            transition: var(--transicao);
+            animation: pulseWa 2s ease-in-out infinite;
+        }
+        @keyframes pulseWa {
+            0% { transform: scale(1); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+            50% { transform: scale(1.08); box-shadow: 0 0 40px rgba(37, 211, 102, 0.5); }
+            100% { transform: scale(1); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        }
+        .float-wa:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 40px rgba(37,211,102,0.4);
+        }
+
+        .btn-top { position: fixed; bottom: 175px; right: 20px; background: rgba(172,40,255,0.5); backdrop-filter: blur(8px); color: #fff; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; z-index: 50; transition: var(--transicao); opacity: 0; visibility: hidden; border: 1px solid var(--vidro-borda); }
         .btn-top.visible { opacity: 1; visibility: visible; }
         .btn-top:hover { background: rgba(172,40,255,0.8); }
 
         .footer { position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(11, 4, 28, 0.8); backdrop-filter: blur(8px); border-top: 1px solid var(--vidro-borda); padding: 8px 20px; text-align: center; font-size: 0.8rem; color: rgba(255,255,255,0.5); z-index: 10; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
         .footer .visit-counter { color: var(--ciano-brilhante); font-weight: 600; }
+
+        /* ========== PROVA SOCIAL ========== */
+        #socialProofContainer {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-width: 320px;
+            pointer-events: none;
+        }
+        .social-proof-item {
+            background: var(--vidro-fundo);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--vidro-borda);
+            border-radius: 16px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideInProof 0.5s ease forwards;
+            pointer-events: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        .social-proof-item .proof-text {
+            font-size: 0.85rem;
+            line-height: 1.3;
+        }
+        .social-proof-item .proof-text strong { color: var(--ciano-brilhante); }
+        @keyframes slideInProof {
+            from { transform: translateX(-60px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutProof {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(-60px); opacity: 0; }
+        }
+
+        /* ========== POPUP PRIMEIRA COMPRA ========== */
+        #firstVisitPopup {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            z-index: 99999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            animation: fadeInPopup 0.5s ease;
+        }
+        #firstVisitPopup.active { display: flex; }
+        @keyframes fadeInPopup {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .popup-box {
+            background: var(--vidro-fundo);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--vidro-borda);
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 450px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(172,40,255,0.4);
+            position: relative;
+        }
+        .popup-box h2 { font-size: 1.8rem; margin-bottom: 10px; color: var(--amarelo-neon); }
+        .popup-box p { font-size: 1rem; opacity: 0.8; margin-bottom: 20px; }
+        .popup-box .cupom-box {
+            background: rgba(255,255,255,0.05);
+            border: 1px dashed var(--ciano-brilhante);
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--ciano-brilhante);
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        .popup-box .btn-fechar-popup {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: var(--cor-texto);
+            padding: 8px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: var(--transicao);
+            font-size: 0.9rem;
+        }
+        .popup-box .btn-fechar-popup:hover { background: rgba(255,255,255,0.2); }
+        .popup-box .close-popup-icon {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 1.8rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--cor-texto);
+            transition: var(--transicao);
+        }
+        .popup-box .close-popup-icon:hover { transform: rotate(90deg); color: var(--rosa-neon); }
 
         @media (max-width: 900px) {
             .fala-container { right: -40px; width: 160px; font-size: 0.75rem; top: 5px; }
@@ -225,6 +560,8 @@
             .produto-card img { height: 100px; }
             #cartDrawer { width: 100vw; max-width: 100vw; right: -100vw; }
             #cartDrawer.open { right: 0; }
+            .float-wa { width: 50px; height: 50px; font-size: 1.5rem; bottom: 85px; right: 15px; }
+            #socialProofContainer { bottom: 80px; left: 10px; }
         }
         @media (max-width: 480px) {
             .fala-container { right: 0; top: -25px; width: 100px; font-size: 0.6rem; }
@@ -297,10 +634,45 @@
         </div>
     </div>
 
+    <!-- FAVORITOS DRAWER -->
+    <div id="favDrawerOverlay" onclick="fecharFavDrawer()"></div>
+    <div id="favDrawer">
+        <div class="cart-drawer-header">
+            <h3>❤️ Meus Favoritos</h3>
+            <button class="close-drawer" onclick="fecharFavDrawer()">×</button>
+        </div>
+        <div class="cart-drawer-body" id="favDrawerBody">
+            <div class="cart-empty">Nenhum favorito ainda.</div>
+        </div>
+    </div>
+
+    <!-- POPUP PRIMEIRA COMPRA -->
+    <div id="firstVisitPopup">
+        <div class="popup-box">
+            <button class="close-popup-icon" onclick="fecharPopup()">×</button>
+            <h2>🔥 Bem-vindo à Gudyx!</h2>
+            <p>Ganhe <strong>10% OFF</strong> na sua primeira compra!</p>
+            <div class="cupom-box" onclick="copiarCupom()">
+                <span id="cupomText">BEMVINDO10</span> <i class="fas fa-copy" style="font-size:1rem; margin-left:10px; opacity:0.6;"></i>
+            </div>
+            <button class="btn-fechar-popup" onclick="fecharPopup()">Fechar e continuar</button>
+        </div>
+    </div>
+
     <!-- CARRINHO FLUTUANTE -->
     <div class="float-cart" onclick="abrirDrawer()">
         <i class="fas fa-shopping-cart"></i>
         <span class="cart-badge" id="cartBadge">0</span>
+    </div>
+
+    <!-- WHATSAPP FLUTUANTE PULSANTE -->
+    <a class="float-wa" href="https://wa.me/5511999999999" target="_blank">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- SINAL DE ALERTA GIGANTE -->
+    <div id="alertaContainer">
+        <div class="alerta-sinal">⚠️</div>
     </div>
 
     <!-- HOME -->
@@ -381,10 +753,15 @@
                 <button class="btn-voltar" onclick="voltarParaEscolha()"><i class="fas fa-arrow-left"></i> Voltar</button>
                 <h2>PRODUTOS</h2>
                 <button class="btn-voltar" onclick="voltarParaHome()"><i class="fas fa-home"></i> Início</button>
+                <div class="view-toggle">
+                    <button onclick="alternarVisualizacao('grid')" class="active" id="viewGrid"><i class="fas fa-th"></i></button>
+                    <button onclick="alternarVisualizacao('lista')" id="viewList"><i class="fas fa-list"></i></button>
+                </div>
             </div>
             <div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchProdutos" placeholder="Buscar produtos..." onkeyup="buscarItems('produtos')"></div>
+            <div id="stickyCategories"></div>
             <div id="produtosCategoriasContainer" class="grid-categorias"></div>
-            <div id="produtosProdutosContainer" class="produtos-grid" style="display:none;"></div>
+            <div id="produtosProdutosContainer" class="produtos-grid"></div>
         </div>
     </div>
 
@@ -402,8 +779,10 @@
         // ================= DADOS =================
         let dados = { categorias: [], produtos: [], frases: [] };
         let carrinho = [];
+        let favoritos = [];
         let quantidadeModal = 1;
         let produtoModalAtual = null;
+        let viewMode = 'grid';
 
         function carregarDados() {
             if (localStorage.getItem('gudyxDados')) {
@@ -433,13 +812,14 @@
             }
 
             carregarCarrinho();
+            carregarFavoritos();
         }
 
         function salvarDados() {
             localStorage.setItem('gudyxDados', JSON.stringify(dados));
         }
 
-        // ================= CARRINHO COM VALIDADE 24H + SESSION =================
+        // ================= CARRINHO =================
         function carregarCarrinho() {
             let sessionCart = sessionStorage.getItem('gudyxCarrinho');
             
@@ -491,6 +871,44 @@
             }));
             atualizarBadgeCarrinho();
             renderizarDrawer();
+        }
+
+        // ================= FAVORITOS =================
+        function carregarFavoritos() {
+            if (localStorage.getItem('gudyxFavoritos')) {
+                try {
+                    favoritos = JSON.parse(localStorage.getItem('gudyxFavoritos'));
+                } catch(e) { favoritos = []; }
+            } else {
+                favoritos = [];
+            }
+        }
+
+        function salvarFavoritos() {
+            localStorage.setItem('gudyxFavoritos', JSON.stringify(favoritos));
+        }
+
+        function toggleFavorito(prodId) {
+            if (favoritos.includes(prodId)) {
+                favoritos = favoritos.filter(id => id !== prodId);
+            } else {
+                favoritos.push(prodId);
+            }
+            salvarFavoritos();
+            atualizarFavoritosUI();
+        }
+
+        function atualizarFavoritosUI() {
+            document.querySelectorAll('.btn-favorite').forEach(btn => {
+                const id = parseInt(btn.dataset.id);
+                if (favoritos.includes(id)) {
+                    btn.classList.add('active');
+                    btn.querySelector('i').className = 'fas fa-heart';
+                } else {
+                    btn.classList.remove('active');
+                    btn.querySelector('i').className = 'far fa-heart';
+                }
+            });
         }
 
         function mostrarTela(id) { document.querySelectorAll('.screen').forEach(t => t.classList.remove('active')); document.getElementById(id).classList.add('active'); }
@@ -712,6 +1130,48 @@
             }
         }
 
+        // ================= FAVORITOS DRAWER =================
+        function abrirFavDrawer() {
+            renderizarFavDrawer();
+            document.getElementById('favDrawerOverlay').classList.add('active');
+            document.getElementById('favDrawer').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharFavDrawer() {
+            document.getElementById('favDrawerOverlay').classList.remove('active');
+            document.getElementById('favDrawer').classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        function renderizarFavDrawer() {
+            const body = document.getElementById('favDrawerBody');
+            if(favoritos.length === 0) {
+                body.innerHTML = '<div class="cart-empty">Nenhum favorito ainda.</div>';
+                return;
+            }
+            let html = '';
+            favoritos.forEach(id => {
+                const prod = dados.produtos.find(p => p.id === id);
+                if(!prod) return;
+                const imgSrc = prod.imagem || 'https://placehold.co/50x50/0b041c/00f2fe?text=Sem+Img';
+                html += `
+                    <div class="cart-drawer-item">
+                        <img src="${imgSrc}" class="item-img">
+                        <div class="item-info">
+                            <h4>${prod.nome}</h4>
+                            <div class="item-price">R$ ${prod.preco}</div>
+                        </div>
+                        <div class="item-actions">
+                            <button onclick="abrirModal(${prod.id}); fecharFavDrawer();"><i class="fas fa-eye"></i></button>
+                            <button class="btn-remove" onclick="toggleFavorito(${prod.id}); renderizarFavDrawer();"><i class="fas fa-heart-broken"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            body.innerHTML = html;
+        }
+
         // ================= ENVIAR ORÇAMENTO POR WHATSAPP =================
         function enviarOrcamentoWhatsApp() {
             if(carrinho.length === 0) return alert('Seu carrinho está vazio!');
@@ -791,9 +1251,25 @@
         function iniciarSliderLoop() { clearInterval(sliderIntervalo); sliderIntervalo = setInterval(proximoSlide, 4000); }
         function resetarSlider() { clearInterval(sliderIntervalo); iniciarSlider(); }
 
-        // ================= MASCOTE - APENAS PROMOÇÕES E MAIS ACESSADOS =================
-        let mascoteMsgIdx = 0; let mascoteMensagens = [];
+        // ================= MASCOTE COM PERSONALIDADE =================
+        let mascoteMsgIdx = 0;
+        let mascoteMensagens = [];
         const falaContainer = document.getElementById('falaContainer');
+        const mascoteWrapper = document.getElementById('mascoteWrapper');
+
+        // Piadas e frases engraçadas do Gluudyx
+        const piadas = [
+            "Por que o caderno foi ao médico? Porque estava com febre de 39,9! 📓🤒",
+            "Qual o doce favorito do Gluudyx? Pé de moleque! Porque ele é grudento! 🍬",
+            "Você sabia que eu sou feito de cola? Por isso sou tão apegado a você! 🥰",
+            "O que o lápis disse para a borracha? 'Você apaga meus erros, mas não apaga meu amor!' ✏️💕",
+            "Por que a caneta não gostou do papel? Porque ele era muito riscado! 🖊️📄",
+            "Qual a fruta preferida do Gluudyx? A uva! Porque ela é 'uva' piada! 🍇😂",
+            "Eu sou como um imã... atraio boas energias e clientes! 🧲✨",
+            "Se você me der um clique, eu te dou um sorriso! 😄",
+            "Meu sonho é ser um papel de parede... para ficar colado em você! 🖼️💖",
+            "Você é mais doce que um caderno de receitas! 🍪📔"
+        ];
 
         function getMensagensMascote() {
             const msgs = [];
@@ -802,17 +1278,21 @@
             const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p));
             if (promos.length > 0) {
                 const p = promos[Math.floor(Math.random() * promos.length)];
-                msgs.push(`🔥 ${p.nome} está em promoção por apenas R$ ${p.precoPromo}! Corre!`);
+                msgs.push(`🔥 ${p.nome} está em promoção por apenas R$ ${p.precoPromo}! Corre que o estoque não espera!`);
             }
 
             // 2. Produtos mais acessados (top 3)
             const top = [...dados.produtos].sort((a, b) => (b.cliques || 0) - (a.cliques || 0)).slice(0, 3);
             if (top.length > 0 && top[0].cliques > 0) {
                 const p = top[Math.floor(Math.random() * top.length)];
-                msgs.push(`🏆 ${p.nome} é o produto mais acessado do momento! Já viu?`);
+                msgs.push(`🏆 ${p.nome} é o produto mais acessado do momento! Já conferiu?`);
             }
 
-            // 3. Se não tiver nada, mensagem padrão
+            // 3. Piadas e frases engraçadas (sempre coloca algumas)
+            const piada = piadas[Math.floor(Math.random() * piadas.length)];
+            msgs.push(piada);
+
+            // 4. Se não tiver nada, mensagem padrão
             if (msgs.length === 0) {
                 msgs.push('Olá, sou o Gluudyx! Explore nosso catálogo. ✨');
             }
@@ -824,29 +1304,148 @@
             mascoteMensagens = getMensagensMascote();
         }
 
-        function falarMascote() {
+        function falarMascote(msgPersonalizada = null) {
+            if (estaFalando || estaFugindo || estaVoltando || estaSumido) return;
+            
             if (mascoteMensagens.length === 0) atualizarMensagensMascote();
-            const msg = mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
+            const msg = msgPersonalizada || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
             mascoteMsgIdx++;
             falaContainer.textContent = msg;
             falaContainer.classList.add('falando');
             setTimeout(() => { falaContainer.classList.remove('falando'); }, 4000);
         }
 
-        setInterval(() => {
-            atualizarMensagensMascote();
-            falarMascote();
-        }, 10000);
+        function mostrarExpressao(expressao) {
+            const wrapper = document.getElementById('mascoteWrapper');
+            wrapper.classList.remove('feliz', 'triste', 'surpreso', 'irritado-1', 'irritado-2', 'fugindo', 'voltando');
+            if (expressao) wrapper.classList.add(expressao);
+        }
 
-        document.getElementById('mascoteWrapper').addEventListener('click', function() {
-            this.style.animation = 'none';
-            this.offsetHeight;
-            this.style.animation = 'floatMascote 0.6s ease-in-out';
-            falarMascote();
-            setTimeout(() => {
-                this.style.animation = 'floatMascote 6s ease-in-out infinite';
-            }, 600);
-        });
+        // Sistema de cliques e irritação
+        function lidarComCliqueMascote() {
+            if (estaSumido) return;
+            if (estaFalando) return;
+            if (estaFugindo || estaVoltando) return;
+
+            const agora = Date.now();
+            const intervalo = 2000; // 2 segundos entre cliques para contar como "sequência"
+            
+            // Se passou mais de 2 segundos desde o último clique, reseta a contagem
+            if (agora - ultimoCliqueTime > intervalo) {
+                cliqueCount = 0;
+            }
+            
+            cliqueCount++;
+            ultimoCliqueTime = agora;
+            
+            // Limpa timeout anterior se existir
+            if (timeoutIrritacao) {
+                clearTimeout(timeoutIrritacao);
+                timeoutIrritacao = null;
+            }
+
+            // Níveis de irritação
+            if (cliqueCount === 1) {
+                // Primeiro clique: fala normal ou piada
+                const random = Math.random();
+                if (random < 0.3) {
+                    falarMascote('Opa! Clicou em mim? Que honra! 😊');
+                } else if (random < 0.6) {
+                    falarMascote('Você é fofo(a) de ficar me clicando! 🥰');
+                } else {
+                    falarMascote(piadas[Math.floor(Math.random() * piadas.length)]);
+                }
+                mostrarExpressao('feliz');
+                mascoteWrapper.classList.remove('irritado-1', 'irritado-2');
+            } 
+            else if (cliqueCount === 2) {
+                // Segundo clique: irritação nível 1
+                mostrarExpressao('irritado-1');
+                mascoteWrapper.classList.remove('irritado-2');
+                falarMascote('Para com isso! 😤 Você tá me deixando nervoso!');
+            }
+            else if (cliqueCount === 3) {
+                // Terceiro clique: irritação nível 2
+                mostrarExpressao('irritado-2');
+                mascoteWrapper.classList.remove('irritado-1');
+                falarMascote('Gluudyx está bravo com você! 😡 Agora vai ter que me pedir desculpas!');
+            }
+            else if (cliqueCount >= 4) {
+                // Quarto clique ou mais: FUGA!
+                mostrarExpressao(null);
+                mascoteWrapper.classList.remove('irritado-1', 'irritado-2');
+                estaFugindo = true;
+                mascoteWrapper.classList.add('fugindo');
+                falarMascote('JÁ CHEGA! VOU EMBORA! 🚀 Até nunca mais! (brincadeira... tô voltando 😜)');
+                
+                // Sinal de alerta gigante
+                const alerta = document.getElementById('alertaContainer');
+                alerta.classList.add('active');
+
+                // Aviso antes de voltar
+                setTimeout(() => {
+                    if (!estaSumido) {
+                        falarMascote('Tô voltando... mas não me irrita! 😅');
+                    }
+                }, 2000);
+
+                // Volta depois de 3 segundos (se não for clicado)
+                const timeoutVolta = setTimeout(() => {
+                    if (!estaSumido) {
+                        alerta.classList.remove('active');
+                        mascoteWrapper.classList.remove('fugindo');
+                        mascoteWrapper.classList.add('voltando');
+                        estaFugindo = false;
+                        estaVoltando = true;
+                        
+                        setTimeout(() => {
+                            mascoteWrapper.classList.remove('voltando');
+                            estaVoltando = false;
+                            cliqueCount = 0;
+                            mostrarExpressao('feliz');
+                            falarMascote('Ufa! Que susto! Voltei... mas não me irrita mais, tá? 😅');
+                        }, 600);
+                    }
+                }, 3000);
+
+                // Se clicar durante a fuga, SOME!
+                const listenerFuga = function(e) {
+                    if (estaFugindo) {
+                        clearTimeout(timeoutVolta);
+                        alerta.classList.remove('active');
+                        mascoteWrapper.classList.remove('fugindo');
+                        mascoteWrapper.classList.add('somiu');
+                        estaFugindo = false;
+                        estaSumido = true;
+                        // Remove o evento para não acumular
+                        mascoteWrapper.removeEventListener('click', listenerFuga);
+                        // Mostra uma mensagem final (opcional)
+                        falarMascote('😶 ... (Gluudyx sumiu...)');
+                    }
+                };
+                mascoteWrapper.addEventListener('click', listenerFuga);
+
+                return; // Para a execução aqui
+            }
+
+            // Reseta o estado de irritação depois de 5 segundos sem cliques
+            timeoutIrritacao = setTimeout(() => {
+                cliqueCount = 0;
+                mostrarExpressao('feliz');
+                timeoutIrritacao = null;
+            }, 5000);
+        }
+
+        // Configura o evento de clique no mascote
+        mascoteWrapper.addEventListener('click', lidarComCliqueMascote);
+
+        // Inicia o intervalo automático de fala
+        setInterval(() => {
+            if (!estaFalando && !estaFugindo && !estaVoltando && !estaSumido) {
+                atualizarMensagensMascote();
+                falarMascote();
+            }
+        }, 12000);
 
         // ================= VENDIDOS =================
         function carregarMaisVendidos() {
