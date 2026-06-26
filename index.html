@@ -71,6 +71,48 @@
         .mascote-wrapper:hover img { filter: drop-shadow(0 0 50px rgba(172,40,255,0.8)); }
         .mascote-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; border-radius: 50%; background: radial-gradient(circle, rgba(172,40,255,0.4) 0%, transparent 70%); z-index: -1; animation: pulseGlow 3s ease-in-out infinite; pointer-events: none; }
 
+        /* ========== EXPRESSÕES DO MASCOTE ========== */
+        .mascote-wrapper.feliz img { filter: drop-shadow(0 0 40px rgba(0, 242, 254, 0.6)); }
+        .mascote-wrapper.triste img { filter: drop-shadow(0 0 30px rgba(100, 100, 255, 0.4)) brightness(0.8); }
+        .mascote-wrapper.surpreso img { transform: scale(1.1); filter: drop-shadow(0 0 50px rgba(255, 229, 0, 0.7)); }
+        .mascote-wrapper.irritado-1 img { transform: rotate(-5deg) scale(0.95); filter: drop-shadow(0 0 30px rgba(255, 68, 68, 0.6)); }
+        .mascote-wrapper.irritado-2 img { transform: rotate(10deg) scale(0.9); filter: drop-shadow(0 0 50px rgba(255, 0, 0, 0.8)); }
+        .mascote-wrapper.fugindo { animation: fugaMascote 0.8s ease forwards; }
+        @keyframes fugaMascote { 0% { transform: translateX(0) scale(1); opacity: 1; } 50% { transform: translateX(100px) scale(1.2) rotate(20deg); opacity: 1; } 100% { transform: translateX(300px) scale(0.5) rotate(40deg); opacity: 0; } }
+        .mascote-wrapper.voltando { animation: voltaMascote 0.6s ease forwards; }
+        @keyframes voltaMascote { 0% { transform: translateX(300px) scale(0.5) rotate(40deg); opacity: 0; } 100% { transform: translateX(0) scale(1) rotate(0); opacity: 1; } }
+        .mascote-wrapper.somiu { display: none !important; }
+
+        /* ========== SINAL DE ALERTA GIGANTE ========== */
+        #alertaContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 99999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+        }
+        #alertaContainer.active {
+            display: flex;
+        }
+        .alerta-sinal {
+            font-size: clamp(12rem, 50vw, 30rem);
+            color: #ff4455;
+            text-shadow: 0 0 60px #ff4455, 0 0 120px #ff4455, 0 0 200px rgba(255, 68, 68, 0.5);
+            animation: alertaPulse 0.5s ease-in-out infinite alternate;
+            opacity: 0.8;
+            font-family: 'Arial Black', sans-serif;
+            font-weight: 900;
+        }
+        @keyframes alertaPulse {
+            0% { transform: scale(1); opacity: 0.6; }
+            100% { transform: scale(1.1); opacity: 1; }
+        }
+
         .btn-acessar { padding: 22px 60px; font-size: 1.4rem; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: #fff; background: linear-gradient(135deg, #a028ff 0%, var(--ciano-brilhante) 100%); border: none; border-radius: 60px; cursor: pointer; transition: var(--transicao); box-shadow: 0 8px 30px rgba(0,0,0,0.5); position: relative; overflow: hidden; }
         .btn-acessar::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.15), transparent, rgba(255,255,255,0.15), transparent); animation: rotateGlow 6s linear infinite; }
         .btn-acessar:hover { transform: translateY(-3px); box-shadow: 0 0 50px rgba(172,40,255,0.8); }
@@ -718,6 +760,7 @@
         let estaFugindo = false;
         let estaVoltando = false;
         let estaSumido = false;
+        let estaContando = false; // Flag para bloquear cliques durante contagem regressiva
         let timeoutFala = null;
         let timeoutIrritacao = null;
         let mascoteMsgIdx = 0;
@@ -771,7 +814,7 @@
         }
 
         function falarMascote(msgPersonalizada = null) {
-            if (estaFalando || estaFugindo || estaVoltando || estaSumido) return;
+            if (estaFalando || estaFugindo || estaVoltando || estaSumido || estaContando) return;
             
             if (mascoteMensagens.length === 0) atualizarMensagensMascote();
             const msg = msgPersonalizada || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
@@ -801,6 +844,7 @@
             if (estaSumido) return;
             if (estaFalando) return;
             if (estaFugindo || estaVoltando) return;
+            if (estaContando) return; // Bloqueia cliques durante a contagem
 
             const agora = Date.now();
             const intervalo = 2000;
@@ -833,57 +877,71 @@
                 falarMascote('Gluudyx está bravo com você! 😡 Agora vai ter que me pedir desculpas!');
             }
             else if (cliqueCount >= 4) {
-                // FUGA!
+                // === CONTAGEM REGRESSIVA ANTES DE SAIR ===
                 mostrarExpressao(null);
                 wrapper.classList.remove('irritado-1', 'irritado-2');
-                estaFugindo = true;
-                wrapper.classList.add('fugindo');
-                falarMascote('JÁ CHEGA! VOU EMBORA! 🚀 Até nunca mais! (brincadeira... tô voltando 😜)');
-                
-                // Sinal de alerta gigante
-                const alerta = document.getElementById('alertaContainer');
-                alerta.classList.add('active');
+                estaContando = true;
+                falarMascote('JÁ CHEGA! VOU EMBORA! 🚀 Contagem regressiva: 5...');
 
-                // Aviso antes de voltar
-                setTimeout(() => {
-                    if (!estaSumido) {
-                        falarMascote('Tô voltando... mas não me irrita! 😅');
-                    }
-                }, 2000);
+                let count = 5;
+                const interval = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        falarMascote(`Tchau em ${count}...`);
+                    } else {
+                        clearInterval(interval);
+                        estaContando = false;
+                        // Agora ele sai de verdade
+                        estaFugindo = true;
+                        wrapper.classList.add('fugindo');
+                        falarMascote('TCHAU! 👋');
 
-                // Volta depois de 3 segundos (se não for clicado)
-                const timeoutVolta = setTimeout(() => {
-                    if (!estaSumido) {
-                        alerta.classList.remove('active');
-                        wrapper.classList.remove('fugindo');
-                        wrapper.classList.add('voltando');
-                        estaFugindo = false;
-                        estaVoltando = true;
-                        
+                        // Sinal de alerta gigante
+                        const alerta = document.getElementById('alertaContainer');
+                        alerta.classList.add('active');
+
+                        // Aviso antes de voltar
                         setTimeout(() => {
-                            wrapper.classList.remove('voltando');
-                            estaVoltando = false;
-                            cliqueCount = 0;
-                            mostrarExpressao('feliz');
-                            falarMascote('Ufa! Que susto! Voltei... mas não me irrita mais, tá? 😅');
-                        }, 600);
-                    }
-                }, 3000);
+                            if (!estaSumido) {
+                                falarMascote('Tô voltando... mas não me irrita! 😅');
+                            }
+                        }, 2000);
 
-                // Se clicar durante a fuga, SOME!
-                const listenerFuga = function(e) {
-                    if (estaFugindo) {
-                        clearTimeout(timeoutVolta);
-                        alerta.classList.remove('active');
-                        wrapper.classList.remove('fugindo');
-                        wrapper.classList.add('somiu');
-                        estaFugindo = false;
-                        estaSumido = true;
-                        wrapper.removeEventListener('click', listenerFuga);
-                        falarMascote('😶 ... (Gluudyx sumiu...)');
+                        // Volta depois de 3 segundos (se não for clicado)
+                        const timeoutVolta = setTimeout(() => {
+                            if (!estaSumido) {
+                                alerta.classList.remove('active');
+                                wrapper.classList.remove('fugindo');
+                                wrapper.classList.add('voltando');
+                                estaFugindo = false;
+                                estaVoltando = true;
+                                
+                                setTimeout(() => {
+                                    wrapper.classList.remove('voltando');
+                                    estaVoltando = false;
+                                    cliqueCount = 0;
+                                    mostrarExpressao('feliz');
+                                    falarMascote('Ufa! Que susto! Voltei... mas não me irrita mais, tá? 😅');
+                                }, 600);
+                            }
+                        }, 3000);
+
+                        // Se clicar durante a fuga, SOME!
+                        const listenerFuga = function(e) {
+                            if (estaFugindo) {
+                                clearTimeout(timeoutVolta);
+                                alerta.classList.remove('active');
+                                wrapper.classList.remove('fugindo');
+                                wrapper.classList.add('somiu');
+                                estaFugindo = false;
+                                estaSumido = true;
+                                wrapper.removeEventListener('click', listenerFuga);
+                                falarMascote('😶 ... (Gluudyx sumiu...)');
+                            }
+                        };
+                        wrapper.addEventListener('click', listenerFuga);
                     }
-                };
-                wrapper.addEventListener('click', listenerFuga);
+                }, 1000);
 
                 return;
             }
@@ -897,7 +955,7 @@
 
         // Inicia o intervalo automático de fala (original)
         setInterval(() => {
-            if (!estaFalando && !estaFugindo && !estaVoltando && !estaSumido) {
+            if (!estaFalando && !estaFugindo && !estaVoltando && !estaSumido && !estaContando) {
                 atualizarMensagensMascote();
                 falarMascote();
             }
