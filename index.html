@@ -1077,7 +1077,74 @@
             }
         }
         function salvarFavoritos() { localStorage.setItem('gudyxFavoritos', JSON.stringify(favoritos)); }
-        function toggleFavorito(prodId) { /* ... (igual anterior) ... */ }
+        function toggleFavorito(prodId) {
+            const prod = dados.produtos.find(p => p.id === prodId);
+            if (favoritos.includes(prodId)) {
+                favoritos = favoritos.filter(id => id !== prodId);
+                salvarFavoritos();
+                atualizarFavoritosUI();
+                mascoteReage('removerFavorito', prod ? prod.nome : null);
+            } else {
+                favoritos.push(prodId);
+                salvarFavoritos();
+                atualizarFavoritosUI();
+                mascoteReage('favoritar', prod ? prod.nome : null);
+            }
+        }
+
+        function atualizarFavoritosUI() {
+            document.querySelectorAll('.btn-favorite').forEach(btn => {
+                const id = parseInt(btn.dataset.id);
+                if (favoritos.includes(id)) {
+                    btn.classList.add('active');
+                    btn.querySelector('i').className = 'fas fa-heart';
+                } else {
+                    btn.classList.remove('active');
+                    btn.querySelector('i').className = 'far fa-heart';
+                }
+            });
+        }
+
+        function abrirFavDrawer() {
+            renderizarFavDrawer();
+            document.getElementById('favDrawerOverlay').classList.add('active');
+            document.getElementById('favDrawer').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharFavDrawer() {
+            document.getElementById('favDrawerOverlay').classList.remove('active');
+            document.getElementById('favDrawer').classList.remove('open');
+            document.body.style.overflow = 'auto';
+        }
+
+        function renderizarFavDrawer() {
+            const body = document.getElementById('favDrawerBody');
+            if (favoritos.length === 0) {
+                body.innerHTML = '<div class="cart-empty">Nenhum favorito ainda.</div>';
+                return;
+            }
+            let html = '';
+            favoritos.forEach(id => {
+                const prod = dados.produtos.find(p => p.id === id);
+                if (!prod) return;
+                const imgSrc = getImagemPrincipal(prod);
+                html += `
+                    <div class="cart-drawer-item">
+                        <img src="${imgSrc}" class="item-img">
+                        <div class="item-info">
+                            <h4>${prod.nome}</h4>
+                            <div class="item-price">R$ ${prod.preco}</div>
+                        </div>
+                        <div class="item-actions">
+                            <button onclick="abrirModal(${prod.id}); fecharFavDrawer();"><i class="fas fa-eye"></i></button>
+                            <button class="btn-remove" onclick="toggleFavorito(${prod.id}); renderizarFavDrawer();"><i class="fas fa-heart-broken"></i></button>
+                        </div>
+                    </div>
+                `;
+            });
+            body.innerHTML = html;
+        }
 
         // ================= WHATSAPP =================
         function enviarOrcamentoWhatsApp() {
