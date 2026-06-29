@@ -30,7 +30,7 @@
     </script>
 
     <style>
-        /* ===== TODOS OS ESTILOS (MANTIDOS + NOVOS) ===== */
+        /* ===== TODOS OS ESTILOS (SEM MINI MASCOTE) ===== */
         :root {
             --roxo-profundo: #0b041c;
             --roxo-meio: #1a0a33;
@@ -382,110 +382,6 @@
         .modal-page .modal-box .close-modal-page { position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer; background:none; border:none; color:var(--cor-texto); transition:var(--transicao); }
         .modal-page .modal-box .close-modal-page:hover { transform:rotate(90deg); color:var(--rosa-neon); }
 
-        /* ===== MINI CHAT DO MASCOTE ===== */
-        #chatButton {
-            position: fixed;
-            bottom: 160px;
-            left: 20px;
-            z-index: 9999;
-            background: linear-gradient(135deg, #a028ff, #00f2fe);
-            color: #fff;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            cursor: pointer;
-            transition: var(--transicao);
-            animation: pulseChat 2s ease-in-out infinite;
-        }
-        #chatButton:hover { transform: scale(1.1); }
-        @keyframes pulseChat {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.08); box-shadow: 0 0 40px rgba(172,40,255,0.5); }
-            100% { transform: scale(1); }
-        }
-        #chatModal {
-            position: fixed;
-            bottom: 230px;
-            left: 20px;
-            width: 340px;
-            max-width: 90vw;
-            background: var(--vidro-fundo);
-            backdrop-filter: blur(16px);
-            border: 1px solid var(--vidro-borda);
-            border-radius: 24px;
-            z-index: 10000;
-            display: none;
-            flex-direction: column;
-            box-shadow: 0 0 40px rgba(0,0,0,0.6);
-            max-height: 500px;
-        }
-        #chatModal.active { display: flex; }
-        .chat-header {
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--vidro-borda);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(11,4,28,0.8);
-            border-radius: 24px 24px 0 0;
-        }
-        .chat-header h4 { font-size: 1.1rem; display: flex; align-items: center; gap: 8px; }
-        .chat-header .close-chat { font-size: 1.5rem; cursor: pointer; background: none; border: none; color: var(--cor-texto); transition: var(--transicao); }
-        .chat-header .close-chat:hover { transform: rotate(90deg); color: var(--rosa-neon); }
-        .chat-body {
-            flex: 1;
-            padding: 15px 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 350px;
-        }
-        .chat-msg {
-            padding: 10px 14px;
-            border-radius: 16px;
-            max-width: 85%;
-            font-size: 0.9rem;
-            line-height: 1.4;
-        }
-        .chat-msg.gluudyx {
-            background: rgba(172,40,255,0.2);
-            border: 1px solid rgba(172,40,255,0.3);
-            align-self: flex-start;
-            border-radius: 16px 16px 16px 0;
-        }
-        .chat-msg.user {
-            background: rgba(0,242,254,0.2);
-            border: 1px solid rgba(0,242,254,0.3);
-            align-self: flex-end;
-            border-radius: 16px 16px 0 16px;
-        }
-        .chat-footer {
-            padding: 10px 20px;
-            border-top: 1px solid var(--vidro-borda);
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            background: rgba(11,4,28,0.5);
-            border-radius: 0 0 24px 24px;
-        }
-        .chat-footer .quick-btn {
-            padding: 6px 14px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--vidro-borda);
-            border-radius: 20px;
-            color: var(--cor-texto);
-            cursor: pointer;
-            font-size: 0.75rem;
-            transition: var(--transicao);
-        }
-        .chat-footer .quick-btn:hover { background: rgba(172,40,255,0.2); }
-
         /* ===== FAQ ===== */
         #faqModal {
             position: fixed;
@@ -522,58 +418,6 @@
         .faq-item .faq-a { display:none; padding-top:8px; opacity:0.8; font-size:0.95rem; }
         .faq-item .faq-a.open { display:block; }
 
-        /* ===== MINI MASCOTE (aparece em todas as telas) ===== */
-        #miniMascote {
-            position: fixed;
-            bottom: 170px;
-            right: 20px;
-            z-index: 9999;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: transform 0.3s;
-            animation: miniFloat 3s ease-in-out infinite;
-        }
-        #miniMascote:hover { transform: scale(1.05); }
-        #miniMascote img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            border: 2px solid var(--ciano-brilhante);
-            box-shadow: 0 0 30px rgba(172,40,255,0.6);
-            transition: filter 0.3s;
-        }
-        #miniMascote .mini-fala {
-            background: rgba(11,4,28,0.9);
-            backdrop-filter: blur(8px);
-            border: 1px solid var(--vidro-borda);
-            border-radius: 12px;
-            padding: 6px 12px;
-            font-size: 0.7rem;
-            color: #fff;
-            margin-bottom: 5px;
-            text-align: center;
-            max-width: 160px;
-            box-shadow: 0 0 15px rgba(172,40,255,0.3);
-            position: relative;
-            display: none;
-        }
-        #miniMascote .mini-fala::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: rgba(11,4,28,0.9);
-        }
-        #miniMascote .mini-fala.falando { display: block; }
-        @keyframes miniFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-
         /* ===== RESPONSIVIDADE ===== */
         @media (max-width:900px) {
             .fala-container { right:-40px; width:160px; font-size:0.75rem; top:5px; }
@@ -582,8 +426,6 @@
             .mascote-block { flex:1 1 auto; width:100%; max-width:400px; margin-left:0; }
             .promo-slider-container { margin-left:0; margin-right:0; padding-left:0; flex:1 1 auto; width:100%; max-width:100%; }
             #chatModal { width: 300px; bottom: 200px; }
-            #miniMascote img { width: 50px; height: 50px; }
-            #miniMascote .mini-fala { font-size: 0.65rem; max-width: 120px; }
         }
         @media (max-width:600px) {
             .fala-container { right:-20px; width:130px; font-size:0.7rem; top:-5px; }
@@ -601,9 +443,6 @@
             .peeking-fala { font-size:0.7rem; max-width:150px; padding:6px 10px; }
             #chatButton { width:50px; height:50px; font-size:1.5rem; bottom:130px; left:15px; }
             #chatModal { width: 280px; bottom: 190px; left: 15px; }
-            #miniMascote { bottom: 140px; right: 15px; }
-            #miniMascote img { width: 45px; height: 45px; }
-            #miniMascote .mini-fala { font-size: 0.6rem; max-width: 100px; }
         }
         @media (max-width:480px) {
             .fala-container { right:0; top:-25px; width:100px; font-size:0.6rem; }
@@ -775,52 +614,12 @@
     </div>
 
     <!-- ===== FAQ ===== -->
-    <div id="faqModal">
+    <div id="faqModal" onclick="fecharFAQ(event)">
         <div class="faq-box">
             <button class="close-faq" onclick="fecharFAQ()">×</button>
             <h2>❓ Dúvidas Frequentes</h2>
-            <div class="faq-item">
-                <div class="faq-q" onclick="toggleFAQ(this)">
-                    <span>⏰ Qual o prazo de produção?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-a">A produção leva de 2 a 5 dias úteis, dependendo da complexidade do pedido.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-q" onclick="toggleFAQ(this)">
-                    <span>💳 Quais formas de pagamento?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-a">Aceitamos PIX, cartão de crédito (via Mercado Pago) e dinheiro na retirada.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-q" onclick="toggleFAQ(this)">
-                    <span>📦 Como retirar meus produtos?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-a">Retirada na loja: Rua das Flores, 123 - São Paulo, SP. Sem agendamento.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-q" onclick="toggleFAQ(this)">
-                    <span>🖼️ Posso enviar minha própria arte?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-a">Sim! Você pode enviar sua arte e nós personalizamos o produto com ela.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-q" onclick="toggleFAQ(this)">
-                    <span>🚀 Como faço meu orçamento?</span>
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-a">Adicione os produtos no carrinho e clique em "Enviar orçamento" para receber o valor pelo WhatsApp.</div>
-            </div>
+            <div id="faqList"></div>
         </div>
-    </div>
-
-    <!-- ===== MINI MASCOTE (TODAS AS TELAS) ===== -->
-    <div id="miniMascote" onclick="miniMascoteFalar()">
-        <div class="mini-fala" id="miniFala">Olá! 👋</div>
-        <img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx mini">
     </div>
 
     <!-- ===== BOTÕES FLUTUANTES ===== -->
@@ -972,7 +771,7 @@
         const WA_NUMBER = '5511999999999'; // Substitua pelo seu número com DDD
 
         // ================= DADOS =================
-        let dados = { categorias: [], produtos: [], frases: [] };
+        let dados = { categorias: [], produtos: [], frases: [], faq: [] };
         let carrinho = [];
         let favoritos = [];
         let quantidadeModal = 1;
@@ -1409,399 +1208,87 @@
 
         window.addEventListener('scroll', verificarScroll);
 
-        // ================= MINI MASCOTE (TODAS AS TELAS) =================
-        let miniFalaTimeout = null;
-
-        function miniMascoteFalar(msgPersonalizada = null) {
-            const miniFala = document.getElementById('miniFala');
-            if (miniFalaTimeout) {
-                clearTimeout(miniFalaTimeout);
-                miniFalaTimeout = null;
-            }
-            let msg = msgPersonalizada;
-            if (!msg) {
-                // Frases aleatórias para o mini mascote
-                const frasesMini = [
-                    "Olá! 👋",
-                    "Estou aqui para ajudar! 😊",
-                    "Tem produto em promoção! 🔥",
-                    "Gostou do que viu? 💜",
-                    "Me clica para mais dicas! 🧠",
-                    "Você tem bom gosto! ✨"
-                ];
-                msg = frasesMini[Math.floor(Math.random() * frasesMini.length)];
-            }
-            miniFala.textContent = msg;
-            miniFala.classList.add('falando');
-            miniFalaTimeout = setTimeout(() => {
-                miniFala.classList.remove('falando');
-                miniFalaTimeout = null;
-            }, 3500);
-        }
-
-        // Mini mascote reage a cliques em produtos
-        function miniMascoteReage(acao, produtoNome = null) {
-            const frasesMiniReacao = {
-                abrirModal: `👀 Olha só! "${produtoNome || 'esse produto'}" é ótimo!`,
-                addCart: `🛒 "${produtoNome || 'Esse item'}" no carrinho! Boa compra!`,
-                favoritar: `❤️ Você favoritou "${produtoNome || 'esse item'}"! Acertou!`,
-                comprar: `💰 "${produtoNome || 'Esse item'}"? Excelente escolha!`
-            };
-            const msg = frasesMiniReacao[acao] || '😄 Obrigado pela interação!';
-            miniMascoteFalar(msg);
-        }
-
-        // Sobrescrever funções para integrar mini mascote
-        const originalAddToCart = addToCart;
-        function addToCart(prodId, qtd = 1) {
-            const prod = dados.produtos.find(p => p.id === prodId);
-            if (!prod || !isEmEstoque(prod)) return alert('Produto esgotado!');
-            const existing = carrinho.find(c => c.id === prodId);
-            const precoUnit = isPromoActive(prod) ? prod.precoPromo : prod.preco;
-            if (existing) {
-                if (existing.quantidade + qtd > getEstoque(prod)) return alert('Estoque máximo atingido!');
-                existing.quantidade += qtd;
-            } else {
-                carrinho.push({ id: prodId, quantidade: qtd, preco: precoUnit, nome: prod.nome, imagem: prod.imagem || '' });
-            }
-            salvarCarrinho();
-            mascoteReage('addCart', prod.nome);
-            miniMascoteReage('addCart', prod.nome);
-            const el = document.querySelector(`.produto-card[data-id="${prodId}"] .btn-add-cart`);
-            if (el) { el.textContent = '✓ Adicionado!'; setTimeout(() => el.textContent = 'Adicionar', 2000); }
-        }
-
-        // Sobrescrever abrirModal
-        const originalAbrirModal = abrirModal;
-        function abrirModal(prodId) {
-            const prod = dados.produtos.find(p => p.id === prodId);
-            if (!prod) return;
-            originalAbrirModal(prodId);
-            miniMascoteReage('abrirModal', prod.nome);
-        }
-
-        // Sobrescrever toggleFavorito
-        const originalToggleFavorito = toggleFavorito;
-        function toggleFavorito(prodId) {
-            const prod = dados.produtos.find(p => p.id === prodId);
-            if (favoritos.includes(prodId)) {
-                favoritos = favoritos.filter(id => id !== prodId);
-                salvarFavoritos();
-                atualizarFavoritosUI();
-                mascoteReage('removerFavorito', prod ? prod.nome : null);
-                miniMascoteReage('removerFavorito', prod ? prod.nome : null);
-            } else {
-                favoritos.push(prodId);
-                salvarFavoritos();
-                atualizarFavoritosUI();
-                mascoteReage('favoritar', prod ? prod.nome : null);
-                miniMascoteReage('favoritar', prod ? prod.nome : null);
-            }
-        }
-
-        // Inicializar mini mascote com fala
-        setTimeout(() => {
-            miniMascoteFalar('Olá! Sou o Gluudyx! 😄');
-        }, 3000);
-
-        // ================= CUPONS DE DESCONTO =================
-        let cupomAtual = null;
-        const cuponsValidos = {
-            'BEMVINDO10': { tipo: 'percentual', valor: 10, descricao: '10% OFF primeira compra' },
-            'PROMO20': { tipo: 'percentual', valor: 20, descricao: '20% OFF' },
-            'FRETEGRATIS': { tipo: 'fixo', valor: 15, descricao: 'R$ 15 de desconto' } // exemplo
-        };
-
-        function aplicarCupom() {
-            const input = document.getElementById('cupomInput');
-            const codigo = input.value.trim().toUpperCase();
-            const msg = document.getElementById('cupomMsg');
-            if (!codigo) {
-                msg.textContent = 'Digite um código de cupom.';
-                msg.className = 'cupom-msg error';
-                return;
-            }
-            if (cuponsValidos[codigo]) {
-                cupomAtual = { codigo, ...cuponsValidos[codigo] };
-                msg.textContent = `✅ Cupom aplicado: ${cuponsValidos[codigo].descricao}`;
-                msg.className = 'cupom-msg success';
-                renderizarDrawer();
-                salvarCarrinho();
-            } else {
-                msg.textContent = '❌ Cupom inválido.';
-                msg.className = 'cupom-msg error';
-            }
-        }
-
-        function calcularTotalCarrinho() {
-            let total = carrinho.reduce((acc, item) => {
-                const preco = parseFloat(item.preco.replace(',', '.'));
-                return acc + preco * item.quantidade;
-            }, 0);
-            if (cupomAtual) {
-                if (cupomAtual.tipo === 'percentual') {
-                    total = total * (1 - cupomAtual.valor / 100);
-                } else if (cupomAtual.tipo === 'fixo') {
-                    total = Math.max(0, total - cupomAtual.valor);
-                }
-            }
-            return total;
-        }
-
-        // ================= AVALIAÇÕES =================
-        let avaliacoes = {};
-
-        function carregarAvaliacoes() {
-            if (localStorage.getItem('gudyx_avaliacoes')) {
-                try {
-                    avaliacoes = JSON.parse(localStorage.getItem('gudyx_avaliacoes'));
-                } catch(e) { avaliacoes = {}; }
-            }
-        }
-
-        function salvarAvaliacoes() {
-            localStorage.setItem('gudyx_avaliacoes', JSON.stringify(avaliacoes));
-        }
-
-        function salvarAvaliacao() {
-            if (!produtoModalAtual) return alert('Nenhum produto selecionado.');
-            const nota = parseInt(document.getElementById('avaliacaoNota').value);
-            const comentario = document.getElementById('avaliacaoComentario').value.trim();
-            if (!comentario) return alert('Escreva um comentário.');
-            const id = produtoModalAtual.id;
-            if (!avaliacoes[id]) avaliacoes[id] = [];
-            avaliacoes[id].push({
-                nota,
-                comentario,
-                autor: 'Cliente',
-                data: new Date().toISOString()
-            });
-            salvarAvaliacoes();
-            document.getElementById('avaliacaoComentario').value = '';
-            renderizarAvaliacoes(id);
-            mascoteReage('addCart', produtoModalAtual.nome);
-            miniMascoteReage('addCart', produtoModalAtual.nome);
-        }
-
-        function renderizarAvaliacoes(prodId) {
-            const container = document.getElementById('avaliacoesList');
-            const lista = avaliacoes[prodId] || [];
-            if (lista.length === 0) {
-                container.innerHTML = '<p style="opacity:0.6;">Nenhuma avaliação ainda. Seja o primeiro!</p>';
+        // ================= FAQ DINÂMICA (do admin) =================
+        function carregarFAQ() {
+            const container = document.getElementById('faqList');
+            const faqs = dados.faq || [];
+            if (faqs.length === 0) {
+                container.innerHTML = '<p style="text-align:center;opacity:0.6;">Nenhuma pergunta cadastrada ainda.</p>';
                 return;
             }
             let html = '';
-            lista.forEach(av => {
-                const estrelas = '★'.repeat(av.nota) + '☆'.repeat(5 - av.nota);
+            faqs.forEach((faq, index) => {
                 html += `
-                    <div class="avaliacao-item">
-                        <div class="estrelas">${estrelas}</div>
-                        <div class="comentario">${av.comentario}</div>
-                        <div class="autor">${av.autor} • ${new Date(av.data).toLocaleDateString()}</div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        // ================= SUGESTÕES =================
-        function renderizarSugestoes(prodId) {
-            const container = document.getElementById('sugestoesGrid');
-            const prod = dados.produtos.find(p => p.id === prodId);
-            if (!prod) { container.innerHTML = ''; return; }
-            const sugestoes = dados.produtos.filter(p => 
-                p.id !== prodId && 
-                p.categoriaId === prod.categoriaId && 
-                isEmEstoque(p)
-            ).slice(0, 3);
-            if (sugestoes.length === 0) {
-                container.innerHTML = '<p style="opacity:0.6;">Nenhum produto relacionado.</p>';
-                return;
-            }
-            let html = '';
-            sugestoes.forEach(s => {
-                const preco = isPromoActive(s) && s.precoPromo ? 'R$ '+s.precoPromo : 'R$ '+s.preco;
-                html += `
-                    <div class="sugestao-card" onclick="abrirModal(${s.id})">
-                        <img src="${s.imagem || 'https://placehold.co/120x80/0b041c/00f2fe?text=Sem+Img'}">
-                        <h5>${s.nome}</h5>
-                        <div class="preco">${preco}</div>
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        // ================= COMPARTILHAR =================
-        function compartilharProduto() {
-            if (!produtoModalAtual) return;
-            const prod = produtoModalAtual;
-            const url = window.location.href.split('?')[0] + '?produto=' + prod.id;
-            const text = `Olha só esse produto da Gudyx: ${prod.nome} - R$ ${prod.preco}\n\n${url}`;
-            if (navigator.share) {
-                navigator.share({ title: prod.nome, text, url });
-            } else {
-                navigator.clipboard.writeText(text).then(() => {
-                    alert('Link copiado! Compartilhe com seus amigos.');
-                });
-            }
-        }
-
-        // ================= FILTROS E PAGINAÇÃO =================
-        let produtosFiltrados = [];
-        let paginaAtual = 1;
-        const itensPorPagina = 12;
-
-        function aplicarFiltros() {
-            const ordenacao = document.getElementById('filtroOrdenacao').value;
-            const precoMin = parseFloat(document.getElementById('filtroPrecoMin').value) || 0;
-            const precoMax = parseFloat(document.getElementById('filtroPrecoMax').value) || Infinity;
-
-            let prods = dados.produtos.filter(p => p.categoriaId === categoriaSelecionada.id);
-            // Filtro por preço
-            prods = prods.filter(p => {
-                const preco = parseFloat(p.preco.replace(',', '.'));
-                return preco >= precoMin && preco <= precoMax;
-            });
-
-            // Ordenação
-            switch (ordenacao) {
-                case 'menorPreco':
-                    prods.sort((a,b) => parseFloat(a.preco.replace(',', '.')) - parseFloat(b.preco.replace(',', '.')));
-                    break;
-                case 'maiorPreco':
-                    prods.sort((a,b) => parseFloat(b.preco.replace(',', '.')) - parseFloat(a.preco.replace(',', '.')));
-                    break;
-                case 'maisVendidos':
-                    prods.sort((a,b) => (b.cliques||0) - (a.cliques||0));
-                    break;
-                case 'nome':
-                    prods.sort((a,b) => a.nome.localeCompare(b.nome));
-                    break;
-                default:
-                    // relevância (ordem original)
-                    break;
-            }
-            produtosFiltrados = prods;
-            paginaAtual = 1;
-            renderizarProdutosFiltrados();
-        }
-
-        function limparFiltros() {
-            document.getElementById('filtroOrdenacao').value = 'relevancia';
-            document.getElementById('filtroPrecoMin').value = '';
-            document.getElementById('filtroPrecoMax').value = '';
-            aplicarFiltros();
-        }
-
-        function renderizarProdutosFiltrados() {
-            const container = document.getElementById('produtosProdutosContainer');
-            const total = produtosFiltrados.length;
-            const totalPaginas = Math.ceil(total / itensPorPagina);
-            const start = (paginaAtual - 1) * itensPorPagina;
-            const end = start + itensPorPagina;
-            const paginaItens = produtosFiltrados.slice(start, end);
-
-            container.style.display = 'grid';
-            container.className = 'produtos-grid' + (viewMode === 'lista' ? ' lista' : '');
-            container.innerHTML = '';
-
-            if (paginaItens.length === 0) {
-                container.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhum item encontrado.</p>';
-                renderizarPaginacao(totalPaginas);
-                return;
-            }
-
-            paginaItens.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = 'produto-card';
-                card.dataset.id = prod.id;
-                card.onclick = (e) => {
-                    if (e.target.closest('.btn-add-cart') || e.target.closest('.btn-wa-card') || e.target.closest('.btn-favorite')) return;
-                    abrirModal(prod.id);
-                };
-                const promoAtiva = isPromoActive(prod);
-                const estoqueOk = isEmEstoque(prod);
-                let badges = '';
-                if (promoAtiva) badges += `<div class="badge-promo">PROMO</div>`;
-                if (prod.destaque) badges += `<div class="badge-destaque">DESTAQUE</div>`;
-                if (!estoqueOk) badges += `<div class="badge-esgotado">ESGOTADO</div>`;
-                let precoHtml = '';
-                if (promoAtiva && prod.precoPromo) {
-                    precoHtml = `<div><span class="preco-promo">R$ ${prod.preco}</span> <span class="preco-atual">R$ ${prod.precoPromo}</span></div>`;
-                } else {
-                    precoHtml = `<div class="preco">R$ ${prod.preco}</div>`;
-                }
-                const favorito = favoritos.includes(prod.id) ? 'active' : '';
-                const favIcon = favoritos.includes(prod.id) ? 'fas' : 'far';
-                const btnAdd = estoqueOk ? `<button class="btn-add-cart" onclick="addToCart(${prod.id})"><i class="fas fa-cart-plus"></i> Adicionar</button>` : `<button class="btn-add-cart" disabled>Esgotado</button>`;
-                const msg = encodeURIComponent(`*Gudyx Custom - Catálogo*\n\n🛒 *Produto:* ${prod.nome}\n💰 *Preço:* ${promoAtiva ? 'R$ '+prod.precoPromo : 'R$ '+prod.preco}\n\nQuero comprar este produto!`);
-                const waBtn = `<a href="https://wa.me/${WA_NUMBER}?text=${msg}" target="_blank" class="btn-wa-card"><i class="fab fa-whatsapp"></i> Comprar</a>`;
-                const favBtn = `<button class="btn-favorite ${favorito}" data-id="${prod.id}" onclick="toggleFavorito(${prod.id})"><i class="${favIcon} fa-heart"></i></button>`;
-
-                if (viewMode === 'lista') {
-                    card.innerHTML = `
-                        ${badges}
-                        ${favBtn}
-                        <img src="${prod.imagem || 'https://placehold.co/80x80/0b041c/00f2fe?text=Sem+Img'}">
-                        <div class="info-lista">
-                            <h5>${prod.nome}</h5>
-                            ${prod.descricao ? `<div class="descricao">${prod.descricao}</div>` : ''}
-                            ${precoHtml}
-                            <div class="botoes-lista">${btnAdd} ${waBtn}</div>
+                    <div class="faq-item">
+                        <div class="faq-q" onclick="toggleFAQ(this)">
+                            <span>${faq.pergunta}</span>
+                            <i class="fas fa-chevron-down"></i>
                         </div>
-                    `;
-                } else {
-                    card.innerHTML = `
-                        ${badges}
-                        ${favBtn}
-                        <img src="${prod.imagem || 'https://placehold.co/140x140/0b041c/00f2fe?text=Sem+Img'}">
-                        <h5>${prod.nome}</h5>
-                        ${prod.descricao ? `<div class="descricao">${prod.descricao.substring(0,60)}${prod.descricao.length>60?'...':''}</div>` : ''}
-                        ${precoHtml}
-                        <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;">${btnAdd} ${waBtn}</div>
-                    `;
-                }
-                container.appendChild(card);
+                        <div class="faq-a">${faq.resposta}</div>
+                    </div>
+                `;
             });
-
-            renderizarPaginacao(totalPaginas);
+            container.innerHTML = html;
         }
 
-        function renderizarPaginacao(totalPaginas) {
-            const container = document.getElementById('paginacaoContainer');
-            container.innerHTML = '';
-            if (totalPaginas <= 1) return;
-            for (let i = 1; i <= totalPaginas; i++) {
-                const btn = document.createElement('button');
-                btn.textContent = i;
-                btn.className = i === paginaAtual ? 'active' : '';
-                btn.onclick = () => {
-                    paginaAtual = i;
-                    renderizarProdutosFiltrados();
-                };
-                container.appendChild(btn);
+        function abrirFAQ() {
+            carregarFAQ();
+            document.getElementById('faqModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharFAQ(e) {
+            if (e && e.target !== e.currentTarget) return;
+            document.getElementById('faqModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        function toggleFAQ(el) {
+            const answer = el.parentElement.querySelector('.faq-a');
+            const icon = el.querySelector('i');
+            answer.classList.toggle('open');
+            el.classList.toggle('open');
+            if (answer.classList.contains('open')) {
+                icon.className = 'fas fa-chevron-up';
+            } else {
+                icon.className = 'fas fa-chevron-down';
             }
         }
 
-        // ================= BUSCA COM AUTOCOMPLETAR =================
-        function buscarItems(tipo) {
-            const term = document.getElementById(tipo === 'produtos' ? 'searchProdutos' : 'searchServicos').value.toLowerCase();
-            const container = document.getElementById(tipo === 'produtos' ? 'produtosProdutosContainer' : 'servicosProdutosContainer');
-            // Se não houver categoria selecionada, não faz nada
-            if (!categoriaSelecionada.id) {
-                container.innerHTML = '';
-                return;
+        // ================= MINI CHAT =================
+        function toggleChat() {
+            const modal = document.getElementById('chatModal');
+            modal.classList.toggle('active');
+            if (modal.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
             }
-            // Auto completar: exibe sugestões enquanto digita
-            const sugestoes = dados.produtos.filter(p => 
-                p.categoriaId === categoriaSelecionada.id &&
-                (p.nome.toLowerCase().includes(term) || (p.descricao && p.descricao.toLowerCase().includes(term)))
-            );
-            // Renderiza os produtos filtrados com paginação
-            produtosFiltrados = sugestoes;
-            paginaAtual = 1;
-            renderizarProdutosFiltrados();
+        }
+
+        function chatResposta(opcao) {
+            const body = document.getElementById('chatBody');
+            const respostas = {
+                produtos: 'Temos uma variedade incrível! 🎨 Caixas personalizadas, imãs, cartões, displays e muito mais. Dá uma olhada no catálogo! 📦',
+                promocoes: '🔥 No momento temos promoções em caixas personalizadas e imãs! Corre que o estoque não espera!',
+                duvidas: 'Claro! Pode perguntar sobre produção, pagamento, retirada... estou aqui para ajudar! 😄',
+                contato: '📞 Meu WhatsApp é (11) 99999-9999. Fique à vontade para chamar!'
+            };
+            const userMsg = document.createElement('div');
+            userMsg.className = 'chat-msg user';
+            userMsg.textContent = opcao === 'produtos' ? 'Quais produtos?' :
+                                  opcao === 'promocoes' ? 'Promoções' :
+                                  opcao === 'duvidas' ? 'Dúvidas' : 'Contato';
+            body.appendChild(userMsg);
+
+            setTimeout(() => {
+                const gluMsg = document.createElement('div');
+                gluMsg.className = 'chat-msg gluudyx';
+                gluMsg.textContent = respostas[opcao] || 'Hmm, não entendi. Pode me perguntar de novo? 😅';
+                body.appendChild(gluMsg);
+                body.scrollTop = body.scrollHeight;
+            }, 600);
+            body.scrollTop = body.scrollHeight;
         }
 
         // ================= DEMAIS FUNÇÕES (CARRINHO, FAVORITOS, MODAL, ETC.) =================
@@ -1811,7 +1298,8 @@
                 try {
                     dados = JSON.parse(localStorage.getItem('gudyxDados'));
                     if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'];
-                } catch(e) { dados = { categorias: [], produtos: [], frases: [] }; }
+                    if(!dados.faq) dados.faq = [];
+                } catch(e) { dados = { categorias: [], produtos: [], frases: [], faq: [] }; }
             } else {
                 dados = {
                     categorias: [
@@ -1828,7 +1316,8 @@
                         { id: 11, tipo: 'servicos', nome: 'Criação de Arte', imagem: '' }
                     ],
                     produtos: [],
-                    frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe', 'Escolha seu caderno cósmico', 'Feito com alma taurina']
+                    frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe', 'Escolha seu caderno cósmico', 'Feito com alma taurina'],
+                    faq: []
                 };
                 localStorage.setItem('gudyxDados', JSON.stringify(dados));
             }
@@ -1956,7 +1445,6 @@
             }
             salvarCarrinho();
             mascoteReage('addCart', prod.nome);
-            miniMascoteReage('addCart', prod.nome);
             const el = document.querySelector(`.produto-card[data-id="${prodId}"] .btn-add-cart`);
             if (el) { el.textContent = '✓ Adicionado!'; setTimeout(() => el.textContent = 'Adicionar', 2000); }
         }
@@ -2028,13 +1516,11 @@
                 salvarFavoritos();
                 atualizarFavoritosUI();
                 mascoteReage('removerFavorito', prod ? prod.nome : null);
-                miniMascoteReage('removerFavorito', prod ? prod.nome : null);
             } else {
                 favoritos.push(prodId);
                 salvarFavoritos();
                 atualizarFavoritosUI();
                 mascoteReage('favoritar', prod ? prod.nome : null);
-                miniMascoteReage('favoritar', prod ? prod.nome : null);
             }
         }
 
@@ -2141,8 +1627,6 @@
             // Carrega avaliações e sugestões
             renderizarAvaliacoes(prodId);
             renderizarSugestoes(prodId);
-            // Mini mascote reage
-            miniMascoteReage('abrirModal', prod.nome);
         }
 
         function fecharModal() {
@@ -2513,30 +1997,6 @@
             body.scrollTop = body.scrollHeight;
         }
 
-        // ================= FAQ =================
-        function abrirFAQ() {
-            document.getElementById('faqModal').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
-        function fecharFAQ() {
-            document.getElementById('faqModal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
-        function toggleFAQ(el) {
-            const answer = el.parentElement.querySelector('.faq-a');
-            const icon = el.querySelector('i');
-            answer.classList.toggle('open');
-            el.classList.toggle('open');
-            if (answer.classList.contains('open')) {
-                icon.className = 'fas fa-chevron-up';
-            } else {
-                icon.className = 'fas fa-chevron-down';
-            }
-        }
-        document.getElementById('faqModal').addEventListener('click', function(e) {
-            if (e.target === this) fecharFAQ();
-        });
-
         // ================= MODAIS SOBRE E CONTATO =================
         function abrirModalSobre() {
             document.getElementById('modalSobre').classList.add('active');
@@ -2611,6 +2071,261 @@
             }
             setInterval(mostrarProva, 8000);
             setTimeout(mostrarProva, 3000);
+        }
+
+        // ================= AVALIAÇÕES =================
+        let avaliacoes = {};
+
+        function carregarAvaliacoes() {
+            if (localStorage.getItem('gudyx_avaliacoes')) {
+                try {
+                    avaliacoes = JSON.parse(localStorage.getItem('gudyx_avaliacoes'));
+                } catch(e) { avaliacoes = {}; }
+            }
+        }
+
+        function salvarAvaliacoes() {
+            localStorage.setItem('gudyx_avaliacoes', JSON.stringify(avaliacoes));
+        }
+
+        function salvarAvaliacao() {
+            if (!produtoModalAtual) return alert('Nenhum produto selecionado.');
+            const nota = parseInt(document.getElementById('avaliacaoNota').value);
+            const comentario = document.getElementById('avaliacaoComentario').value.trim();
+            if (!comentario) return alert('Escreva um comentário.');
+            const id = produtoModalAtual.id;
+            if (!avaliacoes[id]) avaliacoes[id] = [];
+            avaliacoes[id].push({
+                nota,
+                comentario,
+                autor: 'Cliente',
+                data: new Date().toISOString()
+            });
+            salvarAvaliacoes();
+            document.getElementById('avaliacaoComentario').value = '';
+            renderizarAvaliacoes(id);
+            mascoteReage('addCart', produtoModalAtual.nome);
+        }
+
+        function renderizarAvaliacoes(prodId) {
+            const container = document.getElementById('avaliacoesList');
+            const lista = avaliacoes[prodId] || [];
+            if (lista.length === 0) {
+                container.innerHTML = '<p style="opacity:0.6;">Nenhuma avaliação ainda. Seja o primeiro!</p>';
+                return;
+            }
+            let html = '';
+            lista.forEach(av => {
+                const estrelas = '★'.repeat(av.nota) + '☆'.repeat(5 - av.nota);
+                html += `
+                    <div class="avaliacao-item">
+                        <div class="estrelas">${estrelas}</div>
+                        <div class="comentario">${av.comentario}</div>
+                        <div class="autor">${av.autor} • ${new Date(av.data).toLocaleDateString()}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ================= SUGESTÕES =================
+        function renderizarSugestoes(prodId) {
+            const container = document.getElementById('sugestoesGrid');
+            const prod = dados.produtos.find(p => p.id === prodId);
+            if (!prod) { container.innerHTML = ''; return; }
+            const sugestoes = dados.produtos.filter(p => 
+                p.id !== prodId && 
+                p.categoriaId === prod.categoriaId && 
+                isEmEstoque(p)
+            ).slice(0, 3);
+            if (sugestoes.length === 0) {
+                container.innerHTML = '<p style="opacity:0.6;">Nenhum produto relacionado.</p>';
+                return;
+            }
+            let html = '';
+            sugestoes.forEach(s => {
+                const preco = isPromoActive(s) && s.precoPromo ? 'R$ '+s.precoPromo : 'R$ '+s.preco;
+                html += `
+                    <div class="sugestao-card" onclick="abrirModal(${s.id})">
+                        <img src="${s.imagem || 'https://placehold.co/120x80/0b041c/00f2fe?text=Sem+Img'}">
+                        <h5>${s.nome}</h5>
+                        <div class="preco">${preco}</div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // ================= COMPARTILHAR =================
+        function compartilharProduto() {
+            if (!produtoModalAtual) return;
+            const prod = produtoModalAtual;
+            const url = window.location.href.split('?')[0] + '?produto=' + prod.id;
+            const text = `Olha só esse produto da Gudyx: ${prod.nome} - R$ ${prod.preco}\n\n${url}`;
+            if (navigator.share) {
+                navigator.share({ title: prod.nome, text, url });
+            } else {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Link copiado! Compartilhe com seus amigos.');
+                });
+            }
+        }
+
+        // ================= FILTROS E PAGINAÇÃO =================
+        let produtosFiltrados = [];
+        let paginaAtual = 1;
+        const itensPorPagina = 12;
+
+        function aplicarFiltros() {
+            const ordenacao = document.getElementById('filtroOrdenacao').value;
+            const precoMin = parseFloat(document.getElementById('filtroPrecoMin').value) || 0;
+            const precoMax = parseFloat(document.getElementById('filtroPrecoMax').value) || Infinity;
+
+            let prods = dados.produtos.filter(p => p.categoriaId === categoriaSelecionada.id);
+            // Filtro por preço
+            prods = prods.filter(p => {
+                const preco = parseFloat(p.preco.replace(',', '.'));
+                return preco >= precoMin && preco <= precoMax;
+            });
+
+            // Ordenação
+            switch (ordenacao) {
+                case 'menorPreco':
+                    prods.sort((a,b) => parseFloat(a.preco.replace(',', '.')) - parseFloat(b.preco.replace(',', '.')));
+                    break;
+                case 'maiorPreco':
+                    prods.sort((a,b) => parseFloat(b.preco.replace(',', '.')) - parseFloat(a.preco.replace(',', '.')));
+                    break;
+                case 'maisVendidos':
+                    prods.sort((a,b) => (b.cliques||0) - (a.cliques||0));
+                    break;
+                case 'nome':
+                    prods.sort((a,b) => a.nome.localeCompare(b.nome));
+                    break;
+                default:
+                    // relevância (ordem original)
+                    break;
+            }
+            produtosFiltrados = prods;
+            paginaAtual = 1;
+            renderizarProdutosFiltrados();
+        }
+
+        function limparFiltros() {
+            document.getElementById('filtroOrdenacao').value = 'relevancia';
+            document.getElementById('filtroPrecoMin').value = '';
+            document.getElementById('filtroPrecoMax').value = '';
+            aplicarFiltros();
+        }
+
+        function renderizarProdutosFiltrados() {
+            const container = document.getElementById('produtosProdutosContainer');
+            const total = produtosFiltrados.length;
+            const totalPaginas = Math.ceil(total / itensPorPagina);
+            const start = (paginaAtual - 1) * itensPorPagina;
+            const end = start + itensPorPagina;
+            const paginaItens = produtosFiltrados.slice(start, end);
+
+            container.style.display = 'grid';
+            container.className = 'produtos-grid' + (viewMode === 'lista' ? ' lista' : '');
+            container.innerHTML = '';
+
+            if (paginaItens.length === 0) {
+                container.innerHTML = '<p style="grid-column:1/-1;text-align:center;opacity:0.6;">Nenhum item encontrado.</p>';
+                renderizarPaginacao(totalPaginas);
+                return;
+            }
+
+            paginaItens.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'produto-card';
+                card.dataset.id = prod.id;
+                card.onclick = (e) => {
+                    if (e.target.closest('.btn-add-cart') || e.target.closest('.btn-wa-card') || e.target.closest('.btn-favorite')) return;
+                    abrirModal(prod.id);
+                };
+                const promoAtiva = isPromoActive(prod);
+                const estoqueOk = isEmEstoque(prod);
+                let badges = '';
+                if (promoAtiva) badges += `<div class="badge-promo">PROMO</div>`;
+                if (prod.destaque) badges += `<div class="badge-destaque">DESTAQUE</div>`;
+                if (!estoqueOk) badges += `<div class="badge-esgotado">ESGOTADO</div>`;
+                let precoHtml = '';
+                if (promoAtiva && prod.precoPromo) {
+                    precoHtml = `<div><span class="preco-promo">R$ ${prod.preco}</span> <span class="preco-atual">R$ ${prod.precoPromo}</span></div>`;
+                } else {
+                    precoHtml = `<div class="preco">R$ ${prod.preco}</div>`;
+                }
+                const favorito = favoritos.includes(prod.id) ? 'active' : '';
+                const favIcon = favoritos.includes(prod.id) ? 'fas' : 'far';
+                const btnAdd = estoqueOk ? `<button class="btn-add-cart" onclick="addToCart(${prod.id})"><i class="fas fa-cart-plus"></i> Adicionar</button>` : `<button class="btn-add-cart" disabled>Esgotado</button>`;
+                const msg = encodeURIComponent(`*Gudyx Custom - Catálogo*\n\n🛒 *Produto:* ${prod.nome}\n💰 *Preço:* ${promoAtiva ? 'R$ '+prod.precoPromo : 'R$ '+prod.preco}\n\nQuero comprar este produto!`);
+                const waBtn = `<a href="https://wa.me/${WA_NUMBER}?text=${msg}" target="_blank" class="btn-wa-card"><i class="fab fa-whatsapp"></i> Comprar</a>`;
+                const favBtn = `<button class="btn-favorite ${favorito}" data-id="${prod.id}" onclick="toggleFavorito(${prod.id})"><i class="${favIcon} fa-heart"></i></button>`;
+
+                if (viewMode === 'lista') {
+                    card.innerHTML = `
+                        ${badges}
+                        ${favBtn}
+                        <img src="${prod.imagem || 'https://placehold.co/80x80/0b041c/00f2fe?text=Sem+Img'}">
+                        <div class="info-lista">
+                            <h5>${prod.nome}</h5>
+                            ${prod.descricao ? `<div class="descricao">${prod.descricao}</div>` : ''}
+                            ${precoHtml}
+                            <div class="botoes-lista">${btnAdd} ${waBtn}</div>
+                        </div>
+                    `;
+                } else {
+                    card.innerHTML = `
+                        ${badges}
+                        ${favBtn}
+                        <img src="${prod.imagem || 'https://placehold.co/140x140/0b041c/00f2fe?text=Sem+Img'}">
+                        <h5>${prod.nome}</h5>
+                        ${prod.descricao ? `<div class="descricao">${prod.descricao.substring(0,60)}${prod.descricao.length>60?'...':''}</div>` : ''}
+                        ${precoHtml}
+                        <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:center;">${btnAdd} ${waBtn}</div>
+                    `;
+                }
+                container.appendChild(card);
+            });
+
+            renderizarPaginacao(totalPaginas);
+        }
+
+        function renderizarPaginacao(totalPaginas) {
+            const container = document.getElementById('paginacaoContainer');
+            container.innerHTML = '';
+            if (totalPaginas <= 1) return;
+            for (let i = 1; i <= totalPaginas; i++) {
+                const btn = document.createElement('button');
+                btn.textContent = i;
+                btn.className = i === paginaAtual ? 'active' : '';
+                btn.onclick = () => {
+                    paginaAtual = i;
+                    renderizarProdutosFiltrados();
+                };
+                container.appendChild(btn);
+            }
+        }
+
+        // ================= BUSCA COM AUTOCOMPLETAR =================
+        function buscarItems(tipo) {
+            const term = document.getElementById(tipo === 'produtos' ? 'searchProdutos' : 'searchServicos').value.toLowerCase();
+            const container = document.getElementById(tipo === 'produtos' ? 'produtosProdutosContainer' : 'servicosProdutosContainer');
+            // Se não houver categoria selecionada, não faz nada
+            if (!categoriaSelecionada.id) {
+                container.innerHTML = '';
+                return;
+            }
+            // Auto completar: exibe sugestões enquanto digita
+            const sugestoes = dados.produtos.filter(p => 
+                p.categoriaId === categoriaSelecionada.id &&
+                (p.nome.toLowerCase().includes(term) || (p.descricao && p.descricao.toLowerCase().includes(term)))
+            );
+            // Renderiza os produtos filtrados com paginação
+            produtosFiltrados = sugestoes;
+            paginaAtual = 1;
+            renderizarProdutosFiltrados();
         }
 
         // ================= INIT =================
