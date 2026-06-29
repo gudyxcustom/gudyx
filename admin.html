@@ -6,7 +6,6 @@
     <title>Admin - Gudyx Custom</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* === ESTILOS DO ADMIN (mantidos) === */
         body { font-family: 'Poppins', sans-serif; background: #0b041c; color: #f0eaff; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
         .admin-container { background: rgba(11, 4, 28, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(172, 40, 255, 0.3); border-radius: 24px; padding: 30px; max-width: 700px; width: 100%; }
         h1 { text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
@@ -36,6 +35,8 @@
         #passwordOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column; }
         #passwordOverlay.hidden { display:none; }
         #passwordOverlay input { max-width:300px; margin:10px auto; }
+        .flex-row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .flex-row input, .flex-row select { flex: 1; min-width: 80px; }
     </style>
 </head>
 <body>
@@ -54,6 +55,7 @@
             <button onclick="abrirAba('categorias')" id="tabCategorias" class="active">Categorias</button>
             <button onclick="abrirAba('produtos')" id="tabProdutos">Itens</button>
             <button onclick="abrirAba('frases')" id="tabFrases">Frases</button>
+            <button onclick="abrirAba('cupons')" id="tabCupons">Cupons</button>
             <button onclick="abrirAba('faq')" id="tabFaq">FAQ</button>
             <button onclick="abrirAba('relatorios')" id="tabRelatorios">Relatórios</button>
             <button onclick="abrirAba('backup')" id="tabBackup">Backup</button>
@@ -81,13 +83,25 @@
             <label>Preço Original (R$)</label><input type="text" id="prodPreco" placeholder="Ex: 29,90">
             <label>Estoque (Quantidade)</label><input type="number" id="prodEstoque" placeholder="Ex: 10" min="0">
             <label>Imagens (Múltiplas - segure CTRL)</label><input type="file" id="prodImg" accept="image/*" multiple>
+            
             <div class="checkbox-group">
                 <label><input type="checkbox" id="prodPromocao" onchange="togglePromoFields()"> Em Promoção</label>
                 <label><input type="checkbox" id="prodDestaque"> Destaque</label>
                 <label><input type="checkbox" id="prodSlider"> Exibir no Slider</label>
             </div>
+
             <div id="promoFields" class="hidden">
-                <label>Desconto (%)</label><input type="number" id="prodDesconto" placeholder="Ex: 20" min="0" max="100">
+                <div class="flex-row">
+                    <label>Tipo de Promoção</label>
+                    <select id="prodPromoTipo">
+                        <option value="percentual">Percentual (%)</option>
+                        <option value="leve2pague1">Leve 2 Pague 1</option>
+                        <option value="leve3pague2">Leve 3 Pague 2</option>
+                        <option value="precofixo">Preço Fixo</option>
+                    </select>
+                </div>
+                <label>Valor da Promoção</label>
+                <input type="text" id="prodPromoValor" placeholder="Ex: 20 (para %), ou 19,90 (preço fixo)">
                 <label>Início da Promoção</label><input type="datetime-local" id="prodPromoStart">
                 <label>Fim da Promoção</label><input type="datetime-local" id="prodPromoEnd">
                 <label>Descrição da Promoção</label><textarea id="prodDescPromo" placeholder="Ex: Leve 2 pague 1"></textarea>
@@ -102,6 +116,34 @@
             <p style="opacity:0.6; font-size:0.8rem;">Digite uma frase por linha. O mascote vai sortear entre elas.</p>
             <textarea id="frasesInput" rows="6" placeholder="Oi, eu sou Gluudyx!&#10;Amor em cada detalhe"></textarea>
             <button onclick="salvarFrases()">Salvar Frases</button>
+        </div>
+
+        <!-- ===== CUPONS ===== -->
+        <div id="abaCupons" style="display:none;">
+            <h3>Gerenciar Cupons de Desconto</h3>
+            <input type="hidden" id="editCupomId">
+            <label>Código do Cupom</label>
+            <input type="text" id="cupomCodigo" placeholder="Ex: PROMO20">
+            <label>Tipo de Desconto</label>
+            <select id="cupomTipo">
+                <option value="percentual">Percentual (%)</option>
+                <option value="fixo">Valor Fixo (R$)</option>
+                <option value="leve2pague1">Leve 2 Pague 1</option>
+                <option value="leve3pague2">Leve 3 Pague 2</option>
+            </select>
+            <label>Valor do Desconto</label>
+            <input type="text" id="cupomValor" placeholder="Ex: 20 (para %), 15 (fixo)">
+            <div class="flex-row">
+                <label style="flex:1;">Data Início</label>
+                <input type="datetime-local" id="cupomInicio">
+                <label style="flex:1;">Data Fim</label>
+                <input type="datetime-local" id="cupomFim">
+            </div>
+            <div class="checkbox-group">
+                <label><input type="checkbox" id="cupomAtivo" checked> Ativo</label>
+            </div>
+            <button onclick="salvarCupom()">Salvar Cupom</button>
+            <div class="admin-item-list" id="listaCupons"></div>
         </div>
 
         <!-- ===== FAQ ===== -->
@@ -149,7 +191,8 @@
                 carregarDados();
                 atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
                 document.getElementById('frasesInput').value = dados.frases.join('\n');
-                carregarFAQ();
+                carregarFaq();
+                carregarCupons();
                 carregarRelatorios();
             } else {
                 document.getElementById('passError').style.display = 'block';
@@ -158,10 +201,15 @@
         document.getElementById('adminPassInput').addEventListener('keypress', function(e){ if(e.key === 'Enter') checkPassword(); });
 
         // ================= DADOS GERAIS =================
-        let dados = { categorias: [], produtos: [], frases: [], faq: [] };
+        let dados = { categorias: [], produtos: [], frases: [], faq: [], cupons: [] };
         function carregarDados() {
             if (localStorage.getItem('gudyxDados')) {
-                try { dados = JSON.parse(localStorage.getItem('gudyxDados')); if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe']; if(!dados.faq) dados.faq = []; } catch(e) { dados = { categorias: [], produtos: [], frases: [], faq: [] }; }
+                try {
+                    dados = JSON.parse(localStorage.getItem('gudyxDados'));
+                    if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'];
+                    if(!dados.faq) dados.faq = [];
+                    if(!dados.cupons) dados.cupons = [];
+                } catch(e) { dados = { categorias: [], produtos: [], frases: [], faq: [], cupons: [] }; }
             } else {
                 dados = {
                     categorias: [
@@ -179,7 +227,11 @@
                     ],
                     produtos: [],
                     frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe', 'Escolha seu caderno cósmico', 'Feito com alma taurina'],
-                    faq: []
+                    faq: [],
+                    cupons: [
+                        { id: 1, codigo: 'BEMVINDO10', tipo: 'percentual', valor: 10, inicio: '', fim: '', ativo: true },
+                        { id: 2, codigo: 'PROMO20', tipo: 'percentual', valor: 20, inicio: '', fim: '', ativo: true }
+                    ]
                 };
                 localStorage.setItem('gudyxDados', JSON.stringify(dados));
             }
@@ -188,17 +240,18 @@
 
         // ================= ABAS =================
         function abrirAba(aba) {
-            document.querySelectorAll('#abaCategorias, #abaProdutos, #abaFrases, #abaFaq, #abaRelatorios, #abaBackup').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('#abaCategorias, #abaProdutos, #abaFrases, #abaCupons, #abaFaq, #abaRelatorios, #abaBackup').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.tabs button').forEach(el => el.classList.remove('active'));
             if(aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
             if(aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); }
             if(aba === 'frases') { document.getElementById('abaFrases').style.display = 'block'; document.getElementById('tabFrases').classList.add('active'); document.getElementById('frasesInput').value = dados.frases.join('\n'); }
-            if(aba === 'faq') { document.getElementById('abaFaq').style.display = 'block'; document.getElementById('tabFaq').classList.add('active'); carregarFAQ(); }
+            if(aba === 'cupons') { document.getElementById('abaCupons').style.display = 'block'; document.getElementById('tabCupons').classList.add('active'); carregarCupons(); }
+            if(aba === 'faq') { document.getElementById('abaFaq').style.display = 'block'; document.getElementById('tabFaq').classList.add('active'); carregarFaq(); }
             if(aba === 'relatorios') { document.getElementById('abaRelatorios').style.display = 'block'; document.getElementById('tabRelatorios').classList.add('active'); carregarRelatorios(); }
             if(aba === 'backup') { document.getElementById('abaBackup').style.display = 'block'; document.getElementById('tabBackup').classList.add('active'); }
         }
 
-        // ================= CATEGORIAS (já existentes) =================
+        // ================= CATEGORIAS =================
         function salvarCategoria() {
             const id = document.getElementById('editCatId').value;
             const tipo = document.getElementById('catTipo').value; const nome = document.getElementById('catNome').value.trim();
@@ -224,7 +277,7 @@
             });
         }
 
-        // ================= PRODUTOS (já existentes) =================
+        // ================= PRODUTOS =================
         function togglePromoFields() { document.getElementById('promoFields').classList.toggle('hidden', !document.getElementById('prodPromocao').checked); }
         function salvarProduto() {
             const id = document.getElementById('editProdId').value;
@@ -236,22 +289,22 @@
             const promocao = document.getElementById('prodPromocao').checked;
             const destaque = document.getElementById('prodDestaque').checked;
             const exibirSlider = document.getElementById('prodSlider').checked;
-            const promoStart = document.getElementById('prodPromoStart').value;
-            const promoEnd = document.getElementById('prodPromoEnd').value;
-            let precoPromo = '', desconto = 0;
+            let promoTipo = '', promoValor = '', promoStart = '', promoEnd = '', descPromo = '';
             if(promocao) {
-                desconto = parseFloat(document.getElementById('prodDesconto').value) || 0;
-                let num = parseFloat(preco.replace(',', '.'));
-                precoPromo = !isNaN(num) && desconto > 0 ? (num * (1 - desconto/100)).toFixed(2).replace('.', ',') : preco;
+                promoTipo = document.getElementById('prodPromoTipo').value;
+                promoValor = document.getElementById('prodPromoValor').value.trim();
+                promoStart = document.getElementById('prodPromoStart').value;
+                promoEnd = document.getElementById('prodPromoEnd').value;
+                descPromo = document.getElementById('prodDescPromo').value.trim();
             }
             if(!catId || !nome || !preco) return alert('Preencha nome e preço.');
             const fileInput = document.getElementById('prodImg');
             function processarProd(imagens) {
                 if(id) {
                     const idx = dados.produtos.findIndex(p => p.id == id);
-                    if(idx > -1) dados.produtos[idx] = { ...dados.produtos[idx], categoriaId: catId, nome, descricao, preco, estoque, imagens: imagens || dados.produtos[idx].imagens || [], promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd };
+                    if(idx > -1) dados.produtos[idx] = { ...dados.produtos[idx], categoriaId: catId, nome, descricao, preco, estoque, imagens: imagens || dados.produtos[idx].imagens || [], promocao, destaque, exibirSlider, promoTipo, promoValor, promoStart, promoEnd, descPromo };
                 } else {
-                    dados.produtos.push({ id: Date.now(), categoriaId: catId, nome, descricao, preco, estoque, imagens: imagens || [], promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, cliques: 0 });
+                    dados.produtos.push({ id: Date.now(), categoriaId: catId, nome, descricao, preco, estoque, imagens: imagens || [], promocao, destaque, exibirSlider, promoTipo, promoValor, promoStart, promoEnd, descPromo, cliques: 0 });
                 }
                 salvarDados(); limparFormularioProduto(); atualizarListaProdutos(); carregarRelatorios();
             }
@@ -273,8 +326,11 @@
             document.getElementById('prodPreco').value = p.preco; document.getElementById('prodEstoque').value = p.estoque || 0;
             document.getElementById('prodPromocao').checked = p.promocao || false; document.getElementById('prodDestaque').checked = p.destaque || false; document.getElementById('prodSlider').checked = p.exibirSlider || false;
             if(p.promocao) {
-                document.getElementById('prodDesconto').value = p.desconto || 0; document.getElementById('prodDescPromo').value = p.descPromo || '';
-                document.getElementById('prodPromoStart').value = p.promoStart || ''; document.getElementById('prodPromoEnd').value = p.promoEnd || '';
+                document.getElementById('prodPromoTipo').value = p.promoTipo || 'percentual';
+                document.getElementById('prodPromoValor').value = p.promoValor || '';
+                document.getElementById('prodPromoStart').value = p.promoStart || '';
+                document.getElementById('prodPromoEnd').value = p.promoEnd || '';
+                document.getElementById('prodDescPromo').value = p.descPromo || '';
                 document.getElementById('promoFields').classList.remove('hidden');
             } else { document.getElementById('promoFields').classList.add('hidden'); }
         }
@@ -285,8 +341,10 @@
             document.getElementById('prodPreco').value = ''; document.getElementById('prodEstoque').value = '';
             document.getElementById('prodImg').value = '';
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false;
-            document.getElementById('prodDesconto').value = ''; document.getElementById('prodDescPromo').value = '';
+            document.getElementById('prodPromoTipo').value = 'percentual';
+            document.getElementById('prodPromoValor').value = '';
             document.getElementById('prodPromoStart').value = ''; document.getElementById('prodPromoEnd').value = '';
+            document.getElementById('prodDescPromo').value = '';
             document.getElementById('promoFields').classList.add('hidden');
         }
         function atualizarSelectCategorias() {
@@ -300,7 +358,14 @@
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
                 const item = document.createElement('div'); item.className = 'item';
                 let info = `${cat ? cat.nome : '?'} → ${p.nome} (R$ ${p.preco}) | Estoque: ${p.estoque || 0}`;
-                if(p.promocao) info += ` 🔥 ${p.desconto||0}% OFF`;
+                if(p.promocao) {
+                    let promoDesc = '';
+                    if(p.promoTipo === 'percentual') promoDesc = `${p.promoValor}% OFF`;
+                    else if(p.promoTipo === 'leve2pague1') promoDesc = 'Leve 2 Pague 1';
+                    else if(p.promoTipo === 'leve3pague2') promoDesc = 'Leve 3 Pague 2';
+                    else if(p.promoTipo === 'precofixo') promoDesc = `R$ ${p.promoValor}`;
+                    info += ` 🔥 ${promoDesc}`;
+                }
                 if(p.exibirSlider) info += ` 📺`;
                 item.innerHTML = `<span>${info}</span><div><button class="btn-edit" onclick="editarProduto(${p.id})">✏️</button><button onclick="removerProduto(${p.id})">Remover</button></div>`;
                 lista.appendChild(item);
@@ -310,8 +375,69 @@
         // ================= FRASES =================
         function salvarFrases() { dados.frases = document.getElementById('frasesInput').value.split('\n').map(s => s.trim()).filter(s => s.length > 0); salvarDados(); alert('Frases salvas!'); }
 
+        // ================= CUPONS =================
+        function carregarCupons() {
+            const lista = document.getElementById('listaCupons'); lista.innerHTML = '';
+            const cupons = dados.cupons || [];
+            if(cupons.length === 0) { lista.innerHTML = '<p style="opacity:0.6;text-align:center;">Nenhum cupom cadastrado.</p>'; return; }
+            cupons.forEach((cupom, index) => {
+                const item = document.createElement('div'); item.className = 'item';
+                const status = cupom.ativo ? '✅ Ativo' : '❌ Inativo';
+                item.innerHTML = `
+                    <span><strong>${cupom.codigo}</strong> - ${cupom.tipo} (${cupom.valor}) - ${status}</span>
+                    <div>
+                        <button class="btn-edit" onclick="editarCupom(${index})">✏️</button>
+                        <button onclick="removerCupom(${index})">Remover</button>
+                    </div>
+                `;
+                lista.appendChild(item);
+            });
+        }
+        function salvarCupom() {
+            const id = document.getElementById('editCupomId').value;
+            const codigo = document.getElementById('cupomCodigo').value.trim().toUpperCase();
+            const tipo = document.getElementById('cupomTipo').value;
+            const valor = document.getElementById('cupomValor').value.trim();
+            const inicio = document.getElementById('cupomInicio').value;
+            const fim = document.getElementById('cupomFim').value;
+            const ativo = document.getElementById('cupomAtivo').checked;
+            if(!codigo || !valor) return alert('Preencha código e valor.');
+            if(id !== '') {
+                const idx = parseInt(id);
+                if(idx >= 0 && idx < dados.cupons.length) {
+                    dados.cupons[idx] = { ...dados.cupons[idx], codigo, tipo, valor, inicio, fim, ativo };
+                }
+            } else {
+                dados.cupons.push({ id: Date.now(), codigo, tipo, valor, inicio, fim, ativo });
+            }
+            salvarDados();
+            document.getElementById('editCupomId').value = '';
+            document.getElementById('cupomCodigo').value = '';
+            document.getElementById('cupomValor').value = '';
+            document.getElementById('cupomInicio').value = '';
+            document.getElementById('cupomFim').value = '';
+            document.getElementById('cupomAtivo').checked = true;
+            carregarCupons();
+        }
+        function editarCupom(index) {
+            const cupom = dados.cupons[index];
+            document.getElementById('editCupomId').value = index;
+            document.getElementById('cupomCodigo').value = cupom.codigo;
+            document.getElementById('cupomTipo').value = cupom.tipo;
+            document.getElementById('cupomValor').value = cupom.valor;
+            document.getElementById('cupomInicio').value = cupom.inicio || '';
+            document.getElementById('cupomFim').value = cupom.fim || '';
+            document.getElementById('cupomAtivo').checked = cupom.ativo;
+        }
+        function removerCupom(index) {
+            if(!confirm('Remover este cupom?')) return;
+            dados.cupons.splice(index, 1);
+            salvarDados();
+            carregarCupons();
+        }
+
         // ================= FAQ =================
-        function carregarFAQ() {
+        function carregarFaq() {
             const lista = document.getElementById('listaFaq'); lista.innerHTML = '';
             const faqs = dados.faq || [];
             if(faqs.length === 0) { lista.innerHTML = '<p style="opacity:0.6;text-align:center;">Nenhuma FAQ cadastrada.</p>'; return; }
@@ -344,7 +470,7 @@
             document.getElementById('editFaqId').value = '';
             document.getElementById('faqPergunta').value = '';
             document.getElementById('faqResposta').value = '';
-            carregarFAQ();
+            carregarFaq();
         }
         function editarFaq(index) {
             const faq = dados.faq[index];
@@ -356,7 +482,7 @@
             if(!confirm('Remover esta FAQ?')) return;
             dados.faq.splice(index, 1);
             salvarDados();
-            carregarFAQ();
+            carregarFaq();
         }
 
         // ================= RELATÓRIOS =================
@@ -394,10 +520,12 @@
                     if(confirm('Isso substituirá TODOS os dados atuais. Continuar?')) {
                         dados = data; if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦'];
                         if(!dados.faq) dados.faq = [];
+                        if(!dados.cupons) dados.cupons = [];
                         salvarDados();
                         atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
                         document.getElementById('frasesInput').value = dados.frases.join('\n');
-                        carregarFAQ();
+                        carregarFaq();
+                        carregarCupons();
                         carregarRelatorios();
                         alert('Backup restaurado com sucesso!');
                     }
@@ -409,9 +537,9 @@
         // ================= LIMPAR DADOS =================
         function limparDados() {
             if(!confirm('Apagar TODOS os dados?')) return;
-            dados = { categorias: [], produtos: [], frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'], faq: [] };
+            dados = { categorias: [], produtos: [], frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'], faq: [], cupons: [] };
             salvarDados(); atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
-            document.getElementById('frasesInput').value = dados.frases.join('\n'); carregarFAQ(); carregarRelatorios();
+            document.getElementById('frasesInput').value = dados.frases.join('\n'); carregarFaq(); carregarCupons(); carregarRelatorios();
         }
     </script>
 </body>
