@@ -6,6 +6,7 @@
     <title>Admin - Gudyx Custom</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* === ESTILOS DO ADMIN (mantidos) === */
         body { font-family: 'Poppins', sans-serif; background: #0b041c; color: #f0eaff; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; }
         .admin-container { background: rgba(11, 4, 28, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(172, 40, 255, 0.3); border-radius: 24px; padding: 30px; max-width: 700px; width: 100%; }
         h1 { text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
@@ -18,7 +19,8 @@
         .checkbox-group input[type="checkbox"] { width: auto; margin: 0; }
         button { padding: 10px 20px; border: none; border-radius: 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; margin-right: 10px; margin-bottom: 5px; }
         button:hover { transform: scale(1.05); }
-        .btn-danger { background: #ff4455; } .btn-danger:hover { background: #cc1122; }
+        .btn-danger { background: #ff4455; }
+        .btn-danger:hover { background: #cc1122; }
         .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); }
         .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 300px; overflow-y: auto; }
         .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 5px; }
@@ -52,10 +54,12 @@
             <button onclick="abrirAba('categorias')" id="tabCategorias" class="active">Categorias</button>
             <button onclick="abrirAba('produtos')" id="tabProdutos">Itens</button>
             <button onclick="abrirAba('frases')" id="tabFrases">Frases</button>
+            <button onclick="abrirAba('faq')" id="tabFaq">FAQ</button>
             <button onclick="abrirAba('relatorios')" id="tabRelatorios">Relatórios</button>
             <button onclick="abrirAba('backup')" id="tabBackup">Backup</button>
         </div>
 
+        <!-- ===== CATEGORIAS ===== -->
         <div id="abaCategorias">
             <h3>Adicionar / Editar Categoria</h3>
             <input type="hidden" id="editCatId">
@@ -66,6 +70,7 @@
             <div class="admin-item-list" id="listaCategorias"></div>
         </div>
 
+        <!-- ===== PRODUTOS ===== -->
         <div id="abaProdutos" style="display:none;">
             <h3>Adicionar / Editar Item</h3>
             <input type="hidden" id="editProdId">
@@ -91,6 +96,7 @@
             <div class="admin-item-list" id="listaProdutos"></div>
         </div>
 
+        <!-- ===== FRASES DO MASCOTE ===== -->
         <div id="abaFrases" style="display:none;">
             <h3>Frases do Gluudyx</h3>
             <p style="opacity:0.6; font-size:0.8rem;">Digite uma frase por linha. O mascote vai sortear entre elas.</p>
@@ -98,11 +104,25 @@
             <button onclick="salvarFrases()">Salvar Frases</button>
         </div>
 
+        <!-- ===== FAQ ===== -->
+        <div id="abaFaq" style="display:none;">
+            <h3>Gerenciar FAQ (Perguntas Frequentes)</h3>
+            <input type="hidden" id="editFaqId">
+            <label>Pergunta</label>
+            <input type="text" id="faqPergunta" placeholder="Ex: Qual o prazo de produção?">
+            <label>Resposta</label>
+            <textarea id="faqResposta" placeholder="Digite a resposta..."></textarea>
+            <button onclick="salvarFaq()">Salvar FAQ</button>
+            <div class="admin-item-list" id="listaFaq"></div>
+        </div>
+
+        <!-- ===== RELATÓRIOS ===== -->
         <div id="abaRelatorios" style="display:none;">
             <h3>📊 Relatórios de Cliques</h3>
             <div id="relatorioContainer"></div>
         </div>
 
+        <!-- ===== BACKUP ===== -->
         <div id="abaBackup" style="display:none;">
             <h3>Backup e Restauração</h3>
             <div class="backup-area">
@@ -120,10 +140,8 @@
 
     <script>
         // ================= SENHA DO ADMIN =================
-        // Senha padrão: gudyx2026
         function checkPassword() {
             const input = document.getElementById('adminPassInput').value;
-            // Armazena um hash simples (btoa = base64) para não deixar a senha no código fonte limpo
             const hash = btoa("gudyx2026"); 
             if(btoa(input) === hash) {
                 document.getElementById('passwordOverlay').classList.add('hidden');
@@ -131,38 +149,56 @@
                 carregarDados();
                 atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
                 document.getElementById('frasesInput').value = dados.frases.join('\n');
-                togglePromoFields();
+                carregarFAQ();
                 carregarRelatorios();
             } else {
                 document.getElementById('passError').style.display = 'block';
             }
         }
-        // Permite enter no input de senha
         document.getElementById('adminPassInput').addEventListener('keypress', function(e){ if(e.key === 'Enter') checkPassword(); });
 
-        // ================= DADOS =================
-        let dados = { categorias: [], produtos: [], frases: [] };
+        // ================= DADOS GERAIS =================
+        let dados = { categorias: [], produtos: [], frases: [], faq: [] };
         function carregarDados() {
             if (localStorage.getItem('gudyxDados')) {
-                try { dados = JSON.parse(localStorage.getItem('gudyxDados')); if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe']; } catch(e) { dados = { categorias: [], produtos: [], frases: [] }; }
+                try { dados = JSON.parse(localStorage.getItem('gudyxDados')); if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe']; if(!dados.faq) dados.faq = []; } catch(e) { dados = { categorias: [], produtos: [], frases: [], faq: [] }; }
             } else {
-                dados = { categorias: [], produtos: [], frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'] };
+                dados = {
+                    categorias: [
+                        { id: 1, tipo: 'produtos', nome: 'Caixas Personalizadas', imagem: '' },
+                        { id: 2, tipo: 'produtos', nome: 'Imã de Geladeira', imagem: '' },
+                        { id: 3, tipo: 'produtos', nome: 'Plastificação', imagem: '' },
+                        { id: 4, tipo: 'produtos', nome: 'Lembrancinhas', imagem: '' },
+                        { id: 5, tipo: 'produtos', nome: 'Display de Mesa', imagem: '' },
+                        { id: 6, tipo: 'produtos', nome: 'Cards', imagem: '' },
+                        { id: 7, tipo: 'produtos', nome: 'Cartão de Visita', imagem: '' },
+                        { id: 8, tipo: 'produtos', nome: 'Fotos', imagem: '' },
+                        { id: 9, tipo: 'servicos', nome: 'Impressão Digital', imagem: '' },
+                        { id: 10, tipo: 'servicos', nome: 'Encadernação', imagem: '' },
+                        { id: 11, tipo: 'servicos', nome: 'Criação de Arte', imagem: '' }
+                    ],
+                    produtos: [],
+                    frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe', 'Escolha seu caderno cósmico', 'Feito com alma taurina'],
+                    faq: []
+                };
                 localStorage.setItem('gudyxDados', JSON.stringify(dados));
             }
         }
         function salvarDados() { localStorage.setItem('gudyxDados', JSON.stringify(dados)); }
 
+        // ================= ABAS =================
         function abrirAba(aba) {
-            document.querySelectorAll('#abaCategorias, #abaProdutos, #abaFrases, #abaRelatorios, #abaBackup').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('#abaCategorias, #abaProdutos, #abaFrases, #abaFaq, #abaRelatorios, #abaBackup').forEach(el => el.style.display = 'none');
             document.querySelectorAll('.tabs button').forEach(el => el.classList.remove('active'));
             if(aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
             if(aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); }
             if(aba === 'frases') { document.getElementById('abaFrases').style.display = 'block'; document.getElementById('tabFrases').classList.add('active'); document.getElementById('frasesInput').value = dados.frases.join('\n'); }
+            if(aba === 'faq') { document.getElementById('abaFaq').style.display = 'block'; document.getElementById('tabFaq').classList.add('active'); carregarFAQ(); }
             if(aba === 'relatorios') { document.getElementById('abaRelatorios').style.display = 'block'; document.getElementById('tabRelatorios').classList.add('active'); carregarRelatorios(); }
             if(aba === 'backup') { document.getElementById('abaBackup').style.display = 'block'; document.getElementById('tabBackup').classList.add('active'); }
         }
 
-        // ================= CATEGORIAS =================
+        // ================= CATEGORIAS (já existentes) =================
         function salvarCategoria() {
             const id = document.getElementById('editCatId').value;
             const tipo = document.getElementById('catTipo').value; const nome = document.getElementById('catNome').value.trim();
@@ -188,9 +224,8 @@
             });
         }
 
-        // ================= ITENS =================
+        // ================= PRODUTOS (já existentes) =================
         function togglePromoFields() { document.getElementById('promoFields').classList.toggle('hidden', !document.getElementById('prodPromocao').checked); }
-
         function salvarProduto() {
             const id = document.getElementById('editProdId').value;
             const catId = parseInt(document.getElementById('prodCategoria').value);
@@ -229,7 +264,6 @@
                 }
             } else { processarProd(null); }
         }
-
         function editarProduto(id) {
             const p = dados.produtos.find(p => p.id === id);
             document.getElementById('editProdId').value = p.id;
@@ -244,9 +278,7 @@
                 document.getElementById('promoFields').classList.remove('hidden');
             } else { document.getElementById('promoFields').classList.add('hidden'); }
         }
-
         function removerProduto(id) { if(confirm('Remover?')) { dados.produtos = dados.produtos.filter(p => p.id !== id); salvarDados(); atualizarListaProdutos(); carregarRelatorios(); } }
-
         function limparFormularioProduto() {
             document.getElementById('editProdId').value = '';
             document.getElementById('prodNome').value = ''; document.getElementById('prodDescricao').value = '';
@@ -257,13 +289,11 @@
             document.getElementById('prodPromoStart').value = ''; document.getElementById('prodPromoEnd').value = '';
             document.getElementById('promoFields').classList.add('hidden');
         }
-
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
             const select = document.getElementById('prodCategoria'); select.innerHTML = '';
             dados.categorias.filter(c => c.tipo === tipo).forEach(cat => { const opt = document.createElement('option'); opt.value = cat.id; opt.textContent = cat.nome; select.appendChild(opt); });
         }
-
         function atualizarListaProdutos() {
             const lista = document.getElementById('listaProdutos'); lista.innerHTML = '';
             dados.produtos.forEach(p => {
@@ -279,6 +309,55 @@
 
         // ================= FRASES =================
         function salvarFrases() { dados.frases = document.getElementById('frasesInput').value.split('\n').map(s => s.trim()).filter(s => s.length > 0); salvarDados(); alert('Frases salvas!'); }
+
+        // ================= FAQ =================
+        function carregarFAQ() {
+            const lista = document.getElementById('listaFaq'); lista.innerHTML = '';
+            const faqs = dados.faq || [];
+            if(faqs.length === 0) { lista.innerHTML = '<p style="opacity:0.6;text-align:center;">Nenhuma FAQ cadastrada.</p>'; return; }
+            faqs.forEach((faq, index) => {
+                const item = document.createElement('div'); item.className = 'item';
+                item.innerHTML = `
+                    <span><strong>P:</strong> ${faq.pergunta}<br><span style="opacity:0.6;font-size:0.85rem;">R: ${faq.resposta}</span></span>
+                    <div>
+                        <button class="btn-edit" onclick="editarFaq(${index})">✏️</button>
+                        <button onclick="removerFaq(${index})">Remover</button>
+                    </div>
+                `;
+                lista.appendChild(item);
+            });
+        }
+        function salvarFaq() {
+            const id = document.getElementById('editFaqId').value;
+            const pergunta = document.getElementById('faqPergunta').value.trim();
+            const resposta = document.getElementById('faqResposta').value.trim();
+            if(!pergunta || !resposta) return alert('Preencha pergunta e resposta.');
+            if(id !== '') {
+                const idx = parseInt(id);
+                if(idx >= 0 && idx < dados.faq.length) {
+                    dados.faq[idx] = { pergunta, resposta };
+                }
+            } else {
+                dados.faq.push({ pergunta, resposta });
+            }
+            salvarDados();
+            document.getElementById('editFaqId').value = '';
+            document.getElementById('faqPergunta').value = '';
+            document.getElementById('faqResposta').value = '';
+            carregarFAQ();
+        }
+        function editarFaq(index) {
+            const faq = dados.faq[index];
+            document.getElementById('editFaqId').value = index;
+            document.getElementById('faqPergunta').value = faq.pergunta;
+            document.getElementById('faqResposta').value = faq.resposta;
+        }
+        function removerFaq(index) {
+            if(!confirm('Remover esta FAQ?')) return;
+            dados.faq.splice(index, 1);
+            salvarDados();
+            carregarFAQ();
+        }
 
         // ================= RELATÓRIOS =================
         function carregarRelatorios() {
@@ -314,9 +393,11 @@
                     if(!data.categorias || !data.produtos) return alert('Arquivo inválido.');
                     if(confirm('Isso substituirá TODOS os dados atuais. Continuar?')) {
                         dados = data; if(!dados.frases) dados.frases = ['Oi, eu sou Gluudyx! ✦'];
+                        if(!dados.faq) dados.faq = [];
                         salvarDados();
                         atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
                         document.getElementById('frasesInput').value = dados.frases.join('\n');
+                        carregarFAQ();
                         carregarRelatorios();
                         alert('Backup restaurado com sucesso!');
                     }
@@ -325,11 +406,12 @@
             reader.readAsText(fileInput.files[0]);
         }
 
+        // ================= LIMPAR DADOS =================
         function limparDados() {
             if(!confirm('Apagar TODOS os dados?')) return;
-            dados = { categorias: [], produtos: [], frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'] };
+            dados = { categorias: [], produtos: [], frases: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'], faq: [] };
             salvarDados(); atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
-            document.getElementById('frasesInput').value = dados.frases.join('\n'); carregarRelatorios();
+            document.getElementById('frasesInput').value = dados.frases.join('\n'); carregarFAQ(); carregarRelatorios();
         }
     </script>
 </body>
