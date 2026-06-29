@@ -30,7 +30,7 @@
     </script>
 
     <style>
-        /* ===== TODOS OS ESTILOS (SEM MINI MASCOTE) ===== */
+        /* ===== TODOS OS ESTILOS (COM MINI CHAT) ===== */
         :root {
             --roxo-profundo: #0b041c;
             --roxo-meio: #1a0a33;
@@ -147,7 +147,7 @@
         .mais-vendidos-section { width:100%; padding-top:15px; border-top:1px solid var(--vidro-borda); }
         .mais-vendidos-section .section-title { font-size:1.3rem; letter-spacing:4px; text-align:center; font-weight:300; }
         .grid-vendidos { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:20px; }
-        .card-vendido { background:var(--vidro-fundo); backdrop-filter:blur(12px); border:1px solid var(--vidro-borda); border-radius:20px; padding:20px 14px; text-align:center; transition:var(--transicao); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:8px; }
+        .card-vendido { background:var(--vidro-fundo); backdrop-filter:blur(12px); border:1px solid var(--vidro-borda); border-radius:20px; padding:20px 14px; text-align:center; transition:var(--transicao); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:8px; position:relative; }
         .card-vendido:hover { background:rgba(172,40,255,0.15); transform:translateY(-6px); box-shadow:0 10px 40px rgba(172,40,255,0.4); border-color:var(--ciano-brilhante); }
         .card-vendido .icon-box { width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; font-size:1.8rem; color:var(--ciano-brilhante); }
         .card-vendido h4 { font-size:0.95rem; font-weight:500; }
@@ -417,6 +417,61 @@
         .faq-item .faq-q.open i { transform:rotate(180deg); }
         .faq-item .faq-a { display:none; padding-top:8px; opacity:0.8; font-size:0.95rem; }
         .faq-item .faq-a.open { display:block; }
+
+        /* ===== MINI CHAT (ADICIONADO) ===== */
+        #chatButton {
+            position:fixed; bottom: 245px; left:20px;
+            width:60px; height:60px; border-radius:50%;
+            background: linear-gradient(135deg,#a028ff,#00f2fe);
+            color:#fff; display:flex; align-items:center; justify-content:center;
+            font-size:1.8rem; box-shadow:0 4px 20px rgba(0,0,0,0.5);
+            z-index:9998; cursor:pointer; transition:var(--transicao);
+        }
+        #chatButton:hover { transform:scale(1.1); }
+        #chatModal {
+            position:fixed; bottom: 310px; left:20px;
+            width:320px; max-width:80vw; background:var(--vidro-fundo);
+            backdrop-filter:blur(16px); border:1px solid var(--vidro-borda);
+            border-radius:20px; z-index:9999; display:none;
+            flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.6);
+        }
+        #chatModal.active { display:flex; }
+        .chat-header {
+            display:flex; justify-content:space-between; align-items:center;
+            padding:12px 16px; border-bottom:1px solid var(--vidro-borda);
+        }
+        .chat-header h4 { display:flex; align-items:center; gap:8px; font-size:1rem; }
+        .close-chat {
+            background:none; border:none; color:var(--cor-texto);
+            font-size:1.4rem; cursor:pointer; transition:var(--transicao);
+        }
+        .close-chat:hover { transform:rotate(90deg); color:var(--rosa-neon); }
+        .chat-body {
+            padding:15px; max-height:300px; overflow-y:auto;
+            display:flex; flex-direction:column; gap:10px;
+        }
+        .chat-msg {
+            max-width:85%; padding:10px 14px; border-radius:18px;
+            font-size:0.9rem; line-height:1.4;
+        }
+        .chat-msg.gluudyx {
+            align-self:flex-start; background:rgba(172,40,255,0.2);
+            border:1px solid var(--vidro-borda);
+        }
+        .chat-msg.user {
+            align-self:flex-end; background:rgba(0,242,254,0.15);
+            border:1px solid rgba(0,242,254,0.3);
+        }
+        .chat-footer {
+            padding:10px 15px; border-top:1px solid var(--vidro-borda);
+            display:flex; flex-wrap:wrap; gap:6px;
+        }
+        .quick-btn {
+            background:rgba(255,255,255,0.05); border:1px solid var(--vidro-borda);
+            border-radius:20px; padding:6px 12px; font-size:0.8rem; color:var(--cor-texto);
+            cursor:pointer; transition:var(--transicao);
+        }
+        .quick-btn:hover { background:rgba(172,40,255,0.2); }
 
         /* ===== RESPONSIVIDADE ===== */
         @media (max-width:900px) {
@@ -774,6 +829,7 @@
         let dados = { categorias: [], produtos: [], frases: [], faq: [] };
         let carrinho = [];
         let favoritos = [];
+        let cupomAtual = null; // CUPOM ATIVO NO CARRINHO
         let quantidadeModal = 1;
         let produtoModalAtual = null;
         let viewMode = 'grid';
@@ -1331,6 +1387,13 @@
             localStorage.setItem('gudyxDados', JSON.stringify(dados));
         }
 
+        // ================= UTILITÁRIO DE IMAGEM =================
+        function getImagemPrincipal(prod) {
+            if (prod.imagens && Array.isArray(prod.imagens) && prod.imagens.length > 0) return prod.imagens[0];
+            if (prod.imagem) return prod.imagem; // fallback categoria
+            return 'https://placehold.co/140x140/0b041c/00f2fe?text=Sem+Img';
+        }
+
         // ================= CARRINHO (COM CUPOM) =================
         function carregarCarrinho() {
             let sessionCart = sessionStorage.getItem('gudyxCarrinho');
@@ -1437,11 +1500,12 @@
             if (!prod || !isEmEstoque(prod)) return alert('Produto esgotado!');
             const existing = carrinho.find(c => c.id === prodId);
             const precoUnit = isPromoActive(prod) ? prod.precoPromo : prod.preco;
+            const imagemPrincipal = getImagemPrincipal(prod);
             if (existing) {
                 if (existing.quantidade + qtd > getEstoque(prod)) return alert('Estoque máximo atingido!');
                 existing.quantidade += qtd;
             } else {
-                carrinho.push({ id: prodId, quantidade: qtd, preco: precoUnit, nome: prod.nome, imagem: prod.imagem || '' });
+                carrinho.push({ id: prodId, quantidade: qtd, preco: precoUnit, nome: prod.nome, imagem: imagemPrincipal });
             }
             salvarCarrinho();
             mascoteReage('addCart', prod.nome);
@@ -1492,6 +1556,28 @@
             document.getElementById('cartDrawerOverlay').classList.remove('active');
             document.getElementById('cartDrawer').classList.remove('open');
             document.body.style.overflow = 'auto';
+        }
+
+        // ===== CUPONS =====
+        function aplicarCupom() {
+            const input = document.getElementById('cupomInput').value.trim().toUpperCase();
+            const msgEl = document.getElementById('cupomMsg');
+            const cupons = {
+                'BEMVINDO10': { tipo: 'percentual', valor: 10, descricao: '10% OFF primeira compra' },
+                'GUDYX5': { tipo: 'fixo', valor: 5, descricao: 'R$ 5,00 OFF' }
+            };
+            if (cupons[input]) {
+                cupomAtual = { codigo: input, ...cupons[input] };
+                salvarCarrinho();
+                msgEl.textContent = `Cupom ${input} aplicado!`;
+                msgEl.className = 'cupom-msg success';
+            } else {
+                cupomAtual = null;
+                salvarCarrinho();
+                msgEl.textContent = 'Cupom inválido.';
+                msgEl.className = 'cupom-msg error';
+            }
+            renderizarDrawer();
         }
 
         // ================= FAVORITOS =================
@@ -1560,7 +1646,7 @@
             favoritos.forEach(id => {
                 const prod = dados.produtos.find(p => p.id === id);
                 if (!prod) return;
-                const imgSrc = prod.imagem || 'https://placehold.co/50x50/0b041c/00f2fe?text=Sem+Img';
+                const imgSrc = getImagemPrincipal(prod);
                 html += `
                     <div class="cart-drawer-item">
                         <img src="${imgSrc}" class="item-img">
@@ -1603,7 +1689,7 @@
             document.getElementById('modalPriceContainer').innerHTML = priceHtml;
             const gallery = document.getElementById('modalGallery');
             gallery.innerHTML = '';
-            const imagens = prod.imagens && Array.isArray(prod.imagens) && prod.imagens.length > 0 ? prod.imagens : [prod.imagem || 'https://placehold.co/400x250/0b041c/00f2fe?text=Sem+Imagem'];
+            const imagens = prod.imagens && Array.isArray(prod.imagens) && prod.imagens.length > 0 ? prod.imagens : [getImagemPrincipal(prod)];
             imagens.forEach(img => {
                 const imgEl = document.createElement('img'); imgEl.src = img; gallery.appendChild(imgEl);
             });
@@ -1712,7 +1798,7 @@
                 slide.className = 'slide-item' + (i === 0 ? ' active-slide' : '');
                 slide.onclick = () => abrirModal(p.id);
                 const preco = isPromoActive(p) && p.precoPromo ? 'R$ ' + p.precoPromo : 'R$ ' + p.preco;
-                slide.innerHTML = `<img src="${p.imagem || 'https://placehold.co/400x180/0b041c/00f2fe?text=Slider'}"><h4>${p.nome}</h4><div class="preco">${preco}</div>`;
+                slide.innerHTML = `<img src="${getImagemPrincipal(p)}"><h4>${p.nome}</h4><div class="preco">${preco}</div>`;
                 container.appendChild(slide);
                 const dot = document.createElement('button');
                 dot.className = 'dot' + (i === 0 ? ' active-dot' : '');
@@ -1759,7 +1845,7 @@
                 card.className = 'card-vendido';
                 card.onclick = () => abrirModal(p.id);
                 let badge = i < 3 ? `<div class="fire-badge-mini">HOT</div>` : '';
-                const icon = p.imagem ? `<img src="${p.imagem}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:1px solid var(--vidro-borda);">` : `<div class="icon-box"><i class="fas fa-box"></i></div>`;
+                const icon = getImagemPrincipal(p) ? `<img src="${getImagemPrincipal(p)}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;border:1px solid var(--vidro-borda);">` : `<div class="icon-box"><i class="fas fa-box"></i></div>`;
                 card.innerHTML = `${badge}${icon}<h4>${p.nome}</h4><div class="preco">R$ ${p.preco}</div>`;
                 grid.appendChild(card);
             });
@@ -1839,7 +1925,7 @@
                     card.innerHTML = `
                         ${badges}
                         ${favBtn}
-                        <img src="${prod.imagem || 'https://placehold.co/80x80/0b041c/00f2fe?text=Sem+Img'}">
+                        <img src="${getImagemPrincipal(prod)}">
                         <div class="info-lista">
                             <h5>${prod.nome}</h5>
                             ${prod.descricao ? `<div class="descricao">${prod.descricao}</div>` : ''}
@@ -1851,7 +1937,7 @@
                     card.innerHTML = `
                         ${badges}
                         ${favBtn}
-                        <img src="${prod.imagem || 'https://placehold.co/140x140/0b041c/00f2fe?text=Sem+Img'}">
+                        <img src="${getImagemPrincipal(prod)}">
                         <h5>${prod.nome}</h5>
                         ${prod.descricao ? `<div class="descricao">${prod.descricao.substring(0,60)}${prod.descricao.length>60?'...':''}</div>` : ''}
                         ${precoHtml}
@@ -1960,42 +2046,6 @@
                 }
             }
         });
-
-        // ================= MINI CHAT =================
-        function toggleChat() {
-            const modal = document.getElementById('chatModal');
-            modal.classList.toggle('active');
-            if (modal.classList.contains('active')) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = 'auto';
-            }
-        }
-
-        function chatResposta(opcao) {
-            const body = document.getElementById('chatBody');
-            const respostas = {
-                produtos: 'Temos uma variedade incrível! 🎨 Caixas personalizadas, imãs, cartões, displays e muito mais. Dá uma olhada no catálogo! 📦',
-                promocoes: '🔥 No momento temos promoções em caixas personalizadas e imãs! Corre que o estoque não espera!',
-                duvidas: 'Claro! Pode perguntar sobre produção, pagamento, retirada... estou aqui para ajudar! 😄',
-                contato: '📞 Meu WhatsApp é (11) 99999-9999. Fique à vontade para chamar!'
-            };
-            const userMsg = document.createElement('div');
-            userMsg.className = 'chat-msg user';
-            userMsg.textContent = opcao === 'produtos' ? 'Quais produtos?' :
-                                  opcao === 'promocoes' ? 'Promoções' :
-                                  opcao === 'duvidas' ? 'Dúvidas' : 'Contato';
-            body.appendChild(userMsg);
-
-            setTimeout(() => {
-                const gluMsg = document.createElement('div');
-                gluMsg.className = 'chat-msg gluudyx';
-                gluMsg.textContent = respostas[opcao] || 'Hmm, não entendi. Pode me perguntar de novo? 😅';
-                body.appendChild(gluMsg);
-                body.scrollTop = body.scrollHeight;
-            }, 600);
-            body.scrollTop = body.scrollHeight;
-        }
 
         // ================= MODAIS SOBRE E CONTATO =================
         function abrirModalSobre() {
@@ -2147,7 +2197,7 @@
                 const preco = isPromoActive(s) && s.precoPromo ? 'R$ '+s.precoPromo : 'R$ '+s.preco;
                 html += `
                     <div class="sugestao-card" onclick="abrirModal(${s.id})">
-                        <img src="${s.imagem || 'https://placehold.co/120x80/0b041c/00f2fe?text=Sem+Img'}">
+                        <img src="${getImagemPrincipal(s)}">
                         <h5>${s.nome}</h5>
                         <div class="preco">${preco}</div>
                     </div>
@@ -2203,7 +2253,6 @@
                     prods.sort((a,b) => a.nome.localeCompare(b.nome));
                     break;
                 default:
-                    // relevância (ordem original)
                     break;
             }
             produtosFiltrados = prods;
@@ -2267,7 +2316,7 @@
                     card.innerHTML = `
                         ${badges}
                         ${favBtn}
-                        <img src="${prod.imagem || 'https://placehold.co/80x80/0b041c/00f2fe?text=Sem+Img'}">
+                        <img src="${getImagemPrincipal(prod)}">
                         <div class="info-lista">
                             <h5>${prod.nome}</h5>
                             ${prod.descricao ? `<div class="descricao">${prod.descricao}</div>` : ''}
@@ -2279,7 +2328,7 @@
                     card.innerHTML = `
                         ${badges}
                         ${favBtn}
-                        <img src="${prod.imagem || 'https://placehold.co/140x140/0b041c/00f2fe?text=Sem+Img'}">
+                        <img src="${getImagemPrincipal(prod)}">
                         <h5>${prod.nome}</h5>
                         ${prod.descricao ? `<div class="descricao">${prod.descricao.substring(0,60)}${prod.descricao.length>60?'...':''}</div>` : ''}
                         ${precoHtml}
@@ -2312,17 +2361,14 @@
         function buscarItems(tipo) {
             const term = document.getElementById(tipo === 'produtos' ? 'searchProdutos' : 'searchServicos').value.toLowerCase();
             const container = document.getElementById(tipo === 'produtos' ? 'produtosProdutosContainer' : 'servicosProdutosContainer');
-            // Se não houver categoria selecionada, não faz nada
             if (!categoriaSelecionada.id) {
                 container.innerHTML = '';
                 return;
             }
-            // Auto completar: exibe sugestões enquanto digita
             const sugestoes = dados.produtos.filter(p => 
                 p.categoriaId === categoriaSelecionada.id &&
                 (p.nome.toLowerCase().includes(term) || (p.descricao && p.descricao.toLowerCase().includes(term)))
             );
-            // Renderiza os produtos filtrados com paginação
             produtosFiltrados = sugestoes;
             paginaAtual = 1;
             renderizarProdutosFiltrados();
