@@ -157,7 +157,7 @@
             </select>
             <label>Nome</label>
             <input type="text" id="catNome" placeholder="Ex: Caixas Personalizadas">
-            <label>Imagem</label>
+            <label>Imagem (até 1 arquivo)</label>
             <input type="file" id="catImg" accept="image/*">
             <button onclick="salvarCategoria()">Salvar Categoria</button>
             <div class="admin-item-list" id="listaCategorias"></div>
@@ -182,7 +182,7 @@
             <input type="text" id="prodPreco" placeholder="Ex: 29,90">
             <label>Estoque (Quantidade)</label>
             <input type="number" id="prodEstoque" placeholder="Ex: 10" min="0">
-            <label>Imagens (Múltiplas - segure CTRL)</label>
+            <label>Imagens (Múltiplas - máximo 3, segure CTRL)</label>
             <input type="file" id="prodImg" accept="image/*" multiple>
             <div class="checkbox-group">
                 <label><input type="checkbox" id="prodPromocao" onchange="togglePromoFields()"> Em Promoção</label>
@@ -332,6 +332,27 @@
             }
         }
 
+        // ================= FUNÇÃO DE REDIMENSIONAMENTO DE IMAGEM =================
+        function redimensionarImagem(file, maxWidth, qualidade) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        const ratio = maxWidth / img.width;
+                        canvas.width = maxWidth;
+                        canvas.height = img.height * ratio;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        resolve(canvas.toDataURL('image/jpeg', qualidade));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
         // ================= CATEGORIAS =================
         async function salvarCategoria() {
             const id = document.getElementById('editCatId').value;
@@ -360,9 +381,9 @@
             }
 
             if (fileInput.files && fileInput.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (e) => processarCat(e.target.result);
-                reader.readAsDataURL(fileInput.files[0]);
+                // Comprimir imagem da categoria (400px, qualidade 40%)
+                const imgBase64 = await redimensionarImagem(fileInput.files[0], 400, 0.4);
+                processarCat(imgBase64);
             } else {
                 processarCat(null);
             }
@@ -406,26 +427,6 @@
         // ================= PRODUTOS =================
         function togglePromoFields() {
             document.getElementById('promoFields').classList.toggle('hidden', !document.getElementById('prodPromocao').checked);
-        }
-
-        function redimensionarImagem(file, maxWidth, qualidade) {
-            return new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const ratio = maxWidth / img.width;
-                        canvas.width = maxWidth;
-                        canvas.height = img.height * ratio;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', qualidade));
-                    };
-                    img.src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            });
         }
 
         async function salvarProduto() {
@@ -490,14 +491,13 @@
             }
 
             if (fileInput.files && fileInput.files.length > 0) {
+                const filesToProcess = Array.from(fileInput.files).slice(0, 3); // máximo 3 imagens
                 const imagens = [];
-                let count = 0;
-                for (let f of fileInput.files) {
-                    const imgBase64 = await redimensionarImagem(f, 800, 0.6);
+                for (let f of filesToProcess) {
+                    const imgBase64 = await redimensionarImagem(f, 600, 0.5); // 600px largura, qualidade 50%
                     imagens.push(imgBase64);
-                    count++;
-                    if (count === fileInput.files.length) processarProd(imagens);
                 }
+                processarProd(imagens);
             } else {
                 const produtoExistente = id ? dados.produtos.find(p => p.id === id) : null;
                 processarProd(produtoExistente ? produtoExistente.imagens : []);
