@@ -269,13 +269,14 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Autenticação anônima automática para escrita
+        // Autenticação anônima automática
         firebase.auth().signInAnonymously().catch(error => {
             console.error("Erro na autenticação:", error);
             alert("Erro ao autenticar no Firebase. Verifique as regras de segurança.");
         });
 
-        let dados = { categorias: [], produtos: [], frases: [], faq: [] };
+        // Dados globais – usando var para evitar "Cannot access before initialization"
+        var dados = { categorias: [], produtos: [], frases: [], faq: [] };
 
         // ================= CARREGAR DADOS =================
         async function carregarDados() {
