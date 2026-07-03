@@ -160,6 +160,7 @@
             <label>Imagem (até 1 arquivo)</label>
             <input type="file" id="catImg" accept="image/*">
             <button onclick="salvarCategoria()">Salvar Categoria</button>
+            <button onclick="corrigirCategoriasAntigas()" class="btn-outline" style="margin-top:10px;">🔧 Corrigir categorias antigas</button>
             <div class="admin-item-list" id="listaCategorias"></div>
         </div>
 
@@ -280,19 +281,44 @@
         // Dados globais
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
 
-        // ================= CARREGAR DADOS =================
+        // ================= CARREGAR DADOS (CORRIGIDO) =================
         async function carregarDados() {
             try {
                 const snapCategorias = await db.collection('categorias').get();
                 dados.categorias = snapCategorias.docs.map(doc => {
                     const data = doc.data();
-                    // Garantir que o campo id exista e seja o ID do documento
-                    return { id: doc.id, tipo: data.tipo, nome: data.nome, imagem: data.imagem || '' };
+                    // SEMPRE usar o ID do documento do Firestore como o campo id
+                    return { 
+                        id: doc.id,  // Este é o ID real do documento no Firestore
+                        tipo: data.tipo, 
+                        nome: data.nome, 
+                        imagem: data.imagem || '' 
+                    };
                 });
                 console.log('Categorias carregadas:', dados.categorias);
 
                 const snapProdutos = await db.collection('produtos').get();
-                dados.produtos = snapProdutos.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                dados.produtos = snapProdutos.docs.map(doc => {
+                    const data = doc.data();
+                    return { 
+                        id: doc.id,
+                        categoriaId: data.categoriaId,
+                        nome: data.nome,
+                        descricao: data.descricao || '',
+                        preco: data.preco,
+                        estoque: data.estoque || 0,
+                        imagens: data.imagens || [],
+                        promocao: data.promocao || false,
+                        destaque: data.destaque || false,
+                        exibirSlider: data.exibirSlider || false,
+                        precoPromo: data.precoPromo || '',
+                        desconto: data.desconto || 0,
+                        promoStart: data.promoStart || '',
+                        promoEnd: data.promoEnd || '',
+                        descPromo: data.descPromo || '',
+                        cliques: data.cliques || 0
+                    };
+                });
                 console.log('Produtos carregados:', dados.produtos.length);
 
                 const snapFrases = await db.collection('config').doc('frases').get();
@@ -362,6 +388,29 @@
             });
         }
 
+        // ================= CORRIGIR CATEGORIAS ANTIGAS =================
+        async function corrigirCategoriasAntigas() {
+            if (!confirm('Isso vai adicionar o campo "id" correto em todas as categorias. Continuar?')) return;
+            try {
+                const snapshot = await db.collection('categorias').get();
+                let corrigidas = 0;
+                for (const doc of snapshot.docs) {
+                    const data = doc.data();
+                    if (!data.id || data.id !== doc.id) {
+                        await db.collection('categorias').doc(doc.id).update({ id: doc.id });
+                        corrigidas++;
+                        console.log('Categoria corrigida:', doc.id, data.nome);
+                    }
+                }
+                await carregarDados();
+                atualizarListaCategorias();
+                atualizarSelectCategorias();
+                alert(`${corrigidas} categoria(s) foram corrigidas!`);
+            } catch (e) {
+                alert('Erro ao corrigir categorias: ' + e.message);
+            }
+        }
+
         // ================= CATEGORIAS =================
         async function salvarCategoria() {
             const id = document.getElementById('editCatId').value;
@@ -374,10 +423,8 @@
                 const dadosCat = { tipo, nome, imagem: imagem || '' };
                 try {
                     if (id) {
-                        // Atualizar categoria existente
                         await db.collection('categorias').doc(id).update(dadosCat);
                     } else {
-                        // Criar nova categoria e salvar o ID do documento
                         const docRef = await db.collection('categorias').add(dadosCat);
                         await db.collection('categorias').doc(docRef.id).update({ id: docRef.id });
                     }
@@ -607,6 +654,8 @@
                 opt.textContent = cat.nome;
                 select.appendChild(opt);
             });
+            
+            console.log('Select atualizado com', categoriasFiltradas.length, 'categorias do tipo', tipo);
         }
 
         function atualizarListaProdutos() {
