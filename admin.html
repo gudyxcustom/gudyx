@@ -173,7 +173,9 @@
                 <option value="servicos">Serviços</option>
             </select>
             <label>Categoria</label>
-            <select id="prodCategoria"></select>
+            <select id="prodCategoria">
+                <option value="">Selecione uma categoria</option>
+            </select>
             <label>Nome</label>
             <input type="text" id="prodNome" placeholder="Ex: Caixa Média">
             <label>Descrição</label>
@@ -275,17 +277,23 @@
             alert("Erro ao autenticar no Firebase. Verifique as regras de segurança.");
         });
 
-        // Dados globais – usando var para evitar "Cannot access before initialization"
+        // Dados globais
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
 
         // ================= CARREGAR DADOS =================
         async function carregarDados() {
             try {
                 const snapCategorias = await db.collection('categorias').get();
-                dados.categorias = snapCategorias.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                dados.categorias = snapCategorias.docs.map(doc => {
+                    const data = doc.data();
+                    // Garantir que o campo id exista e seja o ID do documento
+                    return { id: doc.id, tipo: data.tipo, nome: data.nome, imagem: data.imagem || '' };
+                });
+                console.log('Categorias carregadas:', dados.categorias);
 
                 const snapProdutos = await db.collection('produtos').get();
                 dados.produtos = snapProdutos.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                console.log('Produtos carregados:', dados.produtos.length);
 
                 const snapFrases = await db.collection('config').doc('frases').get();
                 dados.frases = snapFrases.exists ? snapFrases.data().lista : [];
@@ -366,9 +374,12 @@
                 const dadosCat = { tipo, nome, imagem: imagem || '' };
                 try {
                     if (id) {
+                        // Atualizar categoria existente
                         await db.collection('categorias').doc(id).update(dadosCat);
                     } else {
-                        await db.collection('categorias').add(dadosCat);
+                        // Criar nova categoria e salvar o ID do documento
+                        const docRef = await db.collection('categorias').add(dadosCat);
+                        await db.collection('categorias').doc(docRef.id).update({ id: docRef.id });
                     }
                     document.getElementById('editCatId').value = '';
                     document.getElementById('catNome').value = '';
@@ -376,13 +387,13 @@
                     await carregarDados();
                     atualizarListaCategorias();
                     atualizarSelectCategorias();
+                    alert('Categoria salva com sucesso!');
                 } catch (e) {
                     alert('Erro ao salvar: ' + e.message);
                 }
             }
 
             if (fileInput.files && fileInput.files[0]) {
-                // Comprimir imagem da categoria (400px, qualidade 40%)
                 const imgBase64 = await redimensionarImagem(fileInput.files[0], 400, 0.4);
                 processarCat(imgBase64);
             } else {
@@ -392,7 +403,7 @@
 
         function editarCategoria(id) {
             const cat = dados.categorias.find(c => c.id === id);
-            if (!cat) return;
+            if (!cat) return alert('Categoria não encontrada!');
             document.getElementById('editCatId').value = cat.id;
             document.getElementById('catTipo').value = cat.tipo;
             document.getElementById('catNome').value = cat.nome;
@@ -400,23 +411,32 @@
 
         async function removerCategoria(id) {
             if (!confirm('Remover categoria e itens associados?')) return;
-            await db.collection('categorias').doc(id).delete();
-            const produtos = dados.produtos.filter(p => p.categoriaId === id);
-            for (const prod of produtos) {
-                await db.collection('produtos').doc(prod.id).delete();
+            try {
+                await db.collection('categorias').doc(id).delete();
+                const produtos = dados.produtos.filter(p => p.categoriaId === id);
+                for (const prod of produtos) {
+                    await db.collection('produtos').doc(prod.id).delete();
+                }
+                await carregarDados();
+                atualizarListaCategorias();
+                atualizarSelectCategorias();
+                alert('Categoria removida!');
+            } catch (e) {
+                alert('Erro ao remover: ' + e.message);
             }
-            await carregarDados();
-            atualizarListaCategorias();
-            atualizarSelectCategorias();
         }
 
         function atualizarListaCategorias() {
             const lista = document.getElementById('listaCategorias');
             lista.innerHTML = '';
+            if (dados.categorias.length === 0) {
+                lista.innerHTML = '<p style="opacity:0.6;text-align:center;">Nenhuma categoria cadastrada.</p>';
+                return;
+            }
             dados.categorias.forEach(cat => {
                 const item = document.createElement('div');
                 item.className = 'item';
-                item.innerHTML = `<span>[${cat.tipo}] ${cat.nome}</span>
+                item.innerHTML = `<span>[${cat.tipo}] ${cat.nome} (ID: ${cat.id})</span>
                     <div>
                         <button class="btn-edit" onclick="editarCategoria('${cat.id}')">✏️</button>
                         <button onclick="removerCategoria('${cat.id}')">Remover</button>
@@ -455,7 +475,9 @@
                 }
             }
 
-            if (!catId || !nome || !preco) return alert('Preencha nome e preço.');
+            if (!catId) return alert('Selecione uma categoria!');
+            if (!nome) return alert('Digite o nome do item!');
+            if (!preco) return alert('Digite o preço!');
 
             const fileInput = document.getElementById('prodImg');
             async function processarProd(imagens) {
@@ -481,21 +503,23 @@
                     if (id) {
                         await db.collection('produtos').doc(id).update(produto);
                     } else {
-                        await db.collection('produtos').add(produto);
+                        const docRef = await db.collection('produtos').add(produto);
+                        await db.collection('produtos').doc(docRef.id).update({ id: docRef.id });
                     }
                     limparFormularioProduto();
                     await carregarDados();
                     atualizarListaProdutos();
+                    alert('Item salvo com sucesso!');
                 } catch (e) {
                     alert('Erro ao salvar: ' + e.message);
                 }
             }
 
             if (fileInput.files && fileInput.files.length > 0) {
-                const filesToProcess = Array.from(fileInput.files).slice(0, 3); // máximo 3 imagens
+                const filesToProcess = Array.from(fileInput.files).slice(0, 3);
                 const imagens = [];
                 for (let f of filesToProcess) {
-                    const imgBase64 = await redimensionarImagem(f, 600, 0.5); // 600px largura, qualidade 50%
+                    const imgBase64 = await redimensionarImagem(f, 600, 0.5);
                     imagens.push(imgBase64);
                 }
                 processarProd(imagens);
@@ -507,11 +531,13 @@
 
         function editarProduto(id) {
             const p = dados.produtos.find(p => p.id === id);
-            if (!p) return;
+            if (!p) return alert('Produto não encontrado!');
             document.getElementById('editProdId').value = p.id;
             document.getElementById('prodTipo').value = dados.categorias.find(c => c.id === p.categoriaId)?.tipo || 'produtos';
             atualizarSelectCategorias();
-            document.getElementById('prodCategoria').value = p.categoriaId;
+            setTimeout(() => {
+                document.getElementById('prodCategoria').value = p.categoriaId;
+            }, 100);
             document.getElementById('prodNome').value = p.nome;
             document.getElementById('prodDescricao').value = p.descricao || '';
             document.getElementById('prodPreco').value = p.preco;
@@ -531,10 +557,15 @@
         }
 
         async function removerProduto(id) {
-            if (!confirm('Remover?')) return;
-            await db.collection('produtos').doc(id).delete();
-            await carregarDados();
-            atualizarListaProdutos();
+            if (!confirm('Remover este item?')) return;
+            try {
+                await db.collection('produtos').doc(id).delete();
+                await carregarDados();
+                atualizarListaProdutos();
+                alert('Item removido!');
+            } catch (e) {
+                alert('Erro ao remover: ' + e.message);
+            }
         }
 
         function limparFormularioProduto() {
@@ -557,8 +588,20 @@
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
             const select = document.getElementById('prodCategoria');
-            select.innerHTML = '';
-            dados.categorias.filter(c => c.tipo === tipo).forEach(cat => {
+            select.innerHTML = '<option value="">Selecione uma categoria</option>';
+            
+            const categoriasFiltradas = dados.categorias.filter(c => c.tipo === tipo);
+            
+            if (categoriasFiltradas.length === 0) {
+                const opt = document.createElement('option');
+                opt.value = '';
+                opt.textContent = 'Nenhuma categoria encontrada';
+                opt.disabled = true;
+                select.appendChild(opt);
+                return;
+            }
+            
+            categoriasFiltradas.forEach(cat => {
                 const opt = document.createElement('option');
                 opt.value = cat.id;
                 opt.textContent = cat.nome;
@@ -569,11 +612,15 @@
         function atualizarListaProdutos() {
             const lista = document.getElementById('listaProdutos');
             lista.innerHTML = '';
+            if (dados.produtos.length === 0) {
+                lista.innerHTML = '<p style="opacity:0.6;text-align:center;">Nenhum item cadastrado.</p>';
+                return;
+            }
             dados.produtos.forEach(p => {
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
                 const item = document.createElement('div');
                 item.className = 'item';
-                let info = `${cat ? cat.nome : '?'} → ${p.nome} (R$ ${p.preco}) | Estoque: ${p.estoque || 0}`;
+                let info = `${cat ? cat.nome : 'Sem categoria'} → ${p.nome} (R$ ${p.preco}) | Estoque: ${p.estoque || 0}`;
                 if (p.promocao) info += ` 🔥 ${p.desconto || 0}% OFF`;
                 if (p.exibirSlider) info += ` 📺`;
                 item.innerHTML = `<span>${info}</span>
@@ -588,8 +635,13 @@
         // ================= FRASES =================
         async function salvarFrases() {
             const lista = document.getElementById('frasesInput').value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-            await db.collection('config').doc('frases').set({ lista });
-            alert('Frases salvas!');
+            if (lista.length === 0) return alert('Digite pelo menos uma frase.');
+            try {
+                await db.collection('config').doc('frases').set({ lista });
+                alert('Frases salvas!');
+            } catch (e) {
+                alert('Erro ao salvar frases: ' + e.message);
+            }
         }
 
         // ================= FAQ =================
@@ -618,6 +670,7 @@
             const pergunta = document.getElementById('faqPergunta').value.trim();
             const resposta = document.getElementById('faqResposta').value.trim();
             if (!pergunta || !resposta) return alert('Preencha pergunta e resposta.');
+            
             if (id !== '') {
                 const idx = parseInt(id);
                 if (idx >= 0 && idx < dados.faq.length) {
@@ -626,11 +679,17 @@
             } else {
                 dados.faq.push({ pergunta, resposta });
             }
-            await db.collection('config').doc('faq').set({ perguntas: dados.faq });
-            document.getElementById('editFaqId').value = '';
-            document.getElementById('faqPergunta').value = '';
-            document.getElementById('faqResposta').value = '';
-            carregarFAQ();
+            
+            try {
+                await db.collection('config').doc('faq').set({ perguntas: dados.faq });
+                document.getElementById('editFaqId').value = '';
+                document.getElementById('faqPergunta').value = '';
+                document.getElementById('faqResposta').value = '';
+                carregarFAQ();
+                alert('FAQ salva!');
+            } catch (e) {
+                alert('Erro ao salvar FAQ: ' + e.message);
+            }
         }
 
         function editarFaq(index) {
@@ -643,8 +702,13 @@
         async function removerFaq(index) {
             if (!confirm('Remover esta FAQ?')) return;
             dados.faq.splice(index, 1);
-            await db.collection('config').doc('faq').set({ perguntas: dados.faq });
-            carregarFAQ();
+            try {
+                await db.collection('config').doc('faq').set({ perguntas: dados.faq });
+                carregarFAQ();
+                alert('FAQ removida!');
+            } catch (e) {
+                alert('Erro ao remover FAQ: ' + e.message);
+            }
         }
 
         // ================= RELATÓRIOS =================
@@ -701,11 +765,13 @@
 
                     for (const cat of data.categorias) {
                         const { id, ...catData } = cat;
-                        await db.collection('categorias').add(catData);
+                        const docRef = await db.collection('categorias').add(catData);
+                        await db.collection('categorias').doc(docRef.id).update({ id: docRef.id });
                     }
                     for (const prod of data.produtos) {
                         const { id, ...prodData } = prod;
-                        await db.collection('produtos').add(prodData);
+                        const docRef = await db.collection('produtos').add(prodData);
+                        await db.collection('produtos').doc(docRef.id).update({ id: docRef.id });
                     }
                     await db.collection('config').doc('frases').set({ lista: data.frases || [] });
                     await db.collection('config').doc('faq').set({ perguntas: data.faq || [] });
@@ -719,7 +785,7 @@
                     carregarRelatorios();
                     alert('Backup restaurado com sucesso!');
                 } catch (err) {
-                    alert('Erro ao ler o arquivo.');
+                    alert('Erro ao ler o arquivo: ' + err.message);
                 }
             };
             reader.readAsText(fileInput.files[0]);
@@ -775,19 +841,23 @@
         // ================= LIMPAR DADOS =================
         async function limparDados() {
             if (!confirm('Apagar TODOS os dados do Firestore? Esta ação é irreversível.')) return;
-            const deletarCategorias = (await db.collection('categorias').get()).docs.map(d => d.ref.delete());
-            const deletarProdutos = (await db.collection('produtos').get()).docs.map(d => d.ref.delete());
-            await Promise.all([...deletarCategorias, ...deletarProdutos]);
-            await db.collection('config').doc('frases').set({ lista: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'] });
-            await db.collection('config').doc('faq').set({ perguntas: [] });
-            await carregarDados();
-            atualizarListaCategorias();
-            atualizarSelectCategorias();
-            atualizarListaProdutos();
-            document.getElementById('frasesInput').value = dados.frases.join('\n');
-            carregarFAQ();
-            carregarRelatorios();
-            alert('Dados limpos!');
+            try {
+                const deletarCategorias = (await db.collection('categorias').get()).docs.map(d => d.ref.delete());
+                const deletarProdutos = (await db.collection('produtos').get()).docs.map(d => d.ref.delete());
+                await Promise.all([...deletarCategorias, ...deletarProdutos]);
+                await db.collection('config').doc('frases').set({ lista: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'] });
+                await db.collection('config').doc('faq').set({ perguntas: [] });
+                await carregarDados();
+                atualizarListaCategorias();
+                atualizarSelectCategorias();
+                atualizarListaProdutos();
+                document.getElementById('frasesInput').value = dados.frases.join('\n');
+                carregarFAQ();
+                carregarRelatorios();
+                alert('Dados limpos!');
+            } catch (e) {
+                alert('Erro ao limpar dados: ' + e.message);
+            }
         }
 
         // ================= SENHA =================
