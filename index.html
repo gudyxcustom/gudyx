@@ -314,9 +314,9 @@
         .faq-item .faq-q.open i { transform:rotate(180deg); }
         .faq-item .faq-a { display:none; padding-top:8px; opacity:0.8; font-size:0.95rem; }
         .faq-item .faq-a.open { display:block; }
-        #chatButton { position:fixed; bottom: 180px; left:20px; width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:var(--transicao); opacity:0.8; }
+        #chatButton { position:fixed; bottom: 220px; left:20px; width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:var(--transicao); opacity:0.8; }
         #chatButton:hover { transform:scale(1.1); opacity:1; }
-        #chatModal { position:fixed; bottom: 245px; left:20px; width:320px; max-width:80vw; background:var(--vidro-fundo); backdrop-filter:blur(16px); border:1px solid var(--vidro-borda); border-radius:20px; z-index:9999; display:none; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.6); }
+        #chatModal { position:fixed; bottom: 285px; left:20px; width:320px; max-width:80vw; background:var(--vidro-fundo); backdrop-filter:blur(16px); border:1px solid var(--vidro-borda); border-radius:20px; z-index:9999; display:none; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.6); }
         #chatModal.active { display:flex; }
         .chat-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid var(--vidro-borda); }
         .chat-header h4 { display:flex; align-items:center; gap:8px; font-size:1rem; }
@@ -332,8 +332,8 @@
         #miniGluudyx {
             display: none;
             position: fixed;
-            top: 20px;
-            right: 20px;
+            bottom: 20px;
+            left: 20px;
             z-index: 100001;
             align-items: center;
             gap: 10px;
@@ -363,11 +363,11 @@
         .mini-fala::after {
             content: '';
             position: absolute;
-            bottom: -12px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 50%;
+            right: -12px;
+            transform: translateY(-50%);
             border: 6px solid transparent;
-            border-top-color: rgba(11,4,28,0.95);
+            border-left-color: rgba(11,4,28,0.95);
         }
         @media (max-width:900px) {
             .fala-container { right:-40px; width:160px; font-size:0.75rem; top:5px; }
@@ -388,8 +388,8 @@
             #socialProofContainer { bottom:80px; left:10px; }
             #peekingHead img { width:60px; height:60px; }
             .peeking-fala { font-size:0.7rem; max-width:150px; padding:6px 10px; }
-            #chatButton { width:50px; height:50px; font-size:1.5rem; bottom:160px; left:15px; }
-            #chatModal { width: 280px; bottom: 225px; left: 15px; }
+            #chatButton { width:50px; height:50px; font-size:1.5rem; bottom:200px; left:15px; }
+            #chatModal { width: 280px; bottom: 265px; left: 15px; }
         }
         @media (max-width:480px) {
             .fala-container { right:0; top:-25px; width:100px; font-size:0.6rem; }
@@ -730,6 +730,12 @@
         function mostrarExpressao(exp) { const w = document.getElementById('mascoteWrapper'); w.classList.remove('feliz','triste','surpreso','irritado-1','irritado-2','fugindo','voltando'); if (exp) w.classList.add(exp); }
 
         document.getElementById('mascoteWrapper').addEventListener('click', function() {
+            // BALANÇO RÁPIDO
+            this.style.animation = 'none';
+            this.offsetHeight;
+            this.style.animation = 'floatMascote 0.6s ease-in-out';
+            setTimeout(() => { this.style.animation = 'floatMascote 6s ease-in-out infinite'; }, 600);
+
             if (estaSumido || estaFugindo || estaVoltando || estaContando) return;
             if (timeoutFala) { clearTimeout(timeoutFala); timeoutFala = null; estaFalando = false; }
             document.getElementById('falaContainer').classList.remove('falando');
