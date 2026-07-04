@@ -52,7 +52,7 @@
         @keyframes discoBg { 0% { background-color: #ff00ff; } 20% { background-color: #ffff00; } 40% { background-color: #00ffff; } 60% { background-color: #ff0000; } 80% { background-color: #00ff00; } 100% { background-color: #0000ff; } }
         @keyframes flameFlicker { 0% { opacity: 1; transform: translateY(0); } 50% { opacity: 0.7; transform: translateY(-3px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes rainbowBg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes purpleFire { 0% { background-position: 0% 0%; } 50% { background-position: 0% 100%; } 100% { background-position: 0% 0%; } }
+        @keyframes purpleFire { 0% { background-position: 0% 0%; box-shadow: 0 0 15px #a028ff, 0 0 30px #d400ff; } 50% { background-position: 0% 100%; box-shadow: 0 0 25px #d400ff, 0 0 50px #a028ff; } 100% { background-position: 0% 0%; box-shadow: 0 0 15px #a028ff, 0 0 30px #d400ff; } }
         body.festa { animation: discoBg 0.2s infinite; }
         .float-cart.bounce { animation: bounceCart 0.6s ease; }
         .produto-card:hover { animation: wiggle 0.5s ease; }
@@ -103,7 +103,7 @@
         .fire-badge { position:absolute; top:12px; right:12px; background:rgba(122,0,255,0.4); backdrop-filter:blur(8px); padding:4px 14px; border-radius:20px; font-weight:800; font-size:0.8rem; text-transform:uppercase; z-index:2; animation:fireGlow 0.8s ease-in-out infinite alternate; border:1px solid rgba(255,255,255,0.2); }
         #dynamicSliderContainer .slide-item { display:none; padding:25px 20px; text-align:center; cursor:pointer; animation:fadeSlideIn 0.5s; }
         #dynamicSliderContainer .slide-item.active-slide { display:block; }
-        #dynamicSliderContainer .slide-item img { width:100%; max-height:180px; object-fit:cover; border-radius:12px; }
+        #dynamicSliderContainer .slide-item img { width:100%; max-height:250px; object-fit:contain; border-radius:12px; background: rgba(255,255,255,0.03); }
         #dynamicSliderContainer .slide-item h4 { font-size:1.2rem; margin:5px 0; }
         #dynamicSliderContainer .slide-item .preco { font-size:1.6rem; font-weight:700; color:var(--amarelo-neon); text-shadow:0 0 20px rgba(255,229,0,0.3); }
         #sliderDots { display:flex; gap:8px; justify-content:center; padding:0 0 15px; }
@@ -127,7 +127,6 @@
             align-items:center;
             gap:8px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            overflow: hidden;
             position: relative;
         }
         .card-vendido::before {
@@ -139,6 +138,7 @@
             height: 100%;
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
             transition: 0.5s;
+            pointer-events: none;
         }
         .card-vendido:hover::before { left: 100%; }
         .card-vendido:hover {
@@ -152,21 +152,22 @@
         .card-vendido .preco { font-weight:700; color:var(--amarelo-neon); font-size:1.1rem; }
         .fire-badge-mini {
             position: absolute;
-            top: -8px;
-            left: -8px;
+            top: -12px;
+            left: -12px;
             background: linear-gradient(180deg, #a028ff, #d400ff, #a028ff) !important;
             background-size: 100% 300% !important;
-            padding: 2px 12px;
+            padding: 4px 14px;
             border-radius: 20px;
             font-weight: 800;
             font-size: 0.7rem;
             text-transform: uppercase;
-            animation: fireGlow 0.8s ease-in-out infinite alternate, purpleFire 1.5s ease-in-out infinite !important;
+            animation: purpleFire 1.5s ease-in-out infinite !important;
             box-shadow: 0 0 20px rgba(172, 40, 255, 0.8), 0 0 40px rgba(212, 0, 255, 0.4) !important;
             border: 1px solid rgba(255, 255, 255, 0.3) !important;
             color: #fff !important;
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
-            z-index: 2;
+            z-index: 10;
+            letter-spacing: 1px;
         }
         .listagem-screen { flex-direction:column; align-items:center; padding:30px 20px; gap:20px; background:rgba(11,4,28,0.6); width:100%; }
         .listagem-header { display:flex; align-items:center; gap:15px; flex-wrap:wrap; justify-content:center; width:100%; max-width:1100px; padding-bottom:10px; }
@@ -826,25 +827,25 @@
 
         function getMensagensMascote() {
             const msgs = [];
-            const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p));
-            if (promos.length > 0) { const p = promos[Math.floor(Math.random()*promos.length)]; msgs.push(`🔥 ${p.nome} está em promoção por apenas R$ ${p.precoPromo}! Corre que o estoque não espera!`); }
-            const top = [...dados.produtos].sort((a,b)=>(b.cliques||0)-(a.cliques||0)).slice(0,3);
-            if (top.length>0 && top[0].cliques>0) { const p = top[Math.floor(Math.random()*top.length)]; msgs.push(`🏆 ${p.nome} é o produto mais acessado do momento! Já conferiu?`); }
-            const disponiveis = dados.produtos.filter(p=>isEmEstoque(p));
-            if (disponiveis.length>0) { const dica = disponiveis[Math.floor(Math.random()*disponiveis.length)]; msgs.push(`💡 Dica do dia: que tal dar uma olhada em "${dica.nome}"?`); }
-            const piada = piadas[Math.floor(Math.random()*piadas.length)];
-            msgs.push(piada);
-            // ADICIONA AS FRASES DO ADMIN AO POOL
+            // FRASES DO ADMIN (ADICIONADAS 3 VEZES PARA TER MAIS CHANCE DE APARECER)
             if (dados.frases && dados.frases.length > 0) {
                 msgs.push(...dados.frases);
+                msgs.push(...dados.frases);
+                msgs.push(...dados.frases);
             }
-            if (msgs.length===0) msgs.push('Olá, sou o Gluudyx! ✦', 'Amor em cada detalhe', 'Feito com alma taurina');
+            const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p));
+            if (promos.length > 0) { const p = promos[Math.floor(Math.random()*promos.length)]; msgs.push(`🔥 ${p.nome} está em promoção por apenas R$ ${p.precoPromo}!`); }
+            const top = [...dados.produtos].sort((a,b)=>(b.cliques||0)-(a.cliques||0)).slice(0,3);
+            if (top.length>0 && top[0].cliques>0) { const p = top[Math.floor(Math.random()*top.length)]; msgs.push(`🏆 ${p.nome} é o mais acessado!`); }
+            const disponiveis = dados.produtos.filter(p=>isEmEstoque(p));
+            if (disponiveis.length>0) { const dica = disponiveis[Math.floor(Math.random()*disponiveis.length)]; msgs.push(`💡 Dica: que tal "${dica.nome}"?`); }
+            msgs.push(piadas[Math.floor(Math.random()*piadas.length)]);
+            if (msgs.length===0) msgs.push('Olá, sou o Gluudyx!', 'Amor em cada detalhe', 'Feito com alma taurina');
             return msgs;
         }
 
         function atualizarMensagensMascote() {
             mascoteMensagens = getMensagensMascote();
-            // Embaralhar para não ficar repetitivo
             mascoteMensagens = mascoteMensagens.sort(() => Math.random() - 0.5);
             console.log('Mensagens do mascote:', mascoteMensagens.length, 'frases');
         }
@@ -906,10 +907,15 @@
             const eff = emRecarga ? 1 : cliqueCount;
             if (eff === 1) {
                 mostrarExpressao('feliz');
-                const rand = Math.random();
-                if (rand < 0.3) falarMascote('Opa! Clicou em mim? Que honra! 😊');
-                else if (rand < 0.6) falarMascote('Você é fofo(a) de ficar me clicando! 🥰');
-                else falarMascote(piadas[Math.floor(Math.random() * piadas.length)]);
+                if (dados.frases && dados.frases.length > 0 && Math.random() < 0.5) {
+                    const fraseAdmin = dados.frases[Math.floor(Math.random() * dados.frases.length)];
+                    falarMascote(fraseAdmin);
+                } else {
+                    const rand = Math.random();
+                    if (rand < 0.3) falarMascote('Opa! Clicou em mim? Que honra! 😊');
+                    else if (rand < 0.6) falarMascote('Você é fofo(a) de ficar me clicando! 🥰');
+                    else falarMascote(piadas[Math.floor(Math.random() * piadas.length)]);
+                }
                 wrapper.classList.remove('irritado-1', 'irritado-2');
             } else if (eff === 2) {
                 mostrarExpressao('irritado-1'); wrapper.classList.remove('irritado-2');
@@ -949,10 +955,16 @@
             estaSumido = false; falarMascote('Voltei! 🎉');
         }
 
-        // Intervalo de fala automática (a cada 15s)
+        // Intervalo de fala automática
         setInterval(() => {
             if (!estaFalando && !estaFugindo && !estaVoltando && !estaSumido && !estaContando) {
-                atualizarMensagensMascote(); falarMascote();
+                atualizarMensagensMascote();
+                if (dados.frases && dados.frases.length > 0 && Math.random() < 0.5) {
+                    const fraseAdmin = dados.frases[Math.floor(Math.random() * dados.frases.length)];
+                    falarMascote(fraseAdmin);
+                } else {
+                    falarMascote();
+                }
             }
         }, 15000);
 
