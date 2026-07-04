@@ -314,9 +314,10 @@
         .faq-item .faq-q.open i { transform:rotate(180deg); }
         .faq-item .faq-a { display:none; padding-top:8px; opacity:0.8; font-size:0.95rem; }
         .faq-item .faq-a.open { display:block; }
-        #chatButton { position:fixed; bottom: 220px; left:20px; width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:var(--transicao); opacity:0.8; }
+        /* CHAT BEM MAIS PARA CIMA, LONGE DOS CARDS */
+        #chatButton { position:fixed; bottom: 260px; left:20px; width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:var(--transicao); opacity:0.8; }
         #chatButton:hover { transform:scale(1.1); opacity:1; }
-        #chatModal { position:fixed; bottom: 285px; left:20px; width:320px; max-width:80vw; background:var(--vidro-fundo); backdrop-filter:blur(16px); border:1px solid var(--vidro-borda); border-radius:20px; z-index:9999; display:none; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.6); }
+        #chatModal { position:fixed; bottom: 325px; left:20px; width:320px; max-width:80vw; background:var(--vidro-fundo); backdrop-filter:blur(16px); border:1px solid var(--vidro-borda); border-radius:20px; z-index:9999; display:none; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.6); }
         #chatModal.active { display:flex; }
         .chat-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid var(--vidro-borda); }
         .chat-header h4 { display:flex; align-items:center; gap:8px; font-size:1rem; }
@@ -329,6 +330,7 @@
         .chat-footer { padding:10px 15px; border-top:1px solid var(--vidro-borda); display:flex; flex-wrap:wrap; gap:6px; }
         .quick-btn { background:rgba(255,255,255,0.05); border:1px solid var(--vidro-borda); border-radius:20px; padding:6px 12px; font-size:0.8rem; color:var(--cor-texto); cursor:pointer; transition:var(--transicao); }
         .quick-btn:hover { background:rgba(172,40,255,0.2); }
+        /* MINI GLUUDYX */
         #miniGluudyx {
             display: none;
             position: fixed;
@@ -388,8 +390,8 @@
             #socialProofContainer { bottom:80px; left:10px; }
             #peekingHead img { width:60px; height:60px; }
             .peeking-fala { font-size:0.7rem; max-width:150px; padding:6px 10px; }
-            #chatButton { width:50px; height:50px; font-size:1.5rem; bottom:200px; left:15px; }
-            #chatModal { width: 280px; bottom: 265px; left: 15px; }
+            #chatButton { width:50px; height:50px; font-size:1.5rem; bottom:240px; left:15px; }
+            #chatModal { width: 280px; bottom: 305px; left: 15px; }
         }
         @media (max-width:480px) {
             .fala-container { right:0; top:-25px; width:100px; font-size:0.6rem; }
@@ -506,7 +508,7 @@
         <div class="modal-box">
             <button class="close-modal-page" onclick="fecharModalContato()">×</button>
             <h2 style="font-size:1.8rem;margin-bottom:10px;">Contato</h2>
-            <p style="opacity:0.8;line-height:1.8;">📞 <strong>WhatsApp:</strong> (11) 99999-9999<br>📧 <strong>E-mail:</strong> contato@gudyx.com<br>📍 <strong>Endereço:</strong> Rua das Flores, 123 - São Paulo, SP<br>🕒 <strong>Horário:</strong> Segunda a Sexta, 9h às 18h</p>
+            <p style="opacity:0.8;line-height:1.8;">📞 <strong>WhatsApp:</strong> (21) 97612-1076<br>📧 <strong>E-mail:</strong> contato@gudyx.com<br>📍 <strong>Endereço:</strong> Rua das Flores, 123 - São Paulo, SP<br>🕒 <strong>Horário:</strong> Segunda a Sexta, 9h às 18h</p>
         </div>
     </div>
 
@@ -534,7 +536,7 @@
     </div>
 
     <div class="float-cart" onclick="abrirDrawer()"><i class="fas fa-shopping-cart"></i><span class="cart-badge" id="cartBadge">0</span></div>
-    <a class="float-wa" href="https://wa.me/5511999999999" target="_blank"><i class="fab fa-whatsapp"></i></a>
+    <a class="float-wa" href="https://wa.me/5521976121076" target="_blank"><i class="fab fa-whatsapp"></i></a>
     <div class="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
 
     <div id="alertaContainer"><div class="alerta-sinal">⚠️</div></div>
@@ -659,7 +661,7 @@
     </footer>
 
     <script>
-        const WA_NUMBER = '5511999999999';
+        const WA_NUMBER = '5521976121076';
         let dados = { categorias: [], produtos: [], frases: [], faq: [] };
         let carrinho = [];
         let favoritos = [];
@@ -730,12 +732,8 @@
         function mostrarExpressao(exp) { const w = document.getElementById('mascoteWrapper'); w.classList.remove('feliz','triste','surpreso','irritado-1','irritado-2','fugindo','voltando'); if (exp) w.classList.add(exp); }
 
         document.getElementById('mascoteWrapper').addEventListener('click', function() {
-            // BALANÇO RÁPIDO
-            this.style.animation = 'none';
-            this.offsetHeight;
-            this.style.animation = 'floatMascote 0.6s ease-in-out';
+            this.style.animation = 'none'; this.offsetHeight; this.style.animation = 'floatMascote 0.6s ease-in-out';
             setTimeout(() => { this.style.animation = 'floatMascote 6s ease-in-out infinite'; }, 600);
-
             if (estaSumido || estaFugindo || estaVoltando || estaContando) return;
             if (timeoutFala) { clearTimeout(timeoutFala); timeoutFala = null; estaFalando = false; }
             document.getElementById('falaContainer').classList.remove('falando');
@@ -829,7 +827,7 @@
         function abrirFAQ(){document.getElementById('faqModal').classList.add('active');}
         function fecharFAQ(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('faqModal').classList.remove('active');}
         function toggleChat(){document.getElementById('chatModal').classList.toggle('active');}
-        function chatResposta(op){const b=document.getElementById('chatBody');const resp={produtos:'Temos caixas, imãs, displays!',promocoes:'Promoções nos destaques!',duvidas:'Pergunte à vontade!',contato:'WhatsApp: (11) 99999-9999'};b.innerHTML+=`<div class="chat-msg user">${op}</div><div class="chat-msg gluudyx">${resp[op]}</div>`;b.scrollTop=b.scrollHeight;}
+        function chatResposta(op){const b=document.getElementById('chatBody');const resp={produtos:'Temos caixas, imãs, displays!',promocoes:'Promoções nos destaques!',duvidas:'Pergunte à vontade!',contato:'WhatsApp: (21) 97612-1076'};b.innerHTML+=`<div class="chat-msg user">${op}</div><div class="chat-msg gluudyx">${resp[op]}</div>`;b.scrollTop=b.scrollHeight;}
         function abrirModalSobre(){document.getElementById('modalSobre').classList.add('active');}
         function fecharModalSobre(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('modalSobre').classList.remove('active');}
         function abrirModalContato(){document.getElementById('modalContato').classList.add('active');}
