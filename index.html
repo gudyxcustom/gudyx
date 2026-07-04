@@ -329,16 +329,18 @@
         .chat-footer { padding:10px 15px; border-top:1px solid var(--vidro-borda); display:flex; flex-wrap:wrap; gap:6px; }
         .quick-btn { background:rgba(255,255,255,0.05); border:1px solid var(--vidro-borda); border-radius:20px; padding:6px 12px; font-size:0.8rem; color:var(--cor-texto); cursor:pointer; transition:var(--transicao); }
         .quick-btn:hover { background:rgba(172,40,255,0.2); }
-        /* MINI GLUUDYX INFLUENCIADOR (FUNCIONAL) */
+        /* MINI GLUUDYX SOBRE O CARRINHO */
         #miniGluudyx {
             display: none;
             position: fixed;
             bottom: 20px;
-            left: 20px;
-            z-index: 100001;
+            right: 20px; /* agora fica sobre o drawer */
+            left: auto;
+            z-index: 100001; /* acima do drawer */
             align-items: center;
             gap: 10px;
             pointer-events: none;
+            flex-direction: row-reverse; /* balão à esquerda, imagem à direita */
         }
         #miniGluudyx img {
             width: 60px;
@@ -358,6 +360,16 @@
             max-width: 200px;
             color: #fff;
             box-shadow: 0 0 20px rgba(172,40,255,0.5);
+            position: relative;
+        }
+        .mini-fala::after { /* aponta para a direita (carrinho) */
+            content: '';
+            position: absolute;
+            right: -12px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-left-color: rgba(11,4,28,0.95);
         }
         @media (max-width:900px) {
             .fala-container { right:-40px; width:160px; font-size:0.75rem; top:5px; }
@@ -580,10 +592,10 @@
         <img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx cabeça">
     </div>
 
-    <!-- MINI GLUUDYX INFLUENCIADOR -->
+    <!-- MINI GLUUDYX INFLUENCIADOR (agora sobre o carrinho) -->
     <div id="miniGluudyx">
-        <img src="https://i.imgur.com/Y5H9zqr.png" alt="Mini Gluudyx">
         <div class="mini-fala"></div>
+        <img src="https://i.imgur.com/Y5H9zqr.png" alt="Mini Gluudyx">
     </div>
 
     <!-- HOME -->
@@ -898,7 +910,7 @@
             }
         }, 15000);
 
-        // ================= MINI GLUUDYX =================
+        // ================= MINI GLUUDYX (SOBRE O CARRINHO) =================
         const frasesInfluenciador = [
             "Finaliza essa compra! 🛒", "Tem certeza que não quer mais um?", "Aproveita o cupom BEMVINDO10!",
             "Esses produtos tão com saudade!", "Não deixa pra depois, hein!", "Leva mais um que o frete some! 😜",
@@ -933,7 +945,7 @@
             carrinho.forEach(item => {
                 const sub = parseFloat(item.preco.replace(',','.')) * item.quantidade; total += sub;
                 html += `<div class="cart-drawer-item"><img src="${item.imagem||'https://placehold.co/50'}" class="item-img"><div class="item-info"><h4>${item.nome}</h4><div>R$ ${item.preco} x ${item.quantidade}</div></div>
-                <div class="item-actions"><button onclick="alterarQtdCarrinho('${item.id}',-1)">−</button><span class="qtd">${item.quantidade}</span><button onclick="alterarQtdCarrinho('${item.id}',1)">+</button><button class="btn-remove" onclick="removerDoCarrinho('${item.id}')">🗑️</button></div></div>`;
+                <div class="item-actions"><button onclick="alterarQtdCarrinho('${item.id}',-1)">−</button><span class="qtd">${item.quantidade}</span><button onclick="alterarQtdCarrinho('${item.id}',1)">+</button><button class="btn-remove" onclick="alterarQtdCarrinho('${item.id}',-1)">🗑️</button></div></div>`;
             });
             body.innerHTML = html;
             if (cupomAtual) { if (cupomAtual.tipo === 'percentual') total *= (1 - cupomAtual.valor/100); else total = Math.max(0, total - cupomAtual.valor); }
@@ -950,14 +962,15 @@
             setTimeout(abrirDrawer, 300);
         }
         function addToCartFromModal() { if (produtoModalAtual) { addToCart(produtoModalAtual.id, quantidadeModal); fecharModal(); } }
-        function removerDoCarrinho(id) { carrinho = carrinho.filter(c => c.id !== id); salvarCarrinho(); }
+        function removerDoCarrinho(id) { carrinho = carrinho.filter(c => c.id !== id); salvarCarrinho(); } // mantida para uso interno se necessário
         function alterarQtdCarrinho(id, delta) {
             const item = carrinho.find(c => c.id === id); if (!item) return;
             const prod = dados.produtos.find(p => p.id === id);
             const n = item.quantidade + delta;
-            if (n < 1) return removerDoCarrinho(id);
-            if (n > getEstoque(prod)) return alert('Estoque máximo!');
-            item.quantidade = n; salvarCarrinho();
+            if (n < 1) { carrinho = carrinho.filter(c => c.id !== id); } // se zerar, remove
+            else if (n > getEstoque(prod)) return alert('Estoque máximo!');
+            else item.quantidade = n;
+            salvarCarrinho();
         }
         function atualizarBadgeCarrinho() {
             const t = carrinho.reduce((a,c) => a + c.quantidade, 0);
