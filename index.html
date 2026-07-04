@@ -109,8 +109,6 @@
         #sliderDots { display:flex; gap:8px; justify-content:center; padding:0 0 15px; }
         #sliderDots .dot { width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,0.2); cursor:pointer; border:none; transition:var(--transicao); }
         #sliderDots .dot.active-dot { background:var(--ciano-brilhante); transform:scale(1.3); box-shadow:0 0 15px rgba(0,242,254,0.6); }
-
-        /* ===== MAIS VENDIDOS COM EFEITO DE VIDRO ===== */
         .mais-vendidos-section { width:100%; padding-top:15px; border-top:1px solid var(--vidro-borda); }
         .mais-vendidos-section .section-title { font-size:1.3rem; letter-spacing:4px; text-align:center; font-weight:300; }
         .grid-vendidos { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:20px; }
@@ -170,7 +168,6 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.5) !important;
             z-index: 2;
         }
-
         .listagem-screen { flex-direction:column; align-items:center; padding:30px 20px; gap:20px; background:rgba(11,4,28,0.6); width:100%; }
         .listagem-header { display:flex; align-items:center; gap:15px; flex-wrap:wrap; justify-content:center; width:100%; max-width:1100px; padding-bottom:10px; }
         .listagem-header h2 { font-size:clamp(1.5rem,3vw,2.2rem); letter-spacing:4px; text-shadow:0 0 30px rgba(172,40,255,0.5); text-align:center; font-weight:300; flex:1; }
@@ -368,7 +365,6 @@
         .faq-item .faq-q.open i { transform:rotate(180deg); }
         .faq-item .faq-a { display:none; padding-top:8px; opacity:0.8; font-size:0.95rem; }
         .faq-item .faq-a.open { display:block; }
-        /* MINI CHAT */
         #chatButton { position:fixed; bottom: 120px; left:20px; width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:var(--transicao); opacity:0.7; }
         #chatButton:hover { transform:scale(1.1); opacity:1; }
         #chatModal { position:fixed; bottom: 185px; left:20px; width:320px; max-width:80vw; background:var(--vidro-fundo); backdrop-filter:blur(16px); border:1px solid var(--vidro-borda); border-radius:20px; z-index:9999; display:none; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.6); }
@@ -728,11 +724,31 @@
         let quantidadeModal = 1, produtoModalAtual = null, viewMode = 'grid';
         let avaliacoes = {};
 
-        // Mascote
+        // ================= MASCOTE =================
         let cliqueCount = 0, ultimoCliqueTime = 0, estaFalando = false, estaFugindo = false, estaVoltando = false, estaSumido = false, estaContando = false;
         let timeoutFala = null, timeoutIrritacao = null, mascoteMsgIdx = 0, mascoteMensagens = [];
         const RESET_INTERVAL = 30 * 60 * 1000;
         let ultimaIrritacaoTimestamp = 0;
+
+        function salvarEstadoMascote() {
+            localStorage.setItem('gudyx_mascote_state', JSON.stringify({ cliqueCount, ultimoCliqueTime, estaSumido, ultimaIrritacaoTimestamp, timestamp: Date.now() }));
+        }
+        function carregarEstadoMascote() {
+            const saved = localStorage.getItem('gudyx_mascote_state');
+            if (saved) {
+                try {
+                    const estado = JSON.parse(saved);
+                    if (Date.now() - estado.timestamp < RESET_INTERVAL) {
+                        cliqueCount = estado.cliqueCount || 0; ultimoCliqueTime = estado.ultimoCliqueTime || 0;
+                        estaSumido = estado.estaSumido || false; ultimaIrritacaoTimestamp = estado.ultimaIrritacaoTimestamp || 0;
+                        if (estaSumido) {
+                            document.getElementById('peekingHead').classList.add('active');
+                            document.getElementById('mascoteWrapper').classList.add('somiu');
+                        }
+                    }
+                } catch(e) {}
+            }
+        }
 
         // ================= FIREBASE =================
         const firebaseConfig = {
@@ -790,27 +806,7 @@
         function voltarParaEscolha() { mostrarTela('escolhaScreen'); }
         function navegarPara(destino) { mostrarTela(destino === 'servicos' ? 'servicosScreen' : 'produtosScreen'); carregarCategorias(destino); }
 
-        // ================= MASCOTE =================
-        function salvarEstadoMascote() {
-            localStorage.setItem('gudyx_mascote_state', JSON.stringify({ cliqueCount, ultimoCliqueTime, estaSumido, ultimaIrritacaoTimestamp, timestamp: Date.now() }));
-        }
-        function carregarEstadoMascote() {
-            const saved = localStorage.getItem('gudyx_mascote_state');
-            if (saved) {
-                try {
-                    const estado = JSON.parse(saved);
-                    if (Date.now() - estado.timestamp < RESET_INTERVAL) {
-                        cliqueCount = estado.cliqueCount || 0; ultimoCliqueTime = estado.ultimoCliqueTime || 0;
-                        estaSumido = estado.estaSumido || false; ultimaIrritacaoTimestamp = estado.ultimaIrritacaoTimestamp || 0;
-                        if (estaSumido) {
-                            document.getElementById('peekingHead').classList.add('active');
-                            document.getElementById('mascoteWrapper').classList.add('somiu');
-                        }
-                    }
-                } catch(e) {}
-            }
-        }
-
+        // ================= MASCOTE (COMPLETO COM BIRRA) =================
         const piadas = [
             "Por que o caderno foi ao médico? Porque estava com febre de 39,9! 📓🤒",
             "Qual o doce favorito do Gluudyx? Pé de moleque! Porque ele é grudento! 🍬",
@@ -831,23 +827,26 @@
         function getMensagensMascote() {
             const msgs = [];
             const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p));
-            if (promos.length > 0) { const p = promos[Math.floor(Math.random()*promos.length)]; msgs.push(`🔥 ${p.nome} está em promoção por apenas R$ ${p.precoPromo}!`); }
+            if (promos.length > 0) { const p = promos[Math.floor(Math.random()*promos.length)]; msgs.push(`🔥 ${p.nome} está em promoção por apenas R$ ${p.precoPromo}! Corre que o estoque não espera!`); }
             const top = [...dados.produtos].sort((a,b)=>(b.cliques||0)-(a.cliques||0)).slice(0,3);
-            if (top.length>0 && top[0].cliques>0) { const p = top[Math.floor(Math.random()*top.length)]; msgs.push(`🏆 ${p.nome} é o mais acessado!`); }
+            if (top.length>0 && top[0].cliques>0) { const p = top[Math.floor(Math.random()*top.length)]; msgs.push(`🏆 ${p.nome} é o produto mais acessado do momento! Já conferiu?`); }
             const disponiveis = dados.produtos.filter(p=>isEmEstoque(p));
-            if (disponiveis.length>0) { const dica = disponiveis[Math.floor(Math.random()*disponiveis.length)]; msgs.push(`💡 Dica: que tal "${dica.nome}"?`); }
-            msgs.push(piadas[Math.floor(Math.random()*piadas.length)]);
-            if (msgs.length===0) msgs.push('Olá, sou o Gluudyx!');
+            if (disponiveis.length>0) { const dica = disponiveis[Math.floor(Math.random()*disponiveis.length)]; msgs.push(`💡 Dica do dia: que tal dar uma olhada em "${dica.nome}"?`); }
+            const piada = piadas[Math.floor(Math.random()*piadas.length)];
+            msgs.push(piada);
+            // ADICIONA AS FRASES DO ADMIN AO POOL
+            if (dados.frases && dados.frases.length > 0) {
+                msgs.push(...dados.frases);
+            }
+            if (msgs.length===0) msgs.push('Olá, sou o Gluudyx! ✦', 'Amor em cada detalhe', 'Feito com alma taurina');
             return msgs;
         }
 
         function atualizarMensagensMascote() {
-            if (dados.frases && dados.frases.length > 0) {
-                mascoteMensagens = [...dados.frases];
-            } else {
-                mascoteMensagens = ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe', 'Escolha seu caderno cósmico', 'Feito com alma taurina'];
-            }
-            console.log('Mensagens do mascote:', mascoteMensagens);
+            mascoteMensagens = getMensagensMascote();
+            // Embaralhar para não ficar repetitivo
+            mascoteMensagens = mascoteMensagens.sort(() => Math.random() - 0.5);
+            console.log('Mensagens do mascote:', mascoteMensagens.length, 'frases');
         }
 
         function falarMascote(msgP = null) {
@@ -891,7 +890,7 @@
             falarMascote(msg);
         }
 
-        // Clique no mascote
+        // CLIQUE NO MASCOTE (BIRRA)
         document.getElementById('mascoteWrapper').addEventListener('click', function() {
             console.log('Mascote clicado!');
             this.style.animation = 'none'; this.offsetHeight; this.style.animation = 'floatMascote 0.6s ease-in-out';
@@ -905,27 +904,75 @@
             else { cliqueCount = 0; }
             const wrapper = document.getElementById('mascoteWrapper');
             const eff = emRecarga ? 1 : cliqueCount;
-            if (eff === 1) { mostrarExpressao('feliz'); falarMascote(); wrapper.classList.remove('irritado-1', 'irritado-2'); }
-            else if (eff === 2) { mostrarExpressao('irritado-1'); wrapper.classList.remove('irritado-2'); falarMascote('Para com isso! 😤'); }
-            else if (eff === 3) { mostrarExpressao('irritado-2'); wrapper.classList.remove('irritado-1'); falarMascote('Bravo com você! 😡'); }
-            else if (eff >= 4) {
+            if (eff === 1) {
+                mostrarExpressao('feliz');
+                const rand = Math.random();
+                if (rand < 0.3) falarMascote('Opa! Clicou em mim? Que honra! 😊');
+                else if (rand < 0.6) falarMascote('Você é fofo(a) de ficar me clicando! 🥰');
+                else falarMascote(piadas[Math.floor(Math.random() * piadas.length)]);
+                wrapper.classList.remove('irritado-1', 'irritado-2');
+            } else if (eff === 2) {
+                mostrarExpressao('irritado-1'); wrapper.classList.remove('irritado-2');
+                falarMascote('Para com isso! 😤 Você tá me deixando nervoso!');
+            } else if (eff === 3) {
+                mostrarExpressao('irritado-2'); wrapper.classList.remove('irritado-1');
+                falarMascote('Gluudyx está bravo com você! 😡 Agora vai ter que me pedir desculpas!');
+            } else if (eff >= 4) {
                 mostrarExpressao(null); wrapper.classList.remove('irritado-1', 'irritado-2'); estaContando = true;
-                const msgs = ['JÁ CHEGA! 5...', '4...', '3...', '2...', '1...'];
-                let idx = 0;
-                const iv = setInterval(() => {
-                    if (idx < msgs.length) { falarContagem(msgs[idx]); idx++; }
-                    else { clearInterval(iv); estaContando = false; estaFugindo = true; wrapper.classList.add('fugindo'); falarMascote('TCHAU!'); document.getElementById('alertaContainer').classList.add('active');
-                        setTimeout(() => { wrapper.classList.add('somiu'); estaFugindo = false; estaSumido = true; document.getElementById('peekingHead').classList.add('active'); ultimaIrritacaoTimestamp = Date.now(); salvarEstadoMascote(); document.getElementById('alertaContainer').classList.remove('active'); }, 2500); }
+                const mensagens = ['JÁ CHEGA! VOU EMBORA! 🚀 5...', 'Tchau em 4...', 'Tchau em 3...', 'Tchau em 2...', 'Tchau em 1...'];
+                let index = 0;
+                const intervaloContagem = setInterval(() => {
+                    if (index < mensagens.length) { falarContagem(mensagens[index]); index++; }
+                    else {
+                        clearInterval(intervaloContagem); estaContando = false; estaFugindo = true;
+                        wrapper.classList.add('fugindo'); falarMascote('TCHAU! 👋');
+                        iniciarRastro(); document.getElementById('alertaContainer').classList.add('active');
+                        setTimeout(() => {
+                            if (!estaSumido) {
+                                pararRastro(); document.getElementById('alertaContainer').classList.remove('active');
+                                wrapper.classList.remove('fugindo'); wrapper.classList.add('somiu');
+                                estaFugindo = false; estaSumido = true;
+                                document.getElementById('peekingHead').classList.add('active');
+                                ultimaIrritacaoTimestamp = Date.now(); salvarEstadoMascote();
+                            }
+                        }, 2500);
+                    }
                 }, 1000);
                 return;
             }
             if (!emRecarga) { timeoutIrritacao = setTimeout(() => { cliqueCount = 0; mostrarExpressao('feliz'); salvarEstadoMascote(); }, 5000); salvarEstadoMascote(); }
         });
 
-        function trazerMascoteDeVolta() { document.getElementById('peekingHead').classList.remove('active'); document.getElementById('mascoteWrapper').classList.remove('somiu'); estaSumido = false; falarMascote('Voltei! 🎉'); }
+        function trazerMascoteDeVolta() {
+            document.getElementById('peekingHead').classList.remove('active');
+            document.getElementById('mascoteWrapper').classList.remove('somiu');
+            estaSumido = false; falarMascote('Voltei! 🎉');
+        }
 
-        // Intervalo de fala
-        setInterval(() => { if (!estaFalando && !estaFugindo && !estaVoltando && !estaSumido && !estaContando) { atualizarMensagensMascote(); falarMascote(); } }, 15000);
+        // Intervalo de fala automática (a cada 15s)
+        setInterval(() => {
+            if (!estaFalando && !estaFugindo && !estaVoltando && !estaSumido && !estaContando) {
+                atualizarMensagensMascote(); falarMascote();
+            }
+        }, 15000);
+
+        // ================= RASTRO DE FUGA =================
+        let trailParticles = [], trailAnimationId = null;
+        const trailCanvas = document.getElementById('trailCanvas'), trailCtx = trailCanvas.getContext('2d');
+        function initTrailCanvas() { trailCanvas.width = innerWidth; trailCanvas.height = innerHeight; }
+        window.addEventListener('resize', initTrailCanvas); initTrailCanvas();
+        function criarRastro(x, y) {
+            const num = 60, colors = ['hsla(270,100%,70%,', 'hsla(200,100%,70%,', 'hsla(330,100%,70%,'];
+            for (let i=0;i<num;i++) trailParticles.push({x:x+(Math.random()-0.5)*30,y:y+(Math.random()-0.5)*30,vx:(Math.random()-0.5)*6,vy:(Math.random()-0.5)*6-3,life:1,decay:0.005+Math.random()*0.01,size:4+Math.random()*8,color:colors[Math.floor(Math.random()*colors.length)]});
+        }
+        function animarRastro() {
+            if (!document.getElementById('trailContainer').classList.contains('active')) { if(trailAnimationId){cancelAnimationFrame(trailAnimationId);trailAnimationId=null;} return; }
+            trailCtx.clearRect(0,0,trailCanvas.width,trailCanvas.height); trailCtx.shadowBlur=20; trailCtx.shadowColor='rgba(172,40,255,0.5)';
+            for (let i=trailParticles.length-1;i>=0;i--) { let p=trailParticles[i]; p.x+=p.vx; p.y+=p.vy; p.life-=p.decay; if(p.life<=0){trailParticles.splice(i,1);continue;} trailCtx.beginPath(); trailCtx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2); trailCtx.fillStyle=p.color+p.life+')'; trailCtx.fill(); }
+            trailAnimationId=requestAnimationFrame(animarRastro);
+        }
+        function iniciarRastro() { document.getElementById('trailContainer').classList.add('active'); let r=document.getElementById('mascoteWrapper').getBoundingClientRect(); criarRastro(r.left+r.width/2,r.top+r.height/2); if(!trailAnimationId)animarRastro(); }
+        function pararRastro() { document.getElementById('trailContainer').classList.remove('active'); trailParticles=[]; if(trailAnimationId){cancelAnimationFrame(trailAnimationId);trailAnimationId=null;} trailCtx.clearRect(0,0,trailCanvas.width,trailCanvas.height); trailCtx.shadowBlur=0; }
 
         // ================= CARRINHO =================
         function carregarCarrinho() {
@@ -940,7 +987,7 @@
         }
         function renderizarDrawer() {
             const body = document.getElementById('cartDrawerBody'), totalEl = document.getElementById('cartDrawerTotal');
-            if (carrinho.length === 0) { body.innerHTML = '<div class="cart-empty">Seu carrinho está vazio.</div>'; totalEl.textContent = 'Total: R$ 0,00'; document.getElementById('cupomMsg').textContent = ''; document.getElementById('cupomInput').value = ''; return; }
+            if (carrinho.length === 0) { body.innerHTML = '<div class="cart-empty">Seu carrinho está vazio.</div>'; totalEl.textContent = 'Total: R$ 0,00'; document.getElementById('cupomMsg').textContent = ''; document.getElementById('cupomInput').value = ''; verificarHumorCarrinho(); return; }
             let html = '', total = 0;
             carrinho.forEach(item => {
                 const sub = parseFloat(item.preco.replace(',', '.')) * item.quantidade; total += sub;
@@ -949,6 +996,7 @@
             body.innerHTML = html;
             if (cupomAtual) { if (cupomAtual.tipo === 'percentual') total *= (1 - cupomAtual.valor / 100); else if (cupomAtual.tipo === 'fixo') total = Math.max(0, total - cupomAtual.valor); totalEl.textContent = `Total: R$ ${total.toFixed(2)} (com desconto)`; }
             else { totalEl.textContent = `Total: R$ ${total.toFixed(2)}`; }
+            verificarHumorCarrinho();
         }
         function addToCart(prodId, qtd = 1) {
             const prod = dados.produtos.find(p => p.id === prodId);
@@ -983,6 +1031,13 @@
             else { cupomAtual = null; document.getElementById('cupomMsg').textContent = 'Cupom inválido'; document.getElementById('cupomMsg').className = 'cupom-msg error'; }
             salvarCarrinho();
         }
+        function verificarHumorCarrinho() {
+            const totalItens = carrinho.reduce((acc, c) => acc + c.quantidade, 0);
+            if (totalItens >= 3) { falarMascote('Já pensou em levar mais um? 😉'); mostrarExpressao('feliz'); }
+            else if (totalItens === 0 && document.getElementById('cartDrawer').classList.contains('open')) { mostrarExpressao('triste'); }
+            else if (totalItens > 0) { mostrarExpressao('feliz'); }
+            else { mostrarExpressao(null); }
+        }
 
         // ================= FAVORITOS =================
         function carregarFavoritos() { const f = localStorage.getItem('gudyxFavoritos'); favoritos = f ? JSON.parse(f) : []; }
@@ -1007,8 +1062,7 @@
             let html = '';
             favoritos.forEach(id => {
                 const prod = dados.produtos.find(p => p.id === id); if (!prod) return;
-                const imgSrc = getImagemPrincipal(prod);
-                html += `<div class="cart-drawer-item"><img src="${imgSrc}" class="item-img"><div class="item-info"><h4>${prod.nome}</h4><div class="item-price">R$ ${prod.preco}</div></div><div class="item-actions"><button onclick="abrirModal('${prod.id}'); fecharFavDrawer();"><i class="fas fa-eye"></i></button><button class="btn-remove" onclick="toggleFavorito('${prod.id}'); renderizarFavDrawer();"><i class="fas fa-heart-broken"></i></button></div></div>`;
+                html += `<div class="cart-drawer-item"><img src="${getImagemPrincipal(prod)}" class="item-img"><div class="item-info"><h4>${prod.nome}</h4><div class="item-price">R$ ${prod.preco}</div></div><div class="item-actions"><button onclick="abrirModal('${prod.id}'); fecharFavDrawer();"><i class="fas fa-eye"></i></button><button class="btn-remove" onclick="toggleFavorito('${prod.id}'); renderizarFavDrawer();"><i class="fas fa-heart-broken"></i></button></div></div>`;
             });
             body.innerHTML = html;
         }
