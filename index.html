@@ -52,11 +52,7 @@
         @keyframes discoBg { 0% { background-color: #ff00ff; } 20% { background-color: #ffff00; } 40% { background-color: #00ffff; } 60% { background-color: #ff0000; } 80% { background-color: #00ff00; } 100% { background-color: #0000ff; } }
         @keyframes flameFlicker { 0% { opacity: 1; transform: translateY(0); } 50% { opacity: 0.7; transform: translateY(-3px); } 100% { opacity: 1; transform: translateY(0); } }
         @keyframes rainbowBg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        @keyframes purpleFire { 
-            0% { background-position: 0% 0%; box-shadow: 0 0 20px #a028ff, 0 0 40px #d400ff, 0 0 60px #a028ff; } 
-            50% { background-position: 0% 100%; box-shadow: 0 0 30px #d400ff, 0 0 60px #a028ff, 0 0 80px #d400ff; } 
-            100% { background-position: 0% 0%; box-shadow: 0 0 20px #a028ff, 0 0 40px #d400ff, 0 0 60px #a028ff; } 
-        }
+        @keyframes purpleFire { 0% { background-position: 0% 0%; box-shadow: 0 0 20px #a028ff, 0 0 40px #d400ff, 0 0 60px #a028ff; } 50% { background-position: 0% 100%; box-shadow: 0 0 30px #d400ff, 0 0 60px #a028ff, 0 0 80px #d400ff; } 100% { background-position: 0% 0%; box-shadow: 0 0 20px #a028ff, 0 0 40px #d400ff, 0 0 60px #a028ff; } }
         body.festa { animation: discoBg 0.2s infinite; }
         .float-cart.bounce { animation: bounceCart 0.6s ease; }
         .produto-card:hover { animation: wiggle 0.5s ease; }
@@ -107,15 +103,7 @@
         .fire-badge { position:absolute; top:12px; right:12px; background:rgba(122,0,255,0.4); backdrop-filter:blur(8px); padding:4px 14px; border-radius:20px; font-weight:800; font-size:0.8rem; text-transform:uppercase; z-index:2; animation:fireGlow 0.8s ease-in-out infinite alternate; border:1px solid rgba(255,255,255,0.2); }
         #dynamicSliderContainer .slide-item { display:none; padding:25px 20px; text-align:center; cursor:pointer; animation:fadeSlideIn 0.5s; }
         #dynamicSliderContainer .slide-item.active-slide { display:block; }
-        /* IMAGEM DO SLIDER: NUNCA MAIS CORTADA */
-        #dynamicSliderContainer .slide-item img { 
-            width:100%; 
-            max-height:280px; 
-            object-fit:contain; 
-            border-radius:12px; 
-            background: rgba(0,0,0,0.3);
-            display:block;
-        }
+        #dynamicSliderContainer .slide-item img { width:100%; max-height:280px; object-fit:contain; border-radius:12px; background: rgba(0,0,0,0.3); display:block; }
         #dynamicSliderContainer .slide-item h4 { font-size:1.2rem; margin:5px 0; }
         #dynamicSliderContainer .slide-item .preco { font-size:1.6rem; font-weight:700; color:var(--amarelo-neon); text-shadow:0 0 20px rgba(255,229,0,0.3); }
         #sliderDots { display:flex; gap:8px; justify-content:center; padding:0 0 15px; }
@@ -140,7 +128,7 @@
             gap:8px;
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
             position: relative;
-            overflow: visible !important; /* GARANTE QUE O HOT NÃO SEJA CORTADO */
+            overflow: visible !important;
         }
         .card-vendido::before {
             content: '';
@@ -163,7 +151,6 @@
         .card-vendido .icon-box { width:60px; height:60px; border-radius:50%; background:rgba(255,255,255,0.05); display:flex; align-items:center; justify-content:center; font-size:1.8rem; color:var(--ciano-brilhante); }
         .card-vendido h4 { font-size:0.95rem; font-weight:500; }
         .card-vendido .preco { font-weight:700; color:var(--amarelo-neon); font-size:1.1rem; }
-        /* HOT COM EFEITO DE FOGO ROXO INTENSO E TOTALMENTE VISÍVEL */
         .fire-badge-mini {
             position: absolute;
             top: -18px;
@@ -396,6 +383,35 @@
         .chat-footer { padding:10px 15px; border-top:1px solid var(--vidro-borda); display:flex; flex-wrap:wrap; gap:6px; }
         .quick-btn { background:rgba(255,255,255,0.05); border:1px solid var(--vidro-borda); border-radius:20px; padding:6px 12px; font-size:0.8rem; color:var(--cor-texto); cursor:pointer; transition:var(--transicao); }
         .quick-btn:hover { background:rgba(172,40,255,0.2); }
+        /* MINI GLUUDYX INFLUENCIADOR */
+        #miniGluudyx { 
+            display:none; 
+            position:fixed; 
+            bottom:20px; 
+            left:20px; 
+            z-index:100001; 
+            align-items:center; 
+            gap:10px; 
+            pointer-events:none;
+        }
+        #miniGluudyx img {
+            width:60px;
+            height:60px;
+            border-radius:50%;
+            border:2px solid var(--ciano-brilhante);
+            box-shadow:0 0 25px rgba(172,40,255,0.9);
+            animation: floatMascote 3s ease-in-out infinite;
+        }
+        .mini-fala {
+            background:rgba(11,4,28,0.95);
+            backdrop-filter:blur(8px);
+            border:1px solid var(--vidro-borda);
+            padding:10px 16px;
+            border-radius:20px;
+            font-size:0.85rem;
+            max-width:200px;
+            box-shadow:0 0 20px rgba(172,40,255,0.5);
+        }
         @media (max-width:900px) {
             .fala-container { right:-40px; width:160px; font-size:0.75rem; top:5px; }
             .main-area { justify-content:center; gap:20px; }
@@ -612,6 +628,12 @@
     <div id="peekingHead" onclick="trazerMascoteDeVolta()">
         <div class="peeking-fala">Oi, Você quer que o Gluudyx volte?</div>
         <img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx cabeça">
+    </div>
+
+    <!-- MINI GLUUDYX INFLUENCIADOR -->
+    <div id="miniGluudyx">
+        <img src="https://i.imgur.com/Y5H9zqr.png" alt="Mini Gluudyx">
+        <div class="mini-fala"></div>
     </div>
 
     <!-- HOME -->
@@ -1000,6 +1022,33 @@
         function iniciarRastro() { document.getElementById('trailContainer').classList.add('active'); let r=document.getElementById('mascoteWrapper').getBoundingClientRect(); criarRastro(r.left+r.width/2,r.top+r.height/2); if(!trailAnimationId)animarRastro(); }
         function pararRastro() { document.getElementById('trailContainer').classList.remove('active'); trailParticles=[]; if(trailAnimationId){cancelAnimationFrame(trailAnimationId);trailAnimationId=null;} trailCtx.clearRect(0,0,trailCanvas.width,trailCanvas.height); trailCtx.shadowBlur=0; }
 
+        // ================= MINI GLUUDYX INFLUENCIADOR =================
+        const frasesInfluenciador = [
+            "Finaliza essa compra! 🛒",
+            "Tem certeza que não quer mais um?",
+            "Aproveita o cupom BEMVINDO10!",
+            "Esses produtos tão com saudade!",
+            "Não deixa pra depois, hein!",
+            "Leva mais um que o frete some! 😜",
+            "O Gluudyx aprova esse carrinho!",
+            "Tá esperando o quê? Fecha logo!"
+        ];
+
+        function mostrarMiniGluudyx() {
+            const mini = document.getElementById('miniGluudyx');
+            const fala = mini.querySelector('.mini-fala');
+            fala.textContent = frasesInfluenciador[Math.floor(Math.random() * frasesInfluenciador.length)];
+            mini.style.display = 'flex';
+        }
+
+        function esconderMiniGluudyx() {
+            const drawerOpen = document.getElementById('cartDrawer').classList.contains('open');
+            const modalOpen = document.getElementById('productModal').classList.contains('active');
+            if (!drawerOpen && !modalOpen) {
+                document.getElementById('miniGluudyx').style.display = 'none';
+            }
+        }
+
         // ================= CARRINHO =================
         function carregarCarrinho() {
             let sc = sessionStorage.getItem('gudyxCarrinho');
@@ -1047,8 +1096,8 @@
             item.quantidade = n; salvarCarrinho();
         }
         function atualizarBadgeCarrinho() { const t = carrinho.reduce((a, c) => a + c.quantidade, 0); const b = document.getElementById('cartBadge'); b.textContent = t; b.style.display = t > 0 ? 'flex' : 'none'; }
-        function abrirDrawer() { renderizarDrawer(); document.getElementById('cartDrawerOverlay').classList.add('active'); document.getElementById('cartDrawer').classList.add('open'); }
-        function fecharDrawer() { document.getElementById('cartDrawerOverlay').classList.remove('active'); document.getElementById('cartDrawer').classList.remove('open'); }
+        function abrirDrawer() { renderizarDrawer(); document.getElementById('cartDrawerOverlay').classList.add('active'); document.getElementById('cartDrawer').classList.add('open'); mostrarMiniGluudyx(); }
+        function fecharDrawer() { document.getElementById('cartDrawerOverlay').classList.remove('active'); document.getElementById('cartDrawer').classList.remove('open'); esconderMiniGluudyx(); }
         function limparCarrinho() { carrinho = []; cupomAtual = null; salvarCarrinho(); }
         function aplicarCupom() {
             const input = document.getElementById('cupomInput').value.trim().toUpperCase();
@@ -1112,9 +1161,10 @@
             if (!isEmEstoque(prod)) { cartBtn.disabled = true; cartBtn.textContent = 'Esgotado'; waBtn.style.opacity = '0.5'; waBtn.style.pointerEvents = 'none'; stock.textContent = '⚠️ Produto esgotado'; stock.style.color = '#ff4455'; }
             else { cartBtn.disabled = false; cartBtn.innerHTML = '<i class="fas fa-cart-plus"></i> Adicionar'; waBtn.style.opacity = '1'; waBtn.style.pointerEvents = 'auto'; stock.textContent = `📦 Estoque: ${getEstoque(prod)}`; stock.style.color = 'var(--ciano-brilhante)'; }
             document.getElementById('productModal').classList.add('active');
+            mostrarMiniGluudyx();
             renderizarAvaliacoes(prodId); renderizarSugestoes(prodId);
         }
-        function fecharModal() { document.getElementById('productModal').classList.remove('active'); }
+        function fecharModal() { document.getElementById('productModal').classList.remove('active'); esconderMiniGluudyx(); }
         document.getElementById('productModal').addEventListener('click', function(e) { if (e.target === this) fecharModal(); });
 
         // ================= WHATSAPP =================
