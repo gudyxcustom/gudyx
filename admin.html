@@ -8,127 +8,34 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <style>
-        :root {
-            --roxo-profundo: #0b041c;
-            --ciano-brilhante: #00f2fe;
-            --vidro-fundo: rgba(11, 4, 28, 0.65);
-            --vidro-borda: rgba(172, 40, 255, 0.3);
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: #0b041c;
-            color: #f0eaff;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            min-height: 100vh;
-            margin: 0;
-        }
-        .admin-container {
-            background: var(--vidro-fundo);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--vidro-borda);
-            border-radius: 24px;
-            padding: 30px;
-            max-width: 800px;
-            width: 100%;
-        }
+        :root { --roxo-profundo: #0b041c; --ciano-brilhante: #00f2fe; --vidro-fundo: rgba(11,4,28,0.65); --vidro-borda: rgba(172,40,255,0.3); }
+        body { font-family: 'Poppins', sans-serif; background: #0b041c; color: #f0eaff; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; margin: 0; }
+        .admin-container { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 24px; padding: 30px; max-width: 800px; width: 100%; }
         h1 { text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
         label { display: block; margin: 10px 0 5px; font-size: 0.9rem; opacity: 0.8; }
-        input, select, textarea {
-            width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid var(--vidro-borda);
-            background: rgba(255,255,255,0.05);
-            color: #fff;
-            font-size: 0.95rem;
-            margin-bottom: 10px;
-            font-family: inherit;
-        }
+        input, select, textarea { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--vidro-borda); background: rgba(255,255,255,0.05); color: #fff; font-size: 0.95rem; margin-bottom: 10px; font-family: inherit; }
         textarea { resize: vertical; min-height: 60px; }
         input[type="file"] { padding: 5px; }
-        .checkbox-group { display: flex; gap: 20px; align-items: center; margin-bottom: 10px; flex-wrap: wrap; }
-        .checkbox-group label { margin: 0; display: flex; align-items: center; gap: 5px; }
-        .checkbox-group input[type="checkbox"] { width: auto; margin: 0; }
-        button {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 30px;
-            background: linear-gradient(135deg, #a028ff, #00f2fe);
-            color: #fff;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-right: 10px;
-            margin-bottom: 5px;
-        }
+        button { padding: 10px 20px; border: none; border-radius: 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; margin-right: 10px; margin-bottom: 5px; }
         button:hover { transform: scale(1.05); }
         .btn-danger { background: #ff4455; }
         .btn-danger:hover { background: #cc1122; }
-        .btn-outline { background: transparent; border: 1px solid rgba(255,255,255,0.2); }
         .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 300px; overflow-y: auto; }
-        .admin-item-list .item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            flex-wrap: wrap;
-            gap: 5px;
-        }
-        .admin-item-list .item button {
-            padding: 4px 12px;
-            font-size: 0.8rem;
-            background: #ff4455;
-            margin: 2px;
-        }
+        .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 5px; }
+        .admin-item-list .item button { padding: 4px 12px; font-size: 0.8rem; background: #ff4455; margin: 2px; }
         .admin-item-list .item .btn-edit { background: #a028ff; }
         .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .tabs button { flex: 1; background: rgba(255,255,255,0.1); min-width: 80px; }
         .tabs button.active { background: linear-gradient(135deg, #a028ff, #00f2fe); }
-        .back-link { display: block; text-align: center; margin-top: 20px; color: #00f2fe; text-decoration: none; }
-        .back-link:hover { text-decoration: underline; }
         .hidden { display: none !important; }
-        .backup-area { margin: 20px 0; padding: 15px; border: 1px dashed var(--vidro-borda); border-radius: 16px; }
-        #passwordOverlay {
-            position: fixed; top:0; left:0; width:100%; height:100%;
-            background:rgba(0,0,0,0.9);
-            display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column;
-        }
+        #passwordOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column; }
         #passwordOverlay.hidden { display:none; }
         #passwordOverlay input { max-width:300px; margin:10px auto; }
-        #adminNotificacoes {
-            position: fixed; top: 10px; right: 10px; z-index: 99999;
-            display: flex; flex-direction: column; gap: 5px;
-        }
-        .admin-toast {
-            background: var(--vidro-fundo);
-            backdrop-filter: blur(12px);
-            border: 1px solid var(--vidro-borda);
-            border-radius: 12px;
-            padding: 8px 16px;
-            color: #fff;
-            font-size: 0.9rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            animation: slideInRight 0.3s ease, fadeOut 0.5s 4.5s forwards;
-            max-width: 300px;
-        }
-        @keyframes slideInRight {
-            from { transform: translateX(100px); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        @keyframes fadeOut {
-            to { opacity: 0; transform: translateX(50px); }
-        }
     </style>
 </head>
 <body>
-    <!-- TELA DE SENHA -->
     <div id="passwordOverlay">
         <h2 style="color:#fff;">🔒 Acesso Restrito</h2>
-        <p style="opacity:0.6;margin-bottom:10px;">Digite a senha do Admin</p>
         <input type="password" id="adminPassInput" placeholder="Senha">
         <button onclick="checkPassword()">Entrar</button>
         <p id="passError" style="color:#ff4455;font-size:0.8rem;margin-top:10px;display:none;">Senha incorreta!</p>
@@ -143,243 +50,132 @@
             <button onclick="abrirAba('faq')" id="tabFaq">FAQ</button>
             <button onclick="abrirAba('relatorios')" id="tabRelatorios">Relatórios</button>
             <button onclick="abrirAba('backup')" id="tabBackup">Backup</button>
-            <button onclick="abrirAba('notificacoes')" id="tabNotificacoes">🔔 Notificações</button>
         </div>
 
-        <!-- ===== CATEGORIAS ===== -->
+        <!-- CATEGORIAS -->
         <div id="abaCategorias">
             <h3>Adicionar / Editar Categoria</h3>
             <input type="hidden" id="editCatId">
-            <label>Tipo</label>
-            <select id="catTipo">
-                <option value="produtos">Produtos</option>
-                <option value="servicos">Serviços</option>
-            </select>
-            <label>Nome</label>
-            <input type="text" id="catNome" placeholder="Ex: Caixas Personalizadas">
-            <label>Imagem (até 1 arquivo)</label>
-            <input type="file" id="catImg" accept="image/*">
+            <label>Tipo</label><select id="catTipo"><option value="produtos">Produtos</option><option value="servicos">Serviços</option></select>
+            <label>Nome</label><input type="text" id="catNome">
+            <label>Imagem</label><input type="file" id="catImg" accept="image/*">
             <button onclick="salvarCategoria()">Salvar Categoria</button>
-            <button onclick="corrigirCategoriasAntigas()" class="btn-outline" style="margin-top:10px;">🔧 Corrigir categorias antigas</button>
             <div class="admin-item-list" id="listaCategorias"></div>
         </div>
 
-        <!-- ===== PRODUTOS ===== -->
+        <!-- PRODUTOS -->
         <div id="abaProdutos" style="display:none;">
             <h3>Adicionar / Editar Item</h3>
             <input type="hidden" id="editProdId">
-            <label>Tipo</label>
-            <select id="prodTipo" onchange="atualizarSelectCategorias()">
-                <option value="produtos">Produtos</option>
-                <option value="servicos">Serviços</option>
-            </select>
-            <label>Categoria</label>
-            <select id="prodCategoria">
-                <option value="">Selecione uma categoria</option>
-            </select>
-            <label>Nome</label>
-            <input type="text" id="prodNome" placeholder="Ex: Caixa Média">
-            <label>Descrição</label>
-            <textarea id="prodDescricao" placeholder="Descrição completa"></textarea>
-            <label>Preço Original (R$)</label>
-            <input type="text" id="prodPreco" placeholder="Ex: 29,90">
-            <label>Estoque (Quantidade)</label>
-            <input type="number" id="prodEstoque" placeholder="Ex: 10" min="0">
-            <label>Imagens (Múltiplas - máximo 3, segure CTRL)</label>
-            <input type="file" id="prodImg" accept="image/*" multiple>
+            <label>Tipo</label><select id="prodTipo" onchange="atualizarSelectCategorias()"><option value="produtos">Produtos</option><option value="servicos">Serviços</option></select>
+            <label>Categoria</label><select id="prodCategoria"></select>
+            <label>Nome</label><input type="text" id="prodNome">
+            <label>Descrição</label><textarea id="prodDescricao"></textarea>
+            <label>Preço (R$)</label><input type="text" id="prodPreco">
+            <label>Estoque</label><input type="number" id="prodEstoque" min="0">
+            <label>Imagens (máx 3)</label><input type="file" id="prodImg" accept="image/*" multiple>
             <div class="checkbox-group">
-                <label><input type="checkbox" id="prodPromocao" onchange="togglePromoFields()"> Em Promoção</label>
+                <label><input type="checkbox" id="prodPromocao" onchange="togglePromoFields()"> Promoção</label>
                 <label><input type="checkbox" id="prodDestaque"> Destaque</label>
-                <label><input type="checkbox" id="prodSlider"> Exibir no Slider</label>
+                <label><input type="checkbox" id="prodSlider"> Slider</label>
             </div>
             <div id="promoFields" class="hidden">
-                <label>Desconto (%)</label>
-                <input type="number" id="prodDesconto" placeholder="Ex: 20" min="0" max="100">
-                <label>Início da Promoção</label>
-                <input type="datetime-local" id="prodPromoStart">
-                <label>Fim da Promoção</label>
-                <input type="datetime-local" id="prodPromoEnd">
-                <label>Descrição da Promoção</label>
-                <textarea id="prodDescPromo" placeholder="Ex: Leve 2 pague 1"></textarea>
+                <label>Desconto (%)</label><input type="number" id="prodDesconto" min="0" max="100">
+                <label>Início</label><input type="datetime-local" id="prodPromoStart">
+                <label>Fim</label><input type="datetime-local" id="prodPromoEnd">
+                <label>Descrição da Promo</label><textarea id="prodDescPromo"></textarea>
             </div>
             <button onclick="salvarProduto()">Salvar Item</button>
             <div class="admin-item-list" id="listaProdutos"></div>
         </div>
 
-        <!-- ===== FRASES DO MASCOTE ===== -->
+        <!-- FRASES -->
         <div id="abaFrases" style="display:none;">
             <h3>Frases do Gluudyx</h3>
-            <p style="opacity:0.6; font-size:0.8rem;">Digite uma frase por linha.</p>
-            <textarea id="frasesInput" rows="6" placeholder="Oi, eu sou Gluudyx!&#10;Amor em cada detalhe"></textarea>
+            <textarea id="frasesInput" rows="6"></textarea>
             <button onclick="salvarFrases()">Salvar Frases</button>
         </div>
 
-        <!-- ===== FAQ ===== -->
+        <!-- FAQ -->
         <div id="abaFaq" style="display:none;">
             <h3>Gerenciar FAQ</h3>
             <input type="hidden" id="editFaqId">
-            <label>Pergunta</label>
-            <input type="text" id="faqPergunta" placeholder="Ex: Qual o prazo de produção?">
-            <label>Resposta</label>
-            <textarea id="faqResposta" placeholder="Digite a resposta..."></textarea>
+            <label>Pergunta</label><input type="text" id="faqPergunta">
+            <label>Resposta</label><textarea id="faqResposta"></textarea>
             <button onclick="salvarFaq()">Salvar FAQ</button>
             <div class="admin-item-list" id="listaFaq"></div>
         </div>
 
-        <!-- ===== RELATÓRIOS ===== -->
+        <!-- RELATÓRIOS -->
         <div id="abaRelatorios" style="display:none;">
             <h3>📊 Relatórios de Cliques</h3>
             <div id="relatorioContainer"></div>
         </div>
 
-        <!-- ===== BACKUP ===== -->
+        <!-- BACKUP -->
         <div id="abaBackup" style="display:none;">
             <h3>Backup e Restauração</h3>
-            <div class="backup-area">
-                <button onclick="exportarBackup()"><i class="fas fa-download"></i> Baixar Backup (.json)</button>
-                <br><br>
-                <label>Restaurar backup (substitui todos os dados):</label>
-                <input type="file" id="importFile" accept=".json">
-                <button onclick="importarBackup()" class="btn-danger"><i class="fas fa-upload"></i> Restaurar</button>
-            </div>
+            <button onclick="exportarBackup()">⬇️ Baixar Backup</button>
+            <br><br>
+            <label>Restaurar backup:</label>
+            <input type="file" id="importFile" accept=".json">
+            <button onclick="importarBackup()" class="btn-danger">⬆️ Restaurar</button>
         </div>
 
-        <!-- ===== NOTIFICAÇÕES ===== -->
-        <div id="abaNotificacoes" style="display:none;">
-            <h3>🔔 Atividade dos clientes</h3>
-            <p style="opacity:0.6;">Últimos eventos (máx. 50)</p>
-            <div id="listaEventos" style="max-height:400px;overflow-y:auto;"></div>
-            <button onclick="limparEventos()" class="btn-danger" style="margin-top:10px;">Limpar histórico</button>
-        </div>
-
-        <button class="btn-danger" onclick="limparDados()" style="margin-top:20px;">Limpar todos os dados (Firestore)</button>
-        <a href="index.html" class="back-link">← Voltar para o site</a>
+        <button class="btn-danger" onclick="limparDados()" style="margin-top:20px;">Limpar todos os dados</button>
+        <a href="index.html" style="display:block;text-align:center;margin-top:20px;color:#00f2fe;">← Voltar para o site</a>
     </div>
 
-    <div id="adminNotificacoes"></div>
-
     <script>
-        // ================= CONFIGURAÇÃO FIREBASE =================
         const firebaseConfig = {
             apiKey: "AIzaSyBLZysnzumgrJPHgFq918WGxH5cGBkv7PY",
             authDomain: "gudyx-ff54b.firebaseapp.com",
             projectId: "gudyx-ff54b",
             storageBucket: "gudyx-ff54b.firebasestorage.app",
             messagingSenderId: "569303537578",
-            appId: "1:569303537578:web:cc5e52933cc30a9c513dd3",
-            measurementId: "G-74ESN3NSJT"
+            appId: "1:569303537578:web:cc5e52933cc30a9c513dd3"
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        firebase.auth().signInAnonymously().catch(e => console.error("Auth error:", e));
 
-        // Autenticação anônima automática
-        firebase.auth().signInAnonymously().catch(error => {
-            console.error("Erro na autenticação:", error);
-            alert("Erro ao autenticar no Firebase. Verifique as regras de segurança.");
-        });
-
-        // Dados globais
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
 
-        // ================= CARREGAR DADOS (CORRIGIDO) =================
         async function carregarDados() {
             try {
-                const snapCategorias = await db.collection('categorias').get();
-                dados.categorias = snapCategorias.docs.map(doc => {
-                    const data = doc.data();
-                    // SEMPRE usar o ID do documento do Firestore como o campo id
-                    return { 
-                        id: doc.id,  // Este é o ID real do documento no Firestore
-                        tipo: data.tipo, 
-                        nome: data.nome, 
-                        imagem: data.imagem || '' 
-                    };
-                });
-                console.log('Categorias carregadas:', dados.categorias);
-
-                const snapProdutos = await db.collection('produtos').get();
-                dados.produtos = snapProdutos.docs.map(doc => {
-                    const data = doc.data();
-                    return { 
-                        id: doc.id,
-                        categoriaId: data.categoriaId,
-                        nome: data.nome,
-                        descricao: data.descricao || '',
-                        preco: data.preco,
-                        estoque: data.estoque || 0,
-                        imagens: data.imagens || [],
-                        promocao: data.promocao || false,
-                        destaque: data.destaque || false,
-                        exibirSlider: data.exibirSlider || false,
-                        precoPromo: data.precoPromo || '',
-                        desconto: data.desconto || 0,
-                        promoStart: data.promoStart || '',
-                        promoEnd: data.promoEnd || '',
-                        descPromo: data.descPromo || '',
-                        cliques: data.cliques || 0
-                    };
-                });
-                console.log('Produtos carregados:', dados.produtos.length);
-
+                const snapCat = await db.collection('categorias').get();
+                dados.categorias = snapCat.docs.map(d => ({ id: d.id, tipo: d.data().tipo, nome: d.data().nome, imagem: d.data().imagem || '' }));
+                const snapProd = await db.collection('produtos').get();
+                dados.produtos = snapProd.docs.map(d => ({ id: d.id, ...d.data() }));
                 const snapFrases = await db.collection('config').doc('frases').get();
                 dados.frases = snapFrases.exists ? snapFrases.data().lista : [];
-
                 const snapFaq = await db.collection('config').doc('faq').get();
                 dados.faq = snapFaq.exists ? snapFaq.data().perguntas : [];
-            } catch (e) {
-                console.error('Erro ao carregar dados:', e);
-                dados = { categorias: [], produtos: [], frases: [], faq: [] };
-            }
+            } catch(e) { console.error(e); }
         }
 
-        // ================= ABAS =================
         function abrirAba(aba) {
-            const abas = ['abaCategorias', 'abaProdutos', 'abaFrases', 'abaFaq', 'abaRelatorios', 'abaBackup', 'abaNotificacoes'];
-            abas.forEach(id => document.getElementById(id).style.display = 'none');
+            ['abaCategorias','abaProdutos','abaFrases','abaFaq','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-
-            if (aba === 'categorias') {
-                document.getElementById('abaCategorias').style.display = 'block';
-                document.getElementById('tabCategorias').classList.add('active');
-            } else if (aba === 'produtos') {
-                document.getElementById('abaProdutos').style.display = 'block';
-                document.getElementById('tabProdutos').classList.add('active');
-                atualizarSelectCategorias();
-            } else if (aba === 'frases') {
-                document.getElementById('abaFrases').style.display = 'block';
-                document.getElementById('tabFrases').classList.add('active');
-                document.getElementById('frasesInput').value = dados.frases.join('\n');
-            } else if (aba === 'faq') {
-                document.getElementById('abaFaq').style.display = 'block';
-                document.getElementById('tabFaq').classList.add('active');
-                carregarFAQ();
-            } else if (aba === 'relatorios') {
-                document.getElementById('abaRelatorios').style.display = 'block';
-                document.getElementById('tabRelatorios').classList.add('active');
-                carregarRelatorios();
-            } else if (aba === 'backup') {
-                document.getElementById('abaBackup').style.display = 'block';
-                document.getElementById('tabBackup').classList.add('active');
-            } else if (aba === 'notificacoes') {
-                document.getElementById('abaNotificacoes').style.display = 'block';
-                document.getElementById('tabNotificacoes').classList.add('active');
-                carregarEventos();
-            }
+            if (aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
+            else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); }
+            else if (aba === 'frases') { document.getElementById('abaFrases').style.display = 'block'; document.getElementById('tabFrases').classList.add('active'); document.getElementById('frasesInput').value = dados.frases.join('\n'); }
+            else if (aba === 'faq') { document.getElementById('abaFaq').style.display = 'block'; document.getElementById('tabFaq').classList.add('active'); carregarFAQ(); }
+            else if (aba === 'relatorios') { document.getElementById('abaRelatorios').style.display = 'block'; document.getElementById('tabRelatorios').classList.add('active'); carregarRelatorios(); }
+            else if (aba === 'backup') { document.getElementById('abaBackup').style.display = 'block'; document.getElementById('tabBackup').classList.add('active'); }
         }
 
-        // ================= FUNÇÃO DE REDIMENSIONAMENTO DE IMAGEM =================
         function redimensionarImagem(file, maxWidth, qualidade) {
-            return new Promise((resolve) => {
+            return new Promise(resolve => {
                 const reader = new FileReader();
-                reader.onload = (e) => {
+                reader.onload = e => {
                     const img = new Image();
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
                         const ratio = maxWidth / img.width;
                         canvas.width = maxWidth;
                         canvas.height = img.height * ratio;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
                         resolve(canvas.toDataURL('image/jpeg', qualidade));
                     };
                     img.src = e.target.result;
@@ -388,114 +184,48 @@
             });
         }
 
-        // ================= CORRIGIR CATEGORIAS ANTIGAS =================
-        async function corrigirCategoriasAntigas() {
-            if (!confirm('Isso vai adicionar o campo "id" correto em todas as categorias. Continuar?')) return;
-            try {
-                const snapshot = await db.collection('categorias').get();
-                let corrigidas = 0;
-                for (const doc of snapshot.docs) {
-                    const data = doc.data();
-                    if (!data.id || data.id !== doc.id) {
-                        await db.collection('categorias').doc(doc.id).update({ id: doc.id });
-                        corrigidas++;
-                        console.log('Categoria corrigida:', doc.id, data.nome);
-                    }
-                }
-                await carregarDados();
-                atualizarListaCategorias();
-                atualizarSelectCategorias();
-                alert(`${corrigidas} categoria(s) foram corrigidas!`);
-            } catch (e) {
-                alert('Erro ao corrigir categorias: ' + e.message);
-            }
-        }
-
-        // ================= CATEGORIAS =================
+        // CATEGORIAS
         async function salvarCategoria() {
             const id = document.getElementById('editCatId').value;
             const tipo = document.getElementById('catTipo').value;
             const nome = document.getElementById('catNome').value.trim();
             if (!nome) return alert('Digite o nome.');
-
             const fileInput = document.getElementById('catImg');
             async function processarCat(imagem) {
                 const dadosCat = { tipo, nome, imagem: imagem || '' };
-                try {
-                    if (id) {
-                        await db.collection('categorias').doc(id).update(dadosCat);
-                    } else {
-                        const docRef = await db.collection('categorias').add(dadosCat);
-                        await db.collection('categorias').doc(docRef.id).update({ id: docRef.id });
-                    }
-                    document.getElementById('editCatId').value = '';
-                    document.getElementById('catNome').value = '';
-                    document.getElementById('catImg').value = '';
-                    await carregarDados();
-                    atualizarListaCategorias();
-                    atualizarSelectCategorias();
-                    alert('Categoria salva com sucesso!');
-                } catch (e) {
-                    alert('Erro ao salvar: ' + e.message);
-                }
+                if (id) { await db.collection('categorias').doc(id).update(dadosCat); }
+                else { const docRef = await db.collection('categorias').add(dadosCat); await db.collection('categorias').doc(docRef.id).update({ id: docRef.id }); }
+                document.getElementById('editCatId').value = ''; document.getElementById('catNome').value = ''; document.getElementById('catImg').value = '';
+                await carregarDados(); atualizarListaCategorias(); atualizarSelectCategorias();
             }
-
-            if (fileInput.files && fileInput.files[0]) {
-                const imgBase64 = await redimensionarImagem(fileInput.files[0], 400, 0.4);
-                processarCat(imgBase64);
-            } else {
-                processarCat(null);
-            }
+            if (fileInput.files[0]) { processarCat(await redimensionarImagem(fileInput.files[0], 400, 0.4)); }
+            else { processarCat(null); }
         }
 
         function editarCategoria(id) {
             const cat = dados.categorias.find(c => c.id === id);
-            if (!cat) return alert('Categoria não encontrada!');
+            if (!cat) return;
             document.getElementById('editCatId').value = cat.id;
             document.getElementById('catTipo').value = cat.tipo;
             document.getElementById('catNome').value = cat.nome;
         }
 
         async function removerCategoria(id) {
-            if (!confirm('Remover categoria e itens associados?')) return;
-            try {
-                await db.collection('categorias').doc(id).delete();
-                const produtos = dados.produtos.filter(p => p.categoriaId === id);
-                for (const prod of produtos) {
-                    await db.collection('produtos').doc(prod.id).delete();
-                }
-                await carregarDados();
-                atualizarListaCategorias();
-                atualizarSelectCategorias();
-                alert('Categoria removida!');
-            } catch (e) {
-                alert('Erro ao remover: ' + e.message);
-            }
+            if (!confirm('Remover categoria e itens?')) return;
+            await db.collection('categorias').doc(id).delete();
+            for (const prod of dados.produtos.filter(p => p.categoriaId === id)) { await db.collection('produtos').doc(prod.id).delete(); }
+            await carregarDados(); atualizarListaCategorias(); atualizarSelectCategorias();
         }
 
         function atualizarListaCategorias() {
-            const lista = document.getElementById('listaCategorias');
-            lista.innerHTML = '';
-            if (dados.categorias.length === 0) {
-                lista.innerHTML = '<p style="opacity:0.6;text-align:center;">Nenhuma categoria cadastrada.</p>';
-                return;
-            }
+            const lista = document.getElementById('listaCategorias'); lista.innerHTML = '';
             dados.categorias.forEach(cat => {
-                const item = document.createElement('div');
-                item.className = 'item';
-                item.innerHTML = `<span>[${cat.tipo}] ${cat.nome} (ID: ${cat.id})</span>
-                    <div>
-                        <button class="btn-edit" onclick="editarCategoria('${cat.id}')">✏️</button>
-                        <button onclick="removerCategoria('${cat.id}')">Remover</button>
-                    </div>`;
-                lista.appendChild(item);
+                lista.innerHTML += `<div class="item"><span>[${cat.tipo}] ${cat.nome}</span><div><button class="btn-edit" onclick="editarCategoria('${cat.id}')">✏️</button><button onclick="removerCategoria('${cat.id}')">Remover</button></div></div>`;
             });
         }
 
-        // ================= PRODUTOS =================
-        function togglePromoFields() {
-            document.getElementById('promoFields').classList.toggle('hidden', !document.getElementById('prodPromocao').checked);
-        }
+        // PRODUTOS
+        function togglePromoFields() { document.getElementById('promoFields').classList.toggle('hidden', !document.getElementById('prodPromocao').checked); }
 
         async function salvarProduto() {
             const id = document.getElementById('editProdId').value;
@@ -510,81 +240,37 @@
             const promoStart = document.getElementById('prodPromoStart').value;
             const promoEnd = document.getElementById('prodPromoEnd').value;
             const descPromo = document.getElementById('prodDescPromo').value.trim();
-
             let precoPromo = '', desconto = 0;
             if (promocao) {
                 desconto = parseFloat(document.getElementById('prodDesconto').value) || 0;
                 const num = parseFloat(preco.replace(',', '.'));
-                if (!isNaN(num) && desconto > 0) {
-                    precoPromo = (num * (1 - desconto / 100)).toFixed(2).replace('.', ',');
-                } else {
-                    precoPromo = preco;
-                }
+                if (!isNaN(num) && desconto > 0) precoPromo = (num * (1 - desconto / 100)).toFixed(2).replace('.', ',');
+                else precoPromo = preco;
             }
-
-            if (!catId) return alert('Selecione uma categoria!');
-            if (!nome) return alert('Digite o nome do item!');
-            if (!preco) return alert('Digite o preço!');
+            if (!catId || !nome || !preco) return alert('Preencha nome e preço.');
 
             const fileInput = document.getElementById('prodImg');
             async function processarProd(imagens) {
-                const produto = {
-                    categoriaId: catId,
-                    nome,
-                    descricao,
-                    preco,
-                    estoque,
-                    imagens: imagens || [],
-                    promocao,
-                    destaque,
-                    exibirSlider,
-                    precoPromo,
-                    desconto,
-                    promoStart,
-                    promoEnd,
-                    descPromo,
-                    cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0
-                };
-
-                try {
-                    if (id) {
-                        await db.collection('produtos').doc(id).update(produto);
-                    } else {
-                        const docRef = await db.collection('produtos').add(produto);
-                        await db.collection('produtos').doc(docRef.id).update({ id: docRef.id });
-                    }
-                    limparFormularioProduto();
-                    await carregarDados();
-                    atualizarListaProdutos();
-                    alert('Item salvo com sucesso!');
-                } catch (e) {
-                    alert('Erro ao salvar: ' + e.message);
-                }
+                const produto = { categoriaId: catId, nome, descricao, preco, estoque, imagens: imagens || [], promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0 };
+                if (id) { await db.collection('produtos').doc(id).update(produto); }
+                else { const docRef = await db.collection('produtos').add(produto); await db.collection('produtos').doc(docRef.id).update({ id: docRef.id }); }
+                limparFormularioProduto(); await carregarDados(); atualizarListaProdutos();
             }
 
-            if (fileInput.files && fileInput.files.length > 0) {
-                const filesToProcess = Array.from(fileInput.files).slice(0, 3);
+            if (fileInput.files.length > 0) {
                 const imagens = [];
-                for (let f of filesToProcess) {
-                    const imgBase64 = await redimensionarImagem(f, 600, 0.5);
-                    imagens.push(imgBase64);
-                }
+                for (let f of Array.from(fileInput.files).slice(0, 3)) { imagens.push(await redimensionarImagem(f, 600, 0.5)); }
                 processarProd(imagens);
-            } else {
-                const produtoExistente = id ? dados.produtos.find(p => p.id === id) : null;
-                processarProd(produtoExistente ? produtoExistente.imagens : []);
-            }
+            } else { processarProd(id ? (dados.produtos.find(p => p.id === id)?.imagens || []) : []); }
         }
 
         function editarProduto(id) {
             const p = dados.produtos.find(p => p.id === id);
-            if (!p) return alert('Produto não encontrado!');
+            if (!p) return;
             document.getElementById('editProdId').value = p.id;
             document.getElementById('prodTipo').value = dados.categorias.find(c => c.id === p.categoriaId)?.tipo || 'produtos';
             atualizarSelectCategorias();
-            setTimeout(() => {
-                document.getElementById('prodCategoria').value = p.categoriaId;
-            }, 100);
+            document.getElementById('prodCategoria').value = p.categoriaId;
             document.getElementById('prodNome').value = p.nome;
             document.getElementById('prodDescricao').value = p.descricao || '';
             document.getElementById('prodPreco').value = p.preco;
@@ -598,338 +284,102 @@
                 document.getElementById('prodPromoStart').value = p.promoStart || '';
                 document.getElementById('prodPromoEnd').value = p.promoEnd || '';
                 document.getElementById('promoFields').classList.remove('hidden');
-            } else {
-                document.getElementById('promoFields').classList.add('hidden');
-            }
+            } else { document.getElementById('promoFields').classList.add('hidden'); }
         }
 
-        async function removerProduto(id) {
-            if (!confirm('Remover este item?')) return;
-            try {
-                await db.collection('produtos').doc(id).delete();
-                await carregarDados();
-                atualizarListaProdutos();
-                alert('Item removido!');
-            } catch (e) {
-                alert('Erro ao remover: ' + e.message);
-            }
-        }
-
-        function limparFormularioProduto() {
-            document.getElementById('editProdId').value = '';
-            document.getElementById('prodNome').value = '';
-            document.getElementById('prodDescricao').value = '';
-            document.getElementById('prodPreco').value = '';
-            document.getElementById('prodEstoque').value = '';
-            document.getElementById('prodImg').value = '';
-            document.getElementById('prodPromocao').checked = false;
-            document.getElementById('prodDestaque').checked = false;
-            document.getElementById('prodSlider').checked = false;
-            document.getElementById('prodDesconto').value = '';
-            document.getElementById('prodDescPromo').value = '';
-            document.getElementById('prodPromoStart').value = '';
-            document.getElementById('prodPromoEnd').value = '';
-            document.getElementById('promoFields').classList.add('hidden');
-        }
-
+        async function removerProduto(id) { if (confirm('Remover?')) { await db.collection('produtos').doc(id).delete(); await carregarDados(); atualizarListaProdutos(); } }
+        function limparFormularioProduto() { document.getElementById('editProdId').value = ''; document.getElementById('prodNome').value = ''; document.getElementById('prodDescricao').value = ''; document.getElementById('prodPreco').value = ''; document.getElementById('prodEstoque').value = ''; document.getElementById('prodImg').value = ''; document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; document.getElementById('promoFields').classList.add('hidden'); }
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
-            const select = document.getElementById('prodCategoria');
-            select.innerHTML = '<option value="">Selecione uma categoria</option>';
-            
-            const categoriasFiltradas = dados.categorias.filter(c => c.tipo === tipo);
-            
-            if (categoriasFiltradas.length === 0) {
-                const opt = document.createElement('option');
-                opt.value = '';
-                opt.textContent = 'Nenhuma categoria encontrada';
-                opt.disabled = true;
-                select.appendChild(opt);
-                return;
-            }
-            
-            categoriasFiltradas.forEach(cat => {
-                const opt = document.createElement('option');
-                opt.value = cat.id;
-                opt.textContent = cat.nome;
-                select.appendChild(opt);
-            });
-            
-            console.log('Select atualizado com', categoriasFiltradas.length, 'categorias do tipo', tipo);
+            const select = document.getElementById('prodCategoria'); select.innerHTML = '<option value="">Selecione</option>';
+            dados.categorias.filter(c => c.tipo === tipo).forEach(cat => { select.innerHTML += `<option value="${cat.id}">${cat.nome}</option>`; });
         }
-
         function atualizarListaProdutos() {
-            const lista = document.getElementById('listaProdutos');
-            lista.innerHTML = '';
-            if (dados.produtos.length === 0) {
-                lista.innerHTML = '<p style="opacity:0.6;text-align:center;">Nenhum item cadastrado.</p>';
-                return;
-            }
+            const lista = document.getElementById('listaProdutos'); lista.innerHTML = '';
             dados.produtos.forEach(p => {
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
-                const item = document.createElement('div');
-                item.className = 'item';
-                let info = `${cat ? cat.nome : 'Sem categoria'} → ${p.nome} (R$ ${p.preco}) | Estoque: ${p.estoque || 0}`;
-                if (p.promocao) info += ` 🔥 ${p.desconto || 0}% OFF`;
-                if (p.exibirSlider) info += ` 📺`;
-                item.innerHTML = `<span>${info}</span>
-                    <div>
-                        <button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button>
-                        <button onclick="removerProduto('${p.id}')">Remover</button>
-                    </div>`;
-                lista.appendChild(item);
+                lista.innerHTML += `<div class="item"><span>${cat?.nome || '?'} → ${p.nome} (R$ ${p.preco})</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
             });
         }
 
-        // ================= FRASES =================
+        // FRASES
         async function salvarFrases() {
-            const lista = document.getElementById('frasesInput').value.split('\n').map(s => s.trim()).filter(s => s.length > 0);
-            if (lista.length === 0) return alert('Digite pelo menos uma frase.');
-            try {
-                await db.collection('config').doc('frases').set({ lista });
-                alert('Frases salvas!');
-            } catch (e) {
-                alert('Erro ao salvar frases: ' + e.message);
-            }
+            const lista = document.getElementById('frasesInput').value.split('\n').map(s => s.trim()).filter(s => s);
+            await db.collection('config').doc('frases').set({ lista });
+            alert('Frases salvas!');
         }
 
-        // ================= FAQ =================
-        function carregarFAQ() {
-            const lista = document.getElementById('listaFaq');
-            lista.innerHTML = '';
-            const faqs = dados.faq || [];
-            if (faqs.length === 0) {
-                lista.innerHTML = '<p style="opacity:0.6;text-align:center;">Nenhuma FAQ cadastrada.</p>';
-                return;
-            }
-            faqs.forEach((faq, index) => {
-                const item = document.createElement('div');
-                item.className = 'item';
-                item.innerHTML = `<span><strong>P:</strong> ${faq.pergunta}<br><span style="opacity:0.6;font-size:0.85rem;">R: ${faq.resposta}</span></span>
-                    <div>
-                        <button class="btn-edit" onclick="editarFaq(${index})">✏️</button>
-                        <button onclick="removerFaq(${index})">Remover</button>
-                    </div>`;
-                lista.appendChild(item);
-            });
-        }
-
+        // FAQ
+        function carregarFAQ() { document.getElementById('listaFaq').innerHTML = dados.faq.map((faq, i) => `<div class="item"><span><strong>P:</strong> ${faq.pergunta}<br>R: ${faq.resposta}</span><div><button class="btn-edit" onclick="editarFaq(${i})">✏️</button><button onclick="removerFaq(${i})">Remover</button></div></div>`).join('') || '<p>Nenhuma FAQ.</p>'; }
         async function salvarFaq() {
             const id = document.getElementById('editFaqId').value;
             const pergunta = document.getElementById('faqPergunta').value.trim();
             const resposta = document.getElementById('faqResposta').value.trim();
             if (!pergunta || !resposta) return alert('Preencha pergunta e resposta.');
-            
-            if (id !== '') {
-                const idx = parseInt(id);
-                if (idx >= 0 && idx < dados.faq.length) {
-                    dados.faq[idx] = { pergunta, resposta };
-                }
-            } else {
-                dados.faq.push({ pergunta, resposta });
-            }
-            
-            try {
-                await db.collection('config').doc('faq').set({ perguntas: dados.faq });
-                document.getElementById('editFaqId').value = '';
-                document.getElementById('faqPergunta').value = '';
-                document.getElementById('faqResposta').value = '';
-                carregarFAQ();
-                alert('FAQ salva!');
-            } catch (e) {
-                alert('Erro ao salvar FAQ: ' + e.message);
-            }
+            if (id !== '') { dados.faq[parseInt(id)] = { pergunta, resposta }; }
+            else { dados.faq.push({ pergunta, resposta }); }
+            await db.collection('config').doc('faq').set({ perguntas: dados.faq });
+            document.getElementById('editFaqId').value = ''; document.getElementById('faqPergunta').value = ''; document.getElementById('faqResposta').value = '';
+            carregarFAQ();
         }
+        function editarFaq(index) { const faq = dados.faq[index]; document.getElementById('editFaqId').value = index; document.getElementById('faqPergunta').value = faq.pergunta; document.getElementById('faqResposta').value = faq.resposta; }
+        async function removerFaq(index) { if (confirm('Remover?')) { dados.faq.splice(index, 1); await db.collection('config').doc('faq').set({ perguntas: dados.faq }); carregarFAQ(); } }
 
-        function editarFaq(index) {
-            const faq = dados.faq[index];
-            document.getElementById('editFaqId').value = index;
-            document.getElementById('faqPergunta').value = faq.pergunta;
-            document.getElementById('faqResposta').value = faq.resposta;
-        }
-
-        async function removerFaq(index) {
-            if (!confirm('Remover esta FAQ?')) return;
-            dados.faq.splice(index, 1);
-            try {
-                await db.collection('config').doc('faq').set({ perguntas: dados.faq });
-                carregarFAQ();
-                alert('FAQ removida!');
-            } catch (e) {
-                alert('Erro ao remover FAQ: ' + e.message);
-            }
-        }
-
-        // ================= RELATÓRIOS =================
+        // RELATÓRIOS
         function carregarRelatorios() {
-            const container = document.getElementById('relatorioContainer');
             const sorted = [...dados.produtos].sort((a, b) => (b.cliques || 0) - (a.cliques || 0));
-            if (sorted.length === 0) {
-                container.innerHTML = '<p style="opacity:0.6;">Nenhum clique registrado ainda.</p>';
-                return;
-            }
-            let html = '<ul style="list-style:none;padding:0;">';
-            sorted.slice(0, 20).forEach((p, i) => {
-                html += `<li style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;justify-content:space-between;">
-                    <span>${i + 1}. ${p.nome}</span>
-                    <span style="color:var(--ciano-brilhante);">${p.cliques || 0} cliques</span>
-                </li>`;
-            });
-            html += '</ul>';
-            container.innerHTML = html;
+            document.getElementById('relatorioContainer').innerHTML = sorted.slice(0, 20).map((p, i) => `<div style="display:flex;justify-content:space-between;padding:5px 0;"><span>${i+1}. ${p.nome}</span><span>${p.cliques || 0} cliques</span></div>`).join('') || '<p>Sem dados.</p>';
         }
 
-        // ================= BACKUP =================
+        // BACKUP
         async function exportarBackup() {
             await carregarDados();
-            const data = {
-                categorias: dados.categorias,
-                produtos: dados.produtos,
-                frases: dados.frases,
-                faq: dados.faq
-            };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'gudyx_backup.json';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+            const data = { categorias: dados.categorias, produtos: dados.produtos, frases: dados.frases, faq: dados.faq };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gudyx_backup.json'; a.click();
         }
-
         async function importarBackup() {
-            const fileInput = document.getElementById('importFile');
-            if (!fileInput.files || !fileInput.files[0]) return alert('Selecione um arquivo JSON.');
+            const file = document.getElementById('importFile').files[0];
+            if (!file) return alert('Selecione um arquivo.');
             const reader = new FileReader();
-            reader.onload = async (e) => {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (!data.categorias || !data.produtos) return alert('Arquivo inválido.');
-                    if (!confirm('Isso substituirá TODOS os dados. Continuar?')) return;
-
-                    const deleteCategorias = (await db.collection('categorias').get()).docs.map(d => d.ref.delete());
-                    const deleteProdutos = (await db.collection('produtos').get()).docs.map(d => d.ref.delete());
-                    await Promise.all([...deleteCategorias, ...deleteProdutos]);
-
-                    for (const cat of data.categorias) {
-                        const { id, ...catData } = cat;
-                        const docRef = await db.collection('categorias').add(catData);
-                        await db.collection('categorias').doc(docRef.id).update({ id: docRef.id });
-                    }
-                    for (const prod of data.produtos) {
-                        const { id, ...prodData } = prod;
-                        const docRef = await db.collection('produtos').add(prodData);
-                        await db.collection('produtos').doc(docRef.id).update({ id: docRef.id });
-                    }
-                    await db.collection('config').doc('frases').set({ lista: data.frases || [] });
-                    await db.collection('config').doc('faq').set({ perguntas: data.faq || [] });
-
-                    await carregarDados();
-                    atualizarListaCategorias();
-                    atualizarSelectCategorias();
-                    atualizarListaProdutos();
-                    document.getElementById('frasesInput').value = dados.frases.join('\n');
-                    carregarFAQ();
-                    carregarRelatorios();
-                    alert('Backup restaurado com sucesso!');
-                } catch (err) {
-                    alert('Erro ao ler o arquivo: ' + err.message);
-                }
+            reader.onload = async e => {
+                const data = JSON.parse(e.target.result);
+                if (!data.categorias || !data.produtos) return alert('Arquivo inválido.');
+                if (!confirm('Substituir TODOS os dados?')) return;
+                for (const d of (await db.collection('categorias').get()).docs) { await d.ref.delete(); }
+                for (const d of (await db.collection('produtos').get()).docs) { await d.ref.delete(); }
+                for (const cat of data.categorias) { const { id, ...rest } = cat; const ref = await db.collection('categorias').add(rest); await ref.update({ id: ref.id }); }
+                for (const prod of data.produtos) { const { id, ...rest } = prod; const ref = await db.collection('produtos').add(rest); await ref.update({ id: ref.id }); }
+                await db.collection('config').doc('frases').set({ lista: data.frases || [] });
+                await db.collection('config').doc('faq').set({ perguntas: data.faq || [] });
+                await carregarDados(); atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
+                document.getElementById('frasesInput').value = dados.frases.join('\n'); carregarFAQ(); carregarRelatorios();
+                alert('Backup restaurado!');
             };
-            reader.readAsText(fileInput.files[0]);
+            reader.readAsText(file);
         }
 
-        // ================= NOTIFICAÇÕES E EVENTOS =================
-        const channel = new BroadcastChannel('gudyx_admin');
-        channel.onmessage = (event) => {
-            const { evento, dados } = event.data;
-            mostrarToast(`🛒 ${dados.produto} (${dados.quantidade}x) adicionado ao carrinho`);
-            if (document.getElementById('abaNotificacoes').style.display !== 'none') {
-                carregarEventos();
-            }
-        };
-
-        function mostrarToast(mensagem) {
-            const container = document.getElementById('adminNotificacoes');
-            const toast = document.createElement('div');
-            toast.className = 'admin-toast';
-            toast.textContent = mensagem;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 5000);
-        }
-
-        function carregarEventos() {
-            const lista = document.getElementById('listaEventos');
-            const eventos = JSON.parse(localStorage.getItem('gudyx_eventos') || '[]');
-            if (eventos.length === 0) {
-                lista.innerHTML = '<p style="opacity:0.6;">Nenhuma atividade registrada.</p>';
-                return;
-            }
-            let html = '<ul style="list-style:none;padding:0;">';
-            eventos.reverse().forEach(ev => {
-                const data = new Date(ev.timestamp).toLocaleString();
-                html += `<li style="padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);">
-                    <span style="color:var(--ciano-brilhante);">${data}</span> -
-                    ${ev.evento === 'add_cart' ? '🛒' : '📌'}
-                    ${ev.dados.produto || ev.dados}
-                    ${ev.dados.quantidade ? 'x' + ev.dados.quantidade : ''}
-                </li>`;
-            });
-            html += '</ul>';
-            lista.innerHTML = html;
-        }
-
-        function limparEventos() {
-            if (confirm('Apagar todo o histórico de eventos?')) {
-                localStorage.removeItem('gudyx_eventos');
-                carregarEventos();
-            }
-        }
-
-        // ================= LIMPAR DADOS =================
         async function limparDados() {
-            if (!confirm('Apagar TODOS os dados do Firestore? Esta ação é irreversível.')) return;
-            try {
-                const deletarCategorias = (await db.collection('categorias').get()).docs.map(d => d.ref.delete());
-                const deletarProdutos = (await db.collection('produtos').get()).docs.map(d => d.ref.delete());
-                await Promise.all([...deletarCategorias, ...deletarProdutos]);
-                await db.collection('config').doc('frases').set({ lista: ['Oi, eu sou Gluudyx! ✦', 'Amor em cada detalhe'] });
-                await db.collection('config').doc('faq').set({ perguntas: [] });
-                await carregarDados();
-                atualizarListaCategorias();
-                atualizarSelectCategorias();
-                atualizarListaProdutos();
-                document.getElementById('frasesInput').value = dados.frases.join('\n');
-                carregarFAQ();
-                carregarRelatorios();
-                alert('Dados limpos!');
-            } catch (e) {
-                alert('Erro ao limpar dados: ' + e.message);
-            }
+            if (!confirm('Apagar TUDO?')) return;
+            for (const d of (await db.collection('categorias').get()).docs) { await d.ref.delete(); }
+            for (const d of (await db.collection('produtos').get()).docs) { await d.ref.delete(); }
+            await db.collection('config').doc('frases').set({ lista: ['Oi, eu sou Gluudyx! ✦'] });
+            await db.collection('config').doc('faq').set({ perguntas: [] });
+            await carregarDados(); atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
+            document.getElementById('frasesInput').value = dados.frases.join('\n'); carregarFAQ(); carregarRelatorios();
         }
 
-        // ================= SENHA =================
         function checkPassword() {
-            const input = document.getElementById('adminPassInput').value;
-            if (btoa(input) === btoa('gudyx2026')) {
+            if (btoa(document.getElementById('adminPassInput').value) === btoa('gudyx2026')) {
                 document.getElementById('passwordOverlay').classList.add('hidden');
                 document.getElementById('adminContent').style.display = 'block';
                 carregarDados().then(() => {
-                    atualizarListaCategorias();
-                    atualizarSelectCategorias();
-                    atualizarListaProdutos();
-                    document.getElementById('frasesInput').value = dados.frases.join('\n');
-                    carregarFAQ();
-                    carregarRelatorios();
+                    atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
+                    document.getElementById('frasesInput').value = dados.frases.join('\n'); carregarFAQ(); carregarRelatorios();
                 });
-            } else {
-                document.getElementById('passError').style.display = 'block';
-            }
+            } else { document.getElementById('passError').style.display = 'block'; }
         }
-        document.getElementById('adminPassInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') checkPassword();
-        });
+        document.getElementById('adminPassInput').addEventListener('keypress', e => { if (e.key === 'Enter') checkPassword(); });
     </script>
 </body>
 </html>
