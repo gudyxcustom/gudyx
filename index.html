@@ -24,27 +24,6 @@
             --bg-body: #0b041c;
             --cor-texto: #f0eaff;
         }
-        /* Modo claro */
-        body.modo-claro {
-            --bg-body: #f5f0ff;
-            --cor-texto: #1a0a33;
-            --vidro-fundo: rgba(255, 255, 255, 0.8);
-            --vidro-borda: rgba(172, 40, 255, 0.3);
-            --roxo-profundo: #f5f0ff;
-        }
-        body.modo-claro .bg-overlay { background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.8) 0%, rgba(245,240,255,0.95) 100%); }
-        body.modo-claro .footer { background: rgba(255,255,255,0.9); color: #1a0a33; }
-        body.modo-claro .btn-voltar { background: rgba(0,0,0,0.05); color: #1a0a33; }
-        body.modo-claro .search-global, body.modo-claro .search-box { background: rgba(255,255,255,0.8); }
-        body.modo-claro .search-global input, body.modo-claro .search-box input { color: #1a0a33; }
-        body.modo-claro .card-vendido, body.modo-claro .produto-card, body.modo-claro .categoria-card { background: rgba(255,255,255,0.7); }
-        body.modo-claro .fala-container { background: rgba(255,255,255,0.9); }
-        body.modo-claro .fala-container::before { border-right-color: rgba(255,255,255,0.9); }
-        body.modo-claro .cart-drawer-body, body.modo-claro #cartDrawer { background: rgba(255,255,255,0.9); }
-        body.modo-claro .cart-drawer-item { border-bottom-color: rgba(0,0,0,0.1); }
-        body.modo-claro .modal-box { background: rgba(255,255,255,0.9); color: #1a0a33; }
-        body.modo-claro .quick-btn { background: rgba(0,0,0,0.05); color: #1a0a33; }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Poppins', 'Segoe UI', system-ui, sans-serif;
@@ -54,7 +33,6 @@
             color: var(--cor-texto);
             -webkit-font-smoothing: antialiased;
             padding-bottom: 80px;
-            transition: background 0.3s, color 0.3s;
         }
         .bg-container { position: fixed; top: -20px; left: -20px; width: calc(100% + 40px); height: calc(100% + 40px); z-index: -3; background-image: url('https://i.imgur.com/UDwnKUg.png'); background-size: cover; background-position: center; filter: blur(5px); transform: scale(1.02); }
         .bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: radial-gradient(circle at 50% 50%, rgba(26, 10, 51, 0.4) 0%, rgba(11, 4, 28, 0.9) 100%); }
@@ -90,7 +68,7 @@
         .btn-wa-card:hover, .btn-whatsapp-modal:hover, .btn-wa-cart:hover { animation: rainbowBg 1s linear infinite; }
         .logo-wrapper { position:relative; display:inline-block; }
         .logo-img { max-height:250px; filter:drop-shadow(0 0 30px rgba(172,40,255,0.8)); }
-        .fala-container { position:absolute; top:15px; right:-60px; width:200px; background:rgba(11,4,28,0.85); backdrop-filter:blur(8px); border:1px solid rgba(172,40,255,0.6); border-radius:16px; padding:10px 14px; font-size:0.85rem; box-shadow:0 0 30px rgba(172,40,255,0.4); pointer-events:none; opacity:0; transition:opacity 0.4s, transform 0.4s; transform:translateX(10px); z-index:9999; text-align:center; min-height: 40px; }
+        .fala-container { position:absolute; top:15px; right:-60px; width:200px; background:rgba(11,4,28,0.85); backdrop-filter:blur(8px); border:1px solid rgba(172,40,255,0.6); border-radius:16px; padding:10px 14px; font-size:0.85rem; box-shadow:0 0 30px rgba(172,40,255,0.4); pointer-events:none; opacity:0; transition:opacity 0.4s, transform 0.4s; transform:translateX(10px); z-index:9999; text-align:center; min-height:40px; }
         .fala-container::before { content:''; position:absolute; left:-12px; top:16px; border:6px solid transparent; border-right-color:rgba(11,4,28,0.85); }
         .fala-container.falando { opacity:1; transform:translateX(0); }
         .fala-cursor { display:inline-block; width:2px; height:1em; background:var(--cor-texto); margin-left:2px; animation: blink 0.7s infinite; vertical-align: middle; }
@@ -143,6 +121,8 @@
         .atalhos-container { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; padding:10px 0; }
         .atalho-btn { padding:10px 20px; border-radius:30px; background:var(--vidro-fundo); border:1px solid var(--vidro-borda); color:var(--cor-texto); cursor:pointer; transition:0.3s; font-size:0.9rem; white-space:nowrap; }
         .atalho-btn:hover { background:rgba(172,40,255,0.3); border-color:var(--ciano-brilhante); transform:translateY(-3px); }
+        .btn-sorte { padding:10px 20px; border-radius:30px; background:linear-gradient(135deg,#ffd700,#ff8800); color:#000; border:none; font-weight:700; cursor:pointer; transition:0.3s; font-size:0.9rem; margin:5px; }
+        .btn-sorte:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(255,215,0,0.5); }
         .mais-vendidos-section { width:100%; padding-top:15px; border-top:1px solid var(--vidro-borda); }
         .mais-vendidos-section .section-title { font-size:1.3rem; letter-spacing:4px; text-align:center; font-weight:300; }
         .grid-vendidos { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:20px; }
@@ -328,6 +308,8 @@
         .float-wa:hover { transform:scale(1.1); box-shadow:0 0 40px rgba(37,211,102,0.5); }
         .float-fav { position:fixed; bottom:100px; right:90px; background:linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:0.3s; }
         .float-fav:hover { transform:scale(1.1); }
+        .float-raspadinha { position:fixed; bottom:100px; right:155px; background:linear-gradient(135deg,#ffd700,#ff8800); color:#000; width:50px; height:50px; border-radius:50%; display:none; align-items:center; justify-content:center; font-size:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:0.3s; }
+        .float-raspadinha:hover { transform:scale(1.1); }
         .btn-top { position:fixed; bottom:175px; right:20px; background:rgba(172,40,255,0.5); backdrop-filter:blur(8px); color:#fff; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; cursor:pointer; z-index:50; transition:var(--transicao); opacity:0; visibility:hidden; border:1px solid var(--vidro-borda); animation: pulseTopBtn 2s infinite; }
         .btn-top.visible { opacity:1; visibility:visible; }
         .btn-top:hover { background:rgba(172,40,255,0.8); }
@@ -399,6 +381,19 @@
         #lightboxOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:999999; display:none; justify-content:center; align-items:center; cursor:pointer; }
         #lightboxOverlay.active { display:flex; }
         #lightboxOverlay img { max-width:95vw; max-height:95vh; object-fit:contain; border-radius:12px; }
+        #tourOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999999; display:none; justify-content:center; align-items:center; }
+        #tourOverlay.active { display:flex; }
+        .tour-box { background:var(--vidro-fundo); backdrop-filter:blur(16px); border:2px solid var(--ciano-brilhante); border-radius:20px; padding:25px; max-width:350px; text-align:center; position:relative; box-shadow:0 0 40px rgba(172,40,255,0.6); }
+        .tour-box h3 { margin-bottom:10px; color:var(--ciano-brilhante); }
+        .tour-box p { font-size:0.9rem; opacity:0.8; margin-bottom:15px; }
+        .tour-box button { padding:10px 25px; border-radius:25px; border:none; background:linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; font-weight:600; cursor:pointer; }
+        .tour-highlight { position:absolute; border:3px solid var(--ciano-brilhante); border-radius:12px; box-shadow:0 0 30px rgba(0,242,254,0.5); pointer-events:none; z-index:999998; animation: pulseTour 1.5s infinite; }
+        @keyframes pulseTour { 0%,100% { box-shadow:0 0 20px rgba(0,242,254,0.5); } 50% { box-shadow:0 0 40px rgba(0,242,254,0.8), 0 0 60px rgba(0,242,254,0.3); } }
+        #raspadinhaModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999999; display:none; justify-content:center; align-items:center; }
+        #raspadinhaModal.active { display:flex; }
+        .raspadinha-box { background:var(--vidro-fundo); backdrop-filter:blur(16px); border:2px solid gold; border-radius:20px; padding:20px; text-align:center; position:relative; }
+        .raspadinha-box h3 { color:gold; margin-bottom:10px; }
+        #raspadinhaCanvas { border-radius:12px; cursor:pointer; touch-action:none; }
         .mobile-nav { display:none; position:fixed; bottom:0; left:0; width:100%; background:rgba(11,4,28,0.95); backdrop-filter:blur(12px); border-top:1px solid var(--vidro-borda); padding:8px 10px; z-index:9999; justify-content:space-around; align-items:center; }
         .mobile-nav button { background:none; border:none; color:var(--cor-texto); font-size:1.5rem; display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; }
         .mobile-nav button span { font-size:0.65rem; }
@@ -421,6 +416,7 @@
             #cartDrawer.open { right:0; }
             .float-wa { width:50px; height:50px; font-size:1.5rem; bottom:85px; right:15px; }
             .float-fav { width:40px; height:40px; font-size:1.2rem; bottom:85px; right:75px; }
+            .float-raspadinha { width:40px; height:40px; font-size:1.2rem; bottom:85px; right:135px; }
             #socialProofContainer { bottom:80px; left:10px; }
             #peekingHead img { width:60px; height:60px; }
             .peeking-fala { font-size:0.7rem; max-width:150px; padding:6px 10px; }
@@ -447,6 +443,8 @@
     <canvas id="meteorCanvas"></canvas>
 
     <div id="lightboxOverlay" onclick="fecharLightbox()"><img id="lightboxImg" src="" alt="Zoom"></div>
+    <div id="tourOverlay"><div class="tour-box" id="tourBox"><h3 id="tourTitulo"></h3><p id="tourTexto"></p><button onclick="proximoTour()" id="tourBtn">Próximo</button></div></div>
+    <div id="raspadinhaModal"><div class="raspadinha-box"><h3>🎟️ Raspadinha de Cupom</h3><p>Raspe para revelar seu desconto!</p><canvas id="raspadinhaCanvas" width="300" height="150"></canvas><br><button onclick="fecharRaspadinha()" style="margin-top:10px;padding:8px 20px;border-radius:20px;border:none;background:#555;color:#fff;cursor:pointer;">Fechar</button></div></div>
 
     <div id="productModal">
         <div class="modal-box">
@@ -472,6 +470,7 @@
         <div class="progresso-container"><div class="progresso-texto" id="progressoTexto"></div><div class="progresso-barra"><div class="progresso-preenchimento" id="progressoPreenchimento" style="width:0%"></div></div></div>
         <div class="cupom-container"><input type="text" id="cupomInput" placeholder="Cupom de desconto"><button onclick="aplicarCupom()">Aplicar</button></div>
         <div class="cupom-msg" id="cupomMsg"></div>
+        <button class="btn-sorte" onclick="itemSurpresa()" id="btnSorte" style="margin:10px 20px;display:none;">🎁 Estou com sorte!</button>
         <div class="cart-drawer-footer"><div class="cart-total" id="cartDrawerTotal">Total: R$ 0,00</div><div class="cart-actions"><button class="btn-wa-cart" onclick="enviarOrcamentoWhatsApp()"><i class="fab fa-whatsapp"></i> Enviar orçamento</button><button class="btn-clear-cart" onclick="limparCarrinho()">Limpar</button></div></div>
     </div>
 
@@ -482,20 +481,17 @@
         <button class="btn-share-fav" onclick="compartilharFavoritos()"><i class="fas fa-share-alt"></i> Compartilhar Lista</button>
     </div>
 
-    <div id="firstVisitPopup">
-        <div class="popup-box"><button class="close-popup-icon" onclick="fecharPopup()">×</button><h2>🔥 Bem-vindo à Gudyx!</h2><p>Ganhe <strong>10% OFF</strong> na sua primeira compra! Use o cupom: <strong>BEMVINDO10</strong></p><div class="cupom-box" onclick="copiarCupom()"><span id="cupomText">BEMVINDO10</span> <i class="fas fa-copy" style="font-size:1rem; margin-left:10px; opacity:0.6;"></i></div><button class="btn-fechar-popup" onclick="fecharPopup()">Fechar e continuar</button></div>
-    </div>
-
-    <div id="modalSobre" class="modal-page" onclick="fecharModalSobre(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalSobre()">×</button><h2 style="font-size:1.8rem;margin-bottom:10px;">Sobre a Gudyx</h2><p style="opacity:0.8;line-height:1.6;">Somos uma papelaria personalizada e gráfica rápida apaixonada por detalhes.<br>Criamos produtos únicos com alma taurina e um toque cósmico.<br><br>✨ <strong>Missão:</strong> Transformar ideias em papel.<br>💜 <strong>Valores:</strong> Criatividade, qualidade e carinho.<br>🌟 <strong>Visão:</strong> Ser referência em personalização no Brasil.</p></div></div>
-    <div id="modalContato" class="modal-page" onclick="fecharModalContato(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalContato()">×</button><h2 style="font-size:1.8rem;margin-bottom:10px;">Contato</h2><p style="opacity:0.8;line-height:1.8;">📞 <strong>WhatsApp:</strong> (21) 97612-1076<br>📧 <strong>E-mail:</strong> contato@gudyx.com<br>📍 <strong>Endereço:</strong> Rua das Flores, 123 - São Paulo, SP<br>🕒 <strong>Horário:</strong> Segunda a Sexta, 9h às 18h</p></div></div>
+    <div id="firstVisitPopup"><div class="popup-box"><button class="close-popup-icon" onclick="fecharPopup()">×</button><h2>🔥 Bem-vindo à Gudyx!</h2><p>Ganhe <strong>10% OFF</strong> na sua primeira compra! Use o cupom: <strong>BEMVINDO10</strong></p><div class="cupom-box" onclick="copiarCupom()"><span id="cupomText">BEMVINDO10</span> <i class="fas fa-copy"></i></div><button class="btn-fechar-popup" onclick="fecharPopup()">Fechar e continuar</button></div></div>
+    <div id="modalSobre" class="modal-page" onclick="fecharModalSobre(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalSobre()">×</button><h2>Sobre a Gudyx</h2><p>Somos uma papelaria personalizada apaixonada por detalhes...</p></div></div>
+    <div id="modalContato" class="modal-page" onclick="fecharModalContato(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalContato()">×</button><h2>Contato</h2><p>WhatsApp: (21) 97612-1076<br>Email: contato@gudyx.com</p></div></div>
 
     <div id="chatButton" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
-    <div id="chatModal"><div class="chat-header"><h4><img src="https://i.imgur.com/Y5H9zqr.png" style="width:30px;height:30px;border-radius:50%;" loading="lazy"> Gluudyx</h4><button class="close-chat" onclick="toggleChat()">×</button></div><div class="chat-body" id="chatBody"><div class="chat-msg gluudyx">Oi! Sou o Gluudyx 😄 Como posso te ajudar?</div></div><div class="chat-footer" id="chatFooter"><button class="quick-btn" onclick="chatResposta('produtos')">Quais produtos?</button><button class="quick-btn" onclick="chatResposta('promocoes')">Promoções</button><button class="quick-btn" onclick="chatResposta('duvidas')">Dúvidas</button><button class="quick-btn" onclick="chatResposta('contato')">Contato</button></div></div>
-
+    <div id="chatModal"><div class="chat-header"><h4><img src="https://i.imgur.com/Y5H9zqr.png" style="width:30px;height:30px;border-radius:50%;" loading="lazy"> Gluudyx</h4><button class="close-chat" onclick="toggleChat()">×</button></div><div class="chat-body" id="chatBody"><div class="chat-msg gluudyx">Oi! Sou o Gluudyx 😄 Como posso te ajudar?</div></div><div class="chat-footer"><button class="quick-btn" onclick="chatResposta('produtos')">Produtos</button><button class="quick-btn" onclick="chatResposta('promocoes')">Promoções</button><button class="quick-btn" onclick="chatResposta('duvidas')">Dúvidas</button><button class="quick-btn" onclick="chatResposta('contato')">Contato</button></div></div>
     <div id="faqModal" onclick="fecharFAQ(event)"><div class="faq-box"><button class="close-faq" onclick="fecharFAQ()">×</button><h2>❓ Dúvidas Frequentes</h2><div id="faqList"></div></div></div>
 
     <div class="float-cart" onclick="abrirDrawer()"><i class="fas fa-shopping-cart"></i><span class="cart-badge" id="cartBadge">0</span></div>
     <div class="float-fav" onclick="abrirFavDrawer()"><i class="fas fa-heart"></i></div>
+    <div class="float-raspadinha" onclick="abrirRaspadinha()" id="floatRaspadinha"><i class="fas fa-ticket-alt"></i></div>
     <a class="float-wa" href="https://wa.me/5521976121076" target="_blank"><i class="fab fa-whatsapp"></i></a>
     <div class="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
 
@@ -512,7 +508,7 @@
                 <div class="subtitle">PAPELARIA PERSONALIZADA · GRÁFICA RÁPIDA <span class="badge-vip" id="badgeVip" style="display:none;">⭐ VIP</span></div>
                 <div class="slogan">"Onde cada detalhe é um grude de personalidade"</div>
             </div>
-            <div class="search-global"><i class="fas fa-search" style="opacity:0.6;"></i><input type="text" id="searchGlobal" placeholder="O que você procura? Ex: caixa, imã..." onkeyup="buscaGlobal()"></div>
+            <div class="search-global"><i class="fas fa-search"></i><input type="text" id="searchGlobal" placeholder="O que você procura?" onkeyup="buscaGlobal()"></div>
             <div class="main-area">
                 <div class="mascote-block">
                     <div class="mascote-wrapper" id="mascoteWrapper"><div class="mascote-glow"></div><img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx" id="mascoteImg" loading="lazy"><div class="fala-container" id="falaContainer"><span class="fala-cursor">|</span></div></div>
@@ -521,31 +517,28 @@
                 <div class="promo-slider-container"><div class="slider-box" id="sliderBox"><div class="fire-badge">PROMO</div><div id="dynamicSliderContainer"></div><div id="sliderDots"></div></div></div>
             </div>
             <div class="atalhos-container" id="atalhosContainer"></div>
+            <button class="btn-sorte" onclick="itemSurpresa()" id="btnSorteHome" style="margin:0 auto;display:none;">🎁 Estou com sorte!</button>
             <div class="mais-vendidos-section"><div class="section-title">MAIS VENDIDOS</div><div class="grid-vendidos" id="maisVendidosGrid"></div></div>
             <div class="depoimentos-section"><div class="section-title">💬 O QUE DIZEM NOSSOS CLIENTES</div><div class="depoimentos-grid" id="depoimentosGrid"></div></div>
             <div class="instagram-section"><div class="section-title">📸 SIGA NO INSTAGRAM</div><div class="instagram-grid" id="instagramGrid"></div></div>
         </div>
     </div>
 
-    <div class="screen" id="escolhaScreen">
-        <div class="listagem-screen" style="padding:30px;text-align:center;"><h2 style="text-shadow:0 0 30px rgba(172,40,255,0.5); letter-spacing:4px; font-weight:300; font-size:clamp(1.5rem,3vw,2.2rem);">✨ O que você procura?</h2><div style="display:flex; gap:30px; flex-wrap:wrap; justify-content:center; align-items:stretch; margin-top:30px; max-width:700px; width:100%;"><div class="categoria-card" style="flex:1 1 280px; padding:50px 30px; border-radius:24px;" onclick="navegarPara('servicos')"><div style="font-size:5rem; color:var(--ciano-brilhante); filter:drop-shadow(0 0 20px rgba(0,242,254,0.5));"><i class="fas fa-tools"></i></div><h3 style="font-size:1.6rem; letter-spacing:2px; margin-top:15px; font-weight:600; background:linear-gradient(135deg, var(--ciano-brilhante), #a028ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">SERVIÇOS</h3><p style="opacity:0.6; font-size:0.9rem; margin-top:5px; -webkit-text-fill-color:#f0eaff;">Personalização e criação</p></div><div class="categoria-card" style="flex:1 1 280px; padding:50px 30px; border-radius:24px;" onclick="navegarPara('produtos')"><div style="font-size:5rem; color:var(--rosa-neon); filter:drop-shadow(0 0 20px rgba(255,102,178,0.5));"><i class="fas fa-store"></i></div><h3 style="font-size:1.6rem; letter-spacing:2px; margin-top:15px; font-weight:600; background:linear-gradient(135deg, var(--rosa-neon), #a028ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">PRODUTOS</h3><p style="opacity:0.6; font-size:0.9rem; margin-top:5px; -webkit-text-fill-color:#f0eaff;">Papelaria e itens exclusivos</p></div></div><button class="btn-voltar" onclick="voltarParaHome()" style="margin-top:40px;"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Voltar</button></div>
-    </div>
-
-    <div class="screen" id="servicosScreen"><div class="listagem-screen"><div class="listagem-header"><button class="btn-voltar" onclick="voltarParaEscolha()"><i class="fas fa-arrow-left"></i> Voltar</button><h2>SERVIÇOS</h2><button class="btn-voltar" onclick="voltarParaHome()"><i class="fas fa-home"></i> Início</button></div><div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchServicos" placeholder="Buscar serviços..." onkeyup="buscarItems('servicos')"></div><div id="servicosCategoriasContainer" class="grid-categorias"></div><div id="servicosProdutosContainer" class="produtos-grid"></div></div></div>
-
-    <div class="screen" id="produtosScreen"><div class="listagem-screen"><div class="listagem-header"><button class="btn-voltar" onclick="voltarParaEscolha()"><i class="fas fa-arrow-left"></i> Voltar</button><h2>PRODUTOS</h2><button class="btn-voltar" onclick="voltarParaHome()"><i class="fas fa-home"></i> Início</button><div class="view-toggle"><button onclick="alternarVisualizacao('grid')" class="active" id="viewGrid"><i class="fas fa-th"></i> Grade</button><button onclick="alternarVisualizacao('lista')" id="viewList"><i class="fas fa-list"></i> Lista</button></div></div><div class="search-box"><i class="fas fa-search"></i><input type="text" id="searchProdutos" placeholder="Buscar produtos..." onkeyup="buscarItems('produtos')"></div><div class="filtros-container"><label>Ordenar:</label><select id="filtroOrdenacao" onchange="aplicarFiltros()"><option value="relevancia">Relevância</option><option value="menorPreco">Menor preço</option><option value="maiorPreco">Maior preço</option><option value="maisVendidos">Mais vendidos</option><option value="nome">Nome A-Z</option></select><div class="preco-range"><label>Preço:</label><input type="number" id="filtroPrecoMin" placeholder="Min" onchange="aplicarFiltros()"><span>–</span><input type="number" id="filtroPrecoMax" placeholder="Max" onchange="aplicarFiltros()"></div><button onclick="limparFiltros()" style="padding:6px 12px;background:rgba(255,255,255,0.1);border:1px solid var(--vidro-borda);border-radius:8px;color:var(--cor-texto);cursor:pointer;">Limpar</button></div><div id="stickyCategories"></div><div id="produtosCategoriasContainer" class="grid-categorias"></div><div id="produtosProdutosContainer" class="produtos-grid"></div><div class="paginacao-container" id="paginacaoContainer"></div></div></div>
+    <div class="screen" id="escolhaScreen"><div class="listagem-screen" style="padding:30px;text-align:center;"><h2>✨ O que você procura?</h2><div style="display:flex;gap:30px;justify-content:center;margin-top:30px;"><div class="categoria-card" onclick="navegarPara('servicos')"><i class="fas fa-tools" style="font-size:4rem;color:var(--ciano-brilhante);"></i><h3>SERVIÇOS</h3></div><div class="categoria-card" onclick="navegarPara('produtos')"><i class="fas fa-store" style="font-size:4rem;color:var(--rosa-neon);"></i><h3>PRODUTOS</h3></div></div><button class="btn-voltar" onclick="voltarParaHome()">← Voltar</button></div></div>
+    <div class="screen" id="servicosScreen"><div class="listagem-screen"><div class="listagem-header"><button class="btn-voltar" onclick="voltarParaEscolha()">← Voltar</button><h2>SERVIÇOS</h2></div><div class="search-box"><input type="text" id="searchServicos" placeholder="Buscar..." onkeyup="buscarItems('servicos')"></div><div id="servicosCategoriasContainer" class="grid-categorias"></div><div id="servicosProdutosContainer" class="produtos-grid"></div></div></div>
+    <div class="screen" id="produtosScreen"><div class="listagem-screen"><div class="listagem-header"><button class="btn-voltar" onclick="voltarParaEscolha()">← Voltar</button><h2>PRODUTOS</h2><div class="view-toggle"><button onclick="alternarVisualizacao('grid')" class="active" id="viewGrid">Grade</button><button onclick="alternarVisualizacao('lista')" id="viewList">Lista</button></div></div><div class="search-box"><input type="text" id="searchProdutos" placeholder="Buscar..." onkeyup="buscarItems('produtos')"></div><div id="stickyCategories"></div><div id="produtosCategoriasContainer" class="grid-categorias"></div><div id="produtosProdutosContainer" class="produtos-grid"></div></div></div>
 
     <nav class="mobile-nav">
         <button onclick="mostrarTela('homeScreen')" class="active"><i class="fas fa-home"></i><span>Home</span></button>
         <button onclick="abrirCatalogo()"><i class="fas fa-search"></i><span>Buscar</span></button>
         <button onclick="abrirDrawer()"><i class="fas fa-shopping-cart"></i><span>Carrinho</span></button>
         <button onclick="abrirFavDrawer()"><i class="fas fa-heart"></i><span>Favoritos</span></button>
-        <a href="https://wa.me/5521976121076" target="_blank" style="text-decoration:none;color:var(--cor-texto);display:flex;flex-direction:column;align-items:center;gap:2px;"><i class="fab fa-whatsapp" style="color:#25D366;"></i><span>WhatsApp</span></a>
+        <a href="https://wa.me/5521976121076" target="_blank"><i class="fab fa-whatsapp" style="color:#25D366;"></i><span>WhatsApp</span></a>
     </nav>
 
     <footer class="footer">
         <span>Gudyx Custom © 2026</span>
-        <span><a href="#" onclick="abrirModalSobre();return false;" style="color:var(--cor-texto);text-decoration:none;margin-right:15px;">Sobre</a><a href="#" onclick="abrirModalContato();return false;" style="color:var(--cor-texto);text-decoration:none;">Contato</a></span>
+        <span><a href="#" onclick="abrirModalSobre();return false;">Sobre</a> | <a href="#" onclick="abrirModalContato();return false;">Contato</a></span>
         <span class="selo-seguranca"><i class="fas fa-lock"></i> Compra segura</span>
         <span class="visit-counter">Visitas: <span id="visitCounter">0</span></span>
     </footer>
@@ -563,9 +556,8 @@
         const RESET_INTERVAL = 30 * 60 * 1000;
         let ultimaIrritacaoTimestamp = 0;
         let typewriterTimer = null;
-        let vitrineAtiva = false;
-        let vitrineIntervalo = null;
-        let logoCliquesVitrine = 0;
+        let configDivertido = { raspadinha: true, itemSurpresa: true };
+        let raspadinhaUsada = false;
 
         function salvarEstadoMascote() { localStorage.setItem('gudyx_mascote_state', JSON.stringify({ cliqueCount, ultimoCliqueTime, estaSumido, ultimaIrritacaoTimestamp, timestamp: Date.now() })); }
         function carregarEstadoMascote() { const saved = localStorage.getItem('gudyx_mascote_state'); if (saved) { try { const e = JSON.parse(saved); if (Date.now() - e.timestamp < RESET_INTERVAL) { cliqueCount = e.cliqueCount||0; ultimoCliqueTime = e.ultimoCliqueTime||0; estaSumido = e.estaSumido||false; ultimaIrritacaoTimestamp = e.ultimaIrritacaoTimestamp||0; if (estaSumido) { document.getElementById('peekingHead').classList.add('active'); document.getElementById('mascoteWrapper').classList.add('somiu'); } } } catch(e) {} } }
@@ -574,7 +566,8 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        async function carregarDadosFirebase() { try { const snapCat = await db.collection('categorias').get(); dados.categorias = snapCat.docs.map(d => ({ id: d.id, ...d.data() })); const snapProd = await db.collection('produtos').get(); dados.produtos = snapProd.docs.map(d => ({ id: d.id, ...d.data() })); const snapFrases = await db.collection('config').doc('frases').get(); dados.frases = snapFrases.exists ? snapFrases.data().lista : []; const snapFaq = await db.collection('config').doc('faq').get(); dados.faq = snapFaq.exists ? snapFaq.data().perguntas : []; } catch(e) { console.error('Firestore:', e); } carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); }
+        async function carregarDadosFirebase() { try { const snapCat = await db.collection('categorias').get(); dados.categorias = snapCat.docs.map(d => ({ id: d.id, ...d.data() })); const snapProd = await db.collection('produtos').get(); dados.produtos = snapProd.docs.map(d => ({ id: d.id, ...d.data() })); const snapFrases = await db.collection('config').doc('frases').get(); dados.frases = snapFrases.exists ? snapFrases.data().lista : []; const snapFaq = await db.collection('config').doc('faq').get(); dados.faq = snapFaq.exists ? snapFaq.data().perguntas : []; const snapDivertido = await db.collection('config').doc('divertido').get(); if (snapDivertido.exists) { configDivertido = snapDivertido.data(); } else { const localDivertido = localStorage.getItem('gudyx_divertido'); if (localDivertido) configDivertido = JSON.parse(localDivertido); } } catch(e) { console.error('Firestore:', e); } carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); aplicarConfigDivertido(); }
+        function aplicarConfigDivertido() { document.getElementById('floatRaspadinha').style.display = configDivertido.raspadinha ? 'flex' : 'none'; document.getElementById('btnSorteHome').style.display = configDivertido.itemSurpresa ? 'block' : 'none'; document.getElementById('btnSorte').style.display = configDivertido.itemSurpresa ? 'block' : 'none'; }
         function iniciarListenerFirebase() { db.collection('produtos').onSnapshot(s => { dados.produtos = s.docs.map(d => ({ id: d.id, ...d.data() })); if (document.getElementById('homeScreen').classList.contains('active')) { resetarSlider(); carregarMaisVendidos(); } }); }
 
         function getImagemPrincipal(prod) { return prod.imagens?.length ? prod.imagens[0] : prod.imagem || 'https://placehold.co/140x140/0b041c/00f2fe?text=Sem+Img'; }
@@ -582,47 +575,65 @@
         function getEstoque(prod) { return prod.estoque !== undefined ? prod.estoque : 999; }
         function isEmEstoque(prod) { return getEstoque(prod) > 0; }
         function salvarDados() { localStorage.setItem('gudyxDados', JSON.stringify(dados)); }
-        function mostrarTela(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); document.querySelectorAll('.mobile-nav button').forEach(b => b.classList.remove('active')); if (id === 'homeScreen') document.querySelector('.mobile-nav button[onclick*="homeScreen"]')?.classList.add('active'); }
+        function mostrarTela(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
         function abrirCatalogo() { mostrarTela('escolhaScreen'); }
         function voltarParaHome() { mostrarTela('homeScreen'); resetarSlider(); carregarMaisVendidos(); }
         function voltarParaEscolha() { mostrarTela('escolhaScreen'); }
         function navegarPara(destino) { mostrarTela(destino === 'servicos' ? 'servicosScreen' : 'produtosScreen'); carregarCategorias(destino); }
 
-        // ===== MODO NOTURNO/CLARO =====
         function alternarModo() { document.body.classList.toggle('modo-claro'); const icon = document.querySelector('#modoToggle i'); if (document.body.classList.contains('modo-claro')) { icon.className = 'fas fa-moon'; localStorage.setItem('gudyx_modo', 'claro'); } else { icon.className = 'fas fa-sun'; localStorage.setItem('gudyx_modo', 'escuro'); } }
         if (localStorage.getItem('gudyx_modo') === 'claro') { document.body.classList.add('modo-claro'); document.querySelector('#modoToggle i').className = 'fas fa-moon'; }
 
-        // ===== MÁQUINA DE ESCREVER =====
-        function typewriterEffect(elemento, texto, velocidade = 40) {
-            if (typewriterTimer) clearTimeout(typewriterTimer);
-            elemento.innerHTML = '';
-            let i = 0;
-            function digitar() {
-                if (i < texto.length) { elemento.innerHTML = texto.substring(0, i + 1) + '<span class="fala-cursor">|</span>'; i++; typewriterTimer = setTimeout(digitar, velocidade); }
-                else { elemento.innerHTML = texto; elemento.parentElement.classList.add('falando'); }
-            }
-            digitar();
-        }
+        function falarImediato(msg) { if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; } const falaContainer = document.getElementById('falaContainer'); falaContainer.innerHTML = msg; falaContainer.parentElement.classList.add('falando'); estaFalando = true; if (timeoutFala) clearTimeout(timeoutFala); timeoutFala = setTimeout(() => { falaContainer.parentElement.classList.remove('falando'); estaFalando = false; }, 3000); }
+        function typewriterEffect(elemento, texto, velocidade = 40) { if (typewriterTimer) clearTimeout(typewriterTimer); elemento.innerHTML = ''; let i = 0; function digitar() { if (i < texto.length) { elemento.innerHTML = texto.substring(0, i + 1) + '<span class="fala-cursor">|</span>'; i++; typewriterTimer = setTimeout(digitar, velocidade); } else { elemento.innerHTML = texto; elemento.parentElement.classList.add('falando'); } } digitar(); }
 
         const piadas = ["Por que o caderno foi ao médico? 📓🤒","Qual o doce favorito do Gluudyx? 🍬","Você sabia que eu sou feito de cola? 🥰","O que o lápis disse para a borracha? ✏️💕","Por que a caneta não gostou do papel? 🖊️📄","Qual a fruta preferida do Gluudyx? 🍇😂","Eu sou como um imã... 🧲✨","Se você me der um clique, eu te dou um sorriso! 😄","Meu sonho é ser um papel de parede... 🖼️💖","Você é mais doce que um caderno de receitas! 🍪📔","O que a borracha falou para o lápis? ✏️❤️","Por que o Gluudyx é tão legal? 🎨","Se você me der um abraço, eu te dou um desconto! 😉","Gudyx: onde cada detalhe é um grude de personalidade! 💫"];
         function getMensagensMascote() { const msgs = []; if (dados.frases?.length) { msgs.push(...dados.frases, ...dados.frases, ...dados.frases); } const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p)); if (promos.length) msgs.push(`🔥 ${promos[Math.floor(Math.random()*promos.length)].nome} em promoção!`); const top = [...dados.produtos].sort((a,b)=>(b.cliques||0)-(a.cliques||0)).slice(0,3); if (top.length && top[0].cliques) msgs.push(`🏆 ${top[Math.floor(Math.random()*top.length)].nome} é o mais acessado!`); msgs.push(piadas[Math.floor(Math.random()*piadas.length)]); if (!msgs.length) msgs.push('Olá, sou o Gluudyx! ✦'); return msgs; }
         function atualizarMensagensMascote() { mascoteMensagens = getMensagensMascote().sort(() => Math.random() - 0.5); }
-        function falarMascote(msgP = null) {
-            if (estaFugindo || estaVoltando || estaSumido || estaContando) return;
-            if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
-            if (!mascoteMensagens.length) atualizarMensagensMascote();
-            const falaContainer = document.getElementById('falaContainer');
-            if (!falaContainer) return;
-            const msg = msgP || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length];
-            mascoteMsgIdx++;
-            falaContainer.parentElement?.classList.remove('falando');
-            typewriterEffect(falaContainer, msg);
-            estaFalando = true;
-            timeoutFala = setTimeout(() => { falaContainer.parentElement?.classList.remove('falando'); estaFalando = false; }, msg.length * 40 + 1500);
-        }
+        function falarMascote(msgP = null) { if (estaFugindo || estaVoltando || estaSumido || estaContando) return; if (!mascoteMensagens.length) atualizarMensagensMascote(); const falaContainer = document.getElementById('falaContainer'); if (!falaContainer) return; const msg = msgP || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length]; mascoteMsgIdx++; falaContainer.parentElement?.classList.remove('falando'); typewriterEffect(falaContainer, msg); estaFalando = true; if (timeoutFala) clearTimeout(timeoutFala); timeoutFala = setTimeout(() => { falaContainer.parentElement?.classList.remove('falando'); estaFalando = false; }, msg.length * 40 + 1500); }
         function mostrarExpressao(exp) { const w = document.getElementById('mascoteWrapper'); w.classList.remove('feliz','triste','surpreso','irritado-1','irritado-2','fugindo','voltando'); if (exp) w.classList.add(exp); }
 
-        document.getElementById('mascoteWrapper').addEventListener('click', function() { this.style.animation = 'none'; this.offsetHeight; this.style.animation = 'floatMascote 0.6s ease-in-out'; setTimeout(() => { this.style.animation = 'floatMascote 6s ease-in-out infinite'; }, 600); if (estaSumido || estaFugindo || estaVoltando || estaContando) return; if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; } if (timeoutFala) { clearTimeout(timeoutFala); timeoutFala = null; } document.getElementById('falaContainer').parentElement?.classList.remove('falando'); estaFalando = false; const agora = Date.now(); const emRecarga = ultimaIrritacaoTimestamp && (agora - ultimaIrritacaoTimestamp < RESET_INTERVAL); if (!emRecarga) { if (agora - ultimoCliqueTime > 2000) cliqueCount = 0; cliqueCount++; ultimoCliqueTime = agora; } else cliqueCount = 0; const eff = emRecarga ? 1 : cliqueCount; if (eff === 1) { mostrarExpressao('feliz'); if (dados.frases?.length && Math.random() < 0.5) falarMascote(dados.frases[Math.floor(Math.random()*dados.frases.length)]); else if (Math.random() < 0.5) falarMascote(piadas[Math.floor(Math.random()*piadas.length)]); else falarMascote('Oi! Clicou em mim? 😊'); } else if (eff === 2) { mostrarExpressao('irritado-1'); falarMascote('Para com isso! 😤'); } else if (eff === 3) { mostrarExpressao('irritado-2'); falarMascote('Tô bravo! 😡'); } else if (eff >= 4) { estaContando = true; const msgs = ['JÁ CHEGA! 5...','4...','3...','2...','1...']; let i=0; const iv = setInterval(() => { if (i<msgs.length) { document.getElementById('falaContainer').innerHTML = msgs[i] + '<span class="fala-cursor">|</span>'; document.getElementById('falaContainer').parentElement?.classList.add('falando'); i++; } else { clearInterval(iv); estaContando=false; estaFugindo=true; document.getElementById('mascoteWrapper').classList.add('fugindo'); document.getElementById('alertaContainer').classList.add('active'); setTimeout(() => { document.getElementById('mascoteWrapper').classList.add('somiu'); estaFugindo=false; estaSumido=true; document.getElementById('peekingHead').classList.add('active'); ultimaIrritacaoTimestamp=Date.now(); salvarEstadoMascote(); document.getElementById('alertaContainer').classList.remove('active'); }, 2500); } }, 1000); return; } if (!emRecarga) { timeoutIrritacao = setTimeout(() => { cliqueCount = 0; mostrarExpressao('feliz'); }, 5000); salvarEstadoMascote(); } });
+        document.getElementById('mascoteWrapper').addEventListener('click', function() {
+            this.style.animation = 'none'; this.offsetHeight; this.style.animation = 'floatMascote 0.6s ease-in-out';
+            setTimeout(() => { this.style.animation = 'floatMascote 6s ease-in-out infinite'; }, 600);
+            if (estaSumido || estaFugindo || estaVoltando || estaContando) return;
+            if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
+            if (timeoutFala) { clearTimeout(timeoutFala); timeoutFala = null; }
+            document.getElementById('falaContainer').parentElement?.classList.remove('falando');
+            estaFalando = false;
+            const agora = Date.now();
+            const emRecarga = ultimaIrritacaoTimestamp && (agora - ultimaIrritacaoTimestamp < RESET_INTERVAL);
+            if (!emRecarga) { if (agora - ultimoCliqueTime > 2000) cliqueCount = 0; cliqueCount++; ultimoCliqueTime = agora; }
+            else cliqueCount = 0;
+            const eff = emRecarga ? 1 : cliqueCount;
+            if (eff === 1) { mostrarExpressao('feliz'); if (dados.frases?.length && Math.random() < 0.5) falarMascote(dados.frases[Math.floor(Math.random()*dados.frases.length)]); else if (Math.random() < 0.5) falarMascote(piadas[Math.floor(Math.random()*piadas.length)]); else falarMascote('Oi! Clicou em mim? 😊'); }
+            else if (eff === 2) { mostrarExpressao('irritado-1'); falarMascote('Para com isso! 😤'); }
+            else if (eff === 3) { mostrarExpressao('irritado-2'); falarMascote('Tô bravo! 😡'); }
+            else if (eff >= 4) {
+                estaContando = true;
+                const msgs = ['JÁ CHEGA! VOU EMBORA! 🚀 5...', 'Tchau em 4...', 'Tchau em 3...', 'Tchau em 2...', 'Tchau em 1...'];
+                let i = 0;
+                falarImediato(msgs[0]);
+                const iv = setInterval(() => {
+                    i++;
+                    if (i < msgs.length) { falarImediato(msgs[i]); }
+                    else {
+                        clearInterval(iv); estaContando = false; estaFugindo = true;
+                        document.getElementById('mascoteWrapper').classList.add('fugindo');
+                        document.getElementById('alertaContainer').classList.add('active');
+                        setTimeout(() => {
+                            document.getElementById('mascoteWrapper').classList.add('somiu');
+                            estaFugindo = false; estaSumido = true;
+                            document.getElementById('peekingHead').classList.add('active');
+                            ultimaIrritacaoTimestamp = Date.now(); salvarEstadoMascote();
+                            document.getElementById('alertaContainer').classList.remove('active');
+                        }, 2500);
+                    }
+                }, 1000);
+                return;
+            }
+            if (!emRecarga) { timeoutIrritacao = setTimeout(() => { cliqueCount = 0; mostrarExpressao('feliz'); }, 5000); salvarEstadoMascote(); }
+        });
         function trazerMascoteDeVolta() { document.getElementById('peekingHead').classList.remove('active'); document.getElementById('mascoteWrapper').classList.remove('somiu'); estaSumido=false; falarMascote('Voltei! 🎉'); }
         setInterval(() => { if (!estaFalando && !estaFugindo && !estaSumido && !estaContando) { atualizarMensagensMascote(); if (dados.frases?.length && Math.random()<0.5) falarMascote(dados.frases[Math.floor(Math.random()*dados.frases.length)]); else falarMascote(); } }, 15000);
 
@@ -630,10 +641,9 @@
         function mostrarMiniGluudyx() { const mini = document.getElementById('miniGluudyx'); if(!mini) return; mini.querySelector('.mini-fala').textContent = frasesInfluenciador[Math.floor(Math.random()*frasesInfluenciador.length)]; mini.style.display = 'flex'; }
         function esconderMiniGluudyx() { if (!document.getElementById('cartDrawer').classList.contains('open') && !document.getElementById('productModal').classList.contains('active')) { document.getElementById('miniGluudyx').style.display = 'none'; } }
 
-        // ===== CARRINHO COM BARRA DE PROGRESSO =====
         function carregarCarrinho() { const sc = sessionStorage.getItem('gudyxCarrinho'); if(sc) { try { const d=JSON.parse(sc); carrinho=d.items||[]; cupomAtual=d.cupom||null; } catch(e) {} } atualizarBadgeCarrinho(); renderizarDrawer(); }
         function salvarCarrinho() { sessionStorage.setItem('gudyxCarrinho', JSON.stringify({items:carrinho,cupom:cupomAtual,timestamp:Date.now()})); atualizarBadgeCarrinho(); renderizarDrawer(); verificarCupomAutomatico(); atualizarBarraProgresso(); }
-        function atualizarBarraProgresso() { const total = carrinho.reduce((acc, c) => acc + parseFloat(c.preco.replace(',','.')) * c.quantidade, 0); const meta = 100; const progresso = Math.min((total / meta) * 100, 100); document.getElementById('progressoPreenchimento').style.width = progresso + '%'; if (total >= meta && !cupomAtual) { document.getElementById('progressoTexto').textContent = '🎉 Você ganhou 5% OFF automático!'; } else if (total > 0 && total < meta) { document.getElementById('progressoTexto').textContent = `Faltam R$ ${(meta - total).toFixed(2)} para ganhar 5% OFF`; } else { document.getElementById('progressoTexto').textContent = ''; } }
+        function atualizarBarraProgresso() { const total = carrinho.reduce((acc, c) => acc + parseFloat(c.preco.replace(',','.')) * c.quantidade, 0); const meta = 100; const progresso = Math.min((total / meta) * 100, 100); document.getElementById('progressoPreenchimento').style.width = progresso + '%'; if (total >= meta && !cupomAtual) { document.getElementById('progressoTexto').textContent = '🎉 Você ganhou 5% OFF!'; } else if (total > 0 && total < meta) { document.getElementById('progressoTexto').textContent = `Faltam R$ ${(meta - total).toFixed(2)} para 5% OFF`; } else { document.getElementById('progressoTexto').textContent = ''; } }
         function renderizarDrawer() { const body = document.getElementById('cartDrawerBody'), totalEl = document.getElementById('cartDrawerTotal'); if (!carrinho.length) { body.innerHTML = '<div class="cart-empty">Carrinho vazio.</div>'; totalEl.textContent = 'R$ 0,00'; atualizarBarraProgresso(); return; } let html = '', total = 0; carrinho.forEach(item => { const sub = parseFloat(item.preco.replace(',','.')) * item.quantidade; total += sub; html += `<div class="cart-drawer-item"><img src="${item.imagem||'https://placehold.co/50'}" class="item-img" loading="lazy"><div class="item-info"><h4>${item.nome}</h4><div>R$ ${item.preco} x ${item.quantidade}</div></div><div class="item-actions"><button onclick="alterarQtdCarrinho('${item.id}',-1)">−</button><span class="qtd">${item.quantidade}</span><button onclick="alterarQtdCarrinho('${item.id}',1)">+</button><button class="btn-remove" onclick="alterarQtdCarrinho('${item.id}',-1)">🗑️</button></div></div>`; }); body.innerHTML = html; if (cupomAtual) { if (cupomAtual.tipo==='percentual') total *= (1-cupomAtual.valor/100); else total = Math.max(0, total-cupomAtual.valor); } totalEl.textContent = `R$ ${total.toFixed(2)}`; atualizarBarraProgresso(); }
         function addToCart(prodId, qtd=1) { const prod = dados.produtos.find(p=>p.id===prodId); if(!prod||!isEmEstoque(prod)) return alert('Esgotado!'); const exist = carrinho.find(c=>c.id===prodId); const preco = isPromoActive(prod)?prod.precoPromo:prod.preco; if(exist) { if(exist.quantidade+qtd>getEstoque(prod)) return alert('Estoque máximo!'); exist.quantidade+=qtd; } else carrinho.push({id:prodId,quantidade:qtd,preco,nome:prod.nome,imagem:getImagemPrincipal(prod)}); salvarCarrinho(); animarCarrinho(); confetti({particleCount:100,spread:70,origin:{y:0.7}}); playClickSound(); setTimeout(abrirDrawer,300); }
         function addToCartFromModal() { if(produtoModalAtual) { addToCart(produtoModalAtual.id, quantidadeModal); fecharModal(); } }
@@ -643,9 +653,72 @@
         function fecharDrawer() { document.getElementById('cartDrawerOverlay').classList.remove('active'); document.getElementById('cartDrawer').classList.remove('open'); esconderMiniGluudyx(); }
         function limparCarrinho() { carrinho=[]; cupomAtual=null; salvarCarrinho(); }
         function aplicarCupom() { const input = document.getElementById('cupomInput').value.trim().toUpperCase(); const cupons = {'BEMVINDO10':{tipo:'percentual',valor:10},'GUDYX5':{tipo:'fixo',valor:5}}; if(cupons[input]) { cupomAtual={codigo:input,...cupons[input]}; document.getElementById('cupomMsg').textContent='Cupom aplicado!'; } else { cupomAtual=null; document.getElementById('cupomMsg').textContent='Cupom inválido'; } salvarCarrinho(); }
-        function verificarCupomAutomatico() { if (cupomAtual || carrinho.length===0) return; const total = carrinho.reduce((acc, c) => acc + parseFloat(c.preco.replace(',','.')) * c.quantidade, 0); if (total >= 100) { cupomAtual = { codigo: 'AUTO5', tipo: 'percentual', valor: 5, descricao: '5% OFF automático' }; document.getElementById('cupomMsg').textContent = '🎉 5% OFF automático!'; document.getElementById('cupomMsg').className = 'cupom-msg success'; salvarCarrinho(); } }
+        function verificarCupomAutomatico() { if (cupomAtual || carrinho.length===0) return; const total = carrinho.reduce((acc, c) => acc + parseFloat(c.preco.replace(',','.')) * c.quantidade, 0); if (total >= 100) { cupomAtual = { codigo: 'AUTO5', tipo: 'percentual', valor: 5, descricao: '5% OFF automático' }; document.getElementById('cupomMsg').textContent = '🎉 5% OFF!'; document.getElementById('cupomMsg').className = 'cupom-msg success'; salvarCarrinho(); } }
 
-        // ===== FAVORITOS COM COMPARTILHAMENTO =====
+        function itemSurpresa() {
+            const disponiveis = dados.produtos.filter(p => isEmEstoque(p) && !carrinho.find(c => c.id === p.id));
+            if (disponiveis.length === 0) return alert('Todos os produtos já estão no carrinho!');
+            const prod = disponiveis[Math.floor(Math.random() * disponiveis.length)];
+            addToCart(prod.id, 1);
+            if (!cupomAtual) {
+                cupomAtual = { codigo: 'SORTE10', tipo: 'percentual', valor: 10, descricao: '10% OFF item surpresa' };
+                document.getElementById('cupomMsg').textContent = '🎁 10% OFF aplicado!';
+                document.getElementById('cupomMsg').className = 'cupom-msg success';
+            }
+            falarMascote(`🎁 ${prod.nome} adicionado com 10% OFF!`);
+        }
+
+        function abrirRaspadinha() {
+            if (raspadinhaUsada) return alert('Você já usou sua raspadinha hoje! Volte amanhã!');
+            document.getElementById('raspadinhaModal').classList.add('active');
+            initRaspadinha();
+        }
+        function fecharRaspadinha() { document.getElementById('raspadinhaModal').classList.remove('active'); }
+        const cuponsRaspadinha = [{ codigo: 'RASPA5', tipo: 'percentual', valor: 5, descricao: '5% OFF' },{ codigo: 'RASPA10', tipo: 'percentual', valor: 10, descricao: '10% OFF' },{ codigo: 'RASPA15', tipo: 'percentual', valor: 15, descricao: '15% OFF' },{ codigo: 'RASPA0', tipo: 'percentual', valor: 0, descricao: 'Tente novamente' }];
+        function initRaspadinha() {
+            const canvas = document.getElementById('raspadinhaCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#888';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 24px Poppins';
+            ctx.textAlign = 'center';
+            ctx.fillText('RASPE AQUI', canvas.width/2, canvas.height/2+10);
+            let raspando = false;
+            function raspar(e) {
+                if (!raspando) return;
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || e.touches[0].clientX) - rect.left;
+                const y = (e.clientY || e.touches[0].clientY) - rect.top;
+                ctx.globalCompositeOperation = 'destination-out';
+                ctx.beginPath();
+                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                ctx.fill();
+                if (verificarRaspagem(ctx, canvas)) {
+                    revelarCupom(ctx, canvas);
+                    raspadinhaUsada = true;
+                    document.getElementById('floatRaspadinha').style.display = 'none';
+                }
+            }
+            canvas.addEventListener('mousedown', () => { raspando = true; });
+            canvas.addEventListener('mouseup', () => { raspando = false; });
+            canvas.addEventListener('mousemove', raspar);
+            canvas.addEventListener('touchstart', (e) => { e.preventDefault(); raspando = true; raspar(e); });
+            canvas.addEventListener('touchend', () => { raspando = false; });
+            canvas.addEventListener('touchmove', (e) => { e.preventDefault(); raspar(e); });
+        }
+        function verificarRaspagem(ctx, canvas) { const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data; let transparentes = 0; for (let i = 3; i < imageData.length; i += 4) { if (imageData[i] === 0) transparentes++; } return transparentes > (canvas.width * canvas.height * 0.4); }
+        function revelarCupom(ctx, canvas) { const cupom = cuponsRaspadinha[Math.floor(Math.random() * cuponsRaspadinha.length)]; ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#0b041c'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = 'gold'; ctx.font = 'bold 20px Poppins'; ctx.textAlign = 'center'; if (cupom.valor > 0) { ctx.fillText(`${cupom.descricao}!`, canvas.width/2, canvas.height/2-10); ctx.fillText(`Cupom: ${cupom.codigo}`, canvas.width/2, canvas.height/2+30); aplicarCupomRaspadinha(cupom); } else { ctx.fillText('Tente novamente!', canvas.width/2, canvas.height/2); } setTimeout(fecharRaspadinha, 3000); }
+        function aplicarCupomRaspadinha(cupom) { cupomAtual = cupom; document.getElementById('cupomMsg').textContent = `🎟️ Cupom ${cupom.codigo} aplicado!`; document.getElementById('cupomMsg').className = 'cupom-msg success'; salvarCarrinho(); }
+
+        function verificarAbandono() { if (carrinho.length === 0) return; const ultimoAbandono = localStorage.getItem('gudyx_abandono_aviso'); const agora = Date.now(); if (!ultimoAbandono || (agora - parseInt(ultimoAbandono)) > 86400000) { setTimeout(() => { falarMascote('Ei, você deixou itens no carrinho! 😉 Finaliza sua compra!'); localStorage.setItem('gudyx_abandono_aviso', agora.toString()); }, 5000); } }
+
+        const tourSteps = [{ titulo: 'Bem-vindo à Gudyx!', texto: 'Eu sou o Gluudyx, seu assistente! Clique em mim para interagir.', alvo: '#mascoteWrapper' },{ titulo: 'Busca Rápida', texto: 'Aqui você pode buscar qualquer produto instantaneamente.', alvo: '#searchGlobal' },{ titulo: 'Promoções', texto: 'Aqui ficam as ofertas especiais! Arraste para ver mais.', alvo: '#sliderBox' },{ titulo: 'Seu Carrinho', texto: 'Adicione itens e finalize pelo WhatsApp. É rápido!', alvo: '.float-cart' },{ titulo: 'Pronto!', texto: 'Agora é só explorar e se divertir! 🎉', alvo: null }];
+        let tourAtual = 0;
+        function iniciarTour() { if (localStorage.getItem('tour_feito')) return; document.getElementById('tourOverlay').classList.add('active'); mostrarTourStep(); }
+        function mostrarTourStep() { const step = tourSteps[tourAtual]; document.getElementById('tourTitulo').textContent = step.titulo; document.getElementById('tourTexto').textContent = step.texto; document.getElementById('tourBtn').textContent = tourAtual < tourSteps.length - 1 ? 'Próximo' : 'Começar!'; document.querySelectorAll('.tour-highlight').forEach(el => el.remove()); if (step.alvo) { const alvo = document.querySelector(step.alvo); if (alvo) { const rect = alvo.getBoundingClientRect(); const highlight = document.createElement('div'); highlight.className = 'tour-highlight'; highlight.style.left = rect.left - 5 + 'px'; highlight.style.top = rect.top - 5 + 'px'; highlight.style.width = rect.width + 10 + 'px'; highlight.style.height = rect.height + 10 + 'px'; document.body.appendChild(highlight); } } }
+        function proximoTour() { tourAtual++; if (tourAtual >= tourSteps.length) { document.getElementById('tourOverlay').classList.remove('active'); document.querySelectorAll('.tour-highlight').forEach(el => el.remove()); localStorage.setItem('tour_feito', '1'); } else { mostrarTourStep(); } }
+
         function carregarFavoritos() { favoritos = JSON.parse(localStorage.getItem('gudyxFavoritos')||'[]'); }
         function salvarFavoritos() { localStorage.setItem('gudyxFavoritos', JSON.stringify(favoritos)); }
         function toggleFavorito(prodId) { if(favoritos.includes(prodId)) favoritos = favoritos.filter(id=>id!==prodId); else favoritos.push(prodId); salvarFavoritos(); atualizarFavoritosUI(); }
@@ -655,7 +728,6 @@
         function renderizarFavDrawer() { const body = document.getElementById('favDrawerBody'); if (favoritos.length === 0) { body.innerHTML = '<div class="cart-empty">Nenhum favorito ainda.</div>'; return; } let html = ''; favoritos.forEach(id => { const prod = dados.produtos.find(p => p.id === id); if (!prod) return; html += `<div class="cart-drawer-item"><img src="${getImagemPrincipal(prod)}" class="item-img" loading="lazy"><div class="item-info"><h4>${prod.nome}</h4><div class="item-price">R$ ${prod.preco}</div></div><div class="item-actions"><button onclick="abrirModal('${prod.id}'); fecharFavDrawer();"><i class="fas fa-eye"></i></button><button class="btn-remove" onclick="toggleFavorito('${prod.id}'); renderizarFavDrawer();"><i class="fas fa-heart-broken"></i></button></div></div>`; }); body.innerHTML = html; }
         function compartilharFavoritos() { if (favoritos.length === 0) return alert('Nenhum favorito para compartilhar.'); const prods = favoritos.map(id => dados.produtos.find(p => p.id === id)).filter(p => p); const texto = prods.map(p => `🛒 ${p.nome} - R$ ${p.preco}`).join('\n'); const msg = `*Minha lista de desejos da Gudyx:*\n\n${texto}\n\nQuero esses produtos!`; window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank'); }
 
-        // ===== MODAL COM CONTADOR AO VIVO =====
         function alterarQuantidade(delta) { quantidadeModal = Math.max(1, quantidadeModal+delta); document.getElementById('qtdModal').textContent = quantidadeModal; }
         function abrirModal(prodId) { const prod = dados.produtos.find(p=>p.id===prodId); if(!prod) return; produtoModalAtual=prod; quantidadeModal=1; document.getElementById('qtdModal').textContent='1'; prod.cliques=(prod.cliques||0)+1; salvarDados(); carregarMaisVendidos(); document.getElementById('modalTitle').textContent=prod.nome; document.getElementById('modalDesc').textContent=prod.descricao||''; const promo=isPromoActive(prod); document.getElementById('modalPriceContainer').innerHTML = promo&&prod.precoPromo?`<span class="modal-price-old">R$ ${prod.preco}</span> <span class="modal-price">R$ ${prod.precoPromo}</span>`:`<span class="modal-price">R$ ${prod.preco}</span>`; document.getElementById('modalGallery').innerHTML = (prod.imagens?.length?prod.imagens:[getImagemPrincipal(prod)]).map(img=>`<img src="${img}" loading="lazy">`).join(''); const cartBtn=document.getElementById('modalAddCartBtn'),waBtn=document.getElementById('modalWaBtn'); if(!isEmEstoque(prod)) { cartBtn.disabled=true; cartBtn.textContent='Esgotado'; waBtn.style.opacity='0.5'; } else { cartBtn.disabled=false; cartBtn.innerHTML='<i class="fas fa-cart-plus"></i> Adicionar'; waBtn.style.opacity='1'; } document.getElementById('productModal').classList.add('active'); mostrarMiniGluudyx(); renderizarAvaliacoes(prodId); renderizarSugestoes(prodId); document.getElementById('contadorAoVivo').textContent = `👀 ${Math.floor(Math.random()*5)+1} pessoas estão vendo este produto agora`; setTimeout(() => { document.querySelectorAll('#modalGallery img').forEach(img => { img.onclick = (e) => { e.stopPropagation(); abrirLightbox(img.src); }; }); }, 100); }
         function fecharModal() { document.getElementById('productModal').classList.remove('active'); esconderMiniGluudyx(); }
@@ -663,19 +735,15 @@
         function abrirLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxOverlay').classList.add('active'); }
         function fecharLightbox() { document.getElementById('lightboxOverlay').classList.remove('active'); }
 
-        // ===== COMPRADOS JUNTOS =====
         function renderizarSugestoes(prodId) { const container=document.getElementById('sugestoesGrid'); const prod=dados.produtos.find(p=>p.id===prodId); if(!prod){container.innerHTML='';return;} let sugestoes = dados.produtos.filter(p=>p.id!==prodId&&p.categoriaId===prod.categoriaId&&isEmEstoque(p)).slice(0,3); if (sugestoes.length < 2) { sugestoes = dados.produtos.filter(p=>p.id!==prodId&&isEmEstoque(p)).sort(()=>Math.random()-0.5).slice(0,3); } container.innerHTML=sugestoes.length?sugestoes.map(s=>{const preco=isPromoActive(s)&&s.precoPromo?'R$ '+s.precoPromo:'R$ '+s.preco;return`<div class="sugestao-card" onclick="abrirModal('${s.id}')"><img src="${getImagemPrincipal(s)}" loading="lazy"><h5>${s.nome}</h5><div class="preco">${preco}</div></div>`;}).join(''):'<p style="opacity:0.6;">Nenhum relacionado.</p>'; }
-
         function enviarOrcamentoWhatsApp() { if(!carrinho.length) return alert('Carrinho vazio!'); let msg='*Gudyx Custom - Orçamento*\n\n', total=0; carrinho.forEach(item=>{ const sub=parseFloat(item.preco.replace(',','.'))*item.quantidade; total+=sub; msg+=`🛒 *${item.nome}* - ${item.quantidade}x - R$ ${item.preco}\n`; }); if(cupomAtual) { if(cupomAtual.tipo==='percentual') total*=(1-cupomAtual.valor/100); else total=Math.max(0,total-cupomAtual.valor); msg+=`💳 Cupom ${cupomAtual.codigo}\n`; } msg+=`\n💰 *Total: R$ ${total.toFixed(2)}*\n📝 *Forma de pagamento:* \n📍 *Retirada:* \nQuero finalizar!`; window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); playVictorySound(); confetti({particleCount:200,spread:100,origin:{y:0.5}}); }
         function comprarWhatsAppModal() { if(!produtoModalAtual||!isEmEstoque(produtoModalAtual)) return; const q=parseInt(document.getElementById('qtdModal').textContent), p=isPromoActive(produtoModalAtual)?produtoModalAtual.precoPromo:produtoModalAtual.preco; window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`*Gudyx*\n🛒 ${produtoModalAtual.nome}\n💰 ${p} x ${q}\nQuero comprar!`)}`,'_blank'); fecharModal(); }
 
-        // ===== AVALIAÇÕES COM FOTOS =====
         function carregarAvaliacoes() { avaliacoes = JSON.parse(localStorage.getItem('gudyx_avaliacoes')||'{}'); }
         function salvarAvaliacoes() { localStorage.setItem('gudyx_avaliacoes', JSON.stringify(avaliacoes)); }
         function salvarAvaliacao() { if(!produtoModalAtual) return; const nota=parseInt(document.getElementById('avaliacaoNota').value); const comentario=document.getElementById('avaliacaoComentario').value.trim(); if(!comentario) return alert('Escreva um comentário.'); const id=produtoModalAtual.id; if(!avaliacoes[id]) avaliacoes[id]=[]; const fileInput = document.getElementById('avaliacaoFoto'); if (fileInput.files && fileInput.files[0]) { const reader = new FileReader(); reader.onload = function(e) { const foto = e.target.result; avaliacoes[id].push({nota,comentario,foto,autor:'Cliente',data:new Date().toISOString()}); salvarAvaliacoes(); document.getElementById('avaliacaoComentario').value=''; fileInput.value=''; renderizarAvaliacoes(id); }; reader.readAsDataURL(fileInput.files[0]); } else { avaliacoes[id].push({nota,comentario,autor:'Cliente',data:new Date().toISOString()}); salvarAvaliacoes(); document.getElementById('avaliacaoComentario').value=''; renderizarAvaliacoes(id); } }
         function renderizarAvaliacoes(prodId) { const lista=avaliacoes[prodId]||[]; document.getElementById('avaliacoesList').innerHTML=lista.length?lista.map(av=>`<div class="avaliacao-item"><div class="estrelas">${'★'.repeat(av.nota)+'☆'.repeat(5-av.nota)}</div><div class="comentario">${av.comentario}</div>${av.foto?`<img src="${av.foto}" class="foto-avaliacao" loading="lazy">`:''}<div class="autor">${av.autor} • ${new Date(av.data).toLocaleDateString()}</div></div>`).join(''):'<p style="opacity:0.6;">Nenhuma avaliação.</p>'; }
 
-        // ===== SLIDER COM SWIPE =====
         let slideAtual=0,sliderIntervalo;
         function iniciarSlider(){const c=document.getElementById('dynamicSliderContainer'),d=document.getElementById('sliderDots');c.innerHTML='';d.innerHTML='';const itens=dados.produtos.filter(p=>p.exibirSlider&&(isPromoActive(p)||!p.promocao)&&isEmEstoque(p));if(!itens.length){c.innerHTML='<div style="padding:30px;text-align:center;">Sem promoções.</div>';return;}itens.forEach((p,i)=>{const s=document.createElement('div');s.className='slide-item'+(i===0?' active-slide':'');s.onclick=()=>abrirModal(p.id);s.innerHTML=`<img src="${getImagemPrincipal(p)}" loading="lazy"><h4>${p.nome}</h4><div class="preco">R$ ${p.precoPromo||p.preco}</div>`;c.appendChild(s);const dot=document.createElement('button');dot.className='dot'+(i===0?' active-dot':'');dot.onclick=()=>{clearInterval(sliderIntervalo);mudarSlide(i);iniciarSliderLoop();};d.appendChild(dot);});slideAtual=0;iniciarSliderLoop();}
         function mudarSlide(i){document.querySelectorAll('#dynamicSliderContainer .slide-item').forEach((s,idx)=>s.classList.toggle('active-slide',idx===i));document.querySelectorAll('#sliderDots .dot').forEach((d,idx)=>d.classList.toggle('active-dot',idx===i));slideAtual=i;}
@@ -686,20 +754,13 @@
         document.getElementById('sliderBox').addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;});
         document.getElementById('sliderBox').addEventListener('touchend',e=>{touchEndX=e.changedTouches[0].screenX;if(touchEndX<touchStartX-50)proximoSlide();if(touchEndX>touchStartX+50){const slides=document.querySelectorAll('#dynamicSliderContainer .slide-item');if(slides.length)mudarSlide((slideAtual-1+slides.length)%slides.length);}});
 
-        // ===== MAIS VENDIDOS =====
         function carregarMaisVendidos(){const grid=document.getElementById('maisVendidosGrid');grid.innerHTML='';const top=[...dados.produtos].sort((a,b)=>(b.cliques||0)-(a.cliques||0)).slice(0,5);if(!top.length){grid.innerHTML='<p style="text-align:center;">Sem dados.</p>';return;}top.forEach((p,i)=>{const card=document.createElement('div');card.className='card-vendido';card.onclick=()=>abrirModal(p.id);card.innerHTML=`${i<3?'<div class="fire-badge-mini">HOT</div>':''}<img src="${getImagemPrincipal(p)}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;" loading="lazy"><h4>${p.nome}</h4><div class="preco">R$ ${p.preco}</div>`;grid.appendChild(card);});}
-
-        // ===== BUSCA GLOBAL + EASTER EGGS =====
         function buscaGlobal() { const term = document.getElementById('searchGlobal').value.toLowerCase().trim(); if (term === 'caderno') { document.body.classList.add('festa'); confetti({particleCount:200,spread:100}); falarMascote('🎉 Achou o easter egg do caderno!'); setTimeout(()=>document.body.classList.remove('festa'),3000); return; } if (term === 'desconto') { cupomAtual = {codigo:'SECRETO',tipo:'percentual',valor:15,descricao:'15% OFF easter egg'}; salvarCarrinho(); falarMascote('🎉 Cupom secreto de 15% aplicado!'); return; } if (term === 'festa') { document.body.classList.add('festa'); confetti({particleCount:500,spread:180}); setTimeout(()=>document.body.classList.remove('festa'),5000); return; } if (term.length < 2) return; const resultados = dados.produtos.filter(p => p.nome.toLowerCase().includes(term) || (p.descricao||'').toLowerCase().includes(term)); if (resultados.length === 0) { alert('Nenhum produto encontrado.'); return; } mostrarTela('produtosScreen'); carregarCategorias('produtos'); const container = document.getElementById('produtosProdutosContainer'); container.innerHTML = ''; container.style.display = 'grid'; container.className = 'produtos-grid'; resultados.forEach(prod => { renderizarCardProduto(prod, container); }); }
         function carregarAtalhos() { const container = document.getElementById('atalhosContainer'); container.innerHTML = ''; const nomes = ['Caixas', 'Imãs', 'Adesivos', 'Displays', 'Cards']; nomes.forEach(nome => { const cat = dados.categorias.find(c => c.nome.toLowerCase().includes(nome.toLowerCase())); if (cat) { const btn = document.createElement('button'); btn.className = 'atalho-btn'; btn.textContent = cat.nome; btn.onclick = () => { mostrarTela('produtosScreen'); carregarCategorias('produtos'); setTimeout(() => selecionarCategoria('produtos', cat.id), 200); }; container.appendChild(btn); } }); }
         function carregarDepoimentos() { const container = document.getElementById('depoimentosGrid'); container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Os imãs são lindos!"</div><div class="autor">— Ana C.</div></div>`; }
         function carregarInstagram() { const container = document.getElementById('instagramGrid'); const imgs = ['https://placehold.co/300/0b041c/a028ff?text=Gudyx1','https://placehold.co/300/0b041c/a028ff?text=Gudyx2','https://placehold.co/300/0b041c/a028ff?text=Gudyx3','https://placehold.co/300/0b041c/a028ff?text=Gudyx4','https://placehold.co/300/0b041c/a028ff?text=Gudyx5','https://placehold.co/300/0b041c/a028ff?text=Gudyx6']; container.innerHTML = imgs.map(img => `<img src="${img}" loading="lazy" alt="Instagram Gudyx">`).join(''); }
         function verificarRetorno() { const ultimaVisita = localStorage.getItem('gudyx_ultima_visita'); const agora = Date.now(); if (ultimaVisita && (agora - parseInt(ultimaVisita)) > 86400000) { setTimeout(() => falarMascote('Que bom te ver de novo! 😍'), 4000); document.getElementById('badgeVip').style.display = 'inline-block'; } localStorage.setItem('gudyx_ultima_visita', agora.toString()); }
 
-        // ===== MODO VITRINE (5 CLIQUES NO LOGO) =====
-        document.querySelector('.logo-img').addEventListener('click', function() { logoCliquesVitrine++; if (logoCliquesVitrine >= 5) { logoCliquesVitrine = 0; if (vitrineAtiva) { clearInterval(vitrineIntervalo); vitrineAtiva = false; falarMascote('Modo vitrine desativado.'); } else { vitrineAtiva = true; falarMascote('📺 Modo vitrine ativado!'); vitrineIntervalo = setInterval(() => { const todosProdutos = dados.produtos.filter(p => isEmEstoque(p)); if (todosProdutos.length > 0) { const prod = todosProdutos[Math.floor(Math.random() * todosProdutos.length)]; abrirModal(prod.id); } }, 4000); } } setTimeout(() => { logoCliquesVitrine = 0; }, 3000); });
-
-        // ===== CATEGORIAS E PRODUTOS =====
         let categoriaSelecionada=null;
         function carregarCategorias(tipo){const container=document.getElementById(tipo==='produtos'?'produtosCategoriasContainer':'servicosCategoriasContainer');container.innerHTML='';dados.categorias.filter(c=>c.tipo===tipo).forEach(cat=>{const card=document.createElement('div');card.className='categoria-card';card.innerHTML=`${cat.imagem?`<img src="${cat.imagem}" class="categoria-img" loading="lazy">`:'<i class="fas fa-folder" style="font-size:3rem;"></i>'}<h4>${cat.nome}</h4>`;card.onclick=()=>selecionarCategoria(tipo,cat.id);container.appendChild(card);});}
         function selecionarCategoria(tipo,catId){categoriaSelecionada={tipo,id:catId};const container=document.getElementById(tipo==='produtos'?'produtosProdutosContainer':'servicosProdutosContainer');container.innerHTML='';container.style.display='grid';container.className='produtos-grid';dados.produtos.filter(p=>p.categoriaId===catId).forEach(prod=>{renderizarCardProduto(prod,container);});}
@@ -750,7 +811,7 @@
 
         function contarVisita(){let v=parseInt(localStorage.getItem('visitas')||'0');if(!sessionStorage.getItem('visitou')){v++;localStorage.setItem('visitas',v);sessionStorage.setItem('visitou','1');}document.getElementById('visitCounter').textContent=v;}
 
-        carregarDadosFirebase().then(()=>{contarVisita();resetarSlider();carregarMaisVendidos();verificarPrimeiraVisita();carregarAtalhos();carregarDepoimentos();carregarInstagram();verificarRetorno();iniciarListenerFirebase();setTimeout(()=>{atualizarMensagensMascote();falarMascote();},3000);});
+        carregarDadosFirebase().then(()=>{contarVisita();resetarSlider();carregarMaisVendidos();verificarPrimeiraVisita();carregarAtalhos();carregarDepoimentos();carregarInstagram();verificarRetorno();verificarAbandono();iniciarListenerFirebase();setTimeout(()=>{atualizarMensagensMascote();falarMascote();},3000);setTimeout(iniciarTour,1500);});
 
         function compartilharProduto(){if(!produtoModalAtual)return;const url=window.location.href.split('?')[0]+'?produto='+produtoModalAtual.id;const text=`Olha esse produto da Gudyx: ${produtoModalAtual.nome} - R$ ${produtoModalAtual.preco}\n${url}`;if(navigator.share)navigator.share({title:produtoModalAtual.nome,text,url});else navigator.clipboard.writeText(text).then(()=>alert('Link copiado!'));}
         function verificarDataTematica(){const hoje=new Date();const mes=hoje.getMonth()+1;const dia=hoje.getDate();if(mes===12&&dia===25){document.getElementById('mascoteImg').src='https://i.imgur.com/GLuudyx_natal.png';falarMascote('Olha meu visual natalino! 🎄');}}
