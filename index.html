@@ -825,24 +825,30 @@
         function carregarDepoimentos() { const container = document.getElementById('depoimentosGrid'); container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Os imãs são lindos!"</div><div class="autor">— Ana C.</div></div>`; }
         function carregarInstagram() {
             const container = document.getElementById('instagramGrid');
-            container.style.display = 'grid';
-            container.style.gridTemplateColumns = 'repeat(3, 1fr)';
-            container.style.gap = '8px';
-            container.style.maxWidth = '500px';
-            container.style.margin = '0 auto';
-            // Aqui você deve colocar o código de incorporação do Instagram (widget oficial)
-            // Exemplo: <blockquote class="instagram-media" ...>
-            // Para facilitar, usei um link para o perfil, mas você pode substituir pelo widget.
+            container.style.display = 'block';
             container.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; padding: 20px;">
-                    <i class="fab fa-instagram" style="font-size: 3rem; color: var(--rosa-neon);"></i>
-                    <h4>@gudyxcustom</h4>
-                    <p style="opacity:0.7;">Siga para ver as últimas postagens!</p>
-                    <a href="https://www.instagram.com/gudyxcustom" target="_blank" style="color: var(--ciano-brilhante);">Ver perfil</a>
+                <!-- 
+                    INSTRUÇÃO: Substitua o conteúdo abaixo pelo código que você gerar no SnapWidget.
+                    1. Acesse snapwidget.com
+                    2. Crie um widget com Columns: 3 e Rows: 2
+                    3. Copie o código gerado e cole dentro do container.innerHTML = ``.
+                    
+                    Exemplo do código do SnapWidget:
+                    <script src="https://snapwidget.com/js/snapwidget.js"></script>
+                    <iframe src="https://snapwidget.com/embed/SEU_ID_AQUI" class="snapwidget-widget" allowtransparency="true" frameborder="0" scrolling="no" style="border:none; overflow:hidden;  width:100%; height:280px;"></iframe>
+                -->
+                <div style="display: flex; justify-content: center; align-items: center; background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; padding: 30px; text-align: center; width: 100%; max-width: 400px; margin: 0 auto;">
+                    <div>
+                        <i class="fab fa-instagram" style="font-size: 4rem; color: var(--rosa-neon); margin-bottom: 10px;"></i>
+                        <h3 style="margin-bottom: 5px;">@gudyxcustom</h3>
+                        <p style="opacity: 0.7; margin-bottom: 15px;">Siga nosso Instagram para novidades e promoções!</p>
+                        <a href="https://www.instagram.com/gudyxcustom?igsh=MXhlb3o1emZpbDFqMg==" target="_blank" 
+                           style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; border-radius: 30px; text-decoration: none; font-weight: 600; transition: 0.3s;">
+                            <i class="fab fa-instagram"></i> Seguir agora
+                        </a>
+                    </div>
                 </div>
             `;
-            
-            // INSTRUÇÃO: Para mostrar as 6 últimas postagens reais, vá no Instagram, clique nos 3 pontinhos do seu perfil > Incorporar > Copie o código HTML (widget) e cole dentro do container acima.
         }
         function verificarRetorno() { const ultimaVisita = localStorage.getItem('gudyx_ultima_visita'); const agora = Date.now(); if (ultimaVisita && (agora - parseInt(ultimaVisita)) > 86400000) { setTimeout(() => falarMascote('Que bom te ver de novo! 😍'), 4000); document.getElementById('badgeVip').style.display = 'inline-block'; } localStorage.setItem('gudyx_ultima_visita', agora.toString()); }
 
