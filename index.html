@@ -693,8 +693,7 @@
                 const y = (e.clientY || e.touches[0].clientY) - rect.top;
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                // AUMENTEI O RAIO DE 20 PARA 30
-                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.arc(x, y, 30, 0, Math.PI * 2); // Raio aumentado para 30
                 ctx.fill();
                 if (verificarRaspagem(ctx, canvas)) {
                     revelarCupom(ctx, canvas);
@@ -717,9 +716,7 @@
             } 
             const totalPixels = canvas.width * canvas.height;
             const percentual = transparentes / totalPixels;
-            console.log('Raspagem:', (percentual * 100).toFixed(2) + '%'); // LOG para debug
-            // REDUZI O LIMIAR DE 0.2 PARA 0.15 (15%)
-            return percentual > 0.15; 
+            return percentual > 0.15; // Limiar reduzido para 15%
         }
         function revelarCupom(ctx, canvas) { 
             const cupom = cuponsRaspadinha[Math.floor(Math.random() * cuponsRaspadinha.length)]; 
@@ -734,13 +731,12 @@
                 ctx.fillText(`Cupom: ${cupom.codigo}`, canvas.width/2, canvas.height/2+30); 
                 aplicarCupomRaspadinha(cupom); 
                 setTimeout(() => {
-                    // Mostra confete quando ganhar
                     confetti({particleCount: 150, spread: 70, origin: { y: 0.5 }});
                 }, 100);
             } else { 
                 ctx.fillText('Tente novamente!', canvas.width/2, canvas.height/2); 
             } 
-            setTimeout(fecharRaspadinha, 4000); // Aumentei o tempo para 4s
+            setTimeout(fecharRaspadinha, 4000); 
         }
         function aplicarCupomRaspadinha(cupom) { cupomAtual = cupom; document.getElementById('cupomMsg').textContent = `🎟️ Cupom ${cupom.codigo} aplicado!`; document.getElementById('cupomMsg').className = 'cupom-msg success'; salvarCarrinho(); }
 
@@ -825,29 +821,20 @@
         function carregarDepoimentos() { const container = document.getElementById('depoimentosGrid'); container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Os imãs são lindos!"</div><div class="autor">— Ana C.</div></div>`; }
         function carregarInstagram() {
             const container = document.getElementById('instagramGrid');
-            container.style.display = 'block';
+            container.style.display = 'flex';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            container.style.width = '100%';
             container.innerHTML = `
-                <!-- 
-                    INSTRUÇÃO: Substitua o conteúdo abaixo pelo código que você gerar no SnapWidget.
-                    1. Acesse snapwidget.com
-                    2. Crie um widget com Columns: 3 e Rows: 2
-                    3. Copie o código gerado e cole dentro do container.innerHTML = ``.
-                    
-                    Exemplo do código do SnapWidget:
-                    <script src="https://snapwidget.com/js/snapwidget.js"></script>
-                    <iframe src="https://snapwidget.com/embed/SEU_ID_AQUI" class="snapwidget-widget" allowtransparency="true" frameborder="0" scrolling="no" style="border:none; overflow:hidden;  width:100%; height:280px;"></iframe>
-                -->
-                <div style="display: flex; justify-content: center; align-items: center; background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; padding: 30px; text-align: center; width: 100%; max-width: 400px; margin: 0 auto;">
-                    <div>
-                        <i class="fab fa-instagram" style="font-size: 4rem; color: var(--rosa-neon); margin-bottom: 10px;"></i>
-                        <h3 style="margin-bottom: 5px;">@gudyxcustom</h3>
-                        <p style="opacity: 0.7; margin-bottom: 15px;">Siga nosso Instagram para novidades e promoções!</p>
-                        <a href="https://www.instagram.com/gudyxcustom?igsh=MXhlb3o1emZpbDFqMg==" target="_blank" 
-                           style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; border-radius: 30px; text-decoration: none; font-weight: 600; transition: 0.3s;">
-                            <i class="fab fa-instagram"></i> Seguir agora
-                        </a>
-                    </div>
-                </div>
+                <iframe 
+                    src="https://www.instagram.com/gudyxcustom/embed" 
+                    width="100%" 
+                    height="550" 
+                    frameborder="0" 
+                    scrolling="no" 
+                    allowtransparency="true"
+                    style="border-radius: 20px; max-width: 600px; border: 1px solid rgba(255,255,255,0.1); background: rgba(11,4,28,0.6);">
+                </iframe>
             `;
         }
         function verificarRetorno() { const ultimaVisita = localStorage.getItem('gudyx_ultima_visita'); const agora = Date.now(); if (ultimaVisita && (agora - parseInt(ultimaVisita)) > 86400000) { setTimeout(() => falarMascote('Que bom te ver de novo! 😍'), 4000); document.getElementById('badgeVip').style.display = 'inline-block'; } localStorage.setItem('gudyx_ultima_visita', agora.toString()); }
@@ -907,7 +894,6 @@
         function contarVisita(){let v=parseInt(localStorage.getItem('visitas')||'0');if(!sessionStorage.getItem('visitou')){v++;localStorage.setItem('visitas',v);sessionStorage.setItem('visitou','1');}document.getElementById('visitCounter').textContent=v;}
 
         carregarDadosFirebase().then(()=>{
-            // CORREÇÃO DO MASCOTE: Resetar estado e garantir frases
             setTimeout(() => {
                 localStorage.removeItem('gudyx_mascote_state');
                 const wrapper = document.getElementById('mascoteWrapper');
@@ -935,13 +921,11 @@
                 atualizarMensagensMascote();
                 falarMascote();
             }, 3000);
-            // O tour agora é ativado no primeiro acesso automaticamente, ou manualmente pelo botão.
             if (!localStorage.getItem('tour_feito')) {
                 setTimeout(iniciarTour, 1500);
             }
         });
 
-        // CORREÇÃO DA FALA: Garantir que o mascote fale no primeiro clique (quebra do bloqueio de áudio)
         document.addEventListener('click', function primeiraFala() {
             if (!estaSumido && !estaFalando && typeof falarMascote === 'function') {
                 falarMascote('Olá! Clicou em mim? 😊');
@@ -949,14 +933,12 @@
             }
         }, { once: true });
 
-        // ADICIONADO: Botão manual para reiniciar o Guia (coloquei no HTML, mas você pode chamar pelo console)
-        // Basta clicar no logo 3 vezes para ativar o tour novamente (easter egg)
         document.querySelector('.logo-img').addEventListener('click', function() {
             if (logoCliques === 3) {
                 document.getElementById('tourOverlay').classList.add('active');
                 tourAtual = 0;
                 mostrarTourStep();
-                localStorage.removeItem('tour_feito'); // Reseta para aparecer novamente
+                localStorage.removeItem('tour_feito');
             }
         });
 
