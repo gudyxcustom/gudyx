@@ -627,6 +627,19 @@
         let raspadinhaUsada = false;
         let debounceTimerGlobal, debounceTimerProd, debounceTimerServ;
 
+        // --- FALLBACK DE FRASES DO MASCOTE (garantia de funcionamento) ---
+        if (!dados.frases || dados.frases.length === 0) {
+            dados.frases = [
+                'Olá, sou o Gluudyx! ✦',
+                'Que bom te ver! 🎉',
+                'Vamos explorar juntos!',
+                'Curta a Gudyx! 😍',
+                'Já olhou as promoções? 🔥',
+                'Ei, clica em mim! 😉',
+                'Papelaria personalizada é aqui! ✨'
+            ];
+        }
+
         function salvarEstadoMascote() { localStorage.setItem('gudyx_mascote_state', JSON.stringify({ cliqueCount, ultimoCliqueTime, estaSumido, ultimaIrritacaoTimestamp, timestamp: Date.now() })); }
         function carregarEstadoMascote() { const saved = localStorage.getItem('gudyx_mascote_state'); if (saved) { try { const e = JSON.parse(saved); if (Date.now() - e.timestamp < RESET_INTERVAL) { cliqueCount = e.cliqueCount||0; ultimoCliqueTime = e.ultimoCliqueTime||0; estaSumido = e.estaSumido||false; ultimaIrritacaoTimestamp = e.ultimaIrritacaoTimestamp||0; if (estaSumido) { document.getElementById('peekingHead').classList.add('active'); document.getElementById('mascoteWrapper').classList.add('somiu'); } } } catch(e) {} } }
 
@@ -634,7 +647,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        async function carregarDadosFirebase() { try { const snapCat = await db.collection('categorias').get(); dados.categorias = snapCat.docs.map(d => ({ id: d.id, ...d.data() })); const snapProd = await db.collection('produtos').get(); dados.produtos = snapProd.docs.map(d => ({ id: d.id, ...d.data() })); const snapFrases = await db.collection('config').doc('frases').get(); dados.frases = snapFrases.exists ? snapFrases.data().lista : []; const snapFaq = await db.collection('config').doc('faq').get(); dados.faq = snapFaq.exists ? snapFaq.data().perguntas : []; const snapDivertido = await db.collection('config').doc('divertido').get(); if (snapDivertido.exists) { configDivertido = snapDivertido.data(); } else { const localDivertido = localStorage.getItem('gudyx_divertido'); if (localDivertido) configDivertido = JSON.parse(localDivertido); } } catch(e) { console.error('Firestore:', e); } carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); aplicarConfigDivertido(); }
+        async function carregarDadosFirebase() { try { const snapCat = await db.collection('categorias').get(); dados.categorias = snapCat.docs.map(d => ({ id: d.id, ...d.data() })); const snapProd = await db.collection('produtos').get(); dados.produtos = snapProd.docs.map(d => ({ id: d.id, ...d.data() })); const snapFrases = await db.collection('config').doc('frases').get(); dados.frases = snapFrases.exists ? snapFrases.data().lista : dados.frases; const snapFaq = await db.collection('config').doc('faq').get(); dados.faq = snapFaq.exists ? snapFaq.data().perguntas : []; const snapDivertido = await db.collection('config').doc('divertido').get(); if (snapDivertido.exists) { configDivertido = snapDivertido.data(); } else { const localDivertido = localStorage.getItem('gudyx_divertido'); if (localDivertido) configDivertido = JSON.parse(localDivertido); } } catch(e) { console.error('Firestore:', e); } carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); aplicarConfigDivertido(); }
         function aplicarConfigDivertido() { document.getElementById('floatRaspadinha').style.display = configDivertido.raspadinha ? 'flex' : 'none'; document.getElementById('btnSorteHome').style.display = configDivertido.itemSurpresa ? 'block' : 'none'; document.getElementById('btnSorte').style.display = configDivertido.itemSurpresa ? 'block' : 'none'; }
         function iniciarListenerFirebase() { db.collection('produtos').onSnapshot(s => { dados.produtos = s.docs.map(d => ({ id: d.id, ...d.data() })); if (document.getElementById('homeScreen').classList.contains('active')) { resetarSlider(); carregarMaisVendidos(); } }); }
 
@@ -759,7 +772,7 @@
                 const y = (e.clientY || e.touches[0].clientY) - rect.top;
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                ctx.arc(x, y, 50, 0, Math.PI * 2); // Raio aumentado para 50px
+                ctx.arc(x, y, 50, 0, Math.PI * 2);
                 ctx.fill();
                 if (verificarRaspagem(ctx, canvas)) {
                     revelarCupom(ctx, canvas);
@@ -782,7 +795,7 @@
             } 
             const totalPixels = canvas.width * canvas.height;
             const percentual = transparentes / totalPixels;
-            return percentual > 0.10; // Limiar reduzido para 10%
+            return percentual > 0.10; 
         }
         function revelarCupom(ctx, canvas) { 
             const cupom = cuponsRaspadinha[Math.floor(Math.random() * cuponsRaspadinha.length)]; 
@@ -967,6 +980,11 @@
         function contarVisita(){let v=parseInt(localStorage.getItem('visitas')||'0');if(!sessionStorage.getItem('visitou')){v++;localStorage.setItem('visitas',v);sessionStorage.setItem('visitou','1');}document.getElementById('visitCounter').textContent=v;}
 
         carregarDadosFirebase().then(()=>{
+            // Atualiza as frases se o Firebase tiver novas
+            if (dados.frases?.length) {
+                mascoteMensagens = getMensagensMascote();
+            }
+            
             contarVisita();
             resetarSlider();
             carregarMaisVendidos();
