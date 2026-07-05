@@ -652,13 +652,36 @@
         function alternarModo() { document.body.classList.toggle('modo-claro'); const icon = document.querySelector('#modoToggle i'); if (document.body.classList.contains('modo-claro')) { icon.className = 'fas fa-moon'; localStorage.setItem('gudyx_modo', 'claro'); } else { icon.className = 'fas fa-sun'; localStorage.setItem('gudyx_modo', 'escuro'); } }
         if (localStorage.getItem('gudyx_modo') === 'claro') { document.body.classList.add('modo-claro'); document.querySelector('#modoToggle i').className = 'fas fa-moon'; }
 
+        // --- FUNÇÕES DO MASCOTE COM EFEITO DE DIGITAÇÃO ---
         function falarImediato(msg) { if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; } const falaContainer = document.getElementById('falaContainer'); falaContainer.innerHTML = msg; falaContainer.parentElement.classList.add('falando'); estaFalando = true; if (timeoutFala) clearTimeout(timeoutFala); timeoutFala = setTimeout(() => { falaContainer.parentElement.classList.remove('falando'); estaFalando = false; }, 3000); }
-        function typewriterEffect(elemento, texto, velocidade = 40) { if (typewriterTimer) clearTimeout(typewriterTimer); elemento.innerHTML = ''; let i = 0; function digitar() { if (i < texto.length) { elemento.innerHTML = texto.substring(0, i + 1) + '<span class="fala-cursor">|</span>'; i++; typewriterTimer = setTimeout(digitar, velocidade); } else { elemento.innerHTML = texto; elemento.parentElement.classList.add('falando'); } } digitar(); }
+        function typewriterEffect(elemento, texto, velocidade = 40) { if (typewriterTimer) clearTimeout(typewriterTimer); elemento.innerHTML = ''; let i = 0; function digitar() { if (i < texto.length) { elemento.innerHTML = texto.substring(0, i + 1) + '<span class="fala-cursor">|</span>'; i++; typewriterTimer = setTimeout(digitar, velocidade); } else { elemento.innerHTML = texto; } } digitar(); }
 
         const piadas = ["Por que o caderno foi ao médico? 📓🤒","Qual o doce favorito do Gluudyx? 🍬","Você sabia que eu sou feito de cola? 🥰","O que o lápis disse para a borracha? ✏️💕","Por que a caneta não gostou do papel? 🖊️📄","Qual a fruta preferida do Gluudyx? 🍇😂","Eu sou como um imã... 🧲✨","Se você me der um clique, eu te dou um sorriso! 😄","Meu sonho é ser um papel de parede... 🖼️💖","Você é mais doce que um caderno de receitas! 🍪📔","O que a borracha falou para o lápis? ✏️❤️","Por que o Gluudyx é tão legal? 🎨","Se você me der um abraço, eu te dou um desconto! 😉","Gudyx: onde cada detalhe é um grude de personalidade! 💫"];
         function getMensagensMascote() { const msgs = []; if (dados.frases?.length) { msgs.push(...dados.frases, ...dados.frases, ...dados.frases); } const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p)); if (promos.length) msgs.push(`🔥 ${promos[Math.floor(Math.random()*promos.length)].nome} em promoção!`); const top = [...dados.produtos].sort((a,b)=>(b.cliques||0)-(a.cliques||0)).slice(0,3); if (top.length && top[0].cliques) msgs.push(`🏆 ${top[Math.floor(Math.random()*top.length)].nome} é o mais acessado!`); msgs.push(piadas[Math.floor(Math.random()*piadas.length)]); if (!msgs.length) msgs.push('Olá, sou o Gluudyx! ✦'); return msgs; }
         function atualizarMensagensMascote() { mascoteMensagens = getMensagensMascote().sort(() => Math.random() - 0.5); }
-        function falarMascote(msgP = null) { if (estaFugindo || estaVoltando || estaSumido || estaContando) return; if (!mascoteMensagens.length) atualizarMensagensMascote(); const falaContainer = document.getElementById('falaContainer'); if (!falaContainer) return; const msg = msgP || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length]; mascoteMsgIdx++; falaContainer.parentElement?.classList.remove('falando'); typewriterEffect(falaContainer, msg); estaFalando = true; if (timeoutFala) clearTimeout(timeoutFala); timeoutFala = setTimeout(() => { falaContainer.parentElement?.classList.remove('falando'); estaFalando = false; }, msg.length * 40 + 1500); }
+        
+        // --- CORREÇÃO AQUI: O BALÃO APARECE IMEDIATAMENTE ---
+        function falarMascote(msgP = null) { 
+            if (estaFugindo || estaVoltando || estaSumido || estaContando) return; 
+            if (!mascoteMensagens.length) atualizarMensagensMascote(); 
+            const falaContainer = document.getElementById('falaContainer'); 
+            if (!falaContainer) return; 
+            const msg = msgP || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length]; 
+            mascoteMsgIdx++; 
+            
+            // CORREÇÃO: Adiciona a classe para mostrar o balão ANTES de começar a digitar
+            falaContainer.parentElement.classList.add('falando'); 
+            estaFalando = true; 
+            
+            typewriterEffect(falaContainer, msg); 
+
+            if (timeoutFala) clearTimeout(timeoutFala); 
+            timeoutFala = setTimeout(() => { 
+                falaContainer.parentElement.classList.remove('falando'); 
+                estaFalando = false; 
+            }, msg.length * 40 + 1500); 
+        }
+
         function mostrarExpressao(exp) { const w = document.getElementById('mascoteWrapper'); w.classList.remove('feliz','triste','surpreso','irritado-1','irritado-2','fugindo','voltando'); if (exp) w.classList.add(exp); }
 
         document.getElementById('mascoteWrapper').addEventListener('click', function() {
@@ -867,6 +890,7 @@
         function abrirModal(prodId) { const prod = dados.produtos.find(p=>p.id===prodId); if(!prod) return; produtoModalAtual=prod; quantidadeModal=1; document.getElementById('qtdModal').textContent='1'; prod.cliques=(prod.cliques||0)+1; salvarDados(); carregarMaisVendidos(); document.getElementById('modalTitle').textContent=prod.nome; document.getElementById('modalDesc').textContent=prod.descricao||''; const promo=isPromoActive(prod); document.getElementById('modalPriceContainer').innerHTML = promo&&prod.precoPromo?`<span class="modal-price-old">R$ ${prod.preco}</span> <span class="modal-price">R$ ${prod.precoPromo}</span>`:`<span class="modal-price">R$ ${prod.preco}</span>`; document.getElementById('modalGallery').innerHTML = (prod.imagens?.length?prod.imagens:[getImagemPrincipal(prod)]).map(img=>`<img src="${img}" loading="lazy">`).join(''); const cartBtn=document.getElementById('modalAddCartBtn'),waBtn=document.getElementById('modalWaBtn'); if(!isEmEstoque(prod)) { cartBtn.disabled=true; cartBtn.textContent='Esgotado'; waBtn.style.opacity='0.5'; } else { cartBtn.disabled=false; cartBtn.innerHTML='<i class="fas fa-cart-plus"></i> Adicionar'; waBtn.style.opacity='1'; } document.getElementById('productModal').classList.add('active'); mostrarMiniGluudyx(); renderizarAvaliacoes(prodId); renderizarSugestoes(prodId); document.getElementById('contadorAoVivo').textContent = `👀 ${Math.floor(Math.random()*5)+1} pessoas estão vendo este produto agora`; setTimeout(() => { document.querySelectorAll('#modalGallery img').forEach(img => { img.onclick = (e) => { e.stopPropagation(); abrirLightbox(img.src); }; }); }, 100); }
         function fecharModal() { document.getElementById('productModal').classList.remove('active'); esconderMiniGluudyx(); }
         document.getElementById('productModal').addEventListener('click', function(e) { if(e.target===this) fecharModal(); });
+
         function abrirLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxOverlay').classList.add('active'); }
         function fecharLightbox() { document.getElementById('lightboxOverlay').classList.remove('active'); }
 
