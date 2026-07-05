@@ -313,7 +313,7 @@
         .btn-top { position:fixed; bottom:175px; right:20px; background:rgba(172,40,255,0.5); backdrop-filter:blur(8px); color:#fff; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; cursor:pointer; z-index:50; transition:var(--transicao); opacity:0; visibility:hidden; border:1px solid var(--vidro-borda); animation: pulseTopBtn 2s infinite; }
         .btn-top.visible { opacity:1; visibility:visible; }
         .btn-top:hover { background:rgba(172,40,255,0.8); }
-        .footer { position:fixed; bottom:0; left:0; width:100%; background:rgba(11,4,28,0.8); backdrop-filter:blur(8px); border-top:1px solid var(--vidro-borda); padding:8px 20px; text-align:center; font-size:0.8rem; color:rgba(255,255,255,0.5); z-index:10; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; }
+        .footer { position:fixed; bottom:0; left:0; width:100%; background:rgba(11,4,28,0.8); backdrop-filter:blur(8px); border-top:1px solid var(--vidro-borda); padding:10px 20px; text-align:center; font-size:0.8rem; color:rgba(255,255,255,0.5); z-index:10; display:flex; justify-content:center; align-items:center; gap:15px; flex-wrap:wrap; }
         .footer .visit-counter { color:var(--ciano-brilhante); font-weight:600; }
         .selo-seguranca { display:flex; align-items:center; gap:5px; color:var(--ciano-brilhante); font-size:0.8rem; }
         #trailContainer { position:fixed; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:9998; display:none; }
@@ -355,6 +355,33 @@
         .modal-page .modal-box .info-item:hover { background:rgba(172,40,255,0.2); border-color:var(--ciano-brilhante); }
         .modal-page .modal-box .info-item i { font-size:1.4rem; color:var(--ciano-brilhante); width:30px; }
         /* --- FIM DO DESIGN DOS MODAIS --- */
+
+        /* --- BOTÕES DO RODAPÉ (SOBRE | CONTATO) --- */
+        .btn-footer {
+            display: inline-block;
+            padding: 8px 18px;
+            color: var(--cor-texto);
+            background: rgba(172, 40, 255, 0.15);
+            border: 1px solid var(--vidro-borda);
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: var(--transicao);
+            margin: 0 5px;
+            backdrop-filter: blur(4px);
+        }
+        .btn-footer:hover {
+            background: rgba(172, 40, 255, 0.4);
+            border-color: var(--ciano-brilhante);
+            box-shadow: 0 0 20px rgba(172, 40, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .footer .separator {
+            opacity: 0.3;
+            margin: 0 5px;
+        }
+        /* --- FIM BOTÕES DO RODAPÉ --- */
 
         #faqModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px; }
         #faqModal.active { display: flex; }
@@ -402,7 +429,7 @@
         #raspadinhaModal.active { display:flex; }
         .raspadinha-box { background:var(--vidro-fundo); backdrop-filter:blur(16px); border:2px solid gold; border-radius:20px; padding:20px; text-align:center; position:relative; }
         .raspadinha-box h3 { color:gold; margin-bottom:10px; }
-        #raspadinhaCanvas { border-radius:12px; cursor:pointer; touch-action:none; }
+        #raspadinhaCanvas { border-radius:12px; cursor:pointer; touch-action:none; width: 300px; height: 150px; }
         .mobile-nav { display:none; position:fixed; bottom:0; left:0; width:100%; background:rgba(11,4,28,0.95); backdrop-filter:blur(12px); border-top:1px solid var(--vidro-borda); padding:8px 10px; z-index:9999; justify-content:space-around; align-items:center; }
         .mobile-nav button { background:none; border:none; color:var(--cor-texto); font-size:1.5rem; display:flex; flex-direction:column; align-items:center; gap:2px; cursor:pointer; }
         .mobile-nav button span { font-size:0.65rem; }
@@ -492,7 +519,7 @@
 
     <div id="firstVisitPopup"><div class="popup-box"><button class="close-popup-icon" onclick="fecharPopup()">×</button><h2>🔥 Bem-vindo à Gudyx!</h2><p>Ganhe <strong>10% OFF</strong> na sua primeira compra! Use o cupom: <strong>BEMVINDO10</strong></p><div class="cupom-box" onclick="copiarCupom()"><span id="cupomText">BEMVINDO10</span> <i class="fas fa-copy"></i></div><button class="btn-fechar-popup" onclick="fecharPopup()">Fechar e continuar</button></div></div>
 
-    <!-- ==================== MODAIS SOBRE E CONTATO CORRIGIDOS ==================== -->
+    <!-- ==================== MODAIS SOBRE E CONTATO ==================== -->
     <div id="modalSobre" class="modal-page" onclick="fecharModalSobre(event)">
         <div class="modal-box">
             <button class="close-modal-page" onclick="fecharModalSobre()">×</button>
@@ -574,7 +601,11 @@
 
     <footer class="footer">
         <span>Gudyx Custom © 2026</span>
-        <span><a href="#" onclick="abrirModalSobre();return false;">Sobre</a> | <a href="#" onclick="abrirModalContato();return false;">Contato</a></span>
+        <div>
+            <a href="#" class="btn-footer" onclick="abrirModalSobre();return false;"><i class="fas fa-info-circle"></i> Sobre</a>
+            <span class="separator">|</span>
+            <a href="#" class="btn-footer" onclick="abrirModalContato();return false;"><i class="fas fa-headset"></i> Contato</a>
+        </div>
         <span class="selo-seguranca"><i class="fas fa-lock"></i> Compra segura</span>
         <span class="visit-counter">Visitas: <span id="visitCounter">0</span></span>
     </footer>
@@ -729,7 +760,7 @@
                 const y = (e.clientY || e.touches[0].clientY) - rect.top;
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                ctx.arc(x, y, 30, 0, Math.PI * 2);
+                ctx.arc(x, y, 40, 0, Math.PI * 2); // Raio aumentado para 40
                 ctx.fill();
                 if (verificarRaspagem(ctx, canvas)) {
                     revelarCupom(ctx, canvas);
@@ -752,17 +783,15 @@
             } 
             const totalPixels = canvas.width * canvas.height;
             const percentual = transparentes / totalPixels;
-            return percentual > 0.15; 
+            return percentual > 0.12; // Limiar reduzido para 12%
         }
         function revelarCupom(ctx, canvas) { 
             const cupom = cuponsRaspadinha[Math.floor(Math.random() * cuponsRaspadinha.length)]; 
             ctx.clearRect(0, 0, canvas.width, canvas.height); 
             
-            // Fundo mais claro para o texto aparecer
             ctx.fillStyle = '#0b041c'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height); 
             
-            // Texto maior e mais centralizado
             ctx.fillStyle = 'gold'; 
             ctx.font = 'bold 26px Poppins'; 
             ctx.textAlign = 'center'; 
@@ -781,7 +810,6 @@
                 ctx.fillStyle = '#ff4455';
                 ctx.fillText('Tente novamente!', canvas.width/2, canvas.height/2); 
             } 
-            // Aumentei o tempo para 6 segundos e adicionei botão de fechar manual
             setTimeout(fecharRaspadinha, 6000); 
         }
         function aplicarCupomRaspadinha(cupom) { cupomAtual = cupom; document.getElementById('cupomMsg').textContent = `🎟️ Cupom ${cupom.codigo} aplicado!`; document.getElementById('cupomMsg').className = 'cupom-msg success'; salvarCarrinho(); }
@@ -971,6 +999,18 @@
                 setTimeout(iniciarTour, 1500);
             }
         });
+
+        // Intervalo de segurança para o mascote falar mesmo se o Firebase falhar
+        setInterval(() => {
+            if (!estaFalando && !estaFugindo && !estaSumido && !estaContando) {
+                atualizarMensagensMascote();
+                if (dados.frases?.length && Math.random() < 0.5) {
+                    falarMascote(dados.frases[Math.floor(Math.random() * dados.frases.length)]);
+                } else if (mascoteMensagens.length > 0) {
+                    falarMascote();
+                }
+            }
+        }, 20000);
 
         document.addEventListener('click', function primeiraFala() {
             if (!estaSumido && !estaFalando && typeof falarMascote === 'function') {
