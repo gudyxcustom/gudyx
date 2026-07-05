@@ -140,6 +140,12 @@
         .depoimento-card .estrelas { color:var(--amarelo-neon); margin-bottom:5px; }
         .depoimento-card .texto { font-size:0.9rem; opacity:0.8; font-style:italic; }
         .depoimento-card .autor { font-size:0.8rem; opacity:0.5; margin-top:8px; text-align:right; }
+        .instagram-section { width:100%; padding:20px 0; border-top:1px solid var(--vidro-borda); }
+        .instagram-section .section-title { font-size:1.3rem; letter-spacing:4px; text-align:center; font-weight:300; margin-bottom:15px; }
+        .instagram-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; max-width:500px; margin:0 auto; }
+        .instagram-grid img { width:100%; aspect-ratio:1; object-fit:cover; border-radius:12px; border:2px solid var(--vidro-borda); transition:0.3s; cursor:pointer; }
+        .instagram-grid img:hover { transform:scale(1.05); border-color:var(--ciano-brilhante); }
+        .contador-ao-vivo { text-align:center; font-size:0.85rem; opacity:0.7; padding:5px; animation: pulseStock 2s infinite; }
         .listagem-screen { flex-direction:column; align-items:center; padding:30px 20px; gap:20px; background:rgba(11,4,28,0.6); width:100%; }
         .listagem-header { display:flex; align-items:center; gap:15px; flex-wrap:wrap; justify-content:center; width:100%; max-width:1100px; padding-bottom:10px; }
         .listagem-header h2 { font-size:clamp(1.5rem,3vw,2.2rem); letter-spacing:4px; text-shadow:0 0 30px rgba(172,40,255,0.5); text-align:center; font-weight:300; flex:1; }
@@ -169,6 +175,7 @@
         .produto-card .preco-atual { font-weight:700; color:var(--amarelo-neon); font-size:1rem; }
         .produto-card .quick-view { position:absolute; bottom:50%; left:50%; transform:translate(-50%,50%); background:rgba(0,0,0,0.9); color:#fff; padding:10px 15px; border-radius:20px; font-size:0.8rem; opacity:0; pointer-events:none; transition:0.3s; white-space:nowrap; z-index:5; }
         .produto-card:hover .quick-view { opacity:1; bottom:60%; }
+        .contador-produto { text-align:center; font-size:0.7rem; opacity:0.6; margin-top:2px; }
         .btn-add-cart { display:inline-block; margin-top:8px; padding:8px 16px; background:linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; border-radius:20px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; transition:var(--transicao); }
         .btn-add-cart:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(172,40,255,0.4); }
         .btn-add-cart:disabled { background:#555; cursor:not-allowed; }
@@ -294,6 +301,8 @@
         .float-wa:hover { transform:scale(1.1); box-shadow:0 0 40px rgba(37,211,102,0.5); }
         .float-fav { position:fixed; bottom:100px; right:90px; background:linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:0.3s; }
         .float-fav:hover { transform:scale(1.1); }
+        .float-raspadinha { position:fixed; bottom:100px; right:155px; background:linear-gradient(135deg,#ffd700,#ff8800); color:#000; width:50px; height:50px; border-radius:50%; display:none; align-items:center; justify-content:center; font-size:1.5rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:0.3s; }
+        .float-raspadinha:hover { transform:scale(1.1); }
         .btn-top { position:fixed; bottom:175px; right:20px; background:rgba(172,40,255,0.5); backdrop-filter:blur(8px); color:#fff; width:50px; height:50px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.5rem; cursor:pointer; z-index:50; transition:var(--transicao); opacity:0; visibility:hidden; border:1px solid var(--vidro-borda); animation: pulseTopBtn 2s infinite; }
         .btn-top.visible { opacity:1; visibility:visible; }
         .btn-top:hover { background:rgba(172,40,255,0.8); }
@@ -413,6 +422,8 @@
     <canvas id="meteorCanvas"></canvas>
 
     <div id="lightboxOverlay" onclick="fecharLightbox()"><img id="lightboxImg" src="" alt="Zoom"></div>
+    <div id="tourOverlay"><div class="tour-box" id="tourBox"><h3 id="tourTitulo"></h3><p id="tourTexto"></p><button onclick="proximoTour()" id="tourBtn">Próximo</button></div></div>
+    <div id="raspadinhaModal"><div class="raspadinha-box"><h3>🎟️ Raspadinha de Cupom</h3><p>Raspe para revelar seu desconto!</p><canvas id="raspadinhaCanvas" width="300" height="150"></canvas><br><button onclick="fecharRaspadinha()" style="margin-top:10px;padding:8px 20px;border-radius:20px;border:none;background:#555;color:#fff;cursor:pointer;">Fechar</button></div></div>
 
     <div id="productModal">
         <div class="modal-box">
@@ -421,41 +432,13 @@
             <h2 id="modalTitle">Título</h2>
             <p id="modalDesc" class="modal-desc">Descrição</p>
             <div id="modalPriceContainer"></div>
-            <div class="quantidade-container">
-                <label>Quantidade:</label>
-                <div class="qtd-control">
-                    <button onclick="alterarQuantidade(-1)">−</button>
-                    <span id="qtdModal">1</span>
-                    <button onclick="alterarQuantidade(1)">+</button>
-                </div>
-            </div>
-            <div id="modalButtonsContainer">
-                <button id="modalAddCartBtn" class="btn-add-cart-modal" onclick="addToCartFromModal()"><i class="fas fa-cart-plus"></i> Adicionar ao carrinho</button>
-                <button id="modalWaBtn" class="btn-whatsapp-modal" onclick="comprarWhatsAppModal()"><i class="fab fa-whatsapp"></i> Comprar agora</button>
-            </div>
+            <div class="quantidade-container"><label>Quantidade:</label><div class="qtd-control"><button onclick="alterarQuantidade(-1)">−</button><span id="qtdModal">1</span><button onclick="alterarQuantidade(1)">+</button></div></div>
+            <div id="modalButtonsContainer"><button id="modalAddCartBtn" class="btn-add-cart-modal" onclick="addToCartFromModal()"><i class="fas fa-cart-plus"></i> Adicionar ao carrinho</button><button id="modalWaBtn" class="btn-whatsapp-modal" onclick="comprarWhatsAppModal()"><i class="fab fa-whatsapp"></i> Comprar agora</button></div>
             <div id="modalStockStatus" class="stock-status"></div>
-            <div class="avaliacoes-container" id="avaliacoesContainer">
-                <h4>⭐ Avaliações</h4>
-                <div id="avaliacoesList"></div>
-                <div class="form-avaliacao" id="formAvaliacao">
-                    <select id="avaliacaoNota">
-                        <option value="5">5 estrelas</option>
-                        <option value="4">4 estrelas</option>
-                        <option value="3">3 estrelas</option>
-                        <option value="2">2 estrelas</option>
-                        <option value="1">1 estrela</option>
-                    </select>
-                    <textarea id="avaliacaoComentario" placeholder="Deixe seu comentário..."></textarea>
-                    <button onclick="salvarAvaliacao()">Enviar avaliação</button>
-                </div>
-            </div>
-            <div class="sugestoes-container" id="sugestoesContainer">
-                <h4>🛒 Quem comprou também comprou</h4>
-                <div class="sugestoes-grid" id="sugestoesGrid"></div>
-            </div>
-            <div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap;">
-                <button onclick="compartilharProduto()" style="padding:8px 16px;background:rgba(255,255,255,0.1);border:1px solid var(--vidro-borda);border-radius:20px;color:var(--cor-texto);cursor:pointer;transition:var(--transicao);"><i class="fas fa-share-alt"></i> Compartilhar</button>
-            </div>
+            <div class="contador-ao-vivo" id="contadorAoVivo"></div>
+            <div class="avaliacoes-container" id="avaliacoesContainer"><h4>⭐ Avaliações</h4><div id="avaliacoesList"></div><div class="form-avaliacao" id="formAvaliacao"><select id="avaliacaoNota"><option value="5">5 estrelas</option><option value="4">4 estrelas</option><option value="3">3 estrelas</option><option value="2">2 estrelas</option><option value="1">1 estrela</option></select><textarea id="avaliacaoComentario" placeholder="Deixe seu comentário..."></textarea><button onclick="salvarAvaliacao()">Enviar avaliação</button></div></div>
+            <div class="sugestoes-container" id="sugestoesContainer"><h4>🛒 Quem comprou também comprou</h4><div class="sugestoes-grid" id="sugestoesGrid"></div></div>
+            <div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap;"><button onclick="compartilharProduto()" style="padding:8px 16px;background:rgba(255,255,255,0.1);border:1px solid var(--vidro-borda);border-radius:20px;color:var(--cor-texto);cursor:pointer;transition:var(--transicao);"><i class="fas fa-share-alt"></i> Compartilhar</button></div>
         </div>
     </div>
 
@@ -465,13 +448,7 @@
         <div class="cart-drawer-body" id="cartDrawerBody"><div class="cart-empty">Seu carrinho está vazio.</div></div>
         <div class="cupom-container"><input type="text" id="cupomInput" placeholder="Cupom de desconto"><button onclick="aplicarCupom()">Aplicar</button></div>
         <div class="cupom-msg" id="cupomMsg"></div>
-        <div class="cart-drawer-footer">
-            <div class="cart-total" id="cartDrawerTotal">Total: R$ 0,00</div>
-            <div class="cart-actions">
-                <button class="btn-wa-cart" onclick="enviarOrcamentoWhatsApp()"><i class="fab fa-whatsapp"></i> Enviar orçamento</button>
-                <button class="btn-clear-cart" onclick="limparCarrinho()">Limpar</button>
-            </div>
-        </div>
+        <div class="cart-drawer-footer"><div class="cart-total" id="cartDrawerTotal">Total: R$ 0,00</div><div class="cart-actions"><button class="btn-wa-cart" onclick="enviarOrcamentoWhatsApp()"><i class="fab fa-whatsapp"></i> Enviar orçamento</button><button class="btn-clear-cart" onclick="limparCarrinho()">Limpar</button></div></div>
     </div>
 
     <div id="favDrawerOverlay" onclick="fecharFavDrawer()"></div>
@@ -480,41 +457,18 @@
         <div class="cart-drawer-body" id="favDrawerBody"><div class="cart-empty">Nenhum favorito ainda.</div></div>
     </div>
 
-    <div id="firstVisitPopup">
-        <div class="popup-box">
-            <button class="close-popup-icon" onclick="fecharPopup()">×</button>
-            <h2>🔥 Bem-vindo à Gudyx!</h2>
-            <p>Ganhe <strong>10% OFF</strong> na sua primeira compra! Use o cupom: <strong>BEMVINDO10</strong></p>
-            <div class="cupom-box" onclick="copiarCupom()"><span id="cupomText">BEMVINDO10</span> <i class="fas fa-copy" style="font-size:1rem; margin-left:10px; opacity:0.6;"></i></div>
-            <button class="btn-fechar-popup" onclick="fecharPopup()">Fechar e continuar</button>
-        </div>
-    </div>
+    <div id="firstVisitPopup"><div class="popup-box"><button class="close-popup-icon" onclick="fecharPopup()">×</button><h2>🔥 Bem-vindo à Gudyx!</h2><p>Ganhe <strong>10% OFF</strong> na sua primeira compra! Use o cupom: <strong>BEMVINDO10</strong></p><div class="cupom-box" onclick="copiarCupom()"><span id="cupomText">BEMVINDO10</span> <i class="fas fa-copy" style="font-size:1rem; margin-left:10px; opacity:0.6;"></i></div><button class="btn-fechar-popup" onclick="fecharPopup()">Fechar e continuar</button></div></div>
 
-    <div id="modalSobre" class="modal-page" onclick="fecharModalSobre(event)">
-        <div class="modal-box"><button class="close-modal-page" onclick="fecharModalSobre()">×</button><h2 style="font-size:1.8rem;margin-bottom:10px;">Sobre a Gudyx</h2><p style="opacity:0.8;line-height:1.6;">Somos uma papelaria personalizada e gráfica rápida apaixonada por detalhes.<br>Criamos produtos únicos com alma taurina e um toque cósmico.<br><br>✨ <strong>Missão:</strong> Transformar ideias em papel.<br>💜 <strong>Valores:</strong> Criatividade, qualidade e carinho.<br>🌟 <strong>Visão:</strong> Ser referência em personalização no Brasil.</p></div>
-    </div>
-    <div id="modalContato" class="modal-page" onclick="fecharModalContato(event)">
-        <div class="modal-box"><button class="close-modal-page" onclick="fecharModalContato()">×</button><h2 style="font-size:1.8rem;margin-bottom:10px;">Contato</h2><p style="opacity:0.8;line-height:1.8;">📞 <strong>WhatsApp:</strong> (21) 97612-1076<br>📧 <strong>E-mail:</strong> contato@gudyx.com<br>📍 <strong>Endereço:</strong> Rua das Flores, 123 - São Paulo, SP<br>🕒 <strong>Horário:</strong> Segunda a Sexta, 9h às 18h</p></div>
-    </div>
+    <div id="modalSobre" class="modal-page" onclick="fecharModalSobre(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalSobre()">×</button><h2 style="font-size:1.8rem;margin-bottom:10px;">Sobre a Gudyx</h2><p style="opacity:0.8;line-height:1.6;">Somos uma papelaria personalizada e gráfica rápida apaixonada por detalhes.<br>Criamos produtos únicos com alma taurina e um toque cósmico.<br><br>✨ <strong>Missão:</strong> Transformar ideias em papel.<br>💜 <strong>Valores:</strong> Criatividade, qualidade e carinho.<br>🌟 <strong>Visão:</strong> Ser referência em personalização no Brasil.</p></div></div>
+    <div id="modalContato" class="modal-page" onclick="fecharModalContato(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalContato()">×</button><h2 style="font-size:1.8rem;margin-bottom:10px;">Contato</h2><p style="opacity:0.8;line-height:1.8;">📞 <strong>WhatsApp:</strong> (21) 97612-1076<br>📧 <strong>E-mail:</strong> contato@gudyx.com<br>📍 <strong>Endereço:</strong> Rua das Flores, 123 - São Paulo, SP<br>🕒 <strong>Horário:</strong> Segunda a Sexta, 9h às 18h</p></div></div>
 
     <div id="chatButton" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
-    <div id="chatModal">
-        <div class="chat-header"><h4><img src="https://i.imgur.com/Y5H9zqr.png" style="width:30px;height:30px;border-radius:50%;" loading="lazy"> Gluudyx</h4><button class="close-chat" onclick="toggleChat()">×</button></div>
-        <div class="chat-body" id="chatBody"><div class="chat-msg gluudyx">Oi! Sou o Gluudyx 😄 Como posso te ajudar?</div></div>
-        <div class="chat-footer" id="chatFooter">
-            <button class="quick-btn" onclick="chatResposta('produtos')">Quais produtos?</button>
-            <button class="quick-btn" onclick="chatResposta('promocoes')">Promoções</button>
-            <button class="quick-btn" onclick="chatResposta('duvidas')">Dúvidas</button>
-            <button class="quick-btn" onclick="chatResposta('contato')">Contato</button>
-        </div>
-    </div>
-
-    <div id="faqModal" onclick="fecharFAQ(event)">
-        <div class="faq-box"><button class="close-faq" onclick="fecharFAQ()">×</button><h2>❓ Dúvidas Frequentes</h2><div id="faqList"></div></div>
-    </div>
+    <div id="chatModal"><div class="chat-header"><h4><img src="https://i.imgur.com/Y5H9zqr.png" style="width:30px;height:30px;border-radius:50%;" loading="lazy"> Gluudyx</h4><button class="close-chat" onclick="toggleChat()">×</button></div><div class="chat-body" id="chatBody"><div class="chat-msg gluudyx">Oi! Sou o Gluudyx 😄 Como posso te ajudar?</div></div><div class="chat-footer"><button class="quick-btn" onclick="chatResposta('produtos')">Produtos</button><button class="quick-btn" onclick="chatResposta('promocoes')">Promoções</button><button class="quick-btn" onclick="chatResposta('duvidas')">Dúvidas</button><button class="quick-btn" onclick="chatResposta('contato')">Contato</button></div></div>
+    <div id="faqModal" onclick="fecharFAQ(event)"><div class="faq-box"><button class="close-faq" onclick="fecharFAQ()">×</button><h2>❓ Dúvidas Frequentes</h2><div id="faqList"></div></div></div>
 
     <div class="float-cart" onclick="abrirDrawer()"><i class="fas fa-shopping-cart"></i><span class="cart-badge" id="cartBadge">0</span></div>
     <div class="float-fav" onclick="abrirFavDrawer()"><i class="fas fa-heart"></i></div>
+    <div class="float-raspadinha" onclick="abrirRaspadinha()" id="floatRaspadinha"><i class="fas fa-ticket-alt"></i></div>
     <a class="float-wa" href="https://wa.me/5521976121076" target="_blank"><i class="fab fa-whatsapp"></i></a>
     <div class="btn-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></div>
 
@@ -617,7 +571,15 @@
 
         // --- FALLBACK DE FRASES DO MASCOTE ---
         if (!dados.frases || dados.frases.length === 0) {
-            dados.frases = ['Olá, sou o Gluudyx! ✦', 'Que bom te ver! 🎉', 'Vamos explorar juntos!', 'Curta a Gudyx! 😍', 'Já olhou as promoções? 🔥', 'Ei, clica em mim! 😉', 'Papelaria personalizada é aqui! ✨'];
+            dados.frases = [
+                'Olá, sou o Gluudyx! ✦',
+                'Que bom te ver! 🎉',
+                'Vamos explorar juntos!',
+                'Curta a Gudyx! 😍',
+                'Já olhou as promoções? 🔥',
+                'Ei, clica em mim! 😉',
+                'Papelaria personalizada é aqui! ✨'
+            ];
         }
 
         function salvarEstadoMascote() { localStorage.setItem('gudyx_mascote_state', JSON.stringify({ cliqueCount, ultimoCliqueTime, estaSumido, ultimaIrritacaoTimestamp, timestamp: Date.now() })); }
