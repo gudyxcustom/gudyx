@@ -693,7 +693,8 @@
                 const y = (e.clientY || e.touches[0].clientY) - rect.top;
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                ctx.arc(x, y, 20, 0, Math.PI * 2);
+                // AUMENTEI O RAIO DE 20 PARA 30
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
                 ctx.fill();
                 if (verificarRaspagem(ctx, canvas)) {
                     revelarCupom(ctx, canvas);
@@ -708,17 +709,80 @@
             canvas.addEventListener('touchend', () => { raspando = false; });
             canvas.addEventListener('touchmove', (e) => { e.preventDefault(); raspar(e); });
         }
-        function verificarRaspagem(ctx, canvas) { const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data; let transparentes = 0; for (let i = 3; i < imageData.length; i += 4) { if (imageData[i] === 0) transparentes++; } return transparentes > (canvas.width * canvas.height * 0.2); } // CORRIGIDO: 0.4 -> 0.2
-        function revelarCupom(ctx, canvas) { const cupom = cuponsRaspadinha[Math.floor(Math.random() * cuponsRaspadinha.length)]; ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#0b041c'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = 'gold'; ctx.font = 'bold 20px Poppins'; ctx.textAlign = 'center'; if (cupom.valor > 0) { ctx.fillText(`${cupom.descricao}!`, canvas.width/2, canvas.height/2-10); ctx.fillText(`Cupom: ${cupom.codigo}`, canvas.width/2, canvas.height/2+30); aplicarCupomRaspadinha(cupom); } else { ctx.fillText('Tente novamente!', canvas.width/2, canvas.height/2); } setTimeout(fecharRaspadinha, 3000); }
+        function verificarRaspagem(ctx, canvas) { 
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data; 
+            let transparentes = 0; 
+            for (let i = 3; i < imageData.length; i += 4) { 
+                if (imageData[i] === 0) transparentes++; 
+            } 
+            const totalPixels = canvas.width * canvas.height;
+            const percentual = transparentes / totalPixels;
+            console.log('Raspagem:', (percentual * 100).toFixed(2) + '%'); // LOG para debug
+            // REDUZI O LIMIAR DE 0.2 PARA 0.15 (15%)
+            return percentual > 0.15; 
+        }
+        function revelarCupom(ctx, canvas) { 
+            const cupom = cuponsRaspadinha[Math.floor(Math.random() * cuponsRaspadinha.length)]; 
+            ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            ctx.fillStyle = '#0b041c'; 
+            ctx.fillRect(0, 0, canvas.width, canvas.height); 
+            ctx.fillStyle = 'gold'; 
+            ctx.font = 'bold 20px Poppins'; 
+            ctx.textAlign = 'center'; 
+            if (cupom.valor > 0) { 
+                ctx.fillText(`${cupom.descricao}!`, canvas.width/2, canvas.height/2-10); 
+                ctx.fillText(`Cupom: ${cupom.codigo}`, canvas.width/2, canvas.height/2+30); 
+                aplicarCupomRaspadinha(cupom); 
+                setTimeout(() => {
+                    // Mostra confete quando ganhar
+                    confetti({particleCount: 150, spread: 70, origin: { y: 0.5 }});
+                }, 100);
+            } else { 
+                ctx.fillText('Tente novamente!', canvas.width/2, canvas.height/2); 
+            } 
+            setTimeout(fecharRaspadinha, 4000); // Aumentei o tempo para 4s
+        }
         function aplicarCupomRaspadinha(cupom) { cupomAtual = cupom; document.getElementById('cupomMsg').textContent = `🎟️ Cupom ${cupom.codigo} aplicado!`; document.getElementById('cupomMsg').className = 'cupom-msg success'; salvarCarrinho(); }
 
         function verificarAbandono() { if (carrinho.length === 0) return; const ultimoAbandono = localStorage.getItem('gudyx_abandono_aviso'); const agora = Date.now(); if (!ultimoAbandono || (agora - parseInt(ultimoAbandono)) > 86400000) { setTimeout(() => { falarMascote('Ei, você deixou itens no carrinho! 😉 Finaliza sua compra!'); localStorage.setItem('gudyx_abandono_aviso', agora.toString()); }, 5000); } }
 
         const tourSteps = [{ titulo: 'Bem-vindo à Gudyx!', texto: 'Eu sou o Gluudyx, seu assistente! Clique em mim para interagir.', alvo: '#mascoteWrapper' },{ titulo: 'Busca Rápida', texto: 'Aqui você pode buscar qualquer produto instantaneamente.', alvo: '#searchGlobal' },{ titulo: 'Promoções', texto: 'Aqui ficam as ofertas especiais! Arraste para ver mais.', alvo: '#sliderBox' },{ titulo: 'Seu Carrinho', texto: 'Adicione itens e finalize pelo WhatsApp. É rápido!', alvo: '.float-cart' },{ titulo: 'Pronto!', texto: 'Agora é só explorar e se divertir! 🎉', alvo: null }];
         let tourAtual = 0;
-        function iniciarTour() { if (localStorage.getItem('tour_feito')) return; document.getElementById('tourOverlay').classList.add('active'); mostrarTourStep(); }
-        function mostrarTourStep() { const step = tourSteps[tourAtual]; document.getElementById('tourTitulo').textContent = step.titulo; document.getElementById('tourTexto').textContent = step.texto; document.getElementById('tourBtn').textContent = tourAtual < tourSteps.length - 1 ? 'Próximo' : 'Começar!'; document.querySelectorAll('.tour-highlight').forEach(el => el.remove()); if (step.alvo) { const alvo = document.querySelector(step.alvo); if (alvo) { const rect = alvo.getBoundingClientRect(); const highlight = document.createElement('div'); highlight.className = 'tour-highlight'; highlight.style.left = rect.left - 5 + 'px'; highlight.style.top = rect.top - 5 + 'px'; highlight.style.width = rect.width + 10 + 'px'; highlight.style.height = rect.height + 10 + 'px'; document.body.appendChild(highlight); } } }
-        function proximoTour() { tourAtual++; if (tourAtual >= tourSteps.length) { document.getElementById('tourOverlay').classList.remove('active'); document.querySelectorAll('.tour-highlight').forEach(el => el.remove()); localStorage.setItem('tour_feito', '1'); } else { mostrarTourStep(); } }
+        function iniciarTour() { 
+            tourAtual = 0;
+            document.getElementById('tourOverlay').classList.add('active'); 
+            mostrarTourStep(); 
+        }
+        function mostrarTourStep() { 
+            const step = tourSteps[tourAtual]; 
+            document.getElementById('tourTitulo').textContent = step.titulo; 
+            document.getElementById('tourTexto').textContent = step.texto; 
+            document.getElementById('tourBtn').textContent = tourAtual < tourSteps.length - 1 ? 'Próximo' : 'Começar!'; 
+            document.querySelectorAll('.tour-highlight').forEach(el => el.remove()); 
+            if (step.alvo) { 
+                const alvo = document.querySelector(step.alvo); 
+                if (alvo) { 
+                    const rect = alvo.getBoundingClientRect(); 
+                    const highlight = document.createElement('div'); 
+                    highlight.className = 'tour-highlight'; 
+                    highlight.style.left = rect.left - 5 + 'px'; 
+                    highlight.style.top = rect.top - 5 + 'px'; 
+                    highlight.style.width = rect.width + 10 + 'px'; 
+                    highlight.style.height = rect.height + 10 + 'px'; 
+                    document.body.appendChild(highlight); 
+                } 
+            } 
+        }
+        function proximoTour() { 
+            tourAtual++; 
+            if (tourAtual >= tourSteps.length) { 
+                document.getElementById('tourOverlay').classList.remove('active'); 
+                document.querySelectorAll('.tour-highlight').forEach(el => el.remove()); 
+                localStorage.setItem('tour_feito', '1'); 
+            } else { 
+                mostrarTourStep(); 
+            } 
+        }
 
         function carregarFavoritos() { favoritos = JSON.parse(localStorage.getItem('gudyxFavoritos')||'[]'); }
         function salvarFavoritos() { localStorage.setItem('gudyxFavoritos', JSON.stringify(favoritos)); }
@@ -761,20 +825,24 @@
         function carregarDepoimentos() { const container = document.getElementById('depoimentosGrid'); container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Os imãs são lindos!"</div><div class="autor">— Ana C.</div></div>`; }
         function carregarInstagram() {
             const container = document.getElementById('instagramGrid');
-            container.style.display = 'flex';
-            container.style.justifyContent = 'center';
-            container.style.alignItems = 'center';
+            container.style.display = 'grid';
+            container.style.gridTemplateColumns = 'repeat(3, 1fr)';
+            container.style.gap = '8px';
+            container.style.maxWidth = '500px';
+            container.style.margin = '0 auto';
+            // Aqui você deve colocar o código de incorporação do Instagram (widget oficial)
+            // Exemplo: <blockquote class="instagram-media" ...>
+            // Para facilitar, usei um link para o perfil, mas você pode substituir pelo widget.
             container.innerHTML = `
-                <div style="background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; padding: 30px; text-align: center; width: 100%; max-width: 400px;">
-                    <i class="fab fa-instagram" style="font-size: 4rem; color: var(--rosa-neon); margin-bottom: 10px;"></i>
-                    <h3 style="margin-bottom: 5px;">@gudyxcustom</h3>
-                    <p style="opacity: 0.7; margin-bottom: 15px;">Siga nosso Instagram para novidades e promoções!</p>
-                    <a href="https://www.instagram.com/gudyxcustom?igsh=MXhlb3o1emZpbDFqMg==" target="_blank" 
-                       style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; border-radius: 30px; text-decoration: none; font-weight: 600; transition: 0.3s;">
-                        <i class="fab fa-instagram"></i> Seguir agora
-                    </a>
+                <div style="grid-column: 1/-1; text-align: center; background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; padding: 20px;">
+                    <i class="fab fa-instagram" style="font-size: 3rem; color: var(--rosa-neon);"></i>
+                    <h4>@gudyxcustom</h4>
+                    <p style="opacity:0.7;">Siga para ver as últimas postagens!</p>
+                    <a href="https://www.instagram.com/gudyxcustom" target="_blank" style="color: var(--ciano-brilhante);">Ver perfil</a>
                 </div>
             `;
+            
+            // INSTRUÇÃO: Para mostrar as 6 últimas postagens reais, vá no Instagram, clique nos 3 pontinhos do seu perfil > Incorporar > Copie o código HTML (widget) e cole dentro do container acima.
         }
         function verificarRetorno() { const ultimaVisita = localStorage.getItem('gudyx_ultima_visita'); const agora = Date.now(); if (ultimaVisita && (agora - parseInt(ultimaVisita)) > 86400000) { setTimeout(() => falarMascote('Que bom te ver de novo! 😍'), 4000); document.getElementById('badgeVip').style.display = 'inline-block'; } localStorage.setItem('gudyx_ultima_visita', agora.toString()); }
 
@@ -861,7 +929,10 @@
                 atualizarMensagensMascote();
                 falarMascote();
             }, 3000);
-            setTimeout(iniciarTour, 1500);
+            // O tour agora é ativado no primeiro acesso automaticamente, ou manualmente pelo botão.
+            if (!localStorage.getItem('tour_feito')) {
+                setTimeout(iniciarTour, 1500);
+            }
         });
 
         // CORREÇÃO DA FALA: Garantir que o mascote fale no primeiro clique (quebra do bloqueio de áudio)
@@ -871,6 +942,17 @@
                 document.removeEventListener('click', primeiraFala);
             }
         }, { once: true });
+
+        // ADICIONADO: Botão manual para reiniciar o Guia (coloquei no HTML, mas você pode chamar pelo console)
+        // Basta clicar no logo 3 vezes para ativar o tour novamente (easter egg)
+        document.querySelector('.logo-img').addEventListener('click', function() {
+            if (logoCliques === 3) {
+                document.getElementById('tourOverlay').classList.add('active');
+                tourAtual = 0;
+                mostrarTourStep();
+                localStorage.removeItem('tour_feito'); // Reseta para aparecer novamente
+            }
+        });
 
         function compartilharProduto(){if(!produtoModalAtual)return;const url=window.location.href.split('?')[0]+'?produto='+produtoModalAtual.id;const text=`Olha esse produto da Gudyx: ${produtoModalAtual.nome} - R$ ${produtoModalAtual.preco}\n${url}`;if(navigator.share)navigator.share({title:produtoModalAtual.nome,text,url});else navigator.clipboard.writeText(text).then(()=>alert('Link copiado!'));}
         function verificarDataTematica(){const hoje=new Date();const mes=hoje.getMonth()+1;const dia=hoje.getDate();if(mes===12&&dia===25){document.getElementById('mascoteImg').src='https://i.imgur.com/GLuudyx_natal.png';falarMascote('Olha meu visual natalino! 🎄');}}
