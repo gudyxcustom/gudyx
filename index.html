@@ -508,7 +508,7 @@
                 <div class="subtitle">PAPELARIA PERSONALIZADA · GRÁFICA RÁPIDA <span class="badge-vip" id="badgeVip" style="display:none;">⭐ VIP</span></div>
                 <div class="slogan">"Onde cada detalhe é um grude de personalidade"</div>
             </div>
-            <div class="search-global"><i class="fas fa-search"></i><input type="text" id="searchGlobal" placeholder="O que você procura?" onkeyup="buscaGlobal()"></div>
+            <div class="search-global"><i class="fas fa-search"></i><input type="text" id="searchGlobal" placeholder="O que você procura?" oninput="debounceBuscaGlobal()"></div>
             <div class="main-area">
                 <div class="mascote-block">
                     <div class="mascote-wrapper" id="mascoteWrapper"><div class="mascote-glow"></div><img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx" id="mascoteImg" loading="lazy"><div class="fala-container" id="falaContainer"><span class="fala-cursor">|</span></div></div>
@@ -525,8 +525,8 @@
     </div>
 
     <div class="screen" id="escolhaScreen"><div class="listagem-screen" style="padding:30px;text-align:center;"><h2>✨ O que você procura?</h2><div style="display:flex;gap:30px;justify-content:center;margin-top:30px;"><div class="categoria-card" onclick="navegarPara('servicos')"><i class="fas fa-tools" style="font-size:4rem;color:var(--ciano-brilhante);"></i><h3>SERVIÇOS</h3></div><div class="categoria-card" onclick="navegarPara('produtos')"><i class="fas fa-store" style="font-size:4rem;color:var(--rosa-neon);"></i><h3>PRODUTOS</h3></div></div><button class="btn-voltar" onclick="voltarParaHome()">← Voltar</button></div></div>
-    <div class="screen" id="servicosScreen"><div class="listagem-screen"><div class="listagem-header"><button class="btn-voltar" onclick="voltarParaEscolha()">← Voltar</button><h2>SERVIÇOS</h2></div><div class="search-box"><input type="text" id="searchServicos" placeholder="Buscar..." onkeyup="buscarItems('servicos')"></div><div id="servicosCategoriasContainer" class="grid-categorias"></div><div id="servicosProdutosContainer" class="produtos-grid"></div></div></div>
-    <div class="screen" id="produtosScreen"><div class="listagem-screen"><div class="listagem-header"><button class="btn-voltar" onclick="voltarParaEscolha()">← Voltar</button><h2>PRODUTOS</h2><div class="view-toggle"><button onclick="alternarVisualizacao('grid')" class="active" id="viewGrid">Grade</button><button onclick="alternarVisualizacao('lista')" id="viewList">Lista</button></div></div><div class="search-box"><input type="text" id="searchProdutos" placeholder="Buscar..." onkeyup="buscarItems('produtos')"></div><div id="stickyCategories"></div><div id="produtosCategoriasContainer" class="grid-categorias"></div><div id="produtosProdutosContainer" class="produtos-grid"></div></div></div>
+    <div class="screen" id="servicosScreen"><div class="listagem-screen"><div class="listagem-header"><button class="btn-voltar" onclick="voltarParaEscolha()">← Voltar</button><h2>SERVIÇOS</h2></div><div class="search-box"><input type="text" id="searchServicos" placeholder="Buscar..." oninput="debounceBuscarServicos()"></div><div id="servicosCategoriasContainer" class="grid-categorias"></div><div id="servicosProdutosContainer" class="produtos-grid"></div></div></div>
+    <div class="screen" id="produtosScreen"><div class="listagem-screen"><div class="listagem-header"><button class="btn-voltar" onclick="voltarParaEscolha()">← Voltar</button><h2>PRODUTOS</h2><div class="view-toggle"><button onclick="alternarVisualizacao('grid')" class="active" id="viewGrid">Grade</button><button onclick="alternarVisualizacao('lista')" id="viewList">Lista</button></div></div><div class="search-box"><input type="text" id="searchProdutos" placeholder="Buscar..." oninput="debounceBuscarProdutos()"></div><div id="stickyCategories"></div><div id="produtosCategoriasContainer" class="grid-categorias"></div><div id="produtosProdutosContainer" class="produtos-grid"></div></div></div>
 
     <nav class="mobile-nav">
         <button onclick="mostrarTela('homeScreen')" class="active"><i class="fas fa-home"></i><span>Home</span></button>
@@ -558,6 +558,7 @@
         let typewriterTimer = null;
         let configDivertido = { raspadinha: true, itemSurpresa: true };
         let raspadinhaUsada = false;
+        let debounceTimerGlobal, debounceTimerProd, debounceTimerServ;
 
         function salvarEstadoMascote() { localStorage.setItem('gudyx_mascote_state', JSON.stringify({ cliqueCount, ultimoCliqueTime, estaSumido, ultimaIrritacaoTimestamp, timestamp: Date.now() })); }
         function carregarEstadoMascote() { const saved = localStorage.getItem('gudyx_mascote_state'); if (saved) { try { const e = JSON.parse(saved); if (Date.now() - e.timestamp < RESET_INTERVAL) { cliqueCount = e.cliqueCount||0; ultimoCliqueTime = e.ultimoCliqueTime||0; estaSumido = e.estaSumido||false; ultimaIrritacaoTimestamp = e.ultimaIrritacaoTimestamp||0; if (estaSumido) { document.getElementById('peekingHead').classList.add('active'); document.getElementById('mascoteWrapper').classList.add('somiu'); } } } catch(e) {} } }
@@ -707,7 +708,7 @@
             canvas.addEventListener('touchend', () => { raspando = false; });
             canvas.addEventListener('touchmove', (e) => { e.preventDefault(); raspar(e); });
         }
-        function verificarRaspagem(ctx, canvas) { const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data; let transparentes = 0; for (let i = 3; i < imageData.length; i += 4) { if (imageData[i] === 0) transparentes++; } return transparentes > (canvas.width * canvas.height * 0.4); }
+        function verificarRaspagem(ctx, canvas) { const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data; let transparentes = 0; for (let i = 3; i < imageData.length; i += 4) { if (imageData[i] === 0) transparentes++; } return transparentes > (canvas.width * canvas.height * 0.2); } // Alterado de 0.4 para 0.2
         function revelarCupom(ctx, canvas) { const cupom = cuponsRaspadinha[Math.floor(Math.random() * cuponsRaspadinha.length)]; ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#0b041c'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = 'gold'; ctx.font = 'bold 20px Poppins'; ctx.textAlign = 'center'; if (cupom.valor > 0) { ctx.fillText(`${cupom.descricao}!`, canvas.width/2, canvas.height/2-10); ctx.fillText(`Cupom: ${cupom.codigo}`, canvas.width/2, canvas.height/2+30); aplicarCupomRaspadinha(cupom); } else { ctx.fillText('Tente novamente!', canvas.width/2, canvas.height/2); } setTimeout(fecharRaspadinha, 3000); }
         function aplicarCupomRaspadinha(cupom) { cupomAtual = cupom; document.getElementById('cupomMsg').textContent = `🎟️ Cupom ${cupom.codigo} aplicado!`; document.getElementById('cupomMsg').className = 'cupom-msg success'; salvarCarrinho(); }
 
@@ -758,7 +759,23 @@
         function buscaGlobal() { const term = document.getElementById('searchGlobal').value.toLowerCase().trim(); if (term === 'caderno') { document.body.classList.add('festa'); confetti({particleCount:200,spread:100}); falarMascote('🎉 Achou o easter egg do caderno!'); setTimeout(()=>document.body.classList.remove('festa'),3000); return; } if (term === 'desconto') { cupomAtual = {codigo:'SECRETO',tipo:'percentual',valor:15,descricao:'15% OFF easter egg'}; salvarCarrinho(); falarMascote('🎉 Cupom secreto de 15% aplicado!'); return; } if (term === 'festa') { document.body.classList.add('festa'); confetti({particleCount:500,spread:180}); setTimeout(()=>document.body.classList.remove('festa'),5000); return; } if (term.length < 2) return; const resultados = dados.produtos.filter(p => p.nome.toLowerCase().includes(term) || (p.descricao||'').toLowerCase().includes(term)); if (resultados.length === 0) { alert('Nenhum produto encontrado.'); return; } mostrarTela('produtosScreen'); carregarCategorias('produtos'); const container = document.getElementById('produtosProdutosContainer'); container.innerHTML = ''; container.style.display = 'grid'; container.className = 'produtos-grid'; resultados.forEach(prod => { renderizarCardProduto(prod, container); }); }
         function carregarAtalhos() { const container = document.getElementById('atalhosContainer'); container.innerHTML = ''; const nomes = ['Caixas', 'Imãs', 'Adesivos', 'Displays', 'Cards']; nomes.forEach(nome => { const cat = dados.categorias.find(c => c.nome.toLowerCase().includes(nome.toLowerCase())); if (cat) { const btn = document.createElement('button'); btn.className = 'atalho-btn'; btn.textContent = cat.nome; btn.onclick = () => { mostrarTela('produtosScreen'); carregarCategorias('produtos'); setTimeout(() => selecionarCategoria('produtos', cat.id), 200); }; container.appendChild(btn); } }); }
         function carregarDepoimentos() { const container = document.getElementById('depoimentosGrid'); container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Os imãs são lindos!"</div><div class="autor">— Ana C.</div></div>`; }
-        function carregarInstagram() { const container = document.getElementById('instagramGrid'); const imgs = ['https://placehold.co/300/0b041c/a028ff?text=Gudyx1','https://placehold.co/300/0b041c/a028ff?text=Gudyx2','https://placehold.co/300/0b041c/a028ff?text=Gudyx3','https://placehold.co/300/0b041c/a028ff?text=Gudyx4','https://placehold.co/300/0b041c/a028ff?text=Gudyx5','https://placehold.co/300/0b041c/a028ff?text=Gudyx6']; container.innerHTML = imgs.map(img => `<img src="${img}" loading="lazy" alt="Instagram Gudyx">`).join(''); }
+        function carregarInstagram() {
+            const container = document.getElementById('instagramGrid');
+            container.style.display = 'flex';
+            container.style.justifyContent = 'center';
+            container.style.alignItems = 'center';
+            container.innerHTML = `
+                <div style="background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 20px; padding: 30px; text-align: center; width: 100%; max-width: 400px;">
+                    <i class="fab fa-instagram" style="font-size: 4rem; color: var(--rosa-neon); margin-bottom: 10px;"></i>
+                    <h3 style="margin-bottom: 5px;">@gudyxcustom</h3>
+                    <p style="opacity: 0.7; margin-bottom: 15px;">Siga nosso Instagram para novidades e promoções!</p>
+                    <a href="https://www.instagram.com/gudyxcustom?igsh=MXhlb3o1emZpbDFqMg==" target="_blank" 
+                       style="display: inline-block; padding: 12px 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; border-radius: 30px; text-decoration: none; font-weight: 600; transition: 0.3s;">
+                        <i class="fab fa-instagram"></i> Seguir agora
+                    </a>
+                </div>
+            `;
+        }
         function verificarRetorno() { const ultimaVisita = localStorage.getItem('gudyx_ultima_visita'); const agora = Date.now(); if (ultimaVisita && (agora - parseInt(ultimaVisita)) > 86400000) { setTimeout(() => falarMascote('Que bom te ver de novo! 😍'), 4000); document.getElementById('badgeVip').style.display = 'inline-block'; } localStorage.setItem('gudyx_ultima_visita', agora.toString()); }
 
         let categoriaSelecionada=null;
@@ -793,6 +810,10 @@
         let logoCliques=0,logoTimeout;
         document.querySelector('.logo-img').addEventListener('click',function(){logoCliques++;if(logoCliques===1)logoTimeout=setTimeout(()=>logoCliques=0,800);else if(logoCliques===3){clearTimeout(logoTimeout);logoCliques=0;document.body.classList.add('festa');confetti({particleCount:300,spread:120});setTimeout(()=>document.body.classList.remove('festa'),3000);}});
 
+        function debounceBuscaGlobal() { clearTimeout(debounceTimerGlobal); debounceTimerGlobal = setTimeout(buscaGlobal, 500); }
+        function debounceBuscarProdutos() { clearTimeout(debounceTimerProd); debounceTimerProd = setTimeout(() => buscarItems('produtos'), 500); }
+        function debounceBuscarServicos() { clearTimeout(debounceTimerServ); debounceTimerServ = setTimeout(() => buscarItems('servicos'), 500); }
+
         function buscarItems(tipo){const term=document.getElementById(tipo==='produtos'?'searchProdutos':'searchServicos').value.toLowerCase();const container=document.getElementById(tipo==='produtos'?'produtosProdutosContainer':'servicosProdutosContainer');if(term==='gudyx'){container.innerHTML='<div class="produto-card" style="grid-column:1/-1;text-align:center;"><img src="https://i.imgur.com/Y5H9zqr.png" style="width:150px;height:150px;margin:0 auto;border-radius:50%;" loading="lazy"><h5>🥚 Ovo Cósmico</h5><div class="preco">R$ 0,01</div></div>';return;}if(!categoriaSelecionada)return;container.innerHTML=dados.produtos.filter(p=>p.categoriaId===categoriaSelecionada.id&&p.nome.toLowerCase().includes(term)).map(p=>`<div class="produto-card" onclick="abrirModal('${p.id}')"><img src="${getImagemPrincipal(p)}" loading="lazy"><h5>${p.nome}</h5><div class="preco">R$ ${p.preco}</div></div>`).join('')||'<p>Nenhum item.</p>';}
 
         function abrirFAQ(){document.getElementById('faqModal').classList.add('active');}
@@ -811,7 +832,45 @@
 
         function contarVisita(){let v=parseInt(localStorage.getItem('visitas')||'0');if(!sessionStorage.getItem('visitou')){v++;localStorage.setItem('visitas',v);sessionStorage.setItem('visitou','1');}document.getElementById('visitCounter').textContent=v;}
 
-        carregarDadosFirebase().then(()=>{contarVisita();resetarSlider();carregarMaisVendidos();verificarPrimeiraVisita();carregarAtalhos();carregarDepoimentos();carregarInstagram();verificarRetorno();verificarAbandono();iniciarListenerFirebase();setTimeout(()=>{atualizarMensagensMascote();falarMascote();},3000);setTimeout(iniciarTour,1500);});
+        carregarDadosFirebase().then(()=>{
+            // CORREÇÃO 1: Resetar o mascote e garantir frases
+            setTimeout(() => {
+                localStorage.removeItem('gudyx_mascote_state');
+                const wrapper = document.getElementById('mascoteWrapper');
+                if (wrapper) {
+                    wrapper.classList.remove('somiu', 'fugindo', 'voltando');
+                    wrapper.style.display = 'block';
+                }
+                if (!dados.frases || dados.frases.length === 0) {
+                    dados.frases = ['Olá, sou o Gluudyx! ✦', 'Que bom te ver! 🎉', 'Vamos explorar juntos!', 'Curta a Gudyx! 😍'];
+                }
+                setTimeout(() => falarMascote('Oi! Estou de volta! 🚀'), 500);
+            }, 2000);
+
+            contarVisita();
+            resetarSlider();
+            carregarMaisVendidos();
+            verificarPrimeiraVisita();
+            carregarAtalhos();
+            carregarDepoimentos();
+            carregarInstagram();
+            verificarRetorno();
+            verificarAbandono();
+            iniciarListenerFirebase();
+            setTimeout(() => {
+                atualizarMensagensMascote();
+                falarMascote();
+            }, 3000);
+            setTimeout(iniciarTour, 1500);
+        });
+
+        // CORREÇÃO 2: Garantir que o mascote fale no primeiro clique do usuário (quebra do bloqueio de áudio)
+        document.addEventListener('click', function primeiraFala() {
+            if (!estaSumido && !estaFalando && typeof falarMascote === 'function') {
+                falarMascote('Olá! Clicou em mim? 😊');
+                document.removeEventListener('click', primeiraFala);
+            }
+        }, { once: true });
 
         function compartilharProduto(){if(!produtoModalAtual)return;const url=window.location.href.split('?')[0]+'?produto='+produtoModalAtual.id;const text=`Olha esse produto da Gudyx: ${produtoModalAtual.nome} - R$ ${produtoModalAtual.preco}\n${url}`;if(navigator.share)navigator.share({title:produtoModalAtual.nome,text,url});else navigator.clipboard.writeText(text).then(()=>alert('Link copiado!'));}
         function verificarDataTematica(){const hoje=new Date();const mes=hoje.getMonth()+1;const dia=hoje.getDate();if(mes===12&&dia===25){document.getElementById('mascoteImg').src='https://i.imgur.com/GLuudyx_natal.png';falarMascote('Olha meu visual natalino! 🎄');}}
