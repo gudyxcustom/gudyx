@@ -267,8 +267,6 @@
         #favDrawerOverlay.active { display:block; opacity:1; }
         #favDrawer { position:fixed; top:0; right:-420px; width:400px; max-width:90vw; height:100vh; background:var(--vidro-fundo); backdrop-filter:blur(16px); border-left:1px solid var(--vidro-borda); z-index:99999; transition:right 0.4s; display:flex; flex-direction:column; box-shadow:-10px 0 40px rgba(0,0,0,0.6); }
         #favDrawer.open { right:0; }
-        .btn-share-fav { padding:10px 20px; background:var(--ciano-brilhante); color:#000; border:none; border-radius:20px; cursor:pointer; font-weight:600; margin:10px 20px; transition:0.3s; }
-        .btn-share-fav:hover { transform:scale(1.05); }
         .btn-favorite { position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer; transition:var(--transicao); color:#fff; z-index:5; }
         .btn-favorite:hover { transform:scale(1.1); }
         .btn-favorite.active { color:#ff4455; }
@@ -652,15 +650,40 @@
         function alternarModo() { document.body.classList.toggle('modo-claro'); const icon = document.querySelector('#modoToggle i'); if (document.body.classList.contains('modo-claro')) { icon.className = 'fas fa-moon'; localStorage.setItem('gudyx_modo', 'claro'); } else { icon.className = 'fas fa-sun'; localStorage.setItem('gudyx_modo', 'escuro'); } }
         if (localStorage.getItem('gudyx_modo') === 'claro') { document.body.classList.add('modo-claro'); document.querySelector('#modoToggle i').className = 'fas fa-moon'; }
 
-        // --- FUNÇÕES DO MASCOTE COM EFEITO DE DIGITAÇÃO ---
-        function falarImediato(msg) { if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; } const falaContainer = document.getElementById('falaContainer'); falaContainer.innerHTML = msg; falaContainer.parentElement.classList.add('falando'); estaFalando = true; if (timeoutFala) clearTimeout(timeoutFala); timeoutFala = setTimeout(() => { falaContainer.parentElement.classList.remove('falando'); estaFalando = false; }, 3000); }
-        function typewriterEffect(elemento, texto, velocidade = 40) { if (typewriterTimer) clearTimeout(typewriterTimer); elemento.innerHTML = ''; let i = 0; function digitar() { if (i < texto.length) { elemento.innerHTML = texto.substring(0, i + 1) + '<span class="fala-cursor">|</span>'; i++; typewriterTimer = setTimeout(digitar, velocidade); } else { elemento.innerHTML = texto; } } digitar(); }
+        // --- FUNÇÕES DO MASCOTE CORRIGIDAS ---
+        function falarImediato(msg) { 
+            if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; } 
+            const falaContainer = document.getElementById('falaContainer'); 
+            falaContainer.innerHTML = msg; 
+            falaContainer.classList.add('falando'); 
+            estaFalando = true; 
+            if (timeoutFala) clearTimeout(timeoutFala); 
+            timeoutFala = setTimeout(() => { 
+                falaContainer.classList.remove('falando'); 
+                estaFalando = false; 
+            }, 3000); 
+        }
+
+        function typewriterEffect(elemento, texto, velocidade = 40) { 
+            if (typewriterTimer) clearTimeout(typewriterTimer); 
+            elemento.innerHTML = ''; 
+            let i = 0; 
+            function digitar() { 
+                if (i < texto.length) { 
+                    elemento.innerHTML = texto.substring(0, i + 1) + '<span class="fala-cursor">|</span>'; 
+                    i++; 
+                    typewriterTimer = setTimeout(digitar, velocidade); 
+                } else { 
+                    elemento.innerHTML = texto; 
+                } 
+            } 
+            digitar(); 
+        }
 
         const piadas = ["Por que o caderno foi ao médico? 📓🤒","Qual o doce favorito do Gluudyx? 🍬","Você sabia que eu sou feito de cola? 🥰","O que o lápis disse para a borracha? ✏️💕","Por que a caneta não gostou do papel? 🖊️📄","Qual a fruta preferida do Gluudyx? 🍇😂","Eu sou como um imã... 🧲✨","Se você me der um clique, eu te dou um sorriso! 😄","Meu sonho é ser um papel de parede... 🖼️💖","Você é mais doce que um caderno de receitas! 🍪📔","O que a borracha falou para o lápis? ✏️❤️","Por que o Gluudyx é tão legal? 🎨","Se você me der um abraço, eu te dou um desconto! 😉","Gudyx: onde cada detalhe é um grude de personalidade! 💫"];
         function getMensagensMascote() { const msgs = []; if (dados.frases?.length) { msgs.push(...dados.frases, ...dados.frases, ...dados.frases); } const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p)); if (promos.length) msgs.push(`🔥 ${promos[Math.floor(Math.random()*promos.length)].nome} em promoção!`); const top = [...dados.produtos].sort((a,b)=>(b.cliques||0)-(a.cliques||0)).slice(0,3); if (top.length && top[0].cliques) msgs.push(`🏆 ${top[Math.floor(Math.random()*top.length)].nome} é o mais acessado!`); msgs.push(piadas[Math.floor(Math.random()*piadas.length)]); if (!msgs.length) msgs.push('Olá, sou o Gluudyx! ✦'); return msgs; }
         function atualizarMensagensMascote() { mascoteMensagens = getMensagensMascote().sort(() => Math.random() - 0.5); }
         
-        // --- CORREÇÃO AQUI: O BALÃO APARECE IMEDIATAMENTE ---
         function falarMascote(msgP = null) { 
             if (estaFugindo || estaVoltando || estaSumido || estaContando) return; 
             if (!mascoteMensagens.length) atualizarMensagensMascote(); 
@@ -669,15 +692,15 @@
             const msg = msgP || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length]; 
             mascoteMsgIdx++; 
             
-            // CORREÇÃO: Adiciona a classe para mostrar o balão ANTES de começar a digitar
-            falaContainer.parentElement.classList.add('falando'); 
+            // CORREÇÃO CRÍTICA: A classe .falando é adicionada no PRÓPRIO elemento para ativar o opacity:1
+            falaContainer.classList.add('falando'); 
             estaFalando = true; 
             
             typewriterEffect(falaContainer, msg); 
 
             if (timeoutFala) clearTimeout(timeoutFala); 
             timeoutFala = setTimeout(() => { 
-                falaContainer.parentElement.classList.remove('falando'); 
+                falaContainer.classList.remove('falando'); 
                 estaFalando = false; 
             }, msg.length * 40 + 1500); 
         }
@@ -690,7 +713,11 @@
             if (estaSumido || estaFugindo || estaVoltando || estaContando) return;
             if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
             if (timeoutFala) { clearTimeout(timeoutFala); timeoutFala = null; }
-            document.getElementById('falaContainer').parentElement?.classList.remove('falando');
+            
+            // CORREÇÃO: Remove a classe do elemento certo
+            const falaContainer = document.getElementById('falaContainer');
+            if (falaContainer) falaContainer.classList.remove('falando');
+            
             estaFalando = false;
             const agora = Date.now();
             const emRecarga = ultimaIrritacaoTimestamp && (agora - ultimaIrritacaoTimestamp < RESET_INTERVAL);
