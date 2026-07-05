@@ -627,11 +627,6 @@
         let raspadinhaUsada = false;
         let debounceTimerGlobal, debounceTimerProd, debounceTimerServ;
 
-        // --- FALLBACK IMEDIATO DE FRASES DO MASCOTE ---
-        if (!dados.frases || dados.frases.length === 0) {
-            dados.frases = ['Olá, sou o Gluudyx! ✦', 'Que bom te ver! 🎉', 'Vamos explorar juntos!', 'Curta a Gudyx! 😍', 'Já olhou as promoções? 🔥'];
-        }
-
         function salvarEstadoMascote() { localStorage.setItem('gudyx_mascote_state', JSON.stringify({ cliqueCount, ultimoCliqueTime, estaSumido, ultimaIrritacaoTimestamp, timestamp: Date.now() })); }
         function carregarEstadoMascote() { const saved = localStorage.getItem('gudyx_mascote_state'); if (saved) { try { const e = JSON.parse(saved); if (Date.now() - e.timestamp < RESET_INTERVAL) { cliqueCount = e.cliqueCount||0; ultimoCliqueTime = e.ultimoCliqueTime||0; estaSumido = e.estaSumido||false; ultimaIrritacaoTimestamp = e.ultimaIrritacaoTimestamp||0; if (estaSumido) { document.getElementById('peekingHead').classList.add('active'); document.getElementById('mascoteWrapper').classList.add('somiu'); } } } catch(e) {} } }
 
@@ -709,18 +704,6 @@
         });
         function trazerMascoteDeVolta() { document.getElementById('peekingHead').classList.remove('active'); document.getElementById('mascoteWrapper').classList.remove('somiu'); estaSumido=false; falarMascote('Voltei! 🎉'); }
 
-        // Intervalo de fala automática do mascote
-        setInterval(() => {
-            if (!estaFalando && !estaFugindo && !estaSumido && !estaContando) {
-                atualizarMensagensMascote();
-                if (dados.frases?.length && Math.random() < 0.5) {
-                    falarMascote(dados.frases[Math.floor(Math.random() * dados.frases.length)]);
-                } else if (mascoteMensagens.length > 0) {
-                    falarMascote();
-                }
-            }
-        }, 15000);
-
         const frasesInfluenciador = ["Finaliza essa compra! 🛒","Tem certeza que não quer mais um?","Aproveita o cupom BEMVINDO10!","Esses produtos tão com saudade!","Não deixa pra depois, hein!","Leva mais um que o frete some! 😜","O Gluudyx aprova esse carrinho!","Tá esperando o quê? Fecha logo!"];
         function mostrarMiniGluudyx() { const mini = document.getElementById('miniGluudyx'); if(!mini) return; mini.querySelector('.mini-fala').textContent = frasesInfluenciador[Math.floor(Math.random()*frasesInfluenciador.length)]; mini.style.display = 'flex'; }
         function esconderMiniGluudyx() { if (!document.getElementById('cartDrawer').classList.contains('open') && !document.getElementById('productModal').classList.contains('active')) { document.getElementById('miniGluudyx').style.display = 'none'; } }
@@ -776,8 +759,7 @@
                 const y = (e.clientY || e.touches[0].clientY) - rect.top;
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                // RAIO AUMENTADO PARA 50px (bem fácil de raspar)
-                ctx.arc(x, y, 50, 0, Math.PI * 2);
+                ctx.arc(x, y, 50, 0, Math.PI * 2); // Raio aumentado para 50px
                 ctx.fill();
                 if (verificarRaspagem(ctx, canvas)) {
                     revelarCupom(ctx, canvas);
@@ -800,9 +782,7 @@
             } 
             const totalPixels = canvas.width * canvas.height;
             const percentual = transparentes / totalPixels;
-            console.log('Raspagem:', (percentual * 100).toFixed(2) + '%'); // LOG para você ver o progresso
-            // LIMIAR REDUZIDO PARA 10% (bem mais fácil)
-            return percentual > 0.10; 
+            return percentual > 0.10; // Limiar reduzido para 10%
         }
         function revelarCupom(ctx, canvas) { 
             const cupom = cuponsRaspadinha[Math.floor(Math.random() * cuponsRaspadinha.length)]; 
@@ -816,9 +796,8 @@
             ctx.textAlign = 'center'; 
             ctx.textBaseline = 'middle';
 
-            // TEXTO EM PORTUGUÊS CLARO
             if (cupom.valor > 0) { 
-                ctx.fillText(`🎉 VOCÊ GANHOU ${cupom.valor}% OFF!`, canvas.width/2, canvas.height/2 - 20); 
+                ctx.fillText(`🎉 GANHOU ${cupom.valor}% OFF!`, canvas.width/2, canvas.height/2 - 20); 
                 ctx.font = 'bold 22px Poppins';
                 ctx.fillStyle = '#00f2fe';
                 ctx.fillText(`Cupom: ${cupom.codigo}`, canvas.width/2, canvas.height/2 + 35); 
@@ -988,21 +967,6 @@
         function contarVisita(){let v=parseInt(localStorage.getItem('visitas')||'0');if(!sessionStorage.getItem('visitou')){v++;localStorage.setItem('visitas',v);sessionStorage.setItem('visitou','1');}document.getElementById('visitCounter').textContent=v;}
 
         carregarDadosFirebase().then(()=>{
-            // Atualiza as frases se o Firebase tiver
-            if (dados.frases?.length) {
-                mascoteMensagens = getMensagensMascote();
-            }
-            
-            setTimeout(() => {
-                localStorage.removeItem('gudyx_mascote_state');
-                const wrapper = document.getElementById('mascoteWrapper');
-                if (wrapper) {
-                    wrapper.classList.remove('somiu', 'fugindo', 'voltando');
-                    wrapper.style.display = 'block';
-                }
-                setTimeout(() => falarMascote('Oi! Estou de volta! 🚀'), 500);
-            }, 2000);
-
             contarVisita();
             resetarSlider();
             carregarMaisVendidos();
@@ -1013,10 +977,32 @@
             verificarRetorno();
             verificarAbandono();
             iniciarListenerFirebase();
+
+            // Inicia o mascote após carregar os dados
             setTimeout(() => {
-                atualizarMensagensMascote();
-                falarMascote();
-            }, 3000);
+                localStorage.removeItem('gudyx_mascote_state');
+                const wrapper = document.getElementById('mascoteWrapper');
+                if (wrapper) {
+                    wrapper.classList.remove('somiu', 'fugindo', 'voltando');
+                    wrapper.style.display = 'block';
+                    estaSumido = false;
+                }
+                // Fala inicial
+                setTimeout(() => falarMascote('Olá! Eu sou o Gluudyx! ✦'), 500);
+            }, 2000);
+
+            // Loop de fala automática a cada 15 segundos
+            setInterval(() => {
+                if (!estaFalando && !estaFugindo && !estaSumido && !estaContando) {
+                    atualizarMensagensMascote();
+                    if (dados.frases?.length && Math.random() < 0.5) {
+                        falarMascote(dados.frases[Math.floor(Math.random() * dados.frases.length)]);
+                    } else {
+                        falarMascote();
+                    }
+                }
+            }, 15000);
+
             if (!localStorage.getItem('tour_feito')) {
                 setTimeout(iniciarTour, 1500);
             }
