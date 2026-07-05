@@ -342,11 +342,20 @@
         .social-proof-item .proof-text strong { color:var(--ciano-brilhante); }
         @keyframes slideInProof { from { transform:translateX(-60px); opacity:0; } to { transform:translateX(0); opacity:1; } }
         @keyframes slideOutProof { from { transform:translateX(0); opacity:1; } to { transform:translateX(-60px); opacity:0; } }
+        
+        /* --- DESIGN DOS MODAIS SOBRE E CONTATO --- */
         .modal-page { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:999999; display:none; justify-content:center; align-items:center; padding:20px; }
         .modal-page.active { display:flex; }
-        .modal-page .modal-box { background:var(--vidro-fundo); backdrop-filter:blur(16px); border:1px solid var(--vidro-borda); border-radius:24px; max-width:600px; width:100%; padding:40px; position:relative; box-shadow:0 0 60px rgba(172,40,255,0.4); max-height:80vh; overflow-y:auto; }
-        .modal-page .modal-box .close-modal-page { position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer; background:none; border:none; color:var(--cor-texto); transition:var(--transicao); }
+        .modal-page .modal-box { background:var(--vidro-fundo); backdrop-filter:blur(16px); border:1px solid var(--vidro-borda); border-radius:24px; max-width:600px; width:100%; padding:40px; position:relative; box-shadow:0 0 60px rgba(172,40,255,0.4); max-height:80vh; overflow-y:auto; text-align:center; }
+        .modal-page .modal-box .close-modal-page { position:absolute; top:15px; right:20px; font-size:2rem; cursor:pointer; background:none; border:none; color:var(--cor-texto); transition:var(--transicao); z-index:10; }
         .modal-page .modal-box .close-modal-page:hover { transform:rotate(90deg); color:var(--rosa-neon); }
+        .modal-page .modal-box h2 { font-size:2rem; margin-bottom:20px; color:var(--ciano-brilhante); text-shadow:0 0 20px rgba(0,242,254,0.4); display:flex; align-items:center; justify-content:center; gap:10px; }
+        .modal-page .modal-box p { font-size:1rem; line-height:1.6; color:var(--cor-texto); opacity:0.9; margin-bottom:15px; }
+        .modal-page .modal-box .info-item { display:flex; align-items:center; justify-content:center; gap:12px; background:rgba(255,255,255,0.05); border-radius:12px; padding:12px 20px; margin:10px auto; max-width:350px; border:1px solid rgba(255,255,255,0.05); transition:var(--transicao); }
+        .modal-page .modal-box .info-item:hover { background:rgba(172,40,255,0.2); border-color:var(--ciano-brilhante); }
+        .modal-page .modal-box .info-item i { font-size:1.4rem; color:var(--ciano-brilhante); width:30px; }
+        /* --- FIM DO DESIGN DOS MODAIS --- */
+
         #faqModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px; }
         #faqModal.active { display: flex; }
         .faq-box { background: var(--vidro-fundo); backdrop-filter: blur(16px); border: 1px solid var(--vidro-borda); border-radius: 24px; max-width: 700px; width: 100%; padding: 40px; position: relative; max-height: 80vh; overflow-y: auto; box-shadow: 0 0 60px rgba(172,40,255,0.4); }
@@ -482,8 +491,35 @@
     </div>
 
     <div id="firstVisitPopup"><div class="popup-box"><button class="close-popup-icon" onclick="fecharPopup()">×</button><h2>🔥 Bem-vindo à Gudyx!</h2><p>Ganhe <strong>10% OFF</strong> na sua primeira compra! Use o cupom: <strong>BEMVINDO10</strong></p><div class="cupom-box" onclick="copiarCupom()"><span id="cupomText">BEMVINDO10</span> <i class="fas fa-copy"></i></div><button class="btn-fechar-popup" onclick="fecharPopup()">Fechar e continuar</button></div></div>
-    <div id="modalSobre" class="modal-page" onclick="fecharModalSobre(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalSobre()">×</button><h2>Sobre a Gudyx</h2><p>Somos uma papelaria personalizada apaixonada por detalhes...</p></div></div>
-    <div id="modalContato" class="modal-page" onclick="fecharModalContato(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalContato()">×</button><h2>Contato</h2><p>WhatsApp: (21) 97612-1076<br>Email: contato@gudyx.com</p></div></div>
+
+    <!-- ==================== MODAIS SOBRE E CONTATO CORRIGIDOS ==================== -->
+    <div id="modalSobre" class="modal-page" onclick="fecharModalSobre(event)">
+        <div class="modal-box">
+            <button class="close-modal-page" onclick="fecharModalSobre()">×</button>
+            <h2><i class="fas fa-star"></i> Sobre a Gudyx</h2>
+            <p>Somos uma papelaria personalizada e gráfica rápida apaixonada por detalhes! Criamos produtos únicos que transformam momentos especiais em memórias inesquecíveis.</p>
+            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
+                <div class="info-item"><i class="fas fa-paint-brush"></i> Papelaria Personalizada</div>
+                <div class="info-item"><i class="fas fa-print"></i> Gráfica Rápida</div>
+                <div class="info-item"><i class="fas fa-heart"></i> Feito com alma taurina ♉</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalContato" class="modal-page" onclick="fecharModalContato(event)">
+        <div class="modal-box">
+            <button class="close-modal-page" onclick="fecharModalContato()">×</button>
+            <h2><i class="fas fa-headset"></i> Fale Conosco</h2>
+            <p>Estamos prontos para te atender e criar o produto dos seus sonhos!</p>
+            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center;">
+                <div class="info-item"><i class="fab fa-whatsapp" style="color: #25D366;"></i> (21) 97612-1076</div>
+                <div class="info-item"><i class="fas fa-envelope" style="color: var(--rosa-neon);"></i> contato@gudyx.com</div>
+                <div class="info-item"><i class="fas fa-map-marker-alt" style="color: var(--ciano-brilhante);"></i> Duque de Caxias - RJ</div>
+            </div>
+            <p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.6;">Atendimento de Segunda a Sábado</p>
+        </div>
+    </div>
+    <!-- ==================== FIM DOS MODAIS ==================== -->
 
     <div id="chatButton" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
     <div id="chatModal"><div class="chat-header"><h4><img src="https://i.imgur.com/Y5H9zqr.png" style="width:30px;height:30px;border-radius:50%;" loading="lazy"> Gluudyx</h4><button class="close-chat" onclick="toggleChat()">×</button></div><div class="chat-body" id="chatBody"><div class="chat-msg gluudyx">Oi! Sou o Gluudyx 😄 Como posso te ajudar?</div></div><div class="chat-footer"><button class="quick-btn" onclick="chatResposta('produtos')">Produtos</button><button class="quick-btn" onclick="chatResposta('promocoes')">Promoções</button><button class="quick-btn" onclick="chatResposta('duvidas')">Dúvidas</button><button class="quick-btn" onclick="chatResposta('contato')">Contato</button></div></div>
@@ -693,7 +729,7 @@
                 const y = (e.clientY || e.touches[0].clientY) - rect.top;
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                ctx.arc(x, y, 30, 0, Math.PI * 2); // Raio aumentado para 30
+                ctx.arc(x, y, 30, 0, Math.PI * 2);
                 ctx.fill();
                 if (verificarRaspagem(ctx, canvas)) {
                     revelarCupom(ctx, canvas);
@@ -716,27 +752,37 @@
             } 
             const totalPixels = canvas.width * canvas.height;
             const percentual = transparentes / totalPixels;
-            return percentual > 0.15; // Limiar reduzido para 15%
+            return percentual > 0.15; 
         }
         function revelarCupom(ctx, canvas) { 
             const cupom = cuponsRaspadinha[Math.floor(Math.random() * cuponsRaspadinha.length)]; 
             ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            
+            // Fundo mais claro para o texto aparecer
             ctx.fillStyle = '#0b041c'; 
             ctx.fillRect(0, 0, canvas.width, canvas.height); 
+            
+            // Texto maior e mais centralizado
             ctx.fillStyle = 'gold'; 
-            ctx.font = 'bold 20px Poppins'; 
+            ctx.font = 'bold 26px Poppins'; 
             ctx.textAlign = 'center'; 
+            ctx.textBaseline = 'middle';
+
             if (cupom.valor > 0) { 
-                ctx.fillText(`${cupom.descricao}!`, canvas.width/2, canvas.height/2-10); 
-                ctx.fillText(`Cupom: ${cupom.codigo}`, canvas.width/2, canvas.height/2+30); 
+                ctx.fillText(`${cupom.descricao}!`, canvas.width/2, canvas.height/2 - 20); 
+                ctx.font = 'bold 22px Poppins';
+                ctx.fillStyle = '#00f2fe';
+                ctx.fillText(`Cupom: ${cupom.codigo}`, canvas.width/2, canvas.height/2 + 30); 
                 aplicarCupomRaspadinha(cupom); 
                 setTimeout(() => {
                     confetti({particleCount: 150, spread: 70, origin: { y: 0.5 }});
                 }, 100);
             } else { 
+                ctx.fillStyle = '#ff4455';
                 ctx.fillText('Tente novamente!', canvas.width/2, canvas.height/2); 
             } 
-            setTimeout(fecharRaspadinha, 4000); 
+            // Aumentei o tempo para 6 segundos e adicionei botão de fechar manual
+            setTimeout(fecharRaspadinha, 6000); 
         }
         function aplicarCupomRaspadinha(cupom) { cupomAtual = cupom; document.getElementById('cupomMsg').textContent = `🎟️ Cupom ${cupom.codigo} aplicado!`; document.getElementById('cupomMsg').className = 'cupom-msg success'; salvarCarrinho(); }
 
