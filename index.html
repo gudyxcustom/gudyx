@@ -170,17 +170,18 @@
             backdrop-filter: blur(8px);
             border: 1px solid var(--vidro-borda);
             border-radius: 16px;
-            padding: 15px 10px;
+            padding: 15px;
             text-align: center;
             transition: var(--transicao);
             cursor: pointer;
             position: relative;
             display: flex;
             flex-direction: column;
-            align-items: center;
-            gap: 8px;
+            align-items: stretch;
+            gap: 10px;
             justify-content: space-between;
             min-height: 280px;
+            overflow: hidden;
         }
         .produto-card:hover {
             background: rgba(172, 40, 255, 0.15);
@@ -190,9 +191,10 @@
         .produto-card img {
             width: 100%;
             height: 140px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 5px;
+            object-fit: contain; /* Mostra a imagem inteira sem cortar */
+            border-radius: 12px;
+            background: rgba(255,255,255,0.05);
+            padding: 5px;
             flex-shrink: 0;
         }
         .produto-card h5 {
@@ -208,12 +210,12 @@
             font-weight: 700;
             color: var(--amarelo-neon);
             font-size: 1rem;
-            margin: 5px 0;
+            margin: 0;
         }
-        .produto-card .badge-promo { position:absolute; top:5px; right:5px; background:rgba(255,0,0,0.7); padding:2px 8px; border-radius:12px; font-weight:700; font-size:0.6rem; text-transform:uppercase; z-index:4; }
-        .produto-card .badge-destaque { position:absolute; top:5px; left:5px; background:rgba(0,242,254,0.7); padding:2px 8px; border-radius:12px; font-weight:700; font-size:0.6rem; text-transform:uppercase; z-index:4; }
+        .produto-card .badge-promo { position:absolute; top:8px; right:8px; background:rgba(255,0,0,0.7); padding:2px 8px; border-radius:12px; font-weight:700; font-size:0.6rem; text-transform:uppercase; z-index:4; }
+        .produto-card .badge-destaque { position:absolute; top:8px; left:8px; background:rgba(0,242,254,0.7); padding:2px 8px; border-radius:12px; font-weight:700; font-size:0.6rem; text-transform:uppercase; z-index:4; }
         .produto-card .badge-esgotado { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(0,0,0,0.85); color:#ff4455; padding:4px 12px; border-radius:30px; font-weight:800; border:1px solid #ff4455; animation:pulseStock 1s infinite; pointer-events:none; z-index:9; }
-        .produto-card .badge-novo { position:absolute; top:5px; left:50%; transform:translateX(-50%); background:var(--ciano-brilhante); color:#000; padding:2px 10px; border-radius:12px; font-weight:700; font-size:0.6rem; text-transform:uppercase; z-index:4; animation: pulseGlow 2s infinite; }
+        .produto-card .badge-novo { position:absolute; top:8px; left:50%; transform:translateX(-50%); background:var(--ciano-brilhante); color:#000; padding:2px 10px; border-radius:12px; font-weight:700; font-size:0.6rem; text-transform:uppercase; z-index:4; animation: pulseGlow 2s infinite; }
         .produto-card .badge-estoque-baixo { position:absolute; bottom:5px; left:50%; transform:translateX(-50%); background:#ff8800; color:#000; padding:2px 8px; border-radius:10px; font-weight:700; font-size:0.6rem; z-index:4; animation: pulseStock 1.5s infinite; }
         .produto-card .descricao { font-size:0.8rem; opacity:0.7; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .produto-card .preco-promo { font-weight:700; color:var(--rosa-neon); font-size:1rem; text-decoration:line-through; margin-right:5px; }
@@ -222,12 +224,13 @@
         /* Ajuste do Quick View */
         .produto-card .quick-view {
             position: absolute;
-            top: 50%;
+            bottom: 10px;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
             background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
             color: #fff;
-            padding: 8px 12px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.75rem;
             opacity: 0;
@@ -235,6 +238,8 @@
             transition: 0.3s;
             white-space: nowrap;
             z-index: 5;
+            width: 90%;
+            text-align: center;
         }
         .produto-card:hover .quick-view { opacity: 1; }
         
@@ -251,10 +256,10 @@
             z-index: 4;
         }
 
-        .btn-add-cart { display:inline-block; margin-top:8px; padding:8px 16px; background:linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; border-radius:20px; border:none; font-size:0.85rem; font-weight:600; cursor:pointer; transition:var(--transicao); }
+        .btn-add-cart { display:inline-block; padding:8px 12px; background:linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; border-radius:50px; border:none; font-size:0.8rem; font-weight:600; cursor:pointer; transition:var(--transicao); }
         .btn-add-cart:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(172,40,255,0.4); }
         .btn-add-cart:disabled { background:#555; cursor:not-allowed; }
-        .btn-wa-card { display:inline-block; margin-top:8px; padding:8px 16px; background:#25D366; color:#fff; border-radius:20px; text-decoration:none; font-size:0.85rem; font-weight:600; transition:var(--transicao); margin-left:5px; }
+        .btn-wa-card { display:inline-block; padding:8px 12px; background:#25D366; color:#fff; border-radius:50px; text-decoration:none; font-size:0.8rem; font-weight:600; transition:var(--transicao); margin-left:5px; }
         .btn-wa-card:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(37,211,102,0.4); }
         .btn-favorite { position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer; transition:var(--transicao); color:#fff; z-index:6; }
         .btn-favorite:hover { transform:scale(1.1); }
@@ -803,7 +808,6 @@
             const msg = msgP || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length]; 
             mascoteMsgIdx++; 
             
-            // CORREÇÃO CRÍTICA: A classe .falando é adicionada no PRÓPRIO elemento para ativar o opacity:1
             falaContainer.classList.add('falando'); 
             estaFalando = true; 
             
@@ -825,7 +829,6 @@
             if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
             if (timeoutFala) { clearTimeout(timeoutFala); timeoutFala = null; }
             
-            // CORREÇÃO: Remove a classe do elemento certo
             const falaContainer = document.getElementById('falaContainer');
             if (falaContainer) falaContainer.classList.remove('falando');
             
@@ -1096,7 +1099,8 @@
             const quickView = `<div class="quick-view">R$ ${prod.preco} · Clique para detalhes</div>`;
             const contador = Math.floor(Math.random() * 5) + 1;
             const contadorHtml = `<div class="contador-produto">👀 ${contador} ${contador === 1 ? 'pessoa' : 'pessoas'} olhando agora</div>`;
-            card.innerHTML = `${badges}${favBtn}${quickView}${contadorHtml}<img src="${getImagemPrincipal(prod)}" loading="lazy"><h5>${prod.nome}</h5>${precoHtml}<div>${btnAdd} ${waBtn}</div>`;
+            // Adicionei a classe botoes-lista para alinhar os botões
+            card.innerHTML = `${badges}${favBtn}${quickView}${contadorHtml}<img src="${getImagemPrincipal(prod)}" loading="lazy"><h5>${prod.nome}</h5>${precoHtml}<div class="botoes-lista">${btnAdd} ${waBtn}</div>`;
             container.appendChild(card);
         }
         function alternarVisualizacao(modo){viewMode=modo;document.getElementById('viewGrid').classList.toggle('active',modo==='grid');document.getElementById('viewList').classList.toggle('active',modo==='lista');if(categoriaSelecionada)selecionarCategoria(categoriaSelecionada.tipo,categoriaSelecionada.id);}
