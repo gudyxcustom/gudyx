@@ -57,13 +57,7 @@
         .float-cart.bounce { animation: bounceCart 0.6s ease; }
         .produto-card:hover { animation: wiggle 0.5s ease; }
         .flame-icon { display: inline-block; margin-left: 4px; animation: fireGlow 0.8s infinite alternate; font-size: 1.2em; }
-        .btn-wa-card, .btn-whatsapp-modal, .btn-wa-cart, .btn-agendar-finalizar {
-            background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0088) !important;
-            background-size: 400% 400% !important;
-            animation: rainbowBg 3s ease infinite;
-            color: #fff !important;
-            border: none;
-        }
+        .btn-wa-card, .btn-whatsapp-modal, .btn-wa-cart, .btn-agendar-finalizar { background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0088) !important; background-size: 400% 400% !important; animation: rainbowBg 3s ease infinite; color: #fff !important; border: none; }
         @keyframes rainbowBg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
         .btn-wa-card:hover, .btn-whatsapp-modal:hover, .btn-wa-cart:hover, .btn-agendar-finalizar:hover { animation: rainbowBg 1s linear infinite; }
         .logo-wrapper { position:relative; display:inline-block; }
@@ -73,7 +67,7 @@
         .fala-container.falando { opacity:1; transform:translateX(0); }
         .fala-cursor { display:inline-block; width:2px; height:1em; background:var(--cor-texto); margin-left:2px; animation: blink 0.7s infinite; vertical-align: middle; }
         @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:0; } }
-        .home-screen { flex-direction:column; padding:20px; gap:20px; width:100%; max-width:1400px; margin:0 auto; }
+        .home-screen { flex-direction:column; padding:20px; gap:20px; width:100%; max-width:1400px; margin:0 auto; display:flex !important; } /* FORÇADO PARA NÃO FICAR PRETO */
         .header-top { text-align:center; padding:10px 0 5px; display:flex; flex-direction:column; align-items:center; position:relative; }
         .header-top .subtitle { font-size:clamp(1.2rem,3vw,1.8rem); font-weight:500; letter-spacing:4px; text-shadow:0 0 15px rgba(172,40,255,0.8); }
         .header-top .slogan { font-size:clamp(1rem,2vw,1.3rem); font-weight:300; font-style:italic; letter-spacing:2px; }
@@ -377,6 +371,9 @@
         let raspadinhaUsada = false;
         let debounceTimerGlobal, debounceTimerProd, debounceTimerServ;
 
+        // LOG DE SEGURANÇA PARA IDENTIFICAR O ERRO
+        console.log(">>> INDEX.JS INICIADO COM SUCESSO! <<<");
+
         function salvarEstadoMascote() { localStorage.setItem('gudyx_mascote_state', JSON.stringify({ cliqueCount, ultimoCliqueTime, estaSumido, ultimaIrritacaoTimestamp, timestamp: Date.now() })); }
         function carregarEstadoMascote() { const saved = localStorage.getItem('gudyx_mascote_state'); if (saved) { try { const e = JSON.parse(saved); if (Date.now() - e.timestamp < RESET_INTERVAL) { cliqueCount = e.cliqueCount||0; ultimoCliqueTime = e.ultimoCliqueTime||0; estaSumido = e.estaSumido||false; ultimaIrritacaoTimestamp = e.ultimaIrritacaoTimestamp||0; if (estaSumido) { document.getElementById('peekingHead').classList.add('active'); document.getElementById('mascoteWrapper').classList.add('somiu'); } } } catch(e) {} } }
 
@@ -386,22 +383,23 @@
 
         async function carregarDadosFirebase() { 
             try { 
+                console.log("Tentando carregar dados do Firebase...");
                 const snapCat = await db.collection('categorias').get(); dados.categorias = snapCat.docs.map(d => ({ id: d.id, ...d.data() })); 
                 const snapProd = await db.collection('produtos').get(); dados.produtos = snapProd.docs.map(d => ({ id: d.id, ...d.data() })); 
                 const snapFrases = await db.collection('config').doc('frases').get(); dados.frases = snapFrases.exists ? snapFrases.data().lista : []; 
                 const snapFaq = await db.collection('config').doc('faq').get(); dados.faq = snapFaq.exists ? snapFaq.data().perguntas : []; 
                 const snapDivertido = await db.collection('config').doc('divertido').get(); if (snapDivertido.exists) { configDivertido = snapDivertido.data(); } else { const localDivertido = localStorage.getItem('gudyx_divertido'); if (localDivertido) configDivertido = JSON.parse(localDivertido); } 
-                
                 const snapConfigLoja = await db.collection('config').doc('loja').get();
                 if (snapConfigLoja.exists) { configLoja = snapConfigLoja.data(); }
+                console.log("Dados carregados do Firebase!");
             } catch(e) { 
-                console.error('Firebase falhou, carregando dados de fallback:', e); 
-                // FALLBACK: Se o Firebase falhar, tenta carregar do localStorage
+                console.error('Firebase falhou, carregando do localStorage (segurança):', e); 
                 const localData = localStorage.getItem('gudyxDados');
                 if(localData) dados = JSON.parse(localData);
             } 
             carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); aplicarConfigDivertido(); 
         }
+
         function aplicarConfigDivertido() { document.getElementById('floatRaspadinha').style.display = configDivertido.raspadinha ? 'flex' : 'none'; document.getElementById('btnSorteHome').style.display = configDivertido.itemSurpresa ? 'block' : 'none'; document.getElementById('btnSorte').style.display = configDivertido.itemSurpresa ? 'block' : 'none'; }
         function iniciarListenerFirebase() { db.collection('produtos').onSnapshot(s => { dados.produtos = s.docs.map(d => ({ id: d.id, ...d.data() })); if (document.getElementById('homeScreen').classList.contains('active')) { resetarSlider(); carregarMaisVendidos(); } }); }
 
@@ -562,14 +560,12 @@
         function compartilharFavoritos() { if (favoritos.length === 0) return alert('Nenhum favorito para compartilhar.'); const prods = favoritos.map(id => dados.produtos.find(p => p.id === id)).filter(p => p); const texto = prods.map(p => `🛒 ${p.nome} - R$ ${p.preco}`).join('\n'); const msg = `*Minha lista de desejos da Gudyx:*\n\n${texto}\n\nQuero esses produtos!`; window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank'); }
 
         function alterarQuantidade(delta) { quantidadeModal = Math.max(1, quantidadeModal+delta); document.getElementById('qtdModal').textContent = quantidadeModal; calcularPrecoProgressivo(quantidadeModal); }
-        
         function calcularPrecoProgressivo(qtd) {
             if (!produtoModalAtual) return;
             const prod = produtoModalAtual;
             const precoBase = parseFloat(prod.preco.replace(',', '.'));
             let precoFinal = precoBase;
             let maiorDesconto = 0;
-
             if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
                 prod.descontoProgressivo.forEach(regra => {
                     if (qtd >= regra.qtd && regra.desconto > maiorDesconto) {
@@ -588,7 +584,6 @@
                 containerProgressivo.innerHTML = '';
             }
         }
-
         function simularAtacado() {
             const qtd = parseInt(document.getElementById('simuladorQtd').value);
             if (!qtd || qtd < 1) return alert('Digite uma quantidade válida.');
@@ -596,7 +591,6 @@
             const precoBase = parseFloat(prod.preco.replace(',', '.'));
             let precoFinal = precoBase;
             let maiorDesconto = 0;
-
             if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
                 prod.descontoProgressivo.forEach(regra => {
                     if (qtd >= regra.qtd && regra.desconto > maiorDesconto) {
@@ -615,7 +609,6 @@
                 resultado.innerHTML = `🛒 ${qtd} unidades = R$ ${total.toFixed(2)} (Sem desconto aplicado)`;
             }
         }
-
         function abrirModal(prodId) { 
             const prod = dados.produtos.find(p=>p.id===prodId); 
             if(!prod) return; 
@@ -649,7 +642,6 @@
         function fecharLightbox() { document.getElementById('lightboxOverlay').classList.remove('active'); }
 
         function renderizarSugestoes(prodId) { const container=document.getElementById('sugestoesGrid'); const prod=dados.produtos.find(p=>p.id===prodId); if(!prod){container.innerHTML='';return;} let sugestoes = dados.produtos.filter(p=>p.id!==prodId&&p.categoriaId===prod.categoriaId&&isEmEstoque(p)).slice(0,3); if (sugestoes.length < 2) { sugestoes = dados.produtos.filter(p=>p.id!==prodId&&isEmEstoque(p)).sort(()=>Math.random()-0.5).slice(0,3); } container.innerHTML=sugestoes.length?sugestoes.map(s=>{const preco=isPromoActive(s)&&s.precoPromo?'R$ '+s.precoPromo:'R$ '+s.preco;return`<div class="sugestao-card" onclick="abrirModal('${s.id}')"><img src="${getImagemPrincipal(s)}" loading="lazy"><h5>${s.nome}</h5><div class="preco">${preco}</div></div>`;}).join(''):'<p style="opacity:0.6;">Nenhum relacionado.</p>'; }
-        
         function abrirModalAgendamento() {
             if(carrinho.length === 0) return alert('Seu carrinho está vazio!');
             document.getElementById('agendamentoModal').classList.add('active');
@@ -663,15 +655,12 @@
             const infoPrazo = document.getElementById('infoPrazoAgendamento');
             dataSelect.innerHTML = '<option value="">Carregando...</option>';
             infoPrazo.textContent = '🔄 Calculando datas disponíveis...';
-
             try {
                 const snapConfig = await db.collection('config').doc('loja').get();
                 if(snapConfig.exists) configLoja = snapConfig.data();
-
                 const hoje = new Date();
                 let dataInicio = new Date(hoje);
                 let dataFim = new Date(hoje);
-                
                 if (configLoja.pedidosEmAndamento) {
                     dataInicio.setDate(dataInicio.getDate() + configLoja.prazoMinimo);
                     dataFim.setDate(dataFim.getDate() + configLoja.prazoMaximo);
@@ -681,7 +670,6 @@
                     dataFim.setDate(dataFim.getDate() + 3);
                     infoPrazo.textContent = `✅ Não temos pedidos em andamento. Você pode retirar a partir de amanhã!`;
                 }
-
                 dataSelect.innerHTML = '';
                 for(let d = new Date(dataInicio); d <= dataFim; d.setDate(d.getDate() + 1)) {
                     const option = document.createElement('option');
@@ -698,26 +686,21 @@
                 infoPrazo.textContent = '❌ Erro ao carregar datas. Tente novamente.';
             }
         }
-
         function enviarPedidoComAgendamento() {
             const data = document.getElementById('dataRetirada').value;
             const hora = document.getElementById('horaRetirada').value;
             if(!data || !hora) return alert('Por favor, selecione a data e horário de retirada.');
-
             const dataObj = new Date(data + 'T00:00:00');
             const diaSemana = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][dataObj.getDay()];
             const dataFormatada = `${diaSemana}, ${dataObj.getDate()}/${dataObj.getMonth()+1}/${dataObj.getFullYear()}`;
-
             let msg='*Gudyx Custom - Pedido com Retirada Agendada*\n\n', total=0; 
             let itensPedido = [];
-            
             carrinho.forEach(item=>{ 
                 const sub=parseFloat(item.preco.replace(',','.'))*item.quantidade; 
                 total+=sub; 
                 msg+=`🛒 *${item.nome}* - ${item.quantidade}x - R$ ${item.preco}\n`;
                 itensPedido.push({nome: item.nome, quantidade: item.quantidade, precoUnitario: item.preco, imagem: item.imagem});
             }); 
-            
             if(cupomAtual) { 
                 if(cupomAtual.tipo==='percentual') total*=(1-cupomAtual.valor/100); 
                 else total=Math.max(0,total-cupomAtual.valor); 
@@ -728,8 +711,6 @@
             msg+=`📍 *Local:* Duque de Caxias - RJ\n`;
             msg+=`📝 *Forma de pagamento:* \n`;
             msg+=`\nQuero finalizar!`;
-
-            // SALVAR NO FIREBASE
             const pedido = {
                 cliente: "Cliente WhatsApp",
                 itens: itensPedido,
@@ -740,30 +721,22 @@
                 status: 'Aguardando confirmação',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp()
             };
-            
-            db.collection('pedidos').add(pedido).then(() => {
-                console.log('Pedido salvo no Firebase!');
-                limparCarrinho();
-            }).catch(err => console.error('Erro ao salvar pedido:', err));
-
+            db.collection('pedidos').add(pedido).then(() => { limparCarrinho(); }).catch(err => console.error('Erro ao salvar pedido:', err));
             fecharModalAgendamento();
             fecharDrawer();
             window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); 
             playVictorySound(); 
             confetti({particleCount:200,spread:100,origin:{y:0.5}}); 
         }
-
         function abrirComoFunciona() { document.getElementById('comoFuncionaModal').classList.add('active'); }
         function fecharComoFunciona() { document.getElementById('comoFuncionaModal').classList.remove('active'); }
         document.getElementById('comoFuncionaModal').addEventListener('click', function(e) { if(e.target === this) fecharComoFunciona(); });
 
         function comprarWhatsAppModal() { if(!produtoModalAtual||!isEmEstoque(produtoModalAtual)) return; const q=parseInt(document.getElementById('qtdModal').textContent), p=isPromoActive(produtoModalAtual)?produtoModalAtual.precoPromo:produtoModalAtual.preco; window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`*Gudyx*\n🛒 ${produtoModalAtual.nome}\n💰 ${p} x ${q}\nQuero comprar!`)}`,'_blank'); fecharModal(); }
-
         function carregarAvaliacoes() { avaliacoes = JSON.parse(localStorage.getItem('gudyx_avaliacoes')||'{}'); }
         function salvarAvaliacoes() { localStorage.setItem('gudyx_avaliacoes', JSON.stringify(avaliacoes)); }
         function salvarAvaliacao() { if(!produtoModalAtual) return; const nota=parseInt(document.getElementById('avaliacaoNota').value); const comentario=document.getElementById('avaliacaoComentario').value.trim(); if(!comentario) return alert('Escreva um comentário.'); const id=produtoModalAtual.id; if(!avaliacoes[id]) avaliacoes[id]=[]; const fileInput = document.getElementById('avaliacaoFoto'); if (fileInput.files && fileInput.files[0]) { const reader = new FileReader(); reader.onload = function(e) { const foto = e.target.result; avaliacoes[id].push({nota,comentario,foto,autor:'Cliente',data:new Date().toISOString()}); salvarAvaliacoes(); document.getElementById('avaliacaoComentario').value=''; fileInput.value=''; renderizarAvaliacoes(id); }; reader.readAsDataURL(fileInput.files[0]); } else { avaliacoes[id].push({nota,comentario,autor:'Cliente',data:new Date().toISOString()}); salvarAvaliacoes(); document.getElementById('avaliacaoComentario').value=''; renderizarAvaliacoes(id); } }
         function renderizarAvaliacoes(prodId) { const lista=avaliacoes[prodId]||[]; document.getElementById('avaliacoesList').innerHTML=lista.length?lista.map(av=>`<div class="avaliacao-item"><div class="estrelas">${'★'.repeat(av.nota)+'☆'.repeat(5-av.nota)}</div><div class="comentario">${av.comentario}</div>${av.foto?`<img src="${av.foto}" class="foto-avaliacao" loading="lazy">`:''}<div class="autor">${av.autor} • ${new Date(av.data).toLocaleDateString()}</div></div>`).join(''):'<p style="opacity:0.6;">Nenhuma avaliação.</p>'; }
-
         let slideAtual=0,sliderIntervalo;
         function iniciarSlider(){const c=document.getElementById('dynamicSliderContainer'),d=document.getElementById('sliderDots');c.innerHTML='';d.innerHTML='';const itens=dados.produtos.filter(p=>p.exibirSlider&&(isPromoActive(p)||!p.promocao)&&isEmEstoque(p));if(!itens.length){c.innerHTML='<div style="padding:30px;text-align:center;">Sem promoções.</div>';return;}itens.forEach((p,i)=>{const s=document.createElement('div');s.className='slide-item'+(i===0?' active-slide':'');s.onclick=()=>abrirModal(p.id);s.innerHTML=`<img src="${getImagemPrincipal(p)}" loading="lazy"><h4>${p.nome}</h4><div class="preco">R$ ${p.precoPromo||p.preco}</div>`;c.appendChild(s);const dot=document.createElement('button');dot.className='dot'+(i===0?' active-dot':'');dot.onclick=()=>{clearInterval(sliderIntervalo);mudarSlide(i);iniciarSliderLoop();};d.appendChild(dot);});slideAtual=0;iniciarSliderLoop();}
         function mudarSlide(i){document.querySelectorAll('#dynamicSliderContainer .slide-item').forEach((s,idx)=>s.classList.toggle('active-slide',idx===i));document.querySelectorAll('#sliderDots .dot').forEach((d,idx)=>d.classList.toggle('active-dot',idx===i));slideAtual=i;}
@@ -780,7 +753,6 @@
         function carregarDepoimentos() { const container = document.getElementById('depoimentosGrid'); container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Os imãs são lindos!"</div><div class="autor">— Ana C.</div></div>`; }
         function carregarInstagram() { const container = document.getElementById('instagramGrid'); container.style.display = 'flex'; container.style.justifyContent = 'center'; container.style.alignItems = 'center'; container.style.width = '100%'; container.innerHTML = `<iframe src="https://www.instagram.com/gudyxcustom/embed" width="100%" height="550" frameborder="0" scrolling="no" allowtransparency="true" style="border-radius: 20px; max-width: 600px; border: 1px solid rgba(255,255,255,0.1); background: rgba(11,4,28,0.6);"></iframe>`; }
         function verificarRetorno() { const ultimaVisita = localStorage.getItem('gudyx_ultima_visita'); const agora = Date.now(); if (ultimaVisita && (agora - parseInt(ultimaVisita)) > 86400000) { setTimeout(() => falarMascote('Que bom te ver de novo! 😍'), 4000); document.getElementById('badgeVip').style.display = 'inline-block'; } localStorage.setItem('gudyx_ultima_visita', agora.toString()); }
-
         let categoriaSelecionada=null;
         function carregarCategorias(tipo){const container=document.getElementById(tipo==='produtos'?'produtosCategoriasContainer':'servicosCategoriasContainer');container.innerHTML='';dados.categorias.filter(c=>c.tipo===tipo).forEach(cat=>{const card=document.createElement('div');card.className='categoria-card';card.innerHTML=`${cat.imagem?`<img src="${cat.imagem}" class="categoria-img" loading="lazy">`:'<i class="fas fa-folder" style="font-size:3rem;"></i>'}<h4>${cat.nome}</h4>`;card.onclick=()=>selecionarCategoria(tipo,cat.id);container.appendChild(card);});}
         function selecionarCategoria(tipo,catId){categoriaSelecionada={tipo,id:catId};const container=document.getElementById(tipo==='produtos'?'produtosProdutosContainer':'servicosProdutosContainer');container.innerHTML='';container.style.display='grid';container.className='produtos-grid';dados.produtos.filter(p=>p.categoriaId===catId).forEach(prod=>{renderizarCardProduto(prod,container);});}
@@ -806,22 +778,17 @@
             container.appendChild(card);
         }
         function alternarVisualizacao(modo){viewMode=modo;document.getElementById('viewGrid').classList.toggle('active',modo==='grid');document.getElementById('viewList').classList.toggle('active',modo==='lista');if(categoriaSelecionada)selecionarCategoria(categoriaSelecionada.tipo,categoriaSelecionada.id);}
-
         function animarCarrinho(){const f=document.querySelector('.float-cart');f.classList.add('bounce');setTimeout(()=>f.classList.remove('bounce'),600);}
         function playClickSound(){const ctx=new(window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator(),g=ctx.createGain();o.type='sine';o.frequency.setValueAtTime(800,ctx.currentTime);o.frequency.exponentialRampToValueAtTime(1200,ctx.currentTime+0.1);g.gain.setValueAtTime(0.3,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+0.2);o.connect(g);g.connect(ctx.destination);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.2);}
         function playVictorySound(){const ctx=new(window.AudioContext||window.webkitAudioContext)();[523.25,659.25,783.99,1046.50].forEach((f,i)=>{const o=ctx.createOscillator(),g=ctx.createGain();o.type='triangle';o.frequency.value=f;g.gain.setValueAtTime(0.3,ctx.currentTime+i*0.12);g.gain.exponentialRampToValueAtTime(0.01,ctx.currentTime+i*0.12+0.2);o.connect(g);g.connect(ctx.destination);o.start(ctx.currentTime+i*0.12);o.stop(ctx.currentTime+i*0.12+0.3);});}
         let logoCliques=0,logoTimeout;
         document.querySelector('.logo-img').addEventListener('click',function(){logoCliques++;if(logoCliques===1)logoTimeout=setTimeout(()=>logoCliques=0,800);else if(logoCliques===3){clearTimeout(logoTimeout);logoCliques=0;document.body.classList.add('festa');confetti({particleCount:300,spread:120});setTimeout(()=>document.body.classList.remove('festa'),3000);}});
-
         function debounceBuscaGlobal() { clearTimeout(debounceTimerGlobal); debounceTimerGlobal = setTimeout(buscaGlobal, 500); }
         function debounceBuscarProdutos() { clearTimeout(debounceTimerProd); debounceTimerProd = setTimeout(() => buscarItems('produtos'), 500); }
         function debounceBuscarServicos() { clearTimeout(debounceTimerServ); debounceTimerServ = setTimeout(() => buscarItems('servicos'), 500); }
-
         function buscarItems(tipo){const term=document.getElementById(tipo==='produtos'?'searchProdutos':'searchServicos').value.toLowerCase();const container=document.getElementById(tipo==='produtos'?'produtosProdutosContainer':'servicosProdutosContainer');if(term==='gudyx'){container.innerHTML='<div class="produto-card" style="grid-column:1/-1;text-align:center;"><img src="https://i.imgur.com/Y5H9zqr.png" style="width:150px;height:150px;margin:0 auto;border-radius:50%;" loading="lazy"><h5>🥚 Ovo Cósmico</h5><div class="preco">R$ 0,01</div></div>';return;}if(!categoriaSelecionada)return;container.innerHTML=dados.produtos.filter(p=>p.categoriaId===categoriaSelecionada.id&&p.nome.toLowerCase().includes(term)).map(p=>`<div class="produto-card" onclick="abrirModal('${p.id}')"><img src="${getImagemPrincipal(p)}" loading="lazy"><h5>${p.nome}</h5><div class="preco">R$ ${p.preco}</div></div>`).join('')||'<p>Nenhum item.</p>';}
-
         function abrirFAQ(){document.getElementById('faqModal').classList.add('active');}
         function fecharFAQ(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('faqModal').classList.remove('active');}
-        
         function toggleChat(){
             const modal = document.getElementById('chatModal');
             modal.classList.toggle('active');
@@ -834,7 +801,6 @@
                 }
             }
         }
-
         function chatResposta(op){
             const b=document.getElementById('chatBody');
             let resp = '';
@@ -865,10 +831,7 @@
             setTimeout(() => {
                 localStorage.removeItem('gudyx_mascote_state');
                 const wrapper = document.getElementById('mascoteWrapper');
-                if (wrapper) {
-                    wrapper.classList.remove('somiu', 'fugindo', 'voltando');
-                    wrapper.style.display = 'block';
-                }
+                if (wrapper) { wrapper.classList.remove('somiu', 'fugindo', 'voltando'); wrapper.style.display = 'block'; }
                 if (!dados.frases || dados.frases.length === 0) {
                     dados.frases = ['Olá, sou o Gluudyx! ✦', 'Que bom te ver! 🎉', 'Vamos explorar juntos!', 'Curta a Gudyx! 😍'];
                 }
