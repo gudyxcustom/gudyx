@@ -9,6 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
+        /* --- TODOS OS ESTILOS ANTERIORES SÃO MANTIDOS AQUI --- */
         :root {
             --roxo-profundo: #0b041c;
             --roxo-meio: #1a0a33;
@@ -164,8 +165,6 @@
         .categoria-card .categoria-img { width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--vidro-borda); }
         .categoria-card h4 { font-size:1.1rem; font-weight:500; }
         .produtos-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:15px; width:100%; max-width:1100px; margin-top:10px; }
-        
-        /* --- CORREÇÃO DO CARD DO PRODUTO E POSIÇÃO DO FAVORITO --- */
         .produto-card {
             background: var(--vidro-fundo);
             backdrop-filter: blur(8px);
@@ -278,7 +277,6 @@
         .btn-favorite:hover { transform:scale(1.1); }
         .btn-favorite.active { color:#ff4455; }
         .btn-favorite.active i { color:#ff4455; }
-
         .produto-card .botoes-lista {
             display: flex;
             gap: 8px;
@@ -302,8 +300,6 @@
         .modal-box .modal-desc { font-size:1rem; opacity:0.8; margin-bottom:10px; }
         .modal-box .modal-price { font-size:1.6rem; font-weight:700; color:var(--amarelo-neon); }
         .modal-box .modal-price-old { color:var(--rosa-neon); text-decoration:line-through; font-size:1.2rem; margin-right:10px; }
-        
-        /* ------- MÓDULO 7: PREÇO PROGRESSIVO E SIMULADOR ------- */
         .modal-box .modal-desc-progressivo { margin-top: 5px; color: var(--ciano-brilhante); font-weight: 600; font-size: 0.95rem; }
         .modal-simulador { margin: 15px 0; border-top: 1px solid var(--vidro-borda); padding-top: 15px; }
         .modal-simulador label { font-size: 0.9rem; font-weight: 500; }
@@ -311,8 +307,6 @@
         .modal-simulador #simuladorQtd { width: 100px; padding: 8px; border-radius: 8px; border: 1px solid var(--vidro-borda); background: rgba(255,255,255,0.05); color: #fff; font-family: inherit; }
         .modal-simulador .btn-simular { padding: 8px 16px; background: linear-gradient(135deg, #a028ff, #00f2fe); border: none; border-radius: 20px; color: #fff; cursor: pointer; font-weight: 600; }
         .modal-simulador #resultadoSimulacao { margin-top: 8px; font-size: 1rem; font-weight: bold; color: var(--ciano-brilhante); }
-        /* ------------------------------------------------------- */
-
         .quantidade-container { display:flex; align-items:center; gap:15px; margin:15px 0; }
         .quantidade-container label { font-weight:600; font-size:1rem; }
         .qtd-control { display:flex; align-items:center; gap:10px; }
@@ -459,8 +453,6 @@
         .social-proof-item .proof-text strong { color:var(--ciano-brilhante); }
         @keyframes slideInProof { from { transform:translateX(-60px); opacity:0; } to { transform:translateX(0); opacity:1; } }
         @keyframes slideOutProof { from { transform:translateX(0); opacity:1; } to { transform:translateX(-60px); opacity:0; } }
-        
-        /* --- DESIGN DOS MODAIS SOBRE E CONTATO --- */
         .modal-page { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); backdrop-filter:blur(8px); z-index:999999; display:none; justify-content:center; align-items:center; padding:20px; }
         .modal-page.active { display:flex; }
         .modal-page .modal-box { background:var(--vidro-fundo); backdrop-filter:blur(16px); border:1px solid var(--vidro-borda); border-radius:24px; max-width:600px; width:100%; padding:40px; position:relative; box-shadow:0 0 60px rgba(172,40,255,0.4); max-height:80vh; overflow-y:auto; text-align:center; }
@@ -471,9 +463,7 @@
         .modal-page .modal-box .info-item { display:flex; align-items:center; justify-content:center; gap:12px; background:rgba(255,255,255,0.05); border-radius:12px; padding:12px 20px; margin:10px auto; max-width:350px; border:1px solid rgba(255,255,255,0.05); transition:var(--transicao); }
         .modal-page .modal-box .info-item:hover { background:rgba(172,40,255,0.2); border-color:var(--ciano-brilhante); }
         .modal-page .modal-box .info-item i { font-size:1.4rem; color:var(--ciano-brilhante); width:30px; }
-        /* --- FIM DO DESIGN DOS MODAIS --- */
 
-        /* --- BOTÕES DO RODAPÉ --- */
         .btn-footer { display: inline-block; padding: 8px 18px; color: var(--cor-texto); background: rgba(172, 40, 255, 0.15); border: 1px solid var(--vidro-borda); border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.85rem; transition: var(--transicao); margin: 0 5px; backdrop-filter: blur(4px); }
         .btn-footer:hover { background: rgba(172, 40, 255, 0.4); border-color: var(--ciano-brilhante); box-shadow: 0 0 20px rgba(172, 40, 255, 0.3); transform: translateY(-2px); }
         .footer .separator { opacity: 0.3; margin: 0 5px; }
@@ -491,7 +481,6 @@
         .faq-item .faq-a { display:none; padding-top:8px; opacity:0.8; font-size:0.95rem; }
         .faq-item .faq-a.open { display:block; }
         
-        /* --- CORREÇÃO DO BOTÃO E JANELA DE CHAT (POSIÇÃO DIREITA) --- */
         #chatButton { position:fixed; bottom: 260px; right: 20px; left: auto; width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:var(--transicao); opacity:0.8; }
         #chatButton:hover { transform:scale(1.1); opacity:1; }
         #chatModal { position:fixed; bottom: 325px; right: 20px; left: auto; width:320px; max-width:80vw; background:var(--vidro-fundo); backdrop-filter:blur(16px); border:1px solid var(--vidro-borda); border-radius:20px; z-index:9999; display:none; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.6); }
@@ -508,12 +497,10 @@
         .quick-btn { background:rgba(255,255,255,0.05); border:1px solid var(--vidro-borda); border-radius:20px; padding:6px 12px; font-size:0.8rem; color:var(--cor-texto); cursor:pointer; transition:var(--transicao); }
         .quick-btn:hover { background:rgba(172,40,255,0.2); }
 
-        /* --- CORREÇÃO DO MINI MASCOTE PARA A DIREITA --- */
         #miniGluudyx { display: none; position: fixed; bottom: 20px; right: 20px; left: auto; z-index: 999; align-items: center; gap: 10px; pointer-events: none; flex-direction: row; }
         #miniGluudyx img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--ciano-brilhante); box-shadow: 0 0 25px rgba(172,40,255,0.9); animation: floatMascote 3s ease-in-out infinite; }
         .mini-fala { background: rgba(11,4,28,0.95); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); padding: 10px 16px; border-radius: 20px; font-size: 0.85rem; max-width: 200px; color: #fff; box-shadow: 0 0 20px rgba(172,40,255,0.5); position: relative; }
         .mini-fala::after { content: ''; position: absolute; top: 50%; right: -12px; transform: translateY(-50%); border: 6px solid transparent; border-left-color: rgba(11,4,28,0.95); }
-        /* --- FIM DA CORREÇÃO --- */
 
         #lightboxOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:999999; display:none; justify-content:center; align-items:center; cursor:pointer; }
         #lightboxOverlay.active { display:flex; }
@@ -556,6 +543,7 @@
             #chatModal { width: 280px; bottom: 305px; right: 15px; left: auto; }
             #miniGluudyx { right: 15px; left: auto; }
             #agendamentoModal .modal-box { max-width: 90vw; padding: 20px; }
+            #avaliacaoModal .modal-box { max-width: 90vw; padding: 20px; }
         }
         @media (max-width:480px) {
             .fala-container { right:0; top:-25px; width:100px; font-size:0.6rem; }
@@ -570,7 +558,6 @@
             .footer { flex-direction:column; gap:4px; padding:6px 15px; font-size:0.7rem; }
         }
 
-        /* --- MODAL DE AGENDAMENTO DE RETIRADA (Módulo 1) --- */
         #agendamentoModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:100000; display:none; justify-content:center; align-items:center; padding:20px; }
         #agendamentoModal.active { display:flex; }
         .agendamento-box { background:var(--vidro-fundo); backdrop-filter:blur(12px); border:1px solid var(--vidro-borda); border-radius:24px; max-width:500px; width:100%; padding:30px; position:relative; box-shadow:0 0 60px rgba(172,40,255,0.5); }
@@ -583,7 +570,6 @@
         .agendamento-box .btn-confirmar-agendamento { margin-top:20px; padding:12px; width:100%; background:linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; border:none; border-radius:50px; font-weight:700; font-size:1.1rem; cursor:pointer; transition:var(--transicao); }
         .agendamento-box .btn-confirmar-agendamento:hover { transform:scale(1.02); box-shadow:0 0 30px rgba(172,40,255,0.4); }
 
-        /* --- MODAL COMO FUNCIONA --- */
         #comoFuncionaModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:100001; display:none; justify-content:center; align-items:center; padding:20px; }
         #comoFuncionaModal.active { display:flex; }
         .como-funciona-box { background:var(--vidro-fundo); backdrop-filter:blur(12px); border:1px solid var(--vidro-borda); border-radius:24px; max-width:600px; width:100%; padding:30px; position:relative; box-shadow:0 0 60px rgba(172,40,255,0.5); }
@@ -595,6 +581,19 @@
         .como-funciona-box .passo .numero { font-size:1.5rem; font-weight:700; color:var(--amarelo-neon); min-width:40px; text-align:center; }
         .como-funciona-box .passo .texto { font-size:0.95rem; opacity:0.9; }
         .como-funciona-box .passo .texto strong { color:var(--ciano-brilhante); }
+
+        /* --- MODAL DE AVALIAÇÃO (Módulo 3) --- */
+        #avaliacaoModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:100002; display:none; justify-content:center; align-items:center; padding:20px; }
+        #avaliacaoModal.active { display:flex; }
+        .avaliacao-box { background:var(--vidro-fundo); backdrop-filter:blur(12px); border:1px solid var(--vidro-borda); border-radius:24px; max-width:500px; width:100%; padding:30px; position:relative; box-shadow:0 0 60px rgba(172,40,255,0.5); }
+        .avaliacao-box .close-modal { position:absolute; top:10px; right:20px; font-size:2rem; cursor:pointer; background:none; border:none; color:var(--cor-texto); transition:var(--transicao); }
+        .avaliacao-box .close-modal:hover { transform:rotate(90deg); color:var(--rosa-neon); }
+        .avaliacao-box h2 { font-size:1.6rem; margin-bottom:10px; color:var(--amarelo-neon); }
+        .avaliacao-box label { display:block; margin-top:10px; font-weight:500; }
+        .avaliacao-box input, .avaliacao-box select, .avaliacao-box textarea { width:100%; padding:10px; border-radius:10px; border:1px solid var(--vidro-borda); background:rgba(255,255,255,0.05); color:#fff; font-size:0.95rem; margin-top:5px; font-family:inherit; }
+        .avaliacao-box textarea { resize:vertical; min-height:60px; }
+        .avaliacao-box .btn-enviar-avaliacao { margin-top:20px; padding:12px; width:100%; background:linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; border:none; border-radius:50px; font-weight:700; font-size:1.1rem; cursor:pointer; transition:var(--transicao); }
+        .avaliacao-box .btn-enviar-avaliacao:hover { transform:scale(1.02); box-shadow:0 0 30px rgba(172,40,255,0.4); }
     </style>
 </head>
 <body>
@@ -606,6 +605,7 @@
     <div id="tourOverlay"><div class="tour-box" id="tourBox"><h3 id="tourTitulo"></h3><p id="tourTexto"></p><button onclick="proximoTour()" id="tourBtn">Próximo</button></div></div>
     <div id="raspadinhaModal"><div class="raspadinha-box"><h3>🎟️ Raspadinha de Cupom</h3><p>Raspe para revelar seu desconto!</p><canvas id="raspadinhaCanvas" width="300" height="150"></canvas><br><button onclick="fecharRaspadinha()" style="margin-top:10px;padding:8px 20px;border-radius:20px;border:none;background:#555;color:#fff;cursor:pointer;">Fechar</button></div></div>
 
+    <!-- MODAL DO PRODUTO -->
     <div id="productModal">
         <div class="modal-box">
             <button class="close-modal" onclick="fecharModal()">×</button>
@@ -613,8 +613,6 @@
             <h2 id="modalTitle">Título</h2>
             <p id="modalDesc" class="modal-desc">Descrição</p>
             <div id="modalPriceContainer"></div>
-            
-            <!-- MÓDULO 7: PREÇO PROGRESSIVO E SIMULADOR NO MODAL -->
             <div id="modalPrecoProgressivo" class="modal-desc-progressivo"></div>
             <div class="modal-simulador">
                 <label>📊 Simular Atacado</label>
@@ -624,7 +622,6 @@
                 </div>
                 <div id="resultadoSimulacao"></div>
             </div>
-            
             <div class="quantidade-container"><label>Quantidade:</label><div class="qtd-control"><button onclick="alterarQuantidade(-1)">−</button><span id="qtdModal">1</span><button onclick="alterarQuantidade(1)">+</button></div></div>
             <div id="modalButtonsContainer"><button id="modalAddCartBtn" class="btn-add-cart-modal" onclick="addToCartFromModal()"><i class="fas fa-cart-plus"></i> Adicionar ao carrinho</button><button id="modalWaBtn" class="btn-whatsapp-modal" onclick="comprarWhatsAppModal()"><i class="fab fa-whatsapp"></i> Comprar agora</button></div>
             <div id="modalStockStatus" class="stock-status"></div>
@@ -635,6 +632,28 @@
         </div>
     </div>
 
+    <!-- MODAL DE AVALIAÇÃO PÓS-VENDA -->
+    <div id="avaliacaoModal">
+        <div class="avaliacao-box">
+            <button class="close-modal" onclick="fecharModalAvaliacao()">×</button>
+            <h2>⭐ Avalie sua experiência</h2>
+            <label>Seu nome (opcional):</label>
+            <input type="text" id="avaliacaoNome" placeholder="Seu nome">
+            <label>Nota do pedido:</label>
+            <select id="avaliacaoNotaPedido">
+                <option value="5">5 estrelas</option>
+                <option value="4">4 estrelas</option>
+                <option value="3">3 estrelas</option>
+                <option value="2">2 estrelas</option>
+                <option value="1">1 estrela</option>
+            </select>
+            <label>Deixe seu comentário:</label>
+            <textarea id="avaliacaoComentarioPedido" placeholder="Conte como foi sua experiência..."></textarea>
+            <button class="btn-enviar-avaliacao" onclick="enviarAvaliacaoPedido()">Enviar avaliação</button>
+        </div>
+    </div>
+
+    <!-- CARRINHO E FAVORITOS -->
     <div id="cartDrawerOverlay" onclick="fecharDrawer()"></div>
     <div id="cartDrawer">
         <div class="cart-drawer-header"><h3>🛒 Meu Carrinho</h3><button class="close-drawer" onclick="fecharDrawer()">×</button></div>
@@ -660,7 +679,6 @@
 
     <div id="comoFuncionaModal"><div class="como-funciona-box"><button class="close-modal" onclick="fecharComoFunciona()">×</button><h2>📦 Como comprar e retirar</h2><div class="passos"><div class="passo"><div class="numero">1</div><div class="texto">Escolha seus produtos e adicione ao <strong>carrinho</strong>.</div></div><div class="passo"><div class="numero">2</div><div class="texto">Vá até o carrinho e clique em <strong>"Agendar Retirada"</strong>.</div></div><div class="passo"><div class="numero">3</div><div class="texto">Selecione a <strong>data e horário</strong> disponíveis para retirar no balcão.</div></div><div class="passo"><div class="numero">4</div><div class="texto">Finalize enviando o pedido pelo <strong>WhatsApp</strong> e venha buscar!</div></div></div><p style="margin-top:20px; font-size:0.9rem; opacity:0.6;">📍 Retirada em Duque de Caxias - RJ</p></div></div>
 
-    <!-- MODAL DE AGENDAMENTO (Módulo 1) -->
     <div id="agendamentoModal"><div class="agendamento-box"><button class="close-modal" onclick="fecharModalAgendamento()">×</button><h2>📅 Agendar Retirada</h2><div id="infoPrazoAgendamento" class="info-prazo">Carregando prazos...</div>
         <label>Data da Retirada</label><select id="dataRetirada"></select>
         <label>Horário da Retirada</label><select id="horaRetirada">
@@ -669,7 +687,6 @@
         <button class="btn-confirmar-agendamento" onclick="enviarPedidoComAgendamento()"><i class="fab fa-whatsapp"></i> Enviar Pedido e Agendar</button>
     </div></div>
 
-    <!-- CHAT E MASCOTE -->
     <div id="chatButton" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
     <div id="chatModal"><div class="chat-header"><h4><img src="https://i.imgur.com/Y5H9zqr.png" style="width:30px;height:30px;border-radius:50%;" loading="lazy"> Gluudyx</h4><button class="close-chat" onclick="toggleChat()">×</button></div><div class="chat-body" id="chatBody"><div class="chat-msg gluudyx">Oi! Sou o Gluudyx 😄 Como posso te ajudar?</div></div><div class="chat-footer"><button class="quick-btn" onclick="chatResposta('produtos')">Produtos</button><button class="quick-btn" onclick="chatResposta('promocoes')">Promoções</button><button class="quick-btn" onclick="chatResposta('retirada')">Retirada</button><button class="quick-btn" onclick="chatResposta('contato')">Contato</button></div></div>
     <div id="faqModal" onclick="fecharFAQ(event)"><div class="faq-box"><button class="close-faq" onclick="fecharFAQ()">×</button><h2>❓ Dúvidas Frequentes</h2><div id="faqList"></div></div></div>
@@ -784,6 +801,7 @@
         let configDivertido = { raspadinha: true, itemSurpresa: true };
         let raspadinhaUsada = false;
         let debounceTimerGlobal, debounceTimerProd, debounceTimerServ;
+        let pedidoAvaliacaoAtual = null;
 
         function salvarEstadoMascote() { localStorage.setItem('gudyx_mascote_state', JSON.stringify({ cliqueCount, ultimoCliqueTime, estaSumido, ultimaIrritacaoTimestamp, timestamp: Date.now() })); }
         function carregarEstadoMascote() { const saved = localStorage.getItem('gudyx_mascote_state'); if (saved) { try { const e = JSON.parse(saved); if (Date.now() - e.timestamp < RESET_INTERVAL) { cliqueCount = e.cliqueCount||0; ultimoCliqueTime = e.ultimoCliqueTime||0; estaSumido = e.estaSumido||false; ultimaIrritacaoTimestamp = e.ultimaIrritacaoTimestamp||0; if (estaSumido) { document.getElementById('peekingHead').classList.add('active'); document.getElementById('mascoteWrapper').classList.add('somiu'); } } } catch(e) {} } }
@@ -792,6 +810,7 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // Função de carregamento do Firebase
         async function carregarDadosFirebase() { 
             try { 
                 const snapCat = await db.collection('categorias').get(); dados.categorias = snapCat.docs.map(d => ({ id: d.id, ...d.data() })); 
@@ -803,7 +822,10 @@
                 if (snapConfigLoja.exists) { configLoja = snapConfigLoja.data(); }
             } catch(e) { console.error('Firestore:', e); } 
             carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); aplicarConfigDivertido(); 
+            // Verificar link de avaliação ao carregar
+            verificarLinkAvaliacao();
         }
+
         function aplicarConfigDivertido() { document.getElementById('floatRaspadinha').style.display = configDivertido.raspadinha ? 'flex' : 'none'; document.getElementById('btnSorteHome').style.display = configDivertido.itemSurpresa ? 'block' : 'none'; document.getElementById('btnSorte').style.display = configDivertido.itemSurpresa ? 'block' : 'none'; }
         function iniciarListenerFirebase() { db.collection('produtos').onSnapshot(s => { dados.produtos = s.docs.map(d => ({ id: d.id, ...d.data() })); if (document.getElementById('homeScreen').classList.contains('active')) { resetarSlider(); carregarMaisVendidos(); } }); }
 
@@ -821,7 +843,6 @@
         function alternarModo() { document.body.classList.toggle('modo-claro'); const icon = document.querySelector('#modoToggle i'); if (document.body.classList.contains('modo-claro')) { icon.className = 'fas fa-moon'; localStorage.setItem('gudyx_modo', 'claro'); } else { icon.className = 'fas fa-sun'; localStorage.setItem('gudyx_modo', 'escuro'); } }
         if (localStorage.getItem('gudyx_modo') === 'claro') { document.body.classList.add('modo-claro'); document.querySelector('#modoToggle i').className = 'fas fa-moon'; }
 
-        // --- FUNÇÕES DO MASCOTE ---
         function falarImediato(msg) { if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; } const falaContainer = document.getElementById('falaContainer'); falaContainer.innerHTML = msg; falaContainer.classList.add('falando'); estaFalando = true; if (timeoutFala) clearTimeout(timeoutFala); timeoutFala = setTimeout(() => { falaContainer.classList.remove('falando'); estaFalando = false; }, 3000); }
         function typewriterEffect(elemento, texto, velocidade = 40) { if (typewriterTimer) clearTimeout(typewriterTimer); elemento.innerHTML = ''; let i = 0; function digitar() { if (i < texto.length) { elemento.innerHTML = texto.substring(0, i + 1) + '<span class="fala-cursor">|</span>'; i++; typewriterTimer = setTimeout(digitar, velocidade); } else { elemento.innerHTML = texto; } } digitar(); }
         const piadas = ["Por que o caderno foi ao médico? 📓🤒","Qual o doce favorito do Gluudyx? 🍬","Você sabia que eu sou feito de cola? 🥰","O que o lápis disse para a borracha? ✏️💕","Por que a caneta não gostou do papel? 🖊️📄","Qual a fruta preferida do Gluudyx? 🍇😂","Eu sou como um imã... 🧲✨","Se você me der um clique, eu te dou um sorriso! 😄","Meu sonho é ser um papel de parede... 🖼️💖","Você é mais doce que um caderno de receitas! 🍪📔","O que a borracha falou para o lápis? ✏️❤️","Por que o Gluudyx é tão legal? 🎨","Se você me der um abraço, eu te dou um desconto! 😉","Gudyx: onde cada detalhe é um grude de personalidade! 💫"];
@@ -878,12 +899,43 @@
         function mostrarMiniGluudyx() { const mini = document.getElementById('miniGluudyx'); if(!mini) return; mini.querySelector('.mini-fala').textContent = frasesInfluenciador[Math.floor(Math.random()*frasesInfluenciador.length)]; mini.style.display = 'flex'; }
         function esconderMiniGluudyx() { if (!document.getElementById('cartDrawer').classList.contains('open') && !document.getElementById('productModal').classList.contains('active')) { document.getElementById('miniGluudyx').style.display = 'none'; } }
 
-        // --- CARRINHO E FAVORITOS ---
         function carregarCarrinho() { const sc = sessionStorage.getItem('gudyxCarrinho'); if(sc) { try { const d=JSON.parse(sc); carrinho=d.items||[]; cupomAtual=d.cupom||null; } catch(e) {} } atualizarBadgeCarrinho(); renderizarDrawer(); }
         function salvarCarrinho() { sessionStorage.setItem('gudyxCarrinho', JSON.stringify({items:carrinho,cupom:cupomAtual,timestamp:Date.now()})); atualizarBadgeCarrinho(); renderizarDrawer(); verificarCupomAutomatico(); atualizarBarraProgresso(); }
         function atualizarBarraProgresso() { const total = carrinho.reduce((acc, c) => acc + parseFloat(c.preco.replace(',','.')) * c.quantidade, 0); const meta = 100; const progresso = Math.min((total / meta) * 100, 100); document.getElementById('progressoPreenchimento').style.width = progresso + '%'; if (total >= meta && !cupomAtual) { document.getElementById('progressoTexto').textContent = '🎉 Você ganhou 5% OFF!'; } else if (total > 0 && total < meta) { document.getElementById('progressoTexto').textContent = `Faltam R$ ${(meta - total).toFixed(2)} para 5% OFF`; } else { document.getElementById('progressoTexto').textContent = ''; } }
         function renderizarDrawer() { const body = document.getElementById('cartDrawerBody'), totalEl = document.getElementById('cartDrawerTotal'); if (!carrinho.length) { body.innerHTML = '<div class="cart-empty">Carrinho vazio.</div>'; totalEl.textContent = 'R$ 0,00'; atualizarBarraProgresso(); return; } let html = '', total = 0; carrinho.forEach(item => { const sub = parseFloat(item.preco.replace(',','.')) * item.quantidade; total += sub; html += `<div class="cart-drawer-item"><img src="${item.imagem||'https://placehold.co/50'}" class="item-img" loading="lazy"><div class="item-info"><h4>${item.nome}</h4><div>R$ ${item.preco} x ${item.quantidade}</div></div><div class="item-actions"><button onclick="alterarQtdCarrinho('${item.id}',-1)">−</button><span class="qtd">${item.quantidade}</span><button onclick="alterarQtdCarrinho('${item.id}',1)">+</button><button class="btn-remove" onclick="alterarQtdCarrinho('${item.id}',-1)">🗑️</button></div></div>`; }); body.innerHTML = html; if (cupomAtual) { if (cupomAtual.tipo==='percentual') total *= (1-cupomAtual.valor/100); else total = Math.max(0, total-cupomAtual.valor); } totalEl.textContent = `R$ ${total.toFixed(2)}`; atualizarBarraProgresso(); }
-        function addToCart(prodId, qtd=1) { const prod = dados.produtos.find(p=>p.id===prodId); if(!prod||!isEmEstoque(prod)) return alert('Esgotado!'); const exist = carrinho.find(c=>c.id===prodId); const preco = isPromoActive(prod)?prod.precoPromo:prod.preco; if(exist) { if(exist.quantidade+qtd>getEstoque(prod)) return alert('Estoque máximo!'); exist.quantidade+=qtd; } else carrinho.push({id:prodId,quantidade:qtd,preco,nome:prod.nome,imagem:getImagemPrincipal(prod)}); salvarCarrinho(); animarCarrinho(); confetti({particleCount:100,spread:70,origin:{y:0.7}}); playClickSound(); setTimeout(abrirDrawer,300); }
+        
+        // Lógica de compra e kits
+        function addToCart(prodId, qtd=1) { 
+            const prod = dados.produtos.find(p=>p.id===prodId); 
+            if(!prod||!isEmEstoque(prod)) return alert('Esgotado!'); 
+
+            // Se for um KIT
+            if(prod.tipoItem === 'kit' && prod.componentes && prod.componentes.length > 0) {
+                prod.componentes.forEach(comp => {
+                    const compProd = dados.produtos.find(p => p.id === comp.id);
+                    if(compProd && isEmEstoque(compProd)) {
+                        addToCartBase(comp.id, comp.quantidade * qtd, compProd);
+                    } else {
+                        alert(`Um componente do kit "${prod.nome}" está esgotado.`);
+                    }
+                });
+                animarCarrinho(); confetti({particleCount:100,spread:70,origin:{y:0.7}}); playClickSound(); setTimeout(abrirDrawer,300);
+                return;
+            }
+            
+            addToCartBase(prodId, qtd, prod);
+        }
+
+        function addToCartBase(prodId, qtd, prod) {
+            const exist = carrinho.find(c=>c.id===prodId); 
+            const preco = isPromoActive(prod)?prod.precoPromo:prod.preco; 
+            if(exist) { 
+                if(exist.quantidade+qtd>getEstoque(prod)) return alert('Estoque máximo!'); 
+                exist.quantidade+=qtd; 
+            } else carrinho.push({id:prodId,quantidade:qtd,preco,nome:prod.nome,imagem:getImagemPrincipal(prod)}); 
+            salvarCarrinho(); 
+        }
+
         function addToCartFromModal() { if(produtoModalAtual) { addToCart(produtoModalAtual.id, quantidadeModal); fecharModal(); } }
         function alterarQtdCarrinho(id, delta) { const item = carrinho.find(c=>c.id===id); if(!item) return; const prod = dados.produtos.find(p=>p.id===id); const n = item.quantidade+delta; if(n<1) { carrinho = carrinho.filter(c=>c.id!==id); } else if(n>getEstoque(prod)) return alert('Estoque máximo!'); else item.quantidade=n; salvarCarrinho(); }
         function atualizarBadgeCarrinho() { const t = carrinho.reduce((a,c)=>a+c.quantidade,0); const b = document.getElementById('cartBadge'); b.textContent=t; b.style.display=t?'flex':'none'; }
@@ -965,7 +1017,6 @@
         function renderizarFavDrawer() { const body = document.getElementById('favDrawerBody'); if (favoritos.length === 0) { body.innerHTML = '<div class="cart-empty">Nenhum favorito ainda.</div>'; return; } let html = ''; favoritos.forEach(id => { const prod = dados.produtos.find(p => p.id === id); if (!prod) return; html += `<div class="cart-drawer-item"><img src="${getImagemPrincipal(prod)}" class="item-img" loading="lazy"><div class="item-info"><h4>${prod.nome}</h4><div class="item-price">R$ ${prod.preco}</div></div><div class="item-actions"><button onclick="abrirModal('${prod.id}'); fecharFavDrawer();"><i class="fas fa-eye"></i></button><button class="btn-remove" onclick="toggleFavorito('${prod.id}'); renderizarFavDrawer();"><i class="fas fa-heart-broken"></i></button></div></div>`; }); body.innerHTML = html; }
         function compartilharFavoritos() { if (favoritos.length === 0) return alert('Nenhum favorito para compartilhar.'); const prods = favoritos.map(id => dados.produtos.find(p => p.id === id)).filter(p => p); const texto = prods.map(p => `🛒 ${p.nome} - R$ ${p.preco}`).join('\n'); const msg = `*Minha lista de desejos da Gudyx:*\n\n${texto}\n\nQuero esses produtos!`; window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank'); }
 
-        // --- ALTERAR A QUANTIDADE E PREÇO PROGRESSIVO (Módulo 7) ---
         function alterarQuantidade(delta) { quantidadeModal = Math.max(1, quantidadeModal+delta); document.getElementById('qtdModal').textContent = quantidadeModal; calcularPrecoProgressivo(quantidadeModal); }
         function calcularPrecoProgressivo(qtd) {
             if (!produtoModalAtual) return;
@@ -1042,6 +1093,17 @@
             calcularPrecoProgressivo(1);
             document.getElementById('resultadoSimulacao').innerHTML = '';
             document.getElementById('simuladorQtd').value = '';
+            
+            if(prod.tipoItem === 'kit') {
+                document.getElementById('modalDesc').innerHTML += `<br><br><strong>📦 Este produto é um KIT e contém:</strong><br>`;
+                prod.componentes.forEach(comp => {
+                    const compProd = dados.produtos.find(p => p.id === comp.id);
+                    if(compProd) {
+                        document.getElementById('modalDesc').innerHTML += `- ${compProd.nome} (x${comp.quantidade})<br>`;
+                    }
+                });
+            }
+
             setTimeout(() => { document.querySelectorAll('#modalGallery img').forEach(img => { img.onclick = (e) => { e.stopPropagation(); abrirLightbox(img.src); }; }); }, 100); 
         }
         function fecharModal() { document.getElementById('productModal').classList.remove('active'); esconderMiniGluudyx(); }
@@ -1052,7 +1114,6 @@
 
         function renderizarSugestoes(prodId) { const container=document.getElementById('sugestoesGrid'); const prod=dados.produtos.find(p=>p.id===prodId); if(!prod){container.innerHTML='';return;} let sugestoes = dados.produtos.filter(p=>p.id!==prodId&&p.categoriaId===prod.categoriaId&&isEmEstoque(p)).slice(0,3); if (sugestoes.length < 2) { sugestoes = dados.produtos.filter(p=>p.id!==prodId&&isEmEstoque(p)).sort(()=>Math.random()-0.5).slice(0,3); } container.innerHTML=sugestoes.length?sugestoes.map(s=>{const preco=isPromoActive(s)&&s.precoPromo?'R$ '+s.precoPromo:'R$ '+s.preco;return`<div class="sugestao-card" onclick="abrirModal('${s.id}')"><img src="${getImagemPrincipal(s)}" loading="lazy"><h5>${s.nome}</h5><div class="preco">${preco}</div></div>`;}).join(''):'<p style="opacity:0.6;">Nenhum relacionado.</p>'; }
         
-        // --- AGENDAMENTO (Módulo 1) ---
         function abrirModalAgendamento() {
             if(carrinho.length === 0) return alert('Seu carrinho está vazio!');
             document.getElementById('agendamentoModal').classList.add('active');
@@ -1101,7 +1162,6 @@
             }
         }
 
-        // MÓDULO 1: SALVAR PEDIDO NO FIREBASE E ENVIAR WHATSAPP
         function enviarPedidoComAgendamento() {
             const data = document.getElementById('dataRetirada').value;
             const hora = document.getElementById('horaRetirada').value;
@@ -1132,7 +1192,6 @@
             msg+=`📝 *Forma de pagamento:* \n`;
             msg+=`\nQuero finalizar!`;
 
-            // SALVAR NO FIREBASE
             const pedido = {
                 cliente: "Cliente WhatsApp",
                 itens: itensPedido,
@@ -1180,7 +1239,26 @@
         function carregarMaisVendidos(){const grid=document.getElementById('maisVendidosGrid');grid.innerHTML='';const top=[...dados.produtos].sort((a,b)=>(b.cliques||0)-(a.cliques||0)).slice(0,5);if(!top.length){grid.innerHTML='<p style="text-align:center;">Sem dados.</p>';return;}top.forEach((p,i)=>{const card=document.createElement('div');card.className='card-vendido';card.onclick=()=>abrirModal(p.id);card.innerHTML=`${i<3?'<div class="fire-badge-mini">HOT</div>':''}<img src="${getImagemPrincipal(p)}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;" loading="lazy"><h4>${p.nome}</h4><div class="preco">R$ ${p.preco}</div>`;grid.appendChild(card);});}
         function buscaGlobal() { const term = document.getElementById('searchGlobal').value.toLowerCase().trim(); if (term === 'caderno') { document.body.classList.add('festa'); confetti({particleCount:200,spread:100}); falarMascote('🎉 Achou o easter egg do caderno!'); setTimeout(()=>document.body.classList.remove('festa'),3000); return; } if (term === 'desconto') { cupomAtual = {codigo:'SECRETO',tipo:'percentual',valor:15,descricao:'15% OFF easter egg'}; salvarCarrinho(); falarMascote('🎉 Cupom secreto de 15% aplicado!'); return; } if (term === 'festa') { document.body.classList.add('festa'); confetti({particleCount:500,spread:180}); setTimeout(()=>document.body.classList.remove('festa'),5000); return; } if (term.length < 2) return; const resultados = dados.produtos.filter(p => p.nome.toLowerCase().includes(term) || (p.descricao||'').toLowerCase().includes(term)); if (resultados.length === 0) { alert('Nenhum produto encontrado.'); return; } mostrarTela('produtosScreen'); carregarCategorias('produtos'); const container = document.getElementById('produtosProdutosContainer'); container.innerHTML = ''; container.style.display = 'grid'; container.className = 'produtos-grid'; resultados.forEach(prod => { renderizarCardProduto(prod, container); }); }
         function carregarAtalhos() { const container = document.getElementById('atalhosContainer'); container.innerHTML = ''; const nomes = ['Caixas', 'Imãs', 'Adesivos', 'Displays', 'Cards']; nomes.forEach(nome => { const cat = dados.categorias.find(c => c.nome.toLowerCase().includes(nome.toLowerCase())); if (cat) { const btn = document.createElement('button'); btn.className = 'atalho-btn'; btn.textContent = cat.nome; btn.onclick = () => { mostrarTela('produtosScreen'); carregarCategorias('produtos'); setTimeout(() => selecionarCategoria('produtos', cat.id), 200); }; container.appendChild(btn); } }); }
-        function carregarDepoimentos() { const container = document.getElementById('depoimentosGrid'); container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Os imãs são lindos!"</div><div class="autor">— Ana C.</div></div>`; }
+        function carregarDepoimentos() { const container = document.getElementById('depoimentosGrid'); container.innerHTML = ''; carregarDepoimentosFirebase(); }
+        
+        // Carregar depoimentos do Firebase (Aprovados)
+        function carregarDepoimentosFirebase() {
+            const container = document.getElementById('depoimentosGrid');
+            db.collection('avaliacoes').where('aprovado', '==', true).orderBy('timestamp', 'desc').limit(5).get().then(snapshot => {
+                if (snapshot.empty) {
+                    container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div>`;
+                    return;
+                }
+                let html = '';
+                snapshot.forEach(doc => {
+                    const av = doc.data();
+                    const estrelas = '★'.repeat(av.nota) + '☆'.repeat(5 - av.nota);
+                    html += `<div class="depoimento-card"><div class="estrelas">${estrelas}</div><div class="texto">"${av.comentario || 'Ótima experiência!'}"</div><div class="autor">— ${av.autor || 'Cliente'}</div></div>`;
+                });
+                container.innerHTML = html;
+            }).catch(err => console.error('Erro ao carregar avaliações:', err));
+        }
+
         function carregarInstagram() { const container = document.getElementById('instagramGrid'); container.style.display = 'flex'; container.style.justifyContent = 'center'; container.style.alignItems = 'center'; container.style.width = '100%'; container.innerHTML = `<iframe src="https://www.instagram.com/gudyxcustom/embed" width="100%" height="550" frameborder="0" scrolling="no" allowtransparency="true" style="border-radius: 20px; max-width: 600px; border: 1px solid rgba(255,255,255,0.1); background: rgba(11,4,28,0.6);"></iframe>`; }
         function verificarRetorno() { const ultimaVisita = localStorage.getItem('gudyx_ultima_visita'); const agora = Date.now(); if (ultimaVisita && (agora - parseInt(ultimaVisita)) > 86400000) { setTimeout(() => falarMascote('Que bom te ver de novo! 😍'), 4000); document.getElementById('badgeVip').style.display = 'inline-block'; } localStorage.setItem('gudyx_ultima_visita', agora.toString()); }
 
@@ -1192,6 +1270,7 @@
             const promo = isPromoActive(prod), estoque = isEmEstoque(prod);
             const diasDesdeCriacao = prod.dataCriacao ? Math.floor((Date.now() - new Date(prod.dataCriacao).getTime()) / 86400000) : 999;
             let badges = '';
+            if (prod.tipoItem === 'kit') badges += '<div class="badge-destaque" style="background:#ff8800;">KIT</div>';
             if (promo) badges += '<div class="badge-promo">PROMO</div>';
             if (prod.destaque) badges += '<div class="badge-destaque">DESTAQUE</div>';
             if (!estoque) badges += '<div class="badge-esgotado">ESGOTADO</div>';
@@ -1225,7 +1304,6 @@
         function abrirFAQ(){document.getElementById('faqModal').classList.add('active');}
         function fecharFAQ(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('faqModal').classList.remove('active');}
         
-        // MÓDULO 5: CHAT CONTEXTUAL
         function toggleChat(){
             const modal = document.getElementById('chatModal');
             modal.classList.toggle('active');
@@ -1264,6 +1342,58 @@
         (function(){const c=document.getElementById('meteorCanvas'),ctx=c.getContext('2d');let w,h,meteors=[];function resize(){w=c.width=innerWidth;h=c.height=innerHeight;}window.addEventListener('resize',resize);resize();for(let i=0;i<30;i++)meteors.push({x:Math.random()*w,y:Math.random()*h,size:Math.random()*3+1,speed:Math.random()*5+2});function draw(){ctx.clearRect(0,0,w,h);meteors.forEach(m=>{m.x+=m.speed;m.y+=m.speed*0.5;if(m.x>w+50||m.y>h+50){m.x=Math.random()*w;m.y=-50;}ctx.beginPath();ctx.moveTo(m.x,m.y);ctx.lineTo(m.x-m.speed*10,m.y-m.speed*5);ctx.strokeStyle='rgba(172,40,255,0.5)';ctx.lineWidth=m.size;ctx.stroke();});requestAnimationFrame(draw);}draw();})();
 
         function contarVisita(){let v=parseInt(localStorage.getItem('visitas')||'0');if(!sessionStorage.getItem('visitou')){v++;localStorage.setItem('visitas',v);sessionStorage.setItem('visitou','1');}document.getElementById('visitCounter').textContent=v;}
+
+        // --- Lógica da Avaliação Pós-Venda (Módulo 3) ---
+        function verificarLinkAvaliacao() {
+            const hash = window.location.hash;
+            if(hash.startsWith('#avaliar=')) {
+                const pedidoId = hash.split('=')[1];
+                if(pedidoId) {
+                    pedidoAvaliacaoAtual = pedidoId;
+                    setTimeout(() => {
+                        document.getElementById('avaliacaoModal').classList.add('active');
+                        document.getElementById('avaliacaoNome').value = '';
+                        document.getElementById('avaliacaoNotaPedido').value = '5';
+                        document.getElementById('avaliacaoComentarioPedido').value = '';
+                    }, 1000);
+                }
+            }
+        }
+
+        function fecharModalAvaliacao() {
+            document.getElementById('avaliacaoModal').classList.remove('active');
+            window.location.hash = '';
+        }
+        document.getElementById('avaliacaoModal').addEventListener('click', function(e) { if(e.target === this) fecharModalAvaliacao(); });
+
+        function enviarAvaliacaoPedido() {
+            const nome = document.getElementById('avaliacaoNome').value.trim() || 'Cliente';
+            const nota = parseInt(document.getElementById('avaliacaoNotaPedido').value);
+            const comentario = document.getElementById('avaliacaoComentarioPedido').value.trim();
+            
+            if(!comentario) return alert('Escreva um comentário sobre sua experiência!');
+            if(!pedidoAvaliacaoAtual) return alert('Erro: Pedido não identificado.');
+
+            const avaliacao = {
+                pedidoId: pedidoAvaliacaoAtual,
+                autor: nome,
+                nota: nota,
+                comentario: comentario,
+                aprovado: false,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            db.collection('avaliacoes').add(avaliacao).then(() => {
+                alert('Avaliação enviada com sucesso! Agradecemos seu feedback ❤️');
+                fecharModalAvaliacao();
+                if(nota === 5) {
+                    confetti({ particleCount: 150, spread: 100, origin: { y: 0.5 } });
+                }
+            }).catch(err => {
+                console.error('Erro ao enviar avaliação:', err);
+                alert('Erro ao enviar avaliação. Tente novamente.');
+            });
+        }
 
         carregarDadosFirebase().then(()=>{
             setTimeout(() => {
