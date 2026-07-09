@@ -10,7 +10,7 @@
     <style>
         :root { --roxo-profundo: #0b041c; --ciano-brilhante: #00f2fe; --vidro-fundo: rgba(11,4,28,0.65); --vidro-borda: rgba(172,40,255,0.3); }
         body { font-family: 'Poppins', sans-serif; background: #0b041c; color: #f0eaff; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; margin: 0; }
-        .admin-container { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 24px; padding: 30px; max-width: 800px; width: 100%; }
+        .admin-container { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 24px; padding: 30px; max-width: 900px; width: 100%; }
         h1 { text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
         label { display: block; margin: 10px 0 5px; font-size: 0.9rem; opacity: 0.8; }
         input, select, textarea { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--vidro-borda); background: rgba(255,255,255,0.05); color: #fff; font-size: 0.95rem; margin-bottom: 10px; font-family: inherit; }
@@ -21,6 +21,7 @@
         .btn-danger { background: #ff4455; }
         .btn-danger:hover { background: #cc1122; }
         .btn-secondary { background: #666; }
+        .btn-whatsapp-modal { background: #25D366 !important; }
         .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 300px; overflow-y: auto; }
         .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 5px; }
         .admin-item-list .item button { padding: 4px 12px; font-size: 0.8rem; background: #ff4455; margin: 2px; }
@@ -35,6 +36,12 @@
         .linha-desconto { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; }
         .linha-desconto input { width: 100px; margin-bottom: 0; }
         .linha-desconto button { background: #ff4455; padding: 5px 10px; margin: 0; }
+        .pedido-card { border:1px solid var(--vidro-borda); padding:15px; margin-bottom:15px; border-radius:12px; background:rgba(255,255,255,0.03); }
+        .pedido-card .status { display:inline-block; padding:4px 12px; border-radius:20px; font-weight:bold; font-size:0.8rem; }
+        .status-aguardando { background:#b8860b; color:#fff; }
+        .status-pronto { background:#008000; color:#fff; }
+        .status-retirado { background:#00f2fe; color:#000; }
+        .pedido-card .acoes { margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
     </style>
 </head>
 <body>
@@ -50,6 +57,7 @@
         <div class="tabs">
             <button onclick="abrirAba('categorias')" id="tabCategorias" class="active">Categorias</button>
             <button onclick="abrirAba('produtos')" id="tabProdutos">Itens</button>
+            <button onclick="abrirAba('pedidos')" id="tabPedidos">Pedidos</button>
             <button onclick="abrirAba('frases')" id="tabFrases">Frases</button>
             <button onclick="abrirAba('faq')" id="tabFaq">FAQ</button>
             <button onclick="abrirAba('configLoja')" id="tabConfigLoja">Config. Loja</button>
@@ -106,6 +114,12 @@
 
             <button onclick="salvarProduto()" style="margin-top:15px;">Salvar Item</button>
             <div class="admin-item-list" id="listaProdutos"></div>
+        </div>
+
+        <!-- PEDIDOS -->
+        <div id="abaPedidos" style="display:none;">
+            <h3>📦 Gerenciar Pedidos</h3>
+            <div id="listaPedidosAdmin" class="admin-item-list" style="max-height: none; padding: 10px;"></div>
         </div>
 
         <!-- FRASES -->
@@ -188,7 +202,6 @@
                 const snapFaq = await db.collection('config').doc('faq').get();
                 dados.faq = snapFaq.exists ? snapFaq.data().perguntas : [];
                 
-                // Carregar configuração da loja
                 const snapConfigLoja = await db.collection('config').doc('loja').get();
                 if (snapConfigLoja.exists) {
                     configLoja = snapConfigLoja.data();
@@ -200,10 +213,11 @@
         }
 
         function abrirAba(aba) {
-            ['abaCategorias','abaProdutos','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
+            ['abaCategorias','abaProdutos','abaPedidos','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
             if (aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
             else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); }
+            else if (aba === 'pedidos') { document.getElementById('abaPedidos').style.display = 'block'; document.getElementById('tabPedidos').classList.add('active'); carregarPedidos(); }
             else if (aba === 'frases') { document.getElementById('abaFrases').style.display = 'block'; document.getElementById('tabFrases').classList.add('active'); document.getElementById('frasesInput').value = dados.frases.join('\n'); }
             else if (aba === 'faq') { document.getElementById('abaFaq').style.display = 'block'; document.getElementById('tabFaq').classList.add('active'); carregarFAQ(); }
             else if (aba === 'configLoja') { document.getElementById('abaConfigLoja').style.display = 'block'; document.getElementById('tabConfigLoja').classList.add('active'); carregarConfigLoja(); }
@@ -270,7 +284,6 @@
             });
         }
 
-        // DESCONTO PROGRESSIVO NO ADMIN
         function adicionarLinhaDesconto() {
             const container = document.getElementById('containerDescontoProgressivo');
             const div = document.createElement('div');
@@ -282,9 +295,7 @@
             `;
             container.appendChild(div);
         }
-        function removerLinhaDesconto(btn) {
-            btn.parentElement.remove();
-        }
+        function removerLinhaDesconto(btn) { btn.parentElement.remove(); }
 
         // PRODUTOS
         function togglePromoFields() { document.getElementById('promoFields').classList.toggle('hidden', !document.getElementById('prodPromocao').checked); }
@@ -311,7 +322,6 @@
             }
             if (!catId || !nome || !preco) return alert('Preencha nome e preço.');
 
-            // Coletar descontos progressivos
             const descontoProgressivo = [];
             document.querySelectorAll('.linha-desconto').forEach(row => {
                 const qtd = parseInt(row.querySelector('.input-qtd').value);
@@ -325,7 +335,7 @@
                     categoriaId: catId, nome, descricao, preco, estoque, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
-                    descontoProgressivo // Adicionando array de descontos
+                    descontoProgressivo
                 };
                 if (id) { await db.collection('produtos').doc(id).update(produto); }
                 else { const docRef = await db.collection('produtos').add(produto); await db.collection('produtos').doc(docRef.id).update({ id: docRef.id }); }
@@ -361,7 +371,6 @@
                 document.getElementById('promoFields').classList.remove('hidden');
             } else { document.getElementById('promoFields').classList.add('hidden'); }
 
-            // Carregar descontos progressivos
             const container = document.getElementById('containerDescontoProgressivo');
             container.innerHTML = '';
             if (p.descontoProgressivo && p.descontoProgressivo.length > 0) {
@@ -376,7 +385,6 @@
                     container.appendChild(div);
                 });
             } else {
-                // Iniciar com uma linha em branco
                 adicionarLinhaDesconto();
             }
         }
@@ -388,7 +396,7 @@
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
             document.getElementById('promoFields').classList.add('hidden');
             document.getElementById('containerDescontoProgressivo').innerHTML = '';
-            adicionarLinhaDesconto(); // Adicionar uma linha vazia padrão
+            adicionarLinhaDesconto();
         }
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
@@ -401,6 +409,59 @@
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
                 lista.innerHTML += `<div class="item"><span>${cat?.nome || '?'} → ${p.nome} (R$ ${p.preco})</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
             });
+        }
+
+        // PEDIDOS
+        function carregarPedidos() {
+            const container = document.getElementById('listaPedidosAdmin');
+            container.innerHTML = '<p style="text-align:center;">Carregando pedidos...</p>';
+            
+            db.collection('pedidos').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhum pedido registrado ainda.</p>';
+                    return;
+                }
+                let html = '';
+                snapshot.forEach(doc => {
+                    const p = doc.data();
+                    const id = doc.id;
+                    const itens = p.itens ? p.itens.map(i => `${i.nome} (x${i.quantidade})`).join(', ') : 'Itens não listados';
+                    
+                    let statusClass = 'status-aguardando';
+                    let statusText = p.status || 'Aguardando confirmação';
+                    if(p.status === 'Pronto para retirar') { statusClass = 'status-pronto'; }
+                    else if(p.status === 'Retirado') { statusClass = 'status-retirado'; }
+
+                    html += `
+                        <div class="pedido-card">
+                            <div><strong>Status:</strong> <span class="status ${statusClass}">${statusText}</span></div>
+                            <div><strong>Itens:</strong> ${itens}</div>
+                            <div><strong>Total:</strong> R$ ${p.total || '0,00'}</div>
+                            <div><strong>Retirada:</strong> ${p.dataRetirada || 'N/A'} às ${p.horaRetirada || 'N/A'}</div>
+                            <div class="acoes">
+                                ${p.status !== 'Pronto para retirar' ? `<button onclick="atualizarStatus('${id}', 'Pronto para retirar')" class="btn-edit">✅ Marcar como Pronto</button>` : ''}
+                                ${p.status !== 'Retirado' ? `<button onclick="atualizarStatus('${id}', 'Retirado')" class="btn-danger">🚪 Marcar como Retirado</button>` : ''}
+                                <button onclick="avisoWhatsApp('${id}')" class="btn-whatsapp-modal"><i class="fab fa-whatsapp"></i> Avisar Cliente</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
+        function atualizarStatus(id, novoStatus) {
+            db.collection('pedidos').doc(id).update({ status: novoStatus }).then(() => {
+                console.log('Status atualizado para: ' + novoStatus);
+            }).catch(err => alert('Erro ao atualizar: ' + err));
+        }
+
+        function avisoWhatsApp(id) {
+            // Substitua esse link pela URL da sua IMAGEM (figurinha) hospedada (ex: no Imgur ou Firebase Storage)
+            const linkImagem = "https://i.imgur.com/SuaImagemDeParabens.png"; 
+            
+            const mensagem = `*Gudyx Custom* 🎉\n\nSeu pedido está PRONTO para retirada!\n\n📍 Duque de Caxias - RJ\n\n🛎️ Venha retirar quando preferir!`;
+            const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensagem + "\n\n" + linkImagem)}`;
+            window.open(url, '_blank');
         }
 
         // FRASES
