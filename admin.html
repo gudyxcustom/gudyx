@@ -36,6 +36,10 @@
         .linha-desconto { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; }
         .linha-desconto input { width: 100px; margin-bottom: 0; }
         .linha-desconto button { background: #ff4455; padding: 5px 10px; margin: 0; }
+        .linha-componente { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; }
+        .linha-componente select { flex: 1; margin-bottom: 0; }
+        .linha-componente input { width: 60px; margin-bottom: 0; }
+        .linha-componente button { background: #ff4455; padding: 5px 10px; margin: 0; }
         .pedido-card { border:1px solid var(--vidro-borda); padding:15px; margin-bottom:15px; border-radius:12px; background:rgba(255,255,255,0.03); }
         .pedido-card .status { display:inline-block; padding:4px 12px; border-radius:20px; font-weight:bold; font-size:0.8rem; }
         .status-aguardando { background:#b8860b; color:#fff; }
@@ -59,6 +63,7 @@
             <button onclick="abrirAba('categorias')" id="tabCategorias" class="active">Categorias</button>
             <button onclick="abrirAba('produtos')" id="tabProdutos">Itens</button>
             <button onclick="abrirAba('pedidos')" id="tabPedidos">Pedidos</button>
+            <button onclick="abrirAba('avaliacoes')" id="tabAvaliacoes">Avaliações</button>
             <button onclick="abrirAba('frases')" id="tabFrases">Frases</button>
             <button onclick="abrirAba('faq')" id="tabFaq">FAQ</button>
             <button onclick="abrirAba('configLoja')" id="tabConfigLoja">Config. Loja</button>
@@ -77,17 +82,38 @@
             <div class="admin-item-list" id="listaCategorias"></div>
         </div>
 
-        <!-- PRODUTOS -->
+        <!-- PRODUTOS (COM KITS) -->
         <div id="abaProdutos" style="display:none;">
             <h3>Adicionar / Editar Item</h3>
             <input type="hidden" id="editProdId">
-            <label>Tipo</label><select id="prodTipo" onchange="atualizarSelectCategorias()"><option value="produtos">Produtos</option><option value="servicos">Serviços</option></select>
+            
+            <label>Tipo do Item</label>
+            <select id="prodTipoItem" onchange="toggleCamposKit()">
+                <option value="simples">Produto Simples</option>
+                <option value="kit">Kit / Combo</option>
+            </select>
+
+            <label>Tipo</label><select id="prodTipo" onchange="atualizarSelectCategorias(); toggleCamposKit()"><option value="produtos">Produtos</option><option value="servicos">Serviços</option></select>
             <label>Categoria</label><select id="prodCategoria"></select>
             <label>Nome</label><input type="text" id="prodNome">
             <label>Descrição</label><textarea id="prodDescricao"></textarea>
             <label>Preço (R$)</label><input type="text" id="prodPreco">
             <label>Estoque</label><input type="number" id="prodEstoque" min="0">
             <label>Imagens (máx 3)</label><input type="file" id="prodImg" accept="image/*" multiple>
+
+            <!-- CAMPOS DO KIT -->
+            <div id="camposKit" class="hidden" style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
+                <label>📦 Componentes do Kit:</label>
+                <div id="containerComponentesKit">
+                    <div class="linha-componente">
+                        <select class="comp-produto"><option value="">Selecione um produto</option></select>
+                        <input type="number" class="comp-qtd" placeholder="Qtd" min="1" value="1">
+                        <button class="btn-danger" onclick="removerLinhaComponente(this)">-</button>
+                    </div>
+                </div>
+                <button onclick="adicionarLinhaComponente()" class="btn-secondary" style="margin-top:5px;">+ Adicionar item ao Kit</button>
+            </div>
+
             <div class="checkbox-group">
                 <label><input type="checkbox" id="prodPromocao" onchange="togglePromoFields()"> Promoção</label>
                 <label><input type="checkbox" id="prodDestaque"> Destaque</label>
@@ -99,7 +125,7 @@
                 <label>Fim</label><input type="datetime-local" id="prodPromoEnd">
                 <label>Descrição da Promo</label><textarea id="prodDescPromo"></textarea>
             </div>
-            <!-- Área do Preço Progressivo -->
+            
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📊 Preço Progressivo (Desconto por quantidade)</label>
                 <div id="containerDescontoProgressivo">
@@ -115,10 +141,16 @@
             <div class="admin-item-list" id="listaProdutos"></div>
         </div>
 
-        <!-- PEDIDOS (Módulo 1) -->
+        <!-- PEDIDOS -->
         <div id="abaPedidos" style="display:none;">
             <h3>📦 Gerenciar Pedidos</h3>
             <div id="listaPedidosAdmin" class="admin-item-list" style="max-height: none; padding: 10px;"></div>
+        </div>
+
+        <!-- AVALIAÇÕES (Módulo 3) -->
+        <div id="abaAvaliacoes" style="display:none;">
+            <h3>⭐ Gerenciar Avaliações de Clientes</h3>
+            <div id="listaAvaliacoesAdmin" class="admin-item-list" style="max-height: none; padding: 10px;"></div>
         </div>
 
         <!-- FRASES -->
@@ -138,7 +170,7 @@
             <div class="admin-item-list" id="listaFaq"></div>
         </div>
 
-        <!-- CONFIGURAÇÃO DA LOJA (Módulo 1) -->
+        <!-- CONFIGURAÇÃO DA LOJA -->
         <div id="abaConfigLoja" style="display:none;">
             <h3>⚙️ Configuração de Prazos e Retirada</h3>
             <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
@@ -148,7 +180,7 @@
                 <input type="number" id="configPrazoMax" min="2" value="5">
                 <label style="display:flex; align-items:center; gap:10px; margin-top:15px;">
                     <input type="checkbox" id="configPedidosEmAndamento" style="width:auto; transform:scale(1.5); margin-right:10px;">
-                    Há pedidos em andamento? (Se sim, o site bloqueia as datas).
+                    Há pedidos em andamento?
                 </label>
                 <button onclick="salvarConfigLoja()" style="margin-top:15px;">Salvar Configurações</button>
             </div>
@@ -188,8 +220,6 @@
         const db = firebase.firestore();
         firebase.auth().signInAnonymously().catch(e => console.error("Auth error:", e));
 
-        console.log("Admin JS carregado com sucesso!");
-
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
         var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false };
 
@@ -215,10 +245,11 @@
 
         function abrirAba(aba) {
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            ['abaCategorias','abaProdutos','abaPedidos','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
+            ['abaCategorias','abaProdutos','abaPedidos','abaAvaliacoes','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
             if (aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
-            else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); }
+            else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); toggleCamposKit(); }
             else if (aba === 'pedidos') { document.getElementById('abaPedidos').style.display = 'block'; document.getElementById('tabPedidos').classList.add('active'); carregarPedidos(); }
+            else if (aba === 'avaliacoes') { document.getElementById('abaAvaliacoes').style.display = 'block'; document.getElementById('tabAvaliacoes').classList.add('active'); carregarAvaliacoesAdmin(); }
             else if (aba === 'frases') { document.getElementById('abaFrases').style.display = 'block'; document.getElementById('tabFrases').classList.add('active'); document.getElementById('frasesInput').value = dados.frases.join('\n'); }
             else if (aba === 'faq') { document.getElementById('abaFaq').style.display = 'block'; document.getElementById('tabFaq').classList.add('active'); carregarFAQ(); }
             else if (aba === 'configLoja') { document.getElementById('abaConfigLoja').style.display = 'block'; document.getElementById('tabConfigLoja').classList.add('active'); carregarConfigLoja(); }
@@ -297,8 +328,60 @@
         }
         function removerLinhaDesconto(btn) { btn.parentElement.remove(); }
 
+        // --- Lógica de Kits ---
+        function toggleCamposKit() {
+            const tipoItem = document.getElementById('prodTipoItem').value;
+            const campos = document.getElementById('camposKit');
+            if (tipoItem === 'kit') {
+                campos.classList.remove('hidden');
+            } else {
+                campos.classList.add('hidden');
+            }
+        }
+
+        function adicionarLinhaComponente() {
+            const container = document.getElementById('containerComponentesKit');
+            const div = document.createElement('div');
+            div.className = 'linha-componente';
+            
+            let select = document.createElement('select');
+            select.className = 'comp-produto';
+            select.innerHTML = '<option value="">Selecione um produto</option>';
+            // Preencher com produtos (exceto o que está sendo editado, se for o caso)
+            const currentId = document.getElementById('editProdId').value;
+            dados.produtos.filter(p => p.id !== currentId).forEach(p => {
+                let opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = p.nome;
+                select.appendChild(opt);
+            });
+
+            div.appendChild(select);
+            
+            let inputQtd = document.createElement('input');
+            inputQtd.type = 'number';
+            inputQtd.className = 'comp-qtd';
+            inputQtd.placeholder = 'Qtd';
+            inputQtd.min = 1;
+            inputQtd.value = 1;
+            div.appendChild(inputQtd);
+
+            let btn = document.createElement('button');
+            btn.className = 'btn-danger';
+            btn.textContent = '-';
+            btn.onclick = function() { removerLinhaComponente(this); };
+            div.appendChild(btn);
+
+            container.appendChild(div);
+        }
+
+        function removerLinhaComponente(btn) {
+            btn.parentElement.remove();
+        }
+
         async function salvarProduto() {
             const id = document.getElementById('editProdId').value;
+            const tipoItem = document.getElementById('prodTipoItem').value;
             const catId = document.getElementById('prodCategoria').value;
             const nome = document.getElementById('prodNome').value.trim();
             const descricao = document.getElementById('prodDescricao').value.trim();
@@ -326,9 +409,23 @@
                 if(qtd && desc && desc > 0) descontoProgressivo.push({ qtd, desconto: desc });
             });
 
+            const componentes = [];
+            if (tipoItem === 'kit') {
+                document.querySelectorAll('.linha-componente').forEach(row => {
+                    const prodId = row.querySelector('.comp-produto').value;
+                    const qtd = parseInt(row.querySelector('.comp-qtd').value);
+                    if (prodId && qtd && qtd > 0) {
+                        componentes.push({ id: prodId, quantidade: qtd });
+                    }
+                });
+                if (componentes.length === 0) return alert('Um Kit precisa ter pelo menos 1 componente válido.');
+            }
+
             const fileInput = document.getElementById('prodImg');
             async function processarProd(imagens) {
                 const produto = { 
+                    tipoItem, // 'simples' ou 'kit'
+                    componentes, // array de componentes
                     categoriaId: catId, nome, descricao, preco, estoque, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
@@ -350,6 +447,7 @@
             const p = dados.produtos.find(p => p.id === id);
             if (!p) return;
             document.getElementById('editProdId').value = p.id;
+            document.getElementById('prodTipoItem').value = p.tipoItem || 'simples';
             document.getElementById('prodTipo').value = dados.categorias.find(c => c.id === p.categoriaId)?.tipo || 'produtos';
             atualizarSelectCategorias();
             document.getElementById('prodCategoria').value = p.categoriaId;
@@ -368,8 +466,8 @@
                 document.getElementById('promoFields').classList.remove('hidden');
             } else { document.getElementById('promoFields').classList.add('hidden'); }
 
-            const container = document.getElementById('containerDescontoProgressivo');
-            container.innerHTML = '';
+            const containerDesconto = document.getElementById('containerDescontoProgressivo');
+            containerDesconto.innerHTML = '';
             if (p.descontoProgressivo && p.descontoProgressivo.length > 0) {
                 p.descontoProgressivo.forEach(item => {
                     const div = document.createElement('div');
@@ -379,11 +477,46 @@
                         <input type="number" class="input-desc" value="${item.desconto}" placeholder="% de desconto" min="0" max="100">
                         <button class="btn-danger" onclick="removerLinhaDesconto(this)">-</button>
                     `;
-                    container.appendChild(div);
+                    containerDesconto.appendChild(div);
+                });
+            } else { adicionarLinhaDesconto(); }
+
+            // Carregar Componentes do Kit
+            const containerComp = document.getElementById('containerComponentesKit');
+            containerComp.innerHTML = '';
+            if (p.tipoItem === 'kit' && p.componentes && p.componentes.length > 0) {
+                p.componentes.forEach(comp => {
+                    const div = document.createElement('div');
+                    div.className = 'linha-componente';
+                    let select = document.createElement('select');
+                    select.className = 'comp-produto';
+                    select.innerHTML = '<option value="">Selecione um produto</option>';
+                    dados.produtos.filter(prod => prod.id !== p.id).forEach(prod => {
+                        let opt = document.createElement('option');
+                        opt.value = prod.id;
+                        opt.textContent = prod.nome;
+                        if(prod.id === comp.id) opt.selected = true;
+                        select.appendChild(opt);
+                    });
+                    div.appendChild(select);
+                    let inputQtd = document.createElement('input');
+                    inputQtd.type = 'number';
+                    inputQtd.className = 'comp-qtd';
+                    inputQtd.placeholder = 'Qtd';
+                    inputQtd.min = 1;
+                    inputQtd.value = comp.quantidade;
+                    div.appendChild(inputQtd);
+                    let btn = document.createElement('button');
+                    btn.className = 'btn-danger';
+                    btn.textContent = '-';
+                    btn.onclick = function() { removerLinhaComponente(this); };
+                    div.appendChild(btn);
+                    containerComp.appendChild(div);
                 });
             } else {
-                adicionarLinhaDesconto();
+                adicionarLinhaComponente();
             }
+            toggleCamposKit();
         }
 
         async function removerProduto(id) { if (confirm('Remover?')) { await db.collection('produtos').doc(id).delete(); await carregarDados(); atualizarListaProdutos(); } }
@@ -392,8 +525,9 @@
             document.getElementById('prodPreco').value = ''; document.getElementById('prodEstoque').value = ''; document.getElementById('prodImg').value = ''; 
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
             document.getElementById('promoFields').classList.add('hidden');
-            document.getElementById('containerDescontoProgressivo').innerHTML = '';
-            adicionarLinhaDesconto();
+            document.getElementById('containerDescontoProgressivo').innerHTML = ''; adicionarLinhaDesconto();
+            document.getElementById('containerComponentesKit').innerHTML = ''; adicionarLinhaComponente();
+            document.getElementById('camposKit').classList.add('hidden');
         }
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
@@ -404,20 +538,17 @@
             const lista = document.getElementById('listaProdutos'); lista.innerHTML = '';
             dados.produtos.forEach(p => {
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
-                lista.innerHTML += `<div class="item"><span>${cat?.nome || '?'} → ${p.nome} (R$ ${p.preco})</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
+                const tipo = p.tipoItem === 'kit' ? '[KIT] ' : '';
+                lista.innerHTML += `<div class="item"><span>${tipo}${cat?.nome || '?'} → ${p.nome} (R$ ${p.preco})</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
             });
         }
 
-        // Lógica de Pedidos (Módulo 1)
+        // --- Lógica de Pedidos e Avaliações ---
         function carregarPedidos() {
             const container = document.getElementById('listaPedidosAdmin');
             container.innerHTML = '<p style="text-align:center;">Carregando pedidos...</p>';
-            
             db.collection('pedidos').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-                if (snapshot.empty) {
-                    container.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhum pedido registrado ainda.</p>';
-                    return;
-                }
+                if (snapshot.empty) { container.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhum pedido registrado ainda.</p>'; return; }
                 let html = '';
                 snapshot.forEach(doc => {
                     const p = doc.data();
@@ -437,7 +568,7 @@
                             <div class="acoes">
                                 ${p.status !== 'Pronto para retirar' ? `<button onclick="atualizarStatus('${id}', 'Pronto para retirar')" class="btn-edit">✅ Marcar como Pronto</button>` : ''}
                                 ${p.status !== 'Retirado' ? `<button onclick="atualizarStatus('${id}', 'Retirado')" class="btn-danger">🚪 Marcar como Retirado</button>` : ''}
-                                <button onclick="avisoWhatsApp()" class="btn-whatsapp-modal"><i class="fab fa-whatsapp"></i> Avisar Cliente (Módulo 2)</button>
+                                ${p.status === 'Retirado' ? `<button onclick="enviarLinkAvaliacao('${id}')" class="btn-secondary"><i class="fas fa-star"></i> Enviar Avaliação</button>` : ''}
                             </div>
                         </div>
                     `;
@@ -449,14 +580,51 @@
             db.collection('pedidos').doc(id).update({ status: novoStatus }).then(() => {}).catch(err => alert('Erro ao atualizar: ' + err));
         }
 
-        // Função do Módulo 2 (Avisar cliente)
-        function avisoWhatsApp() {
-            // Substitua a URL abaixo pelo link da sua imagem (sua "figurinha") hospedada no Imgur ou Firebase
-            const linkImagem = "https://i.imgur.com/SuaImagemDeParabens.png"; 
-            const mensagem = `*Gudyx Custom* 🎉\n\nSeu pedido está PRONTO para retirada!\n\n📍 Duque de Caxias - RJ\n\n🛎️ Venha retirar quando preferir!`;
-            const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensagem + "\n\n" + linkImagem)}`;
+        // Módulo 3: Link de Avaliação Pós-Venda
+        function enviarLinkAvaliacao(id) {
+            // Gera o link baseado no ID do pedido
+            const linkAvaliacao = window.location.origin + window.location.pathname.replace('admin.html', 'index.html') + '#avaliar=' + id;
+            
+            const mensagem = `*Gudyx Custom* 🎉\n\nSeu pedido foi retirado com sucesso!\n\n📝 Gostaríamos de saber como foi sua experiência. Avalie seu pedido clicando no link abaixo:\n\n${linkAvaliacao}\n\n⭐ Sua opinião é muito importante para nós!`;
+            
+            const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensagem)}`;
             window.open(url, '_blank');
         }
+
+        // Gerenciar Avaliações
+        function carregarAvaliacoesAdmin() {
+            const container = document.getElementById('listaAvaliacoesAdmin');
+            container.innerHTML = '<p style="text-align:center;">Carregando avaliações...</p>';
+            db.collection('avaliacoes').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
+                if (snapshot.empty) { container.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhuma avaliação pendente.</p>'; return; }
+                let html = '';
+                snapshot.forEach(doc => {
+                    const av = doc.data();
+                    const id = doc.id;
+                    const estrelas = '★'.repeat(av.nota) + '☆'.repeat(5 - av.nota);
+                    const aprovadoBadge = av.aprovado ? '<span style="color: #00f2fe;">(Aprovado)</span>' : '<span style="color: #ff8800;">(Pendente)</span>';
+                    
+                    html += `
+                        <div class="pedido-card">
+                            <div><strong>Cliente:</strong> ${av.autor || 'Anônimo'}</div>
+                            <div><strong>Pedido:</strong> ${av.pedidoId || 'N/A'}</div>
+                            <div><strong>Nota:</strong> ${estrelas} (${av.nota})</div>
+                            <div><strong>Comentário:</strong> ${av.comentario || 'Sem comentários.'}</div>
+                            <div><strong>Status:</strong> ${aprovadoBadge}</div>
+                            <div class="acoes">
+                                ${!av.aprovado ? `<button onclick="aprovarAvaliacao('${id}')" class="btn-edit">✅ Aprovar (exibir no site)</button>` : ''}
+                                ${av.aprovado ? `<button onclick="desaprovarAvaliacao('${id}')" class="btn-secondary">⛔ Esconder do site</button>` : ''}
+                                <button onclick="deletarAvaliacao('${id}')" class="btn-danger">🗑️ Deletar</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            });
+        }
+        function aprovarAvaliacao(id) { db.collection('avaliacoes').doc(id).update({ aprovado: true }); }
+        function desaprovarAvaliacao(id) { db.collection('avaliacoes').doc(id).update({ aprovado: false }); }
+        function deletarAvaliacao(id) { if(confirm('Deletar avaliação?')) db.collection('avaliacoes').doc(id).delete(); }
 
         async function salvarFrases() {
             const lista = document.getElementById('frasesInput').value.split('\n').map(s => s.trim()).filter(s => s);
@@ -488,7 +656,7 @@
             const prazoMin = parseInt(document.getElementById('configPrazoMin').value);
             const prazoMax = parseInt(document.getElementById('configPrazoMax').value);
             const pedidosEmAndamento = document.getElementById('configPedidosEmAndamento').checked;
-            if (prazoMin < 1 || prazoMax < prazoMin) return alert('Defina prazos válidos (Mínimo >= 1 e Máximo >= Mínimo).');
+            if (prazoMin < 1 || prazoMax < prazoMin) return alert('Defina prazos válidos.');
             await db.collection('config').doc('loja').set({ prazoMinimo: prazoMin, prazoMaximo: prazoMax, pedidosEmAndamento });
             alert('Configurações salvas!');
             carregarConfigLoja();
