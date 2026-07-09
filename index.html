@@ -57,7 +57,7 @@
         .float-cart.bounce { animation: bounceCart 0.6s ease; }
         .produto-card:hover { animation: wiggle 0.5s ease; }
         .flame-icon { display: inline-block; margin-left: 4px; animation: fireGlow 0.8s infinite alternate; font-size: 1.2em; }
-        .btn-wa-card, .btn-whatsapp-modal, .btn-wa-cart {
+        .btn-wa-card, .btn-whatsapp-modal, .btn-wa-cart, .btn-agendar-finalizar {
             background: linear-gradient(90deg, #ff0000, #ff8800, #ffff00, #00ff00, #0088ff, #8800ff, #ff0088) !important;
             background-size: 400% 400% !important;
             animation: rainbowBg 3s ease infinite;
@@ -65,7 +65,7 @@
             border: none;
         }
         @keyframes rainbowBg { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
-        .btn-wa-card:hover, .btn-whatsapp-modal:hover, .btn-wa-cart:hover { animation: rainbowBg 1s linear infinite; }
+        .btn-wa-card:hover, .btn-whatsapp-modal:hover, .btn-wa-cart:hover, .btn-agendar-finalizar:hover { animation: rainbowBg 1s linear infinite; }
         .logo-wrapper { position:relative; display:inline-block; }
         .logo-img { max-height:250px; filter:drop-shadow(0 0 30px rgba(172,40,255,0.8)); }
         .fala-container { position:absolute; top:15px; right:-60px; width:200px; background:rgba(11,4,28,0.85); backdrop-filter:blur(8px); border:1px solid rgba(172,40,255,0.6); border-radius:16px; padding:10px 14px; font-size:0.85rem; box-shadow:0 0 30px rgba(172,40,255,0.4); pointer-events:none; opacity:0; transition:opacity 0.4s, transform 0.4s; transform:translateX(10px); z-index:9999; text-align:center; min-height:40px; }
@@ -165,7 +165,7 @@
         .categoria-card h4 { font-size:1.1rem; font-weight:500; }
         .produtos-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:15px; width:100%; max-width:1100px; margin-top:10px; }
         
-        /* --- INICIO CORREÇÃO DO CARD DO PRODUTO (MAIOR, BOTÕES SUBIDOS, FAVORITO NA DIREITA) --- */
+        /* --- CORREÇÃO DO CARD DO PRODUTO E POSIÇÃO DO FAVORITO --- */
         .produto-card {
             background: var(--vidro-fundo);
             backdrop-filter: blur(8px);
@@ -221,7 +221,6 @@
         .produto-card .descricao { font-size:0.8rem; opacity:0.7; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
         .produto-card .preco-promo { font-weight:700; color:var(--rosa-neon); font-size:1rem; text-decoration:line-through; margin-right:5px; }
         .produto-card .preco-atual { font-weight:700; color:var(--amarelo-neon); font-size:1rem; }
-        
         .produto-card .quick-view {
             position: absolute;
             bottom: 10px;
@@ -242,7 +241,6 @@
             text-align: center;
         }
         .produto-card:hover .quick-view { opacity: 1; }
-        
         .produto-card .contador-produto {
             position: absolute;
             bottom: 8px;
@@ -257,8 +255,6 @@
             align-items: center;
             gap: 4px;
         }
-
-        /* Botão de Favorito - MUDOU DE LADO (Agora na Direita) */
         .btn-favorite {
             position: absolute;
             top: 10px;
@@ -283,40 +279,17 @@
         .btn-favorite.active { color:#ff4455; }
         .btn-favorite.active i { color:#ff4455; }
 
-        /* Botões de Ação (WhatsApp e Carrinho) - SUBIRAM UM POUCO */
         .produto-card .botoes-lista {
             display: flex;
             gap: 8px;
             margin-top: 5px;
             z-index: 5;
         }
-        .btn-add-cart { 
-            display: inline-block; 
-            padding: 10px 16px;
-            background: linear-gradient(135deg, #7b2ffc, #00f2fe);
-            color: #fff; 
-            border-radius: 50px; 
-            border:none; 
-            font-size: 0.9rem; 
-            font-weight:600; 
-            cursor:pointer; 
-            transition:var(--transicao); 
-        }
+        .btn-add-cart { display: inline-block; padding: 10px 16px; background: linear-gradient(135deg, #7b2ffc, #00f2fe); color: #fff; border-radius: 50px; border:none; font-size: 0.9rem; font-weight:600; cursor:pointer; transition:var(--transicao); }
         .btn-add-cart:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(172,40,255,0.4); }
         .btn-add-cart:disabled { background:#555; cursor:not-allowed; }
-        .btn-wa-card { 
-            display: inline-block; 
-            padding: 10px 16px;
-            background:#25D366; 
-            color:#fff; 
-            border-radius:50px; 
-            text-decoration:none; 
-            font-size: 0.9rem; 
-            font-weight:600; 
-            transition:var(--transicao); 
-        }
+        .btn-wa-card { display: inline-block; padding: 10px 16px; background:#25D366; color:#fff; border-radius:50px; text-decoration:none; font-size: 0.9rem; font-weight:600; transition:var(--transicao); }
         .btn-wa-card:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(37,211,102,0.4); }
-        /* --- FIM CORREÇÃO DO CARD DO PRODUTO --- */
 
         #productModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:99999; display:none; justify-content:center; align-items:center; padding:20px; }
         #productModal.active { display:flex; }
@@ -329,6 +302,17 @@
         .modal-box .modal-desc { font-size:1rem; opacity:0.8; margin-bottom:10px; }
         .modal-box .modal-price { font-size:1.6rem; font-weight:700; color:var(--amarelo-neon); }
         .modal-box .modal-price-old { color:var(--rosa-neon); text-decoration:line-through; font-size:1.2rem; margin-right:10px; }
+        
+        /* ------- MÓDULO 7: PREÇO PROGRESSIVO E SIMULADOR ------- */
+        .modal-box .modal-desc-progressivo { margin-top: 5px; color: var(--ciano-brilhante); font-weight: 600; font-size: 0.95rem; }
+        .modal-simulador { margin: 15px 0; border-top: 1px solid var(--vidro-borda); padding-top: 15px; }
+        .modal-simulador label { font-size: 0.9rem; font-weight: 500; }
+        .modal-simulador .simulador-inputs { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .modal-simulador #simuladorQtd { width: 100px; padding: 8px; border-radius: 8px; border: 1px solid var(--vidro-borda); background: rgba(255,255,255,0.05); color: #fff; font-family: inherit; }
+        .modal-simulador .btn-simular { padding: 8px 16px; background: linear-gradient(135deg, #a028ff, #00f2fe); border: none; border-radius: 20px; color: #fff; cursor: pointer; font-weight: 600; }
+        .modal-simulador #resultadoSimulacao { margin-top: 8px; font-size: 1rem; font-weight: bold; color: var(--ciano-brilhante); }
+        /* ------------------------------------------------------- */
+
         .quantidade-container { display:flex; align-items:center; gap:15px; margin:15px 0; }
         .quantidade-container label { font-weight:600; font-size:1rem; }
         .qtd-control { display:flex; align-items:center; gap:10px; }
@@ -361,6 +345,7 @@
         .sugestao-card img { width:100%; height:80px; object-fit:cover; border-radius:4px; }
         .sugestao-card h5 { font-size:0.8rem; margin:5px 0; }
         .sugestao-card .preco { font-size:0.9rem; font-weight:700; color:var(--amarelo-neon); }
+
         #cartDrawerOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); z-index:99999; display:none; opacity:0; transition:opacity 0.4s; }
         #cartDrawerOverlay.active { display:block; opacity:1; }
         #cartDrawer { position:fixed; top:0; right:-420px; width:400px; max-width:90vw; height:100vh; background:var(--vidro-fundo); backdrop-filter:blur(16px); border-left:1px solid var(--vidro-borda); z-index:100000; transition:right 0.4s; display:flex; flex-direction:column; box-shadow:-10px 0 40px rgba(0,0,0,0.6); }
@@ -396,8 +381,7 @@
         .cart-drawer-footer { padding:15px 25px; border-top:1px solid var(--vidro-borda); }
         .cart-drawer-footer .cart-total { font-size:1.3rem; font-weight:700; margin-bottom:10px; color:var(--amarelo-neon); text-align:right; }
         .cart-drawer-footer .cart-actions { display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
-        .cart-drawer-footer .cart-actions .btn-wa-cart { padding:12px 25px; background:#25D366; color:#fff; border-radius:50px; font-weight:700; border:none; cursor:pointer; transition:var(--transicao); font-size:1rem; text-align:center; flex:1; }
-        .cart-drawer-footer .cart-actions .btn-wa-cart:hover { transform:scale(1.05); box-shadow:0 0 30px rgba(37,211,102,0.6); }
+        .cart-drawer-footer .cart-actions .btn-agendar-finalizar { padding:12px 25px; color:#fff; border-radius:50px; font-weight:700; border:none; cursor:pointer; transition:var(--transicao); font-size:1rem; text-align:center; flex:1; background: linear-gradient(135deg, #a028ff, #00f2fe); }
         .cart-drawer-footer .cart-actions .btn-clear-cart { padding:12px 20px; background:#ff4455; color:#fff; border-radius:50px; font-weight:700; border:none; cursor:pointer; transition:var(--transicao); font-size:1rem; flex:0.5; text-align:center; }
         .cart-drawer-footer .cart-actions .btn-clear-cart:hover { transform:scale(1.05); }
         #favDrawerOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); backdrop-filter:blur(4px); z-index:99998; display:none; opacity:0; transition:opacity 0.4s; }
@@ -489,32 +473,10 @@
         .modal-page .modal-box .info-item i { font-size:1.4rem; color:var(--ciano-brilhante); width:30px; }
         /* --- FIM DO DESIGN DOS MODAIS --- */
 
-        /* --- BOTÕES DO RODAPÉ (SOBRE | CONTATO) --- */
-        .btn-footer {
-            display: inline-block;
-            padding: 8px 18px;
-            color: var(--cor-texto);
-            background: rgba(172, 40, 255, 0.15);
-            border: 1px solid var(--vidro-borda);
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.85rem;
-            transition: var(--transicao);
-            margin: 0 5px;
-            backdrop-filter: blur(4px);
-        }
-        .btn-footer:hover {
-            background: rgba(172, 40, 255, 0.4);
-            border-color: var(--ciano-brilhante);
-            box-shadow: 0 0 20px rgba(172, 40, 255, 0.3);
-            transform: translateY(-2px);
-        }
-        .footer .separator {
-            opacity: 0.3;
-            margin: 0 5px;
-        }
-        /* --- FIM BOTÕES DO RODAPÉ --- */
+        /* --- BOTÕES DO RODAPÉ --- */
+        .btn-footer { display: inline-block; padding: 8px 18px; color: var(--cor-texto); background: rgba(172, 40, 255, 0.15); border: 1px solid var(--vidro-borda); border-radius: 30px; text-decoration: none; font-weight: 500; font-size: 0.85rem; transition: var(--transicao); margin: 0 5px; backdrop-filter: blur(4px); }
+        .btn-footer:hover { background: rgba(172, 40, 255, 0.4); border-color: var(--ciano-brilhante); box-shadow: 0 0 20px rgba(172, 40, 255, 0.3); transform: translateY(-2px); }
+        .footer .separator { opacity: 0.3; margin: 0 5px; }
 
         #faqModal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 999999; display: none; justify-content: center; align-items: center; padding: 20px; }
         #faqModal.active { display: flex; }
@@ -529,43 +491,10 @@
         .faq-item .faq-a { display:none; padding-top:8px; opacity:0.8; font-size:0.95rem; }
         .faq-item .faq-a.open { display:block; }
         
-        /* --- CORREÇÃO DO BOTÃO E JANELA DE CHAT (REMOÇÃO DA SOBREPOSIÇÃO E MOVIMENTO PARA DIREITA) --- */
-        #chatButton { 
-            position:fixed; 
-            bottom: 260px; 
-            right: 20px;
-            left: auto;
-            width:60px; height:60px; 
-            border-radius:50%; 
-            background: linear-gradient(135deg,#a028ff,#00f2fe); 
-            color:#fff; 
-            display:flex; 
-            align-items:center; 
-            justify-content:center; 
-            font-size:1.8rem; 
-            box-shadow:0 4px 20px rgba(0,0,0,0.5); 
-            z-index:9998; 
-            cursor:pointer; 
-            transition:var(--transicao); 
-            opacity:0.8; 
-        }
+        /* --- CORREÇÃO DO BOTÃO E JANELA DE CHAT (POSIÇÃO DIREITA) --- */
+        #chatButton { position:fixed; bottom: 260px; right: 20px; left: auto; width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:var(--transicao); opacity:0.8; }
         #chatButton:hover { transform:scale(1.1); opacity:1; }
-        #chatModal { 
-            position:fixed; 
-            bottom: 325px; 
-            right: 20px;
-            left: auto;
-            width:320px; 
-            max-width:80vw; 
-            background:var(--vidro-fundo); 
-            backdrop-filter:blur(16px); 
-            border:1px solid var(--vidro-borda); 
-            border-radius:20px; 
-            z-index:9999; 
-            display:none; 
-            flex-direction:column; 
-            box-shadow:0 10px 40px rgba(0,0,0,0.6); 
-        }
+        #chatModal { position:fixed; bottom: 325px; right: 20px; left: auto; width:320px; max-width:80vw; background:var(--vidro-fundo); backdrop-filter:blur(16px); border:1px solid var(--vidro-borda); border-radius:20px; z-index:9999; display:none; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.6); }
         #chatModal.active { display:flex; }
         .chat-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid var(--vidro-borda); }
         .chat-header h4 { display:flex; align-items:center; gap:8px; font-size:1rem; }
@@ -580,18 +509,7 @@
         .quick-btn:hover { background:rgba(172,40,255,0.2); }
 
         /* --- CORREÇÃO DO MINI MASCOTE PARA A DIREITA --- */
-        #miniGluudyx { 
-            display: none; 
-            position: fixed; 
-            bottom: 20px; 
-            right: 20px;
-            left: auto;
-            z-index: 999;
-            align-items: center; 
-            gap: 10px; 
-            pointer-events: none; 
-            flex-direction: row; 
-        }
+        #miniGluudyx { display: none; position: fixed; bottom: 20px; right: 20px; left: auto; z-index: 999; align-items: center; gap: 10px; pointer-events: none; flex-direction: row; }
         #miniGluudyx img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--ciano-brilhante); box-shadow: 0 0 25px rgba(172,40,255,0.9); animation: floatMascote 3s ease-in-out infinite; }
         .mini-fala { background: rgba(11,4,28,0.95); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); padding: 10px 16px; border-radius: 20px; font-size: 0.85rem; max-width: 200px; color: #fff; box-shadow: 0 0 20px rgba(172,40,255,0.5); position: relative; }
         .mini-fala::after { content: ''; position: absolute; top: 50%; right: -12px; transform: translateY(-50%); border: 6px solid transparent; border-left-color: rgba(11,4,28,0.95); }
@@ -618,12 +536,7 @@
         .mobile-nav button span { font-size:0.65rem; }
         .mobile-nav button.active { color:var(--ciano-brilhante); }
         @media (max-width:768px) { .mobile-nav { display:flex; } body { padding-bottom: 80px; } }
-        @media (max-width:900px) {
-            .fala-container { right:-40px; width:160px; font-size:0.75rem; top:5px; }
-            .main-area { justify-content:center; gap:20px; }
-            .mascote-block { flex:1 1 auto; width:100%; max-width:400px; margin-left:0; }
-            .promo-slider-container { margin-left:0; margin-right:0; padding-left:0; flex:1 1 auto; width:100%; max-width:100%; }
-        }
+        @media (max-width:900px) { .fala-container { right:-40px; width:160px; font-size:0.75rem; top:5px; } .main-area { justify-content:center; gap:20px; } .mascote-block { flex:1 1 auto; width:100%; max-width:400px; margin-left:0; } .promo-slider-container { margin-left:0; margin-right:0; padding-left:0; flex:1 1 auto; width:100%; max-width:100%; } }
         @media (max-width:600px) {
             .fala-container { right:-20px; width:130px; font-size:0.7rem; top:-5px; }
             .float-cart { width:50px; height:50px; font-size:1.5rem; bottom:20px; right:15px; }
@@ -642,6 +555,7 @@
             #chatButton { width:50px; height:50px; font-size:1.5rem; bottom:240px; right:15px; left: auto; }
             #chatModal { width: 280px; bottom: 305px; right: 15px; left: auto; }
             #miniGluudyx { right: 15px; left: auto; }
+            #agendamentoModal .modal-box { max-width: 90vw; padding: 20px; }
         }
         @media (max-width:480px) {
             .fala-container { right:0; top:-25px; width:100px; font-size:0.6rem; }
@@ -655,6 +569,32 @@
             .modal-gallery img { height:150px; }
             .footer { flex-direction:column; gap:4px; padding:6px 15px; font-size:0.7rem; }
         }
+
+        /* --- MODAL DE AGENDAMENTO DE RETIRADA (Módulo 1) --- */
+        #agendamentoModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:100000; display:none; justify-content:center; align-items:center; padding:20px; }
+        #agendamentoModal.active { display:flex; }
+        .agendamento-box { background:var(--vidro-fundo); backdrop-filter:blur(12px); border:1px solid var(--vidro-borda); border-radius:24px; max-width:500px; width:100%; padding:30px; position:relative; box-shadow:0 0 60px rgba(172,40,255,0.5); }
+        .agendamento-box .close-modal { position:absolute; top:10px; right:20px; font-size:2rem; cursor:pointer; background:none; border:none; color:var(--cor-texto); transition:var(--transicao); }
+        .agendamento-box .close-modal:hover { transform:rotate(90deg); color:var(--rosa-neon); }
+        .agendamento-box h2 { font-size:1.6rem; margin-bottom:10px; }
+        .agendamento-box label { display:block; margin-top:10px; font-weight:500; }
+        .agendamento-box input, .agendamento-box select { width:100%; padding:10px; border-radius:10px; border:1px solid var(--vidro-borda); background:rgba(255,255,255,0.05); color:#fff; font-size:0.95rem; margin-top:5px; }
+        .agendamento-box .info-prazo { font-size:0.9rem; opacity:0.7; margin:10px 0; background:rgba(255,255,255,0.05); padding:8px; border-radius:8px; text-align:center; }
+        .agendamento-box .btn-confirmar-agendamento { margin-top:20px; padding:12px; width:100%; background:linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; border:none; border-radius:50px; font-weight:700; font-size:1.1rem; cursor:pointer; transition:var(--transicao); }
+        .agendamento-box .btn-confirmar-agendamento:hover { transform:scale(1.02); box-shadow:0 0 30px rgba(172,40,255,0.4); }
+
+        /* --- MODAL COMO FUNCIONA --- */
+        #comoFuncionaModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:100001; display:none; justify-content:center; align-items:center; padding:20px; }
+        #comoFuncionaModal.active { display:flex; }
+        .como-funciona-box { background:var(--vidro-fundo); backdrop-filter:blur(12px); border:1px solid var(--vidro-borda); border-radius:24px; max-width:600px; width:100%; padding:30px; position:relative; box-shadow:0 0 60px rgba(172,40,255,0.5); }
+        .como-funciona-box .close-modal { position:absolute; top:10px; right:20px; font-size:2rem; cursor:pointer; background:none; border:none; color:var(--cor-texto); transition:var(--transicao); }
+        .como-funciona-box .close-modal:hover { transform:rotate(90deg); color:var(--rosa-neon); }
+        .como-funciona-box h2 { font-size:1.8rem; margin-bottom:10px; color:var(--ciano-brilhante); }
+        .como-funciona-box .passos { display:flex; flex-direction:column; gap:15px; margin-top:20px; }
+        .como-funciona-box .passo { display:flex; gap:15px; align-items:center; background:rgba(255,255,255,0.03); border-radius:12px; padding:15px; border:1px solid var(--vidro-borda); }
+        .como-funciona-box .passo .numero { font-size:1.5rem; font-weight:700; color:var(--amarelo-neon); min-width:40px; text-align:center; }
+        .como-funciona-box .passo .texto { font-size:0.95rem; opacity:0.9; }
+        .como-funciona-box .passo .texto strong { color:var(--ciano-brilhante); }
     </style>
 </head>
 <body>
@@ -673,6 +613,18 @@
             <h2 id="modalTitle">Título</h2>
             <p id="modalDesc" class="modal-desc">Descrição</p>
             <div id="modalPriceContainer"></div>
+            
+            <!-- MÓDULO 7: PREÇO PROGRESSIVO E SIMULADOR NO MODAL -->
+            <div id="modalPrecoProgressivo" class="modal-desc-progressivo"></div>
+            <div class="modal-simulador">
+                <label>📊 Simular Atacado</label>
+                <div class="simulador-inputs">
+                    <input type="number" id="simuladorQtd" min="1" placeholder="Ex: 20">
+                    <button onclick="simularAtacado()" class="btn-simular">Simular</button>
+                </div>
+                <div id="resultadoSimulacao"></div>
+            </div>
+            
             <div class="quantidade-container"><label>Quantidade:</label><div class="qtd-control"><button onclick="alterarQuantidade(-1)">−</button><span id="qtdModal">1</span><button onclick="alterarQuantidade(1)">+</button></div></div>
             <div id="modalButtonsContainer"><button id="modalAddCartBtn" class="btn-add-cart-modal" onclick="addToCartFromModal()"><i class="fas fa-cart-plus"></i> Adicionar ao carrinho</button><button id="modalWaBtn" class="btn-whatsapp-modal" onclick="comprarWhatsAppModal()"><i class="fab fa-whatsapp"></i> Comprar agora</button></div>
             <div id="modalStockStatus" class="stock-status"></div>
@@ -691,7 +643,7 @@
         <div class="cupom-container"><input type="text" id="cupomInput" placeholder="Cupom de desconto"><button onclick="aplicarCupom()">Aplicar</button></div>
         <div class="cupom-msg" id="cupomMsg"></div>
         <button class="btn-sorte" onclick="itemSurpresa()" id="btnSorte" style="margin:10px 20px;display:none;">🎁 Estou com sorte!</button>
-        <div class="cart-drawer-footer"><div class="cart-total" id="cartDrawerTotal">Total: R$ 0,00</div><div class="cart-actions"><button class="btn-wa-cart" onclick="enviarOrcamentoWhatsApp()"><i class="fab fa-whatsapp"></i> Enviar orçamento</button><button class="btn-clear-cart" onclick="limparCarrinho()">Limpar</button></div></div>
+        <div class="cart-drawer-footer"><div class="cart-total" id="cartDrawerTotal">Total: R$ 0,00</div><div class="cart-actions"><button class="btn-agendar-finalizar" onclick="abrirModalAgendamento()"><i class="fas fa-calendar-check"></i> Agendar Retirada</button><button class="btn-clear-cart" onclick="limparCarrinho()">Limpar</button></div></div>
     </div>
 
     <div id="favDrawerOverlay" onclick="fecharFavDrawer()"></div>
@@ -703,37 +655,23 @@
 
     <div id="firstVisitPopup"><div class="popup-box"><button class="close-popup-icon" onclick="fecharPopup()">×</button><h2>🔥 Bem-vindo à Gudyx!</h2><p>Ganhe <strong>10% OFF</strong> na sua primeira compra! Use o cupom: <strong>BEMVINDO10</strong></p><div class="cupom-box" onclick="copiarCupom()"><span id="cupomText">BEMVINDO10</span> <i class="fas fa-copy"></i></div><button class="btn-fechar-popup" onclick="fecharPopup()">Fechar e continuar</button></div></div>
 
-    <!-- ==================== MODAIS SOBRE E CONTATO ==================== -->
-    <div id="modalSobre" class="modal-page" onclick="fecharModalSobre(event)">
-        <div class="modal-box">
-            <button class="close-modal-page" onclick="fecharModalSobre()">×</button>
-            <h2><i class="fas fa-star"></i> Sobre a Gudyx</h2>
-            <p>Somos uma papelaria personalizada e gráfica rápida apaixonada por detalhes! Criamos produtos únicos que transformam momentos especiais em memórias inesquecíveis.</p>
-            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px; align-items: center;">
-                <div class="info-item"><i class="fas fa-paint-brush"></i> Papelaria Personalizada</div>
-                <div class="info-item"><i class="fas fa-print"></i> Gráfica Rápida</div>
-                <div class="info-item"><i class="fas fa-heart"></i> Feito com alma taurina ♉</div>
-            </div>
-        </div>
-    </div>
+    <div id="modalSobre" class="modal-page" onclick="fecharModalSobre(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalSobre()">×</button><h2><i class="fas fa-star"></i> Sobre a Gudyx</h2><p>Somos uma papelaria personalizada e gráfica rápida apaixonada por detalhes! Criamos produtos únicos que transformam momentos especiais em memórias inesquecíveis.</p><div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px; align-items: center;"><div class="info-item"><i class="fas fa-paint-brush"></i> Papelaria Personalizada</div><div class="info-item"><i class="fas fa-print"></i> Gráfica Rápida</div><div class="info-item"><i class="fas fa-heart"></i> Feito com alma taurina ♉</div></div></div></div>
+    <div id="modalContato" class="modal-page" onclick="fecharModalContato(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalContato()">×</button><h2><i class="fas fa-headset"></i> Fale Conosco</h2><p>Estamos prontos para te atender e criar o produto dos seus sonhos!</p><div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center;"><div class="info-item"><i class="fab fa-whatsapp" style="color: #25D366;"></i> (21) 97612-1076</div><div class="info-item"><i class="fas fa-envelope" style="color: var(--rosa-neon);"></i> contato@gudyx.com</div><div class="info-item"><i class="fas fa-map-marker-alt" style="color: var(--ciano-brilhante);"></i> Duque de Caxias - RJ</div></div><p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.6;">Atendimento de Segunda a Sábado</p></div></div>
 
-    <div id="modalContato" class="modal-page" onclick="fecharModalContato(event)">
-        <div class="modal-box">
-            <button class="close-modal-page" onclick="fecharModalContato()">×</button>
-            <h2><i class="fas fa-headset"></i> Fale Conosco</h2>
-            <p>Estamos prontos para te atender e criar o produto dos seus sonhos!</p>
-            <div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center;">
-                <div class="info-item"><i class="fab fa-whatsapp" style="color: #25D366;"></i> (21) 97612-1076</div>
-                <div class="info-item"><i class="fas fa-envelope" style="color: var(--rosa-neon);"></i> contato@gudyx.com</div>
-                <div class="info-item"><i class="fas fa-map-marker-alt" style="color: var(--ciano-brilhante);"></i> Duque de Caxias - RJ</div>
-            </div>
-            <p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.6;">Atendimento de Segunda a Sábado</p>
-        </div>
-    </div>
-    <!-- ==================== FIM DOS MODAIS ==================== -->
+    <div id="comoFuncionaModal"><div class="como-funciona-box"><button class="close-modal" onclick="fecharComoFunciona()">×</button><h2>📦 Como comprar e retirar</h2><div class="passos"><div class="passo"><div class="numero">1</div><div class="texto">Escolha seus produtos e adicione ao <strong>carrinho</strong>.</div></div><div class="passo"><div class="numero">2</div><div class="texto">Vá até o carrinho e clique em <strong>"Agendar Retirada"</strong>.</div></div><div class="passo"><div class="numero">3</div><div class="texto">Selecione a <strong>data e horário</strong> disponíveis para retirar no balcão.</div></div><div class="passo"><div class="numero">4</div><div class="texto">Finalize enviando o pedido pelo <strong>WhatsApp</strong> e venha buscar!</div></div></div><p style="margin-top:20px; font-size:0.9rem; opacity:0.6;">📍 Retirada em Duque de Caxias - RJ</p></div></div>
 
+    <!-- MODAL DE AGENDAMENTO (Módulo 1) -->
+    <div id="agendamentoModal"><div class="agendamento-box"><button class="close-modal" onclick="fecharModalAgendamento()">×</button><h2>📅 Agendar Retirada</h2><div id="infoPrazoAgendamento" class="info-prazo">Carregando prazos...</div>
+        <label>Data da Retirada</label><select id="dataRetirada"></select>
+        <label>Horário da Retirada</label><select id="horaRetirada">
+            <option value="09:00">09:00</option><option value="10:00">10:00</option><option value="11:00">11:00</option><option value="12:00">12:00</option><option value="13:00">13:00</option><option value="14:00">14:00</option><option value="15:00">15:00</option><option value="16:00">16:00</option><option value="17:00">17:00</option><option value="18:00">18:00</option>
+        </select>
+        <button class="btn-confirmar-agendamento" onclick="enviarPedidoComAgendamento()"><i class="fab fa-whatsapp"></i> Enviar Pedido e Agendar</button>
+    </div></div>
+
+    <!-- CHAT E MASCOTE -->
     <div id="chatButton" onclick="toggleChat()"><i class="fas fa-comment-dots"></i></div>
-    <div id="chatModal"><div class="chat-header"><h4><img src="https://i.imgur.com/Y5H9zqr.png" style="width:30px;height:30px;border-radius:50%;" loading="lazy"> Gluudyx</h4><button class="close-chat" onclick="toggleChat()">×</button></div><div class="chat-body" id="chatBody"><div class="chat-msg gluudyx">Oi! Sou o Gluudyx 😄 Como posso te ajudar?</div></div><div class="chat-footer"><button class="quick-btn" onclick="chatResposta('produtos')">Produtos</button><button class="quick-btn" onclick="chatResposta('promocoes')">Promoções</button><button class="quick-btn" onclick="chatResposta('duvidas')">Dúvidas</button><button class="quick-btn" onclick="chatResposta('contato')">Contato</button></div></div>
+    <div id="chatModal"><div class="chat-header"><h4><img src="https://i.imgur.com/Y5H9zqr.png" style="width:30px;height:30px;border-radius:50%;" loading="lazy"> Gluudyx</h4><button class="close-chat" onclick="toggleChat()">×</button></div><div class="chat-body" id="chatBody"><div class="chat-msg gluudyx">Oi! Sou o Gluudyx 😄 Como posso te ajudar?</div></div><div class="chat-footer"><button class="quick-btn" onclick="chatResposta('produtos')">Produtos</button><button class="quick-btn" onclick="chatResposta('promocoes')">Promoções</button><button class="quick-btn" onclick="chatResposta('retirada')">Retirada</button><button class="quick-btn" onclick="chatResposta('contato')">Contato</button></div></div>
     <div id="faqModal" onclick="fecharFAQ(event)"><div class="faq-box"><button class="close-faq" onclick="fecharFAQ()">×</button><h2>❓ Dúvidas Frequentes</h2><div id="faqList"></div></div></div>
 
     <div class="float-cart" onclick="abrirDrawer()"><i class="fas fa-shopping-cart"></i><span class="cart-badge" id="cartBadge">0</span></div>
@@ -754,6 +692,9 @@
                 <div class="logo-wrapper"><img src="https://i.imgur.com/uvur0Sy.png" alt="Gudyx" class="logo-img" loading="lazy"></div>
                 <div class="subtitle">PAPELARIA PERSONALIZADA · GRÁFICA RÁPIDA <span class="badge-vip" id="badgeVip" style="display:none;">⭐ VIP</span></div>
                 <div class="slogan">"Onde cada detalhe é um grude de personalidade"</div>
+                <div style="margin-top: 10px; display:flex; gap:15px; align-items:center; justify-content:center; flex-wrap:wrap;">
+                    <button onclick="abrirComoFunciona()" style="background:rgba(172,40,255,0.2); border:1px solid var(--vidro-borda); border-radius:20px; padding:8px 16px; color:var(--cor-texto); cursor:pointer; transition:0.3s;">📦 Como retirar</button>
+                </div>
             </div>
             <div class="search-global"><i class="fas fa-search"></i><input type="text" id="searchGlobal" placeholder="O que você procura?" oninput="debounceBuscaGlobal()"><button onclick="buscaGlobal()"><i class="fas fa-search"></i></button></div>
             <div class="main-area">
@@ -829,6 +770,7 @@
     <script>
         const WA_NUMBER = '5521976121076';
         let dados = { categorias: [], produtos: [], frases: [], faq: [] };
+        let configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false };
         let carrinho = [];
         let favoritos = [];
         let cupomAtual = null;
@@ -850,7 +792,18 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        async function carregarDadosFirebase() { try { const snapCat = await db.collection('categorias').get(); dados.categorias = snapCat.docs.map(d => ({ id: d.id, ...d.data() })); const snapProd = await db.collection('produtos').get(); dados.produtos = snapProd.docs.map(d => ({ id: d.id, ...d.data() })); const snapFrases = await db.collection('config').doc('frases').get(); dados.frases = snapFrases.exists ? snapFrases.data().lista : []; const snapFaq = await db.collection('config').doc('faq').get(); dados.faq = snapFaq.exists ? snapFaq.data().perguntas : []; const snapDivertido = await db.collection('config').doc('divertido').get(); if (snapDivertido.exists) { configDivertido = snapDivertido.data(); } else { const localDivertido = localStorage.getItem('gudyx_divertido'); if (localDivertido) configDivertido = JSON.parse(localDivertido); } } catch(e) { console.error('Firestore:', e); } carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); aplicarConfigDivertido(); }
+        async function carregarDadosFirebase() { 
+            try { 
+                const snapCat = await db.collection('categorias').get(); dados.categorias = snapCat.docs.map(d => ({ id: d.id, ...d.data() })); 
+                const snapProd = await db.collection('produtos').get(); dados.produtos = snapProd.docs.map(d => ({ id: d.id, ...d.data() })); 
+                const snapFrases = await db.collection('config').doc('frases').get(); dados.frases = snapFrases.exists ? snapFrases.data().lista : []; 
+                const snapFaq = await db.collection('config').doc('faq').get(); dados.faq = snapFaq.exists ? snapFaq.data().perguntas : []; 
+                const snapDivertido = await db.collection('config').doc('divertido').get(); if (snapDivertido.exists) { configDivertido = snapDivertido.data(); } else { const localDivertido = localStorage.getItem('gudyx_divertido'); if (localDivertido) configDivertido = JSON.parse(localDivertido); } 
+                const snapConfigLoja = await db.collection('config').doc('loja').get();
+                if (snapConfigLoja.exists) { configLoja = snapConfigLoja.data(); }
+            } catch(e) { console.error('Firestore:', e); } 
+            carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); aplicarConfigDivertido(); 
+        }
         function aplicarConfigDivertido() { document.getElementById('floatRaspadinha').style.display = configDivertido.raspadinha ? 'flex' : 'none'; document.getElementById('btnSorteHome').style.display = configDivertido.itemSurpresa ? 'block' : 'none'; document.getElementById('btnSorte').style.display = configDivertido.itemSurpresa ? 'block' : 'none'; }
         function iniciarListenerFirebase() { db.collection('produtos').onSnapshot(s => { dados.produtos = s.docs.map(d => ({ id: d.id, ...d.data() })); if (document.getElementById('homeScreen').classList.contains('active')) { resetarSlider(); carregarMaisVendidos(); } }); }
 
@@ -868,72 +821,22 @@
         function alternarModo() { document.body.classList.toggle('modo-claro'); const icon = document.querySelector('#modoToggle i'); if (document.body.classList.contains('modo-claro')) { icon.className = 'fas fa-moon'; localStorage.setItem('gudyx_modo', 'claro'); } else { icon.className = 'fas fa-sun'; localStorage.setItem('gudyx_modo', 'escuro'); } }
         if (localStorage.getItem('gudyx_modo') === 'claro') { document.body.classList.add('modo-claro'); document.querySelector('#modoToggle i').className = 'fas fa-moon'; }
 
-        // --- FUNÇÕES DO MASCOTE CORRIGIDAS ---
-        function falarImediato(msg) { 
-            if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; } 
-            const falaContainer = document.getElementById('falaContainer'); 
-            falaContainer.innerHTML = msg; 
-            falaContainer.classList.add('falando'); 
-            estaFalando = true; 
-            if (timeoutFala) clearTimeout(timeoutFala); 
-            timeoutFala = setTimeout(() => { 
-                falaContainer.classList.remove('falando'); 
-                estaFalando = false; 
-            }, 3000); 
-        }
-
-        function typewriterEffect(elemento, texto, velocidade = 40) { 
-            if (typewriterTimer) clearTimeout(typewriterTimer); 
-            elemento.innerHTML = ''; 
-            let i = 0; 
-            function digitar() { 
-                if (i < texto.length) { 
-                    elemento.innerHTML = texto.substring(0, i + 1) + '<span class="fala-cursor">|</span>'; 
-                    i++; 
-                    typewriterTimer = setTimeout(digitar, velocidade); 
-                } else { 
-                    elemento.innerHTML = texto; 
-                } 
-            } 
-            digitar(); 
-        }
-
+        // --- FUNÇÕES DO MASCOTE ---
+        function falarImediato(msg) { if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; } const falaContainer = document.getElementById('falaContainer'); falaContainer.innerHTML = msg; falaContainer.classList.add('falando'); estaFalando = true; if (timeoutFala) clearTimeout(timeoutFala); timeoutFala = setTimeout(() => { falaContainer.classList.remove('falando'); estaFalando = false; }, 3000); }
+        function typewriterEffect(elemento, texto, velocidade = 40) { if (typewriterTimer) clearTimeout(typewriterTimer); elemento.innerHTML = ''; let i = 0; function digitar() { if (i < texto.length) { elemento.innerHTML = texto.substring(0, i + 1) + '<span class="fala-cursor">|</span>'; i++; typewriterTimer = setTimeout(digitar, velocidade); } else { elemento.innerHTML = texto; } } digitar(); }
         const piadas = ["Por que o caderno foi ao médico? 📓🤒","Qual o doce favorito do Gluudyx? 🍬","Você sabia que eu sou feito de cola? 🥰","O que o lápis disse para a borracha? ✏️💕","Por que a caneta não gostou do papel? 🖊️📄","Qual a fruta preferida do Gluudyx? 🍇😂","Eu sou como um imã... 🧲✨","Se você me der um clique, eu te dou um sorriso! 😄","Meu sonho é ser um papel de parede... 🖼️💖","Você é mais doce que um caderno de receitas! 🍪📔","O que a borracha falou para o lápis? ✏️❤️","Por que o Gluudyx é tão legal? 🎨","Se você me der um abraço, eu te dou um desconto! 😉","Gudyx: onde cada detalhe é um grude de personalidade! 💫"];
         function getMensagensMascote() { const msgs = []; if (dados.frases?.length) { msgs.push(...dados.frases, ...dados.frases, ...dados.frases); } const promos = dados.produtos.filter(p => isPromoActive(p) && isEmEstoque(p)); if (promos.length) msgs.push(`🔥 ${promos[Math.floor(Math.random()*promos.length)].nome} em promoção!`); const top = [...dados.produtos].sort((a,b)=>(b.cliques||0)-(a.cliques||0)).slice(0,3); if (top.length && top[0].cliques) msgs.push(`🏆 ${top[Math.floor(Math.random()*top.length)].nome} é o mais acessado!`); msgs.push(piadas[Math.floor(Math.random()*piadas.length)]); if (!msgs.length) msgs.push('Olá, sou o Gluudyx! ✦'); return msgs; }
         function atualizarMensagensMascote() { mascoteMensagens = getMensagensMascote().sort(() => Math.random() - 0.5); }
-        
-        function falarMascote(msgP = null) { 
-            if (estaFugindo || estaVoltando || estaSumido || estaContando) return; 
-            if (!mascoteMensagens.length) atualizarMensagensMascote(); 
-            const falaContainer = document.getElementById('falaContainer'); 
-            if (!falaContainer) return; 
-            const msg = msgP || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length]; 
-            mascoteMsgIdx++; 
-            
-            falaContainer.classList.add('falando'); 
-            estaFalando = true; 
-            
-            typewriterEffect(falaContainer, msg); 
-
-            if (timeoutFala) clearTimeout(timeoutFala); 
-            timeoutFala = setTimeout(() => { 
-                falaContainer.classList.remove('falando'); 
-                estaFalando = false; 
-            }, msg.length * 40 + 1500); 
-        }
-
+        function falarMascote(msgP = null) { if (estaFugindo || estaVoltando || estaSumido || estaContando) return; if (!mascoteMensagens.length) atualizarMensagensMascote(); const falaContainer = document.getElementById('falaContainer'); if (!falaContainer) return; const msg = msgP || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length]; mascoteMsgIdx++; falaContainer.classList.add('falando'); estaFalando = true; typewriterEffect(falaContainer, msg); if (timeoutFala) clearTimeout(timeoutFala); timeoutFala = setTimeout(() => { falaContainer.classList.remove('falando'); estaFalando = false; }, msg.length * 40 + 1500); }
         function mostrarExpressao(exp) { const w = document.getElementById('mascoteWrapper'); w.classList.remove('feliz','triste','surpreso','irritado-1','irritado-2','fugindo','voltando'); if (exp) w.classList.add(exp); }
-
         document.getElementById('mascoteWrapper').addEventListener('click', function() {
             this.style.animation = 'none'; this.offsetHeight; this.style.animation = 'floatMascote 0.6s ease-in-out';
             setTimeout(() => { this.style.animation = 'floatMascote 6s ease-in-out infinite'; }, 600);
             if (estaSumido || estaFugindo || estaVoltando || estaContando) return;
             if (typewriterTimer) { clearTimeout(typewriterTimer); typewriterTimer = null; }
             if (timeoutFala) { clearTimeout(timeoutFala); timeoutFala = null; }
-            
             const falaContainer = document.getElementById('falaContainer');
             if (falaContainer) falaContainer.classList.remove('falando');
-            
             estaFalando = false;
             const agora = Date.now();
             const emRecarga = ultimaIrritacaoTimestamp && (agora - ultimaIrritacaoTimestamp < RESET_INTERVAL);
@@ -975,6 +878,7 @@
         function mostrarMiniGluudyx() { const mini = document.getElementById('miniGluudyx'); if(!mini) return; mini.querySelector('.mini-fala').textContent = frasesInfluenciador[Math.floor(Math.random()*frasesInfluenciador.length)]; mini.style.display = 'flex'; }
         function esconderMiniGluudyx() { if (!document.getElementById('cartDrawer').classList.contains('open') && !document.getElementById('productModal').classList.contains('active')) { document.getElementById('miniGluudyx').style.display = 'none'; } }
 
+        // --- CARRINHO E FAVORITOS ---
         function carregarCarrinho() { const sc = sessionStorage.getItem('gudyxCarrinho'); if(sc) { try { const d=JSON.parse(sc); carrinho=d.items||[]; cupomAtual=d.cupom||null; } catch(e) {} } atualizarBadgeCarrinho(); renderizarDrawer(); }
         function salvarCarrinho() { sessionStorage.setItem('gudyxCarrinho', JSON.stringify({items:carrinho,cupom:cupomAtual,timestamp:Date.now()})); atualizarBadgeCarrinho(); renderizarDrawer(); verificarCupomAutomatico(); atualizarBarraProgresso(); }
         function atualizarBarraProgresso() { const total = carrinho.reduce((acc, c) => acc + parseFloat(c.preco.replace(',','.')) * c.quantidade, 0); const meta = 100; const progresso = Math.min((total / meta) * 100, 100); document.getElementById('progressoPreenchimento').style.width = progresso + '%'; if (total >= meta && !cupomAtual) { document.getElementById('progressoTexto').textContent = '🎉 Você ganhou 5% OFF!'; } else if (total > 0 && total < meta) { document.getElementById('progressoTexto').textContent = `Faltam R$ ${(meta - total).toFixed(2)} para 5% OFF`; } else { document.getElementById('progressoTexto').textContent = ''; } }
@@ -988,7 +892,6 @@
         function limparCarrinho() { carrinho=[]; cupomAtual=null; salvarCarrinho(); }
         function aplicarCupom() { const input = document.getElementById('cupomInput').value.trim().toUpperCase(); const cupons = {'BEMVINDO10':{tipo:'percentual',valor:10},'GUDYX5':{tipo:'fixo',valor:5}}; if(cupons[input]) { cupomAtual={codigo:input,...cupons[input]}; document.getElementById('cupomMsg').textContent='Cupom aplicado!'; } else { cupomAtual=null; document.getElementById('cupomMsg').textContent='Cupom inválido'; } salvarCarrinho(); }
         function verificarCupomAutomatico() { if (cupomAtual || carrinho.length===0) return; const total = carrinho.reduce((acc, c) => acc + parseFloat(c.preco.replace(',','.')) * c.quantidade, 0); if (total >= 100) { cupomAtual = { codigo: 'AUTO5', tipo: 'percentual', valor: 5, descricao: '5% OFF automático' }; document.getElementById('cupomMsg').textContent = '🎉 5% OFF!'; document.getElementById('cupomMsg').className = 'cupom-msg success'; salvarCarrinho(); } }
-
         function itemSurpresa() {
             const disponiveis = dados.produtos.filter(p => isEmEstoque(p) && !carrinho.find(c => c.id === p.id));
             if (disponiveis.length === 0) return alert('Todos os produtos já estão no carrinho!');
@@ -1026,7 +929,7 @@
                 const y = (e.clientY || e.touches[0].clientY) - rect.top;
                 ctx.globalCompositeOperation = 'destination-out';
                 ctx.beginPath();
-                ctx.arc(x, y, 40, 0, Math.PI * 2); // Raio aumentado para 40
+                ctx.arc(x, y, 40, 0, Math.PI * 2);
                 ctx.fill();
                 if (verificarRaspagem(ctx, canvas)) {
                     revelarCupom(ctx, canvas);
@@ -1041,84 +944,17 @@
             canvas.addEventListener('touchend', () => { raspando = false; });
             canvas.addEventListener('touchmove', (e) => { e.preventDefault(); raspar(e); });
         }
-        function verificarRaspagem(ctx, canvas) { 
-            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data; 
-            let transparentes = 0; 
-            for (let i = 3; i < imageData.length; i += 4) { 
-                if (imageData[i] === 0) transparentes++; 
-            } 
-            const totalPixels = canvas.width * canvas.height;
-            const percentual = transparentes / totalPixels;
-            return percentual > 0.12; // Limiar reduzido para 12%
-        }
-        function revelarCupom(ctx, canvas) { 
-            const cupom = cuponsRaspadinha[Math.floor(Math.random() * cuponsRaspadinha.length)]; 
-            ctx.clearRect(0, 0, canvas.width, canvas.height); 
-            
-            ctx.fillStyle = '#0b041c'; 
-            ctx.fillRect(0, 0, canvas.width, canvas.height); 
-            
-            ctx.fillStyle = 'gold'; 
-            ctx.font = 'bold 26px Poppins'; 
-            ctx.textAlign = 'center'; 
-            ctx.textBaseline = 'middle';
-
-            if (cupom.valor > 0) { 
-                ctx.fillText(`${cupom.descricao}!`, canvas.width/2, canvas.height/2 - 20); 
-                ctx.font = 'bold 22px Poppins';
-                ctx.fillStyle = '#00f2fe';
-                ctx.fillText(`Cupom: ${cupom.codigo}`, canvas.width/2, canvas.height/2 + 30); 
-                aplicarCupomRaspadinha(cupom); 
-                setTimeout(() => {
-                    confetti({particleCount: 150, spread: 70, origin: { y: 0.5 }});
-                }, 100);
-            } else { 
-                ctx.fillStyle = '#ff4455';
-                ctx.fillText('Tente novamente!', canvas.width/2, canvas.height/2); 
-            } 
-            setTimeout(fecharRaspadinha, 6000); 
-        }
+        function verificarRaspagem(ctx, canvas) { const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data; let transparentes = 0; for (let i = 3; i < imageData.length; i += 4) { if (imageData[i] === 0) transparentes++; } const totalPixels = canvas.width * canvas.height; const percentual = transparentes / totalPixels; return percentual > 0.12; }
+        function revelarCupom(ctx, canvas) { const cupom = cuponsRaspadinha[Math.floor(Math.random() * cuponsRaspadinha.length)]; ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = '#0b041c'; ctx.fillRect(0, 0, canvas.width, canvas.height); ctx.fillStyle = 'gold'; ctx.font = 'bold 26px Poppins'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; if (cupom.valor > 0) { ctx.fillText(`${cupom.descricao}!`, canvas.width/2, canvas.height/2 - 20); ctx.font = 'bold 22px Poppins'; ctx.fillStyle = '#00f2fe'; ctx.fillText(`Cupom: ${cupom.codigo}`, canvas.width/2, canvas.height/2 + 30); aplicarCupomRaspadinha(cupom); setTimeout(() => { confetti({particleCount: 150, spread: 70, origin: { y: 0.5 }}); }, 100); } else { ctx.fillStyle = '#ff4455'; ctx.fillText('Tente novamente!', canvas.width/2, canvas.height/2); } setTimeout(fecharRaspadinha, 6000); }
         function aplicarCupomRaspadinha(cupom) { cupomAtual = cupom; document.getElementById('cupomMsg').textContent = `🎟️ Cupom ${cupom.codigo} aplicado!`; document.getElementById('cupomMsg').className = 'cupom-msg success'; salvarCarrinho(); }
 
         function verificarAbandono() { if (carrinho.length === 0) return; const ultimoAbandono = localStorage.getItem('gudyx_abandono_aviso'); const agora = Date.now(); if (!ultimoAbandono || (agora - parseInt(ultimoAbandono)) > 86400000) { setTimeout(() => { falarMascote('Ei, você deixou itens no carrinho! 😉 Finaliza sua compra!'); localStorage.setItem('gudyx_abandono_aviso', agora.toString()); }, 5000); } }
 
         const tourSteps = [{ titulo: 'Bem-vindo à Gudyx!', texto: 'Eu sou o Gluudyx, seu assistente! Clique em mim para interagir.', alvo: '#mascoteWrapper' },{ titulo: 'Busca Rápida', texto: 'Aqui você pode buscar qualquer produto instantaneamente.', alvo: '#searchGlobal' },{ titulo: 'Promoções', texto: 'Aqui ficam as ofertas especiais! Arraste para ver mais.', alvo: '#sliderBox' },{ titulo: 'Seu Carrinho', texto: 'Adicione itens e finalize pelo WhatsApp. É rápido!', alvo: '.float-cart' },{ titulo: 'Pronto!', texto: 'Agora é só explorar e se divertir! 🎉', alvo: null }];
         let tourAtual = 0;
-        function iniciarTour() { 
-            tourAtual = 0;
-            document.getElementById('tourOverlay').classList.add('active'); 
-            mostrarTourStep(); 
-        }
-        function mostrarTourStep() { 
-            const step = tourSteps[tourAtual]; 
-            document.getElementById('tourTitulo').textContent = step.titulo; 
-            document.getElementById('tourTexto').textContent = step.texto; 
-            document.getElementById('tourBtn').textContent = tourAtual < tourSteps.length - 1 ? 'Próximo' : 'Começar!'; 
-            document.querySelectorAll('.tour-highlight').forEach(el => el.remove()); 
-            if (step.alvo) { 
-                const alvo = document.querySelector(step.alvo); 
-                if (alvo) { 
-                    const rect = alvo.getBoundingClientRect(); 
-                    const highlight = document.createElement('div'); 
-                    highlight.className = 'tour-highlight'; 
-                    highlight.style.left = rect.left - 5 + 'px'; 
-                    highlight.style.top = rect.top - 5 + 'px'; 
-                    highlight.style.width = rect.width + 10 + 'px'; 
-                    highlight.style.height = rect.height + 10 + 'px'; 
-                    document.body.appendChild(highlight); 
-                } 
-            } 
-        }
-        function proximoTour() { 
-            tourAtual++; 
-            if (tourAtual >= tourSteps.length) { 
-                document.getElementById('tourOverlay').classList.remove('active'); 
-                document.querySelectorAll('.tour-highlight').forEach(el => el.remove()); 
-                localStorage.setItem('tour_feito', '1'); 
-            } else { 
-                mostrarTourStep(); 
-            } 
-        }
+        function iniciarTour() { tourAtual = 0; document.getElementById('tourOverlay').classList.add('active'); mostrarTourStep(); }
+        function mostrarTourStep() { const step = tourSteps[tourAtual]; document.getElementById('tourTitulo').textContent = step.titulo; document.getElementById('tourTexto').textContent = step.texto; document.getElementById('tourBtn').textContent = tourAtual < tourSteps.length - 1 ? 'Próximo' : 'Começar!'; document.querySelectorAll('.tour-highlight').forEach(el => el.remove()); if (step.alvo) { const alvo = document.querySelector(step.alvo); if (alvo) { const rect = alvo.getBoundingClientRect(); const highlight = document.createElement('div'); highlight.className = 'tour-highlight'; highlight.style.left = rect.left - 5 + 'px'; highlight.style.top = rect.top - 5 + 'px'; highlight.style.width = rect.width + 10 + 'px'; highlight.style.height = rect.height + 10 + 'px'; document.body.appendChild(highlight); } } }
+        function proximoTour() { tourAtual++; if (tourAtual >= tourSteps.length) { document.getElementById('tourOverlay').classList.remove('active'); document.querySelectorAll('.tour-highlight').forEach(el => el.remove()); localStorage.setItem('tour_feito', '1'); } else { mostrarTourStep(); } }
 
         function carregarFavoritos() { favoritos = JSON.parse(localStorage.getItem('gudyxFavoritos')||'[]'); }
         function salvarFavoritos() { localStorage.setItem('gudyxFavoritos', JSON.stringify(favoritos)); }
@@ -1129,8 +965,85 @@
         function renderizarFavDrawer() { const body = document.getElementById('favDrawerBody'); if (favoritos.length === 0) { body.innerHTML = '<div class="cart-empty">Nenhum favorito ainda.</div>'; return; } let html = ''; favoritos.forEach(id => { const prod = dados.produtos.find(p => p.id === id); if (!prod) return; html += `<div class="cart-drawer-item"><img src="${getImagemPrincipal(prod)}" class="item-img" loading="lazy"><div class="item-info"><h4>${prod.nome}</h4><div class="item-price">R$ ${prod.preco}</div></div><div class="item-actions"><button onclick="abrirModal('${prod.id}'); fecharFavDrawer();"><i class="fas fa-eye"></i></button><button class="btn-remove" onclick="toggleFavorito('${prod.id}'); renderizarFavDrawer();"><i class="fas fa-heart-broken"></i></button></div></div>`; }); body.innerHTML = html; }
         function compartilharFavoritos() { if (favoritos.length === 0) return alert('Nenhum favorito para compartilhar.'); const prods = favoritos.map(id => dados.produtos.find(p => p.id === id)).filter(p => p); const texto = prods.map(p => `🛒 ${p.nome} - R$ ${p.preco}`).join('\n'); const msg = `*Minha lista de desejos da Gudyx:*\n\n${texto}\n\nQuero esses produtos!`; window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank'); }
 
-        function alterarQuantidade(delta) { quantidadeModal = Math.max(1, quantidadeModal+delta); document.getElementById('qtdModal').textContent = quantidadeModal; }
-        function abrirModal(prodId) { const prod = dados.produtos.find(p=>p.id===prodId); if(!prod) return; produtoModalAtual=prod; quantidadeModal=1; document.getElementById('qtdModal').textContent='1'; prod.cliques=(prod.cliques||0)+1; salvarDados(); carregarMaisVendidos(); document.getElementById('modalTitle').textContent=prod.nome; document.getElementById('modalDesc').textContent=prod.descricao||''; const promo=isPromoActive(prod); document.getElementById('modalPriceContainer').innerHTML = promo&&prod.precoPromo?`<span class="modal-price-old">R$ ${prod.preco}</span> <span class="modal-price">R$ ${prod.precoPromo}</span>`:`<span class="modal-price">R$ ${prod.preco}</span>`; document.getElementById('modalGallery').innerHTML = (prod.imagens?.length?prod.imagens:[getImagemPrincipal(prod)]).map(img=>`<img src="${img}" loading="lazy">`).join(''); const cartBtn=document.getElementById('modalAddCartBtn'),waBtn=document.getElementById('modalWaBtn'); if(!isEmEstoque(prod)) { cartBtn.disabled=true; cartBtn.textContent='Esgotado'; waBtn.style.opacity='0.5'; } else { cartBtn.disabled=false; cartBtn.innerHTML='<i class="fas fa-cart-plus"></i> Adicionar'; waBtn.style.opacity='1'; } document.getElementById('productModal').classList.add('active'); mostrarMiniGluudyx(); renderizarAvaliacoes(prodId); renderizarSugestoes(prodId); document.getElementById('contadorAoVivo').textContent = `👀 ${Math.floor(Math.random()*5)+1} pessoas estão vendo este produto agora`; setTimeout(() => { document.querySelectorAll('#modalGallery img').forEach(img => { img.onclick = (e) => { e.stopPropagation(); abrirLightbox(img.src); }; }); }, 100); }
+        // --- ALTERAR A QUANTIDADE E PREÇO PROGRESSIVO (Módulo 7) ---
+        function alterarQuantidade(delta) { quantidadeModal = Math.max(1, quantidadeModal+delta); document.getElementById('qtdModal').textContent = quantidadeModal; calcularPrecoProgressivo(quantidadeModal); }
+        function calcularPrecoProgressivo(qtd) {
+            if (!produtoModalAtual) return;
+            const prod = produtoModalAtual;
+            const precoBase = parseFloat(prod.preco.replace(',', '.'));
+            let precoFinal = precoBase;
+            let maiorDesconto = 0;
+            if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
+                prod.descontoProgressivo.forEach(regra => {
+                    if (qtd >= regra.qtd && regra.desconto > maiorDesconto) {
+                        maiorDesconto = regra.desconto;
+                    }
+                });
+                if (maiorDesconto > 0) {
+                    precoFinal = precoBase * (1 - maiorDesconto / 100);
+                }
+            }
+            const precoExibicao = precoFinal.toFixed(2).replace('.', ',');
+            const containerProgressivo = document.getElementById('modalPrecoProgressivo');
+            if (maiorDesconto > 0) {
+                containerProgressivo.innerHTML = `💰 Preço unitário: <strong>R$ ${precoExibicao}</strong> (${maiorDesconto}% OFF para ${qtd} unidades)`;
+            } else {
+                containerProgressivo.innerHTML = '';
+            }
+        }
+
+        function simularAtacado() {
+            const qtd = parseInt(document.getElementById('simuladorQtd').value);
+            if (!qtd || qtd < 1) return alert('Digite uma quantidade válida.');
+            const prod = produtoModalAtual;
+            const precoBase = parseFloat(prod.preco.replace(',', '.'));
+            let precoFinal = precoBase;
+            let maiorDesconto = 0;
+            if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
+                prod.descontoProgressivo.forEach(regra => {
+                    if (qtd >= regra.qtd && regra.desconto > maiorDesconto) {
+                        maiorDesconto = regra.desconto;
+                    }
+                });
+                if (maiorDesconto > 0) {
+                    precoFinal = precoBase * (1 - maiorDesconto / 100);
+                }
+            }
+            const total = precoFinal * qtd;
+            const resultado = document.getElementById('resultadoSimulacao');
+            if (maiorDesconto > 0) {
+                resultado.innerHTML = `🛒 ${qtd} unidades = R$ ${total.toFixed(2)} (${maiorDesconto}% OFF)`;
+            } else {
+                resultado.innerHTML = `🛒 ${qtd} unidades = R$ ${total.toFixed(2)} (Sem desconto aplicado)`;
+            }
+        }
+
+        function abrirModal(prodId) { 
+            const prod = dados.produtos.find(p=>p.id===prodId); 
+            if(!prod) return; 
+            produtoModalAtual=prod; 
+            quantidadeModal=1; 
+            document.getElementById('qtdModal').textContent='1'; 
+            prod.cliques=(prod.cliques||0)+1; 
+            salvarDados(); 
+            carregarMaisVendidos(); 
+            document.getElementById('modalTitle').textContent=prod.nome; 
+            document.getElementById('modalDesc').textContent=prod.descricao||''; 
+            const promo=isPromoActive(prod); 
+            document.getElementById('modalPriceContainer').innerHTML = promo&&prod.precoPromo?`<span class="modal-price-old">R$ ${prod.preco}</span> <span class="modal-price">R$ ${prod.precoPromo}</span>`:`<span class="modal-price">R$ ${prod.preco}</span>`; 
+            document.getElementById('modalGallery').innerHTML = (prod.imagens?.length?prod.imagens:[getImagemPrincipal(prod)]).map(img=>`<img src="${img}" loading="lazy">`).join(''); 
+            const cartBtn=document.getElementById('modalAddCartBtn'),waBtn=document.getElementById('modalWaBtn'); 
+            if(!isEmEstoque(prod)) { cartBtn.disabled=true; cartBtn.textContent='Esgotado'; waBtn.style.opacity='0.5'; } else { cartBtn.disabled=false; cartBtn.innerHTML='<i class="fas fa-cart-plus"></i> Adicionar'; waBtn.style.opacity='1'; } 
+            document.getElementById('productModal').classList.add('active'); 
+            mostrarMiniGluudyx(); 
+            renderizarAvaliacoes(prodId); 
+            renderizarSugestoes(prodId); 
+            document.getElementById('contadorAoVivo').textContent = `👀 ${Math.floor(Math.random()*5)+1} pessoas estão vendo este produto agora`; 
+            calcularPrecoProgressivo(1);
+            document.getElementById('resultadoSimulacao').innerHTML = '';
+            document.getElementById('simuladorQtd').value = '';
+            setTimeout(() => { document.querySelectorAll('#modalGallery img').forEach(img => { img.onclick = (e) => { e.stopPropagation(); abrirLightbox(img.src); }; }); }, 100); 
+        }
         function fecharModal() { document.getElementById('productModal').classList.remove('active'); esconderMiniGluudyx(); }
         document.getElementById('productModal').addEventListener('click', function(e) { if(e.target===this) fecharModal(); });
 
@@ -1138,7 +1051,115 @@
         function fecharLightbox() { document.getElementById('lightboxOverlay').classList.remove('active'); }
 
         function renderizarSugestoes(prodId) { const container=document.getElementById('sugestoesGrid'); const prod=dados.produtos.find(p=>p.id===prodId); if(!prod){container.innerHTML='';return;} let sugestoes = dados.produtos.filter(p=>p.id!==prodId&&p.categoriaId===prod.categoriaId&&isEmEstoque(p)).slice(0,3); if (sugestoes.length < 2) { sugestoes = dados.produtos.filter(p=>p.id!==prodId&&isEmEstoque(p)).sort(()=>Math.random()-0.5).slice(0,3); } container.innerHTML=sugestoes.length?sugestoes.map(s=>{const preco=isPromoActive(s)&&s.precoPromo?'R$ '+s.precoPromo:'R$ '+s.preco;return`<div class="sugestao-card" onclick="abrirModal('${s.id}')"><img src="${getImagemPrincipal(s)}" loading="lazy"><h5>${s.nome}</h5><div class="preco">${preco}</div></div>`;}).join(''):'<p style="opacity:0.6;">Nenhum relacionado.</p>'; }
-        function enviarOrcamentoWhatsApp() { if(!carrinho.length) return alert('Carrinho vazio!'); let msg='*Gudyx Custom - Orçamento*\n\n', total=0; carrinho.forEach(item=>{ const sub=parseFloat(item.preco.replace(',','.'))*item.quantidade; total+=sub; msg+=`🛒 *${item.nome}* - ${item.quantidade}x - R$ ${item.preco}\n`; }); if(cupomAtual) { if(cupomAtual.tipo==='percentual') total*=(1-cupomAtual.valor/100); else total=Math.max(0,total-cupomAtual.valor); msg+=`💳 Cupom ${cupomAtual.codigo}\n`; } msg+=`\n💰 *Total: R$ ${total.toFixed(2)}*\n📝 *Forma de pagamento:* \n📍 *Retirada:* \nQuero finalizar!`; window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); playVictorySound(); confetti({particleCount:200,spread:100,origin:{y:0.5}}); }
+        
+        // --- AGENDAMENTO (Módulo 1) ---
+        function abrirModalAgendamento() {
+            if(carrinho.length === 0) return alert('Seu carrinho está vazio!');
+            document.getElementById('agendamentoModal').classList.add('active');
+            gerarOpcoesAgendamento();
+        }
+        function fecharModalAgendamento() { document.getElementById('agendamentoModal').classList.remove('active'); }
+        document.getElementById('agendamentoModal').addEventListener('click', function(e) { if(e.target === this) fecharModalAgendamento(); });
+
+        async function gerarOpcoesAgendamento() {
+            const dataSelect = document.getElementById('dataRetirada');
+            const infoPrazo = document.getElementById('infoPrazoAgendamento');
+            dataSelect.innerHTML = '<option value="">Carregando...</option>';
+            infoPrazo.textContent = '🔄 Calculando datas disponíveis...';
+            try {
+                const snapConfig = await db.collection('config').doc('loja').get();
+                if(snapConfig.exists) configLoja = snapConfig.data();
+
+                const hoje = new Date();
+                let dataInicio = new Date(hoje);
+                let dataFim = new Date(hoje);
+                
+                if (configLoja.pedidosEmAndamento) {
+                    dataInicio.setDate(dataInicio.getDate() + configLoja.prazoMinimo);
+                    dataFim.setDate(dataFim.getDate() + configLoja.prazoMaximo);
+                    infoPrazo.textContent = `📦 Estamos com pedidos em andamento. O prazo para retirada é de ${configLoja.prazoMinimo} a ${configLoja.prazoMaximo} dias.`;
+                } else {
+                    dataInicio.setDate(dataInicio.getDate() + 1);
+                    dataFim.setDate(dataFim.getDate() + 3);
+                    infoPrazo.textContent = `✅ Não temos pedidos em andamento. Você pode retirar a partir de amanhã!`;
+                }
+
+                dataSelect.innerHTML = '';
+                for(let d = new Date(dataInicio); d <= dataFim; d.setDate(d.getDate() + 1)) {
+                    const option = document.createElement('option');
+                    const dia = String(d.getDate()).padStart(2, '0');
+                    const mes = String(d.getMonth() + 1).padStart(2, '0');
+                    const ano = d.getFullYear();
+                    const diaSemana = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.getDay()];
+                    option.value = `${ano}-${mes}-${dia}`;
+                    option.textContent = `${dia}/${mes}/${ano} (${diaSemana})`;
+                    dataSelect.appendChild(option);
+                }
+            } catch(e) {
+                console.error(e);
+                infoPrazo.textContent = '❌ Erro ao carregar datas. Tente novamente.';
+            }
+        }
+
+        // MÓDULO 1: SALVAR PEDIDO NO FIREBASE E ENVIAR WHATSAPP
+        function enviarPedidoComAgendamento() {
+            const data = document.getElementById('dataRetirada').value;
+            const hora = document.getElementById('horaRetirada').value;
+            if(!data || !hora) return alert('Por favor, selecione a data e horário de retirada.');
+
+            const dataObj = new Date(data + 'T00:00:00');
+            const diaSemana = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][dataObj.getDay()];
+            const dataFormatada = `${diaSemana}, ${dataObj.getDate()}/${dataObj.getMonth()+1}/${dataObj.getFullYear()}`;
+
+            let msg='*Gudyx Custom - Pedido com Retirada Agendada*\n\n', total=0; 
+            let itensPedido = [];
+            
+            carrinho.forEach(item=>{ 
+                const sub=parseFloat(item.preco.replace(',','.'))*item.quantidade; 
+                total+=sub; 
+                msg+=`🛒 *${item.nome}* - ${item.quantidade}x - R$ ${item.preco}\n`;
+                itensPedido.push({nome: item.nome, quantidade: item.quantidade, precoUnitario: item.preco, imagem: item.imagem});
+            }); 
+            
+            if(cupomAtual) { 
+                if(cupomAtual.tipo==='percentual') total*=(1-cupomAtual.valor/100); 
+                else total=Math.max(0,total-cupomAtual.valor); 
+                msg+=`💳 Cupom ${cupomAtual.codigo}\n`; 
+            } 
+            msg+=`\n💰 *Total: R$ ${total.toFixed(2)}*\n`;
+            msg+=`📅 *Retirada agendada para:* ${dataFormatada} às ${hora}\n`;
+            msg+=`📍 *Local:* Duque de Caxias - RJ\n`;
+            msg+=`📝 *Forma de pagamento:* \n`;
+            msg+=`\nQuero finalizar!`;
+
+            // SALVAR NO FIREBASE
+            const pedido = {
+                cliente: "Cliente WhatsApp",
+                itens: itensPedido,
+                total: total.toFixed(2),
+                dataRetirada: data,
+                horaRetirada: hora,
+                cupom: cupomAtual ? cupomAtual.codigo : null,
+                status: 'Aguardando confirmação',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            db.collection('pedidos').add(pedido).then(() => {
+                console.log('Pedido salvo no Firebase!');
+                limparCarrinho();
+            }).catch(err => console.error('Erro ao salvar pedido:', err));
+
+            fecharModalAgendamento();
+            fecharDrawer();
+            window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); 
+            playVictorySound(); 
+            confetti({particleCount:200,spread:100,origin:{y:0.5}}); 
+        }
+
+        function abrirComoFunciona() { document.getElementById('comoFuncionaModal').classList.add('active'); }
+        function fecharComoFunciona() { document.getElementById('comoFuncionaModal').classList.remove('active'); }
+        document.getElementById('comoFuncionaModal').addEventListener('click', function(e) { if(e.target === this) fecharComoFunciona(); });
+
         function comprarWhatsAppModal() { if(!produtoModalAtual||!isEmEstoque(produtoModalAtual)) return; const q=parseInt(document.getElementById('qtdModal').textContent), p=isPromoActive(produtoModalAtual)?produtoModalAtual.precoPromo:produtoModalAtual.preco; window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`*Gudyx*\n🛒 ${produtoModalAtual.nome}\n💰 ${p} x ${q}\nQuero comprar!`)}`,'_blank'); fecharModal(); }
 
         function carregarAvaliacoes() { avaliacoes = JSON.parse(localStorage.getItem('gudyx_avaliacoes')||'{}'); }
@@ -1160,24 +1181,7 @@
         function buscaGlobal() { const term = document.getElementById('searchGlobal').value.toLowerCase().trim(); if (term === 'caderno') { document.body.classList.add('festa'); confetti({particleCount:200,spread:100}); falarMascote('🎉 Achou o easter egg do caderno!'); setTimeout(()=>document.body.classList.remove('festa'),3000); return; } if (term === 'desconto') { cupomAtual = {codigo:'SECRETO',tipo:'percentual',valor:15,descricao:'15% OFF easter egg'}; salvarCarrinho(); falarMascote('🎉 Cupom secreto de 15% aplicado!'); return; } if (term === 'festa') { document.body.classList.add('festa'); confetti({particleCount:500,spread:180}); setTimeout(()=>document.body.classList.remove('festa'),5000); return; } if (term.length < 2) return; const resultados = dados.produtos.filter(p => p.nome.toLowerCase().includes(term) || (p.descricao||'').toLowerCase().includes(term)); if (resultados.length === 0) { alert('Nenhum produto encontrado.'); return; } mostrarTela('produtosScreen'); carregarCategorias('produtos'); const container = document.getElementById('produtosProdutosContainer'); container.innerHTML = ''; container.style.display = 'grid'; container.className = 'produtos-grid'; resultados.forEach(prod => { renderizarCardProduto(prod, container); }); }
         function carregarAtalhos() { const container = document.getElementById('atalhosContainer'); container.innerHTML = ''; const nomes = ['Caixas', 'Imãs', 'Adesivos', 'Displays', 'Cards']; nomes.forEach(nome => { const cat = dados.categorias.find(c => c.nome.toLowerCase().includes(nome.toLowerCase())); if (cat) { const btn = document.createElement('button'); btn.className = 'atalho-btn'; btn.textContent = cat.nome; btn.onclick = () => { mostrarTela('produtosScreen'); carregarCategorias('produtos'); setTimeout(() => selecionarCategoria('produtos', cat.id), 200); }; container.appendChild(btn); } }); }
         function carregarDepoimentos() { const container = document.getElementById('depoimentosGrid'); container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Os imãs são lindos!"</div><div class="autor">— Ana C.</div></div>`; }
-        function carregarInstagram() {
-            const container = document.getElementById('instagramGrid');
-            container.style.display = 'flex';
-            container.style.justifyContent = 'center';
-            container.style.alignItems = 'center';
-            container.style.width = '100%';
-            container.innerHTML = `
-                <iframe 
-                    src="https://www.instagram.com/gudyxcustom/embed" 
-                    width="100%" 
-                    height="550" 
-                    frameborder="0" 
-                    scrolling="no" 
-                    allowtransparency="true"
-                    style="border-radius: 20px; max-width: 600px; border: 1px solid rgba(255,255,255,0.1); background: rgba(11,4,28,0.6);">
-                </iframe>
-            `;
-        }
+        function carregarInstagram() { const container = document.getElementById('instagramGrid'); container.style.display = 'flex'; container.style.justifyContent = 'center'; container.style.alignItems = 'center'; container.style.width = '100%'; container.innerHTML = `<iframe src="https://www.instagram.com/gudyxcustom/embed" width="100%" height="550" frameborder="0" scrolling="no" allowtransparency="true" style="border-radius: 20px; max-width: 600px; border: 1px solid rgba(255,255,255,0.1); background: rgba(11,4,28,0.6);"></iframe>`; }
         function verificarRetorno() { const ultimaVisita = localStorage.getItem('gudyx_ultima_visita'); const agora = Date.now(); if (ultimaVisita && (agora - parseInt(ultimaVisita)) > 86400000) { setTimeout(() => falarMascote('Que bom te ver de novo! 😍'), 4000); document.getElementById('badgeVip').style.display = 'inline-block'; } localStorage.setItem('gudyx_ultima_visita', agora.toString()); }
 
         let categoriaSelecionada=null;
@@ -1220,8 +1224,35 @@
 
         function abrirFAQ(){document.getElementById('faqModal').classList.add('active');}
         function fecharFAQ(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('faqModal').classList.remove('active');}
-        function toggleChat(){document.getElementById('chatModal').classList.toggle('active');}
-        function chatResposta(op){const b=document.getElementById('chatBody');const resp={produtos:'Temos caixas, imãs, displays!',promocoes:'Promoções nos destaques!',duvidas:'Pergunte à vontade!',contato:'WhatsApp: (21) 97612-1076'};b.innerHTML+=`<div class="chat-msg user">${op}</div><div class="chat-msg gluudyx">${resp[op]}</div>`;b.scrollTop=b.scrollHeight;}
+        
+        // MÓDULO 5: CHAT CONTEXTUAL
+        function toggleChat(){
+            const modal = document.getElementById('chatModal');
+            modal.classList.toggle('active');
+            if(modal.classList.contains('active') && produtoModalAtual) {
+                const b = document.getElementById('chatBody');
+                const ultimaMsg = b.lastElementChild;
+                if(!ultimaMsg || !ultimaMsg.textContent.includes(produtoModalAtual.nome)) {
+                    b.innerHTML += `<div class="chat-msg gluudyx">🤔 Está vendo o *${produtoModalAtual.nome}*? Quer saber se temos mais opções de acabamento ou cores? Fala comigo! 😉</div>`;
+                    b.scrollTop = b.scrollHeight;
+                }
+            }
+        }
+
+        function chatResposta(op){
+            const b=document.getElementById('chatBody');
+            let resp = '';
+            if(op === 'produtos') resp = 'Temos caixas, imãs, displays e muito mais! 📦 Navegue pelo catálogo.';
+            else if(op === 'promocoes') resp = '🔥 Fique de olho nos cards com a etiqueta "PROMO" e no slider da home!';
+            else if(op === 'retirada') {
+                const emAndamento = configLoja.pedidosEmAndamento ? 'estamos com pedidos em andamento (prazo de 3 a 5 dias)' : 'não temos pedidos em andamento (pode retirar a partir de amanhã)';
+                resp = `📍 Trabalhamos apenas com retirada no balcão. Atualmente, ${emAndamento}. Vá até o carrinho, clique em "Agendar Retirada" e escolha a melhor data!`;
+            }
+            else if(op === 'contato') resp = '📞 WhatsApp: (21) 97612-1076 ou envie uma mensagem aqui pelo chat!';
+            else resp = 'Olá! Posso te ajudar com os produtos, promoções, retirada ou contato?';
+            b.innerHTML += `<div class="chat-msg user">${op}</div><div class="chat-msg gluudyx">${resp}</div>`; 
+            b.scrollTop = b.scrollHeight;
+        }
         function abrirModalSobre(){document.getElementById('modalSobre').classList.add('active');}
         function fecharModalSobre(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('modalSobre').classList.remove('active');}
         function abrirModalContato(){document.getElementById('modalContato').classList.add('active');}
@@ -1238,10 +1269,7 @@
             setTimeout(() => {
                 localStorage.removeItem('gudyx_mascote_state');
                 const wrapper = document.getElementById('mascoteWrapper');
-                if (wrapper) {
-                    wrapper.classList.remove('somiu', 'fugindo', 'voltando');
-                    wrapper.style.display = 'block';
-                }
+                if (wrapper) { wrapper.classList.remove('somiu', 'fugindo', 'voltando'); wrapper.style.display = 'block'; }
                 if (!dados.frases || dados.frases.length === 0) {
                     dados.frases = ['Olá, sou o Gluudyx! ✦', 'Que bom te ver! 🎉', 'Vamos explorar juntos!', 'Curta a Gudyx! 😍'];
                 }
@@ -1267,7 +1295,6 @@
             }
         });
 
-        // Intervalo de segurança para o mascote falar mesmo se o Firebase falhar
         setInterval(() => {
             if (!estaFalando && !estaFugindo && !estaSumido && !estaContando) {
                 atualizarMensagensMascote();
