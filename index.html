@@ -530,9 +530,44 @@
         .faq-item .faq-q.open i { transform:rotate(180deg); }
         .faq-item .faq-a { display:none; padding-top:8px; opacity:0.8; font-size:0.95rem; }
         .faq-item .faq-a.open { display:block; }
-        #chatButton { position:fixed; bottom: 260px; left:20px; width:60px; height:60px; border-radius:50%; background: linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.8rem; box-shadow:0 4px 20px rgba(0,0,0,0.5); z-index:9998; cursor:pointer; transition:var(--transicao); opacity:0.8; }
+        
+        /* --- CORREÇÃO DO BOTÃO E JANELA DE CHAT (REMOÇÃO DA SOBREPOSIÇÃO) --- */
+        #chatButton { 
+            position:fixed; 
+            bottom: 260px; 
+            right: 20px; /* Movido para a direita */
+            left: auto; /* Remove o alinhamento à esquerda */
+            width:60px; height:60px; 
+            border-radius:50%; 
+            background: linear-gradient(135deg,#a028ff,#00f2fe); 
+            color:#fff; 
+            display:flex; 
+            align-items:center; 
+            justify-content:center; 
+            font-size:1.8rem; 
+            box-shadow:0 4px 20px rgba(0,0,0,0.5); 
+            z-index:9998; 
+            cursor:pointer; 
+            transition:var(--transicao); 
+            opacity:0.8; 
+        }
         #chatButton:hover { transform:scale(1.1); opacity:1; }
-        #chatModal { position:fixed; bottom: 325px; left:20px; width:320px; max-width:80vw; background:var(--vidro-fundo); backdrop-filter:blur(16px); border:1px solid var(--vidro-borda); border-radius:20px; z-index:9999; display:none; flex-direction:column; box-shadow:0 10px 40px rgba(0,0,0,0.6); }
+        #chatModal { 
+            position:fixed; 
+            bottom: 325px; 
+            right: 20px; /* Movido para a direita */
+            left: auto; /* Remove o alinhamento à esquerda */
+            width:320px; 
+            max-width:80vw; 
+            background:var(--vidro-fundo); 
+            backdrop-filter:blur(16px); 
+            border:1px solid var(--vidro-borda); 
+            border-radius:20px; 
+            z-index:9999; 
+            display:none; 
+            flex-direction:column; 
+            box-shadow:0 10px 40px rgba(0,0,0,0.6); 
+        }
         #chatModal.active { display:flex; }
         .chat-header { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; border-bottom:1px solid var(--vidro-borda); }
         .chat-header h4 { display:flex; align-items:center; gap:8px; font-size:1rem; }
@@ -545,10 +580,25 @@
         .chat-footer { padding:10px 15px; border-top:1px solid var(--vidro-borda); display:flex; flex-wrap:wrap; gap:6px; }
         .quick-btn { background:rgba(255,255,255,0.05); border:1px solid var(--vidro-borda); border-radius:20px; padding:6px 12px; font-size:0.8rem; color:var(--cor-texto); cursor:pointer; transition:var(--transicao); }
         .quick-btn:hover { background:rgba(172,40,255,0.2); }
-        #miniGluudyx { display: none; position: fixed; bottom: 20px; left: 20px; z-index: 100001; align-items: center; gap: 10px; pointer-events: none; flex-direction: row; }
+
+        /* --- CORREÇÃO DO MINI MASCOTE PARA A DIREITA --- */
+        #miniGluudyx { 
+            display: none; 
+            position: fixed; 
+            bottom: 20px; 
+            right: 20px; /* Movido para a direita */
+            left: auto; /* Remove o alinhamento à esquerda */
+            z-index: 999; /* Reduzido o z-index para não ficar acima de modais principais */
+            align-items: center; 
+            gap: 10px; 
+            pointer-events: none; 
+            flex-direction: row; 
+        }
         #miniGluudyx img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--ciano-brilhante); box-shadow: 0 0 25px rgba(172,40,255,0.9); animation: floatMascote 3s ease-in-out infinite; }
         .mini-fala { background: rgba(11,4,28,0.95); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); padding: 10px 16px; border-radius: 20px; font-size: 0.85rem; max-width: 200px; color: #fff; box-shadow: 0 0 20px rgba(172,40,255,0.5); position: relative; }
         .mini-fala::after { content: ''; position: absolute; top: 50%; right: -12px; transform: translateY(-50%); border: 6px solid transparent; border-left-color: rgba(11,4,28,0.95); }
+        /* --- FIM DA CORREÇÃO --- */
+
         #lightboxOverlay { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:999999; display:none; justify-content:center; align-items:center; cursor:pointer; }
         #lightboxOverlay.active { display:flex; }
         #lightboxOverlay img { max-width:95vw; max-height:95vh; object-fit:contain; border-radius:12px; }
@@ -582,7 +632,7 @@
             .cart-badge { width:20px; height:20px; font-size:0.7rem; }
             .btn-top { width:40px; height:40px; font-size:1.2rem; bottom:85px; }
             .produtos-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
-            .produto-card img { height:100px; } /* Em telas pequenas, a imagem diminui proporcionalmente */
+            .produto-card img { height:100px; }
             #cartDrawer { width:100vw; max-width:100vw; right:-100vw; }
             #cartDrawer.open { right:0; }
             .float-wa { width:50px; height:50px; font-size:1.5rem; bottom:85px; right:15px; }
@@ -591,8 +641,11 @@
             #socialProofContainer { bottom:80px; left:10px; }
             #peekingHead img { width:60px; height:60px; }
             .peeking-fala { font-size:0.7rem; max-width:150px; padding:6px 10px; }
-            #chatButton { width:50px; height:50px; font-size:1.5rem; bottom:240px; left:15px; }
-            #chatModal { width: 280px; bottom: 305px; left: 15px; }
+            
+            /* Ajustes de responsividade para os elementos de chat na versão mobile */
+            #chatButton { width:50px; height:50px; font-size:1.5rem; bottom:240px; right:15px; left: auto; }
+            #chatModal { width: 280px; bottom: 305px; right: 15px; left: auto; }
+            #miniGluudyx { right: 15px; left: auto; }
         }
         @media (max-width:480px) {
             .fala-container { right:0; top:-25px; width:100px; font-size:0.6rem; }
