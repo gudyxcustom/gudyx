@@ -32,7 +32,7 @@
         .hidden { display: none !important; }
         #passwordOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column; }
         #passwordOverlay.hidden { display:none; }
-        #passwordOverlay input { max-width:300px; margin:10px auto; }
+        #passwordOverlay input { max-width:300px; margin:10px auto; padding:10px; border-radius:8px; border:1px solid var(--vidro-borda); background:rgba(255,255,255,0.1); color:#fff; text-align:center;}
         .linha-desconto { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; }
         .linha-desconto input { width: 100px; margin-bottom: 0; }
         .linha-desconto button { background: #ff4455; padding: 5px 10px; margin: 0; }
@@ -42,14 +42,15 @@
         .status-pronto { background:#008000; color:#fff; }
         .status-retirado { background:#00f2fe; color:#000; }
         .pedido-card .acoes { margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
+        #passError { color:#ff4455; font-size:0.8rem; margin-top:10px; display:none; }
     </style>
 </head>
 <body>
     <div id="passwordOverlay">
         <h2 style="color:#fff;">🔒 Acesso Restrito</h2>
-        <input type="password" id="adminPassInput" placeholder="Senha">
+        <input type="password" id="adminPassInput" placeholder="Digite a senha">
         <button onclick="checkPassword()">Entrar</button>
-        <p id="passError" style="color:#ff4455;font-size:0.8rem;margin-top:10px;display:none;">Senha incorreta!</p>
+        <p id="passError">Senha incorreta!</p>
     </div>
 
     <div id="adminContent" class="admin-container" style="display:none;">
@@ -98,7 +99,6 @@
                 <label>Fim</label><input type="datetime-local" id="prodPromoEnd">
                 <label>Descrição da Promo</label><textarea id="prodDescPromo"></textarea>
             </div>
-            
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📊 Preço Progressivo (Desconto por quantidade)</label>
                 <div id="containerDescontoProgressivo">
@@ -110,7 +110,6 @@
                 </div>
                 <button onclick="adicionarLinhaDesconto()" class="btn-secondary" style="margin-top:5px;">+ Adicionar faixa de desconto</button>
             </div>
-
             <button onclick="salvarProduto()" style="margin-top:15px;">Salvar Item</button>
             <div class="admin-item-list" id="listaProdutos"></div>
         </div>
@@ -175,7 +174,7 @@
     </div>
 
     <script>
-        const WA_NUMBER = '5521976121076'; // Definido para o aviso no Admin
+        const WA_NUMBER = '5521976121076'; 
         const firebaseConfig = {
             apiKey: "AIzaSyBLZysnzumgrJPHgFq918WGxH5cGBkv7PY",
             authDomain: "gudyx-ff54b.firebaseapp.com",
@@ -187,6 +186,8 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         firebase.auth().signInAnonymously().catch(e => console.error("Auth error:", e));
+
+        console.log("Admin JS carregado com sucesso!");
 
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
         var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false };
@@ -201,7 +202,6 @@
                 dados.frases = snapFrases.exists ? snapFrases.data().lista : [];
                 const snapFaq = await db.collection('config').doc('faq').get();
                 dados.faq = snapFaq.exists ? snapFaq.data().perguntas : [];
-                
                 const snapConfigLoja = await db.collection('config').doc('loja').get();
                 if (snapConfigLoja.exists) {
                     configLoja = snapConfigLoja.data();
@@ -213,8 +213,8 @@
         }
 
         function abrirAba(aba) {
-            ['abaCategorias','abaProdutos','abaPedidos','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+            ['abaCategorias','abaProdutos','abaPedidos','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
             if (aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
             else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); }
             else if (aba === 'pedidos') { document.getElementById('abaPedidos').style.display = 'block'; document.getElementById('tabPedidos').classList.add('active'); carregarPedidos(); }
@@ -410,23 +410,17 @@
         function carregarPedidos() {
             const container = document.getElementById('listaPedidosAdmin');
             container.innerHTML = '<p style="text-align:center;">Carregando pedidos...</p>';
-            
             db.collection('pedidos').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-                if (snapshot.empty) {
-                    container.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhum pedido registrado ainda.</p>';
-                    return;
-                }
+                if (snapshot.empty) { container.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhum pedido registrado.</p>'; return; }
                 let html = '';
                 snapshot.forEach(doc => {
                     const p = doc.data();
                     const id = doc.id;
                     const itens = p.itens ? p.itens.map(i => `${i.nome} (x${i.quantidade})`).join(', ') : 'Itens não listados';
-                    
                     let statusClass = 'status-aguardando';
                     let statusText = p.status || 'Aguardando confirmação';
                     if(p.status === 'Pronto para retirar') { statusClass = 'status-pronto'; }
                     else if(p.status === 'Retirado') { statusClass = 'status-retirado'; }
-
                     html += `
                         <div class="pedido-card">
                             <div><strong>Status:</strong> <span class="status ${statusClass}">${statusText}</span></div>
@@ -445,13 +439,10 @@
             });
         }
         function atualizarStatus(id, novoStatus) {
-            db.collection('pedidos').doc(id).update({ status: novoStatus }).then(() => {
-                console.log('Status atualizado para: ' + novoStatus);
-            }).catch(err => alert('Erro ao atualizar: ' + err));
+            db.collection('pedidos').doc(id).update({ status: novoStatus }).then(() => {}).catch(err => alert('Erro ao atualizar: ' + err));
         }
-
         function avisoWhatsApp(id) {
-            const linkImagem = "https://i.imgur.com/SuaImagemDeParabens.png"; // Troque pelo link da sua imagem!
+            const linkImagem = "https://i.imgur.com/SuaImagemDeParabens.png"; 
             const mensagem = `*Gudyx Custom* 🎉\n\nSeu pedido está PRONTO para retirada!\n\n📍 Duque de Caxias - RJ\n\n🛎️ Venha retirar quando preferir!`;
             const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensagem + "\n\n" + linkImagem)}`;
             window.open(url, '_blank');
@@ -487,8 +478,7 @@
             const prazoMin = parseInt(document.getElementById('configPrazoMin').value);
             const prazoMax = parseInt(document.getElementById('configPrazoMax').value);
             const pedidosEmAndamento = document.getElementById('configPedidosEmAndamento').checked;
-            if (prazoMin < 1 || prazoMax < prazoMin) return alert('Defina prazos válidos (Mínimo >= 1 e Máximo >= Mínimo).');
-            
+            if (prazoMin < 1 || prazoMax < prazoMin) return alert('Defina prazos válidos.');
             await db.collection('config').doc('loja').set({ prazoMinimo: prazoMin, prazoMaximo: prazoMax, pedidosEmAndamento });
             alert('Configurações salvas!');
             carregarConfigLoja();
@@ -499,12 +489,7 @@
             document.getElementById('relatorioContainer').innerHTML = sorted.slice(0, 20).map((p, i) => `<div style="display:flex;justify-content:space-between;padding:5px 0;"><span>${i+1}. ${p.nome}</span><span>${p.cliques || 0} cliques</span></div>`).join('') || '<p>Sem dados.</p>';
         }
 
-        async function exportarBackup() {
-            await carregarDados();
-            const data = { categorias: dados.categorias, produtos: dados.produtos, frases: dados.frases, faq: dados.faq };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gudyx_backup.json'; a.click();
-        }
+        async function exportarBackup() { await carregarDados(); const data = { categorias: dados.categorias, produtos: dados.produtos, frases: dados.frases, faq: dados.faq }; const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'gudyx_backup.json'; a.click(); }
         async function importarBackup() {
             const file = document.getElementById('importFile').files[0];
             if (!file) return alert('Selecione um arquivo.');
@@ -537,7 +522,9 @@
         }
 
         function checkPassword() {
-            if (btoa(document.getElementById('adminPassInput').value) === btoa('gudyx2026')) {
+            // Verificação corrigida e simplificada
+            const pass = document.getElementById('adminPassInput').value;
+            if (pass === 'gudyx2026') {
                 document.getElementById('passwordOverlay').classList.add('hidden');
                 document.getElementById('adminContent').style.display = 'block';
                 carregarDados().then(() => {
