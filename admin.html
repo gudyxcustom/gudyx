@@ -40,6 +40,10 @@
         .linha-componente select { flex: 1; margin-bottom: 0; }
         .linha-componente input { width: 60px; margin-bottom: 0; }
         .linha-componente button { background: #ff4455; padding: 5px 10px; margin: 0; }
+        .linha-cupom { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; flex-wrap: wrap; }
+        .linha-cupom input { width: 100px; margin-bottom: 0; }
+        .linha-cupom select { width: 80px; margin-bottom: 0; }
+        .linha-cupom button { background: #ff4455; padding: 5px 10px; margin: 0; }
         .pedido-card { border:1px solid var(--vidro-borda); padding:15px; margin-bottom:15px; border-radius:12px; background:rgba(255,255,255,0.03); }
         .pedido-card .status { display:inline-block; padding:4px 12px; border-radius:20px; font-weight:bold; font-size:0.8rem; }
         .status-aguardando { background:#b8860b; color:#fff; }
@@ -64,6 +68,7 @@
             <button onclick="abrirAba('produtos')" id="tabProdutos">Itens</button>
             <button onclick="abrirAba('pedidos')" id="tabPedidos">Pedidos</button>
             <button onclick="abrirAba('avaliacoes')" id="tabAvaliacoes">Avaliações</button>
+            <button onclick="abrirAba('jogos')" id="tabJogos">Jogos e Promos</button>
             <button onclick="abrirAba('frases')" id="tabFrases">Frases</button>
             <button onclick="abrirAba('faq')" id="tabFaq">FAQ</button>
             <button onclick="abrirAba('configLoja')" id="tabConfigLoja">Config. Loja</button>
@@ -82,7 +87,7 @@
             <div class="admin-item-list" id="listaCategorias"></div>
         </div>
 
-        <!-- PRODUTOS (COM KITS) -->
+        <!-- PRODUTOS -->
         <div id="abaProdutos" style="display:none;">
             <h3>Adicionar / Editar Item</h3>
             <input type="hidden" id="editProdId">
@@ -147,10 +152,46 @@
             <div id="listaPedidosAdmin" class="admin-item-list" style="max-height: none; padding: 10px;"></div>
         </div>
 
-        <!-- AVALIAÇÕES (Módulo 3) -->
+        <!-- AVALIAÇÕES -->
         <div id="abaAvaliacoes" style="display:none;">
             <h3>⭐ Gerenciar Avaliações de Clientes</h3>
             <div id="listaAvaliacoesAdmin" class="admin-item-list" style="max-height: none; padding: 10px;"></div>
+        </div>
+
+        <!-- JOGOS E PROMOÇÕES -->
+        <div id="abaJogos" style="display:none;">
+            <h3>🎮 Configurar "Estou com Sorte" e Raspadinha</h3>
+            <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
+                <h4 style="margin-bottom:10px;">🎁 Estou com sorte</h4>
+                <label><input type="checkbox" id="sorteAtivo" style="width:auto; transform:scale(1.5); margin-right:10px;"> Ativar</label>
+                <label>Início (opcional):</label><input type="datetime-local" id="sorteInicio">
+                <label>Fim (opcional):</label><input type="datetime-local" id="sorteFim">
+            </div>
+
+            <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
+                <h4 style="margin-bottom:10px;">🎟️ Raspadinha</h4>
+                <label><input type="checkbox" id="raspaAtivo" style="width:auto; transform:scale(1.5); margin-right:10px;"> Ativar</label>
+                <label>Início (opcional):</label><input type="datetime-local" id="raspaInicio">
+                <label>Fim (opcional):</label><input type="datetime-local" id="raspaFim">
+                
+                <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
+                    <label>💳 Cupons da Raspadinha (quanto maior o desconto, mais raro deve ser):</label>
+                    <div id="containerCuponsRaspa">
+                        <div class="linha-cupom">
+                            <input type="text" class="cupom-codigo" placeholder="Código" value="RASPA5">
+                            <input type="number" class="cupom-valor" placeholder="%" min="0" max="100" value="5">
+                            <select class="cupom-tipo">
+                                <option value="percentual">%</option>
+                                <option value="fixo">R$ Fixo</option>
+                            </select>
+                            <input type="text" class="cupom-desc" placeholder="Descrição" value="5% OFF">
+                            <button class="btn-danger" onclick="removerLinhaCupom(this)">-</button>
+                        </div>
+                    </div>
+                    <button onclick="adicionarLinhaCupom()" class="btn-secondary" style="margin-top:5px;">+ Adicionar cupom</button>
+                </div>
+                <button onclick="salvarConfigJogos()" style="margin-top:15px;">Salvar Configurações</button>
+            </div>
         </div>
 
         <!-- FRASES -->
@@ -222,6 +263,7 @@
 
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
         var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false };
+        var configJogos = { sorte: { ativo: false, inicio: '', fim: '' }, raspa: { ativo: false, inicio: '', fim: '', cupons: [] } };
 
         async function carregarDados() {
             try {
@@ -240,16 +282,53 @@
                     document.getElementById('configPrazoMax').value = configLoja.prazoMaximo;
                     document.getElementById('configPedidosEmAndamento').checked = configLoja.pedidosEmAndamento;
                 }
+                const snapJogos = await db.collection('config').doc('jogos').get();
+                if (snapJogos.exists) {
+                    configJogos = snapJogos.data();
+                    // Preencher campos
+                    document.getElementById('sorteAtivo').checked = configJogos.sorte?.ativo || false;
+                    document.getElementById('sorteInicio').value = configJogos.sorte?.inicio || '';
+                    document.getElementById('sorteFim').value = configJogos.sorte?.fim || '';
+                    document.getElementById('raspaAtivo').checked = configJogos.raspa?.ativo || false;
+                    document.getElementById('raspaInicio').value = configJogos.raspa?.inicio || '';
+                    document.getElementById('raspaFim').value = configJogos.raspa?.fim || '';
+                    // Preencher cupons
+                    const containerCupons = document.getElementById('containerCuponsRaspa');
+                    containerCupons.innerHTML = '';
+                    if (configJogos.raspa?.cupons && configJogos.raspa.cupons.length > 0) {
+                        configJogos.raspa.cupons.forEach(cupom => {
+                            const div = document.createElement('div');
+                            div.className = 'linha-cupom';
+                            div.innerHTML = `
+                                <input type="text" class="cupom-codigo" placeholder="Código" value="${cupom.codigo || ''}">
+                                <input type="number" class="cupom-valor" placeholder="%" min="0" max="100" value="${cupom.valor || 0}">
+                                <select class="cupom-tipo">
+                                    <option value="percentual" ${cupom.tipo === 'percentual' ? 'selected' : ''}>%</option>
+                                    <option value="fixo" ${cupom.tipo === 'fixo' ? 'selected' : ''}>R$ Fixo</option>
+                                </select>
+                                <input type="text" class="cupom-desc" placeholder="Descrição" value="${cupom.descricao || ''}">
+                                <button class="btn-danger" onclick="removerLinhaCupom(this)">-</button>
+                            `;
+                            containerCupons.appendChild(div);
+                        });
+                    } else {
+                        // Adicionar uma linha padrão
+                        adicionarLinhaCupom();
+                    }
+                } else {
+                    adicionarLinhaCupom();
+                }
             } catch(e) { console.error(e); }
         }
 
         function abrirAba(aba) {
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            ['abaCategorias','abaProdutos','abaPedidos','abaAvaliacoes','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
+            ['abaCategorias','abaProdutos','abaPedidos','abaAvaliacoes','abaJogos','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
             if (aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
             else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); toggleCamposKit(); }
             else if (aba === 'pedidos') { document.getElementById('abaPedidos').style.display = 'block'; document.getElementById('tabPedidos').classList.add('active'); carregarPedidos(); }
             else if (aba === 'avaliacoes') { document.getElementById('abaAvaliacoes').style.display = 'block'; document.getElementById('tabAvaliacoes').classList.add('active'); carregarAvaliacoesAdmin(); }
+            else if (aba === 'jogos') { document.getElementById('abaJogos').style.display = 'block'; document.getElementById('tabJogos').classList.add('active'); }
             else if (aba === 'frases') { document.getElementById('abaFrases').style.display = 'block'; document.getElementById('tabFrases').classList.add('active'); document.getElementById('frasesInput').value = dados.frases.join('\n'); }
             else if (aba === 'faq') { document.getElementById('abaFaq').style.display = 'block'; document.getElementById('tabFaq').classList.add('active'); carregarFAQ(); }
             else if (aba === 'configLoja') { document.getElementById('abaConfigLoja').style.display = 'block'; document.getElementById('tabConfigLoja').classList.add('active'); carregarConfigLoja(); }
@@ -328,7 +407,6 @@
         }
         function removerLinhaDesconto(btn) { btn.parentElement.remove(); }
 
-        // --- Lógica de Kits ---
         function toggleCamposKit() {
             const tipoItem = document.getElementById('prodTipoItem').value;
             const campos = document.getElementById('camposKit');
@@ -343,11 +421,9 @@
             const container = document.getElementById('containerComponentesKit');
             const div = document.createElement('div');
             div.className = 'linha-componente';
-            
             let select = document.createElement('select');
             select.className = 'comp-produto';
             select.innerHTML = '<option value="">Selecione um produto</option>';
-            // Preencher com produtos (exceto o que está sendo editado, se for o caso)
             const currentId = document.getElementById('editProdId').value;
             dados.produtos.filter(p => p.id !== currentId).forEach(p => {
                 let opt = document.createElement('option');
@@ -355,9 +431,7 @@
                 opt.textContent = p.nome;
                 select.appendChild(opt);
             });
-
             div.appendChild(select);
-            
             let inputQtd = document.createElement('input');
             inputQtd.type = 'number';
             inputQtd.className = 'comp-qtd';
@@ -365,19 +439,14 @@
             inputQtd.min = 1;
             inputQtd.value = 1;
             div.appendChild(inputQtd);
-
             let btn = document.createElement('button');
             btn.className = 'btn-danger';
             btn.textContent = '-';
             btn.onclick = function() { removerLinhaComponente(this); };
             div.appendChild(btn);
-
             container.appendChild(div);
         }
-
-        function removerLinhaComponente(btn) {
-            btn.parentElement.remove();
-        }
+        function removerLinhaComponente(btn) { btn.parentElement.remove(); }
 
         async function salvarProduto() {
             const id = document.getElementById('editProdId').value;
@@ -424,8 +493,8 @@
             const fileInput = document.getElementById('prodImg');
             async function processarProd(imagens) {
                 const produto = { 
-                    tipoItem, // 'simples' ou 'kit'
-                    componentes, // array de componentes
+                    tipoItem,
+                    componentes,
                     categoriaId: catId, nome, descricao, preco, estoque, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
@@ -435,7 +504,6 @@
                 else { const docRef = await db.collection('produtos').add(produto); await db.collection('produtos').doc(docRef.id).update({ id: docRef.id }); }
                 limparFormularioProduto(); await carregarDados(); atualizarListaProdutos();
             }
-
             if (fileInput.files.length > 0) {
                 const imagens = [];
                 for (let f of Array.from(fileInput.files).slice(0, 3)) { imagens.push(await redimensionarImagem(f, 600, 0.5)); }
@@ -481,7 +549,6 @@
                 });
             } else { adicionarLinhaDesconto(); }
 
-            // Carregar Componentes do Kit
             const containerComp = document.getElementById('containerComponentesKit');
             containerComp.innerHTML = '';
             if (p.tipoItem === 'kit' && p.componentes && p.componentes.length > 0) {
@@ -543,7 +610,7 @@
             });
         }
 
-        // --- Lógica de Pedidos e Avaliações ---
+        // --- Pedidos e Avaliações ---
         function carregarPedidos() {
             const container = document.getElementById('listaPedidosAdmin');
             container.innerHTML = '<p style="text-align:center;">Carregando pedidos...</p>';
@@ -579,19 +646,13 @@
         function atualizarStatus(id, novoStatus) {
             db.collection('pedidos').doc(id).update({ status: novoStatus }).then(() => {}).catch(err => alert('Erro ao atualizar: ' + err));
         }
-
-        // Módulo 3: Link de Avaliação Pós-Venda
         function enviarLinkAvaliacao(id) {
-            // Gera o link baseado no ID do pedido
             const linkAvaliacao = window.location.origin + window.location.pathname.replace('admin.html', 'index.html') + '#avaliar=' + id;
-            
             const mensagem = `*Gudyx Custom* 🎉\n\nSeu pedido foi retirado com sucesso!\n\n📝 Gostaríamos de saber como foi sua experiência. Avalie seu pedido clicando no link abaixo:\n\n${linkAvaliacao}\n\n⭐ Sua opinião é muito importante para nós!`;
-            
             const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensagem)}`;
             window.open(url, '_blank');
         }
 
-        // Gerenciar Avaliações
         function carregarAvaliacoesAdmin() {
             const container = document.getElementById('listaAvaliacoesAdmin');
             container.innerHTML = '<p style="text-align:center;">Carregando avaliações...</p>';
@@ -603,7 +664,6 @@
                     const id = doc.id;
                     const estrelas = '★'.repeat(av.nota) + '☆'.repeat(5 - av.nota);
                     const aprovadoBadge = av.aprovado ? '<span style="color: #00f2fe;">(Aprovado)</span>' : '<span style="color: #ff8800;">(Pendente)</span>';
-                    
                     html += `
                         <div class="pedido-card">
                             <div><strong>Cliente:</strong> ${av.autor || 'Anônimo'}</div>
@@ -625,6 +685,53 @@
         function aprovarAvaliacao(id) { db.collection('avaliacoes').doc(id).update({ aprovado: true }); }
         function desaprovarAvaliacao(id) { db.collection('avaliacoes').doc(id).update({ aprovado: false }); }
         function deletarAvaliacao(id) { if(confirm('Deletar avaliação?')) db.collection('avaliacoes').doc(id).delete(); }
+
+        // --- Jogos e Promoções ---
+        function adicionarLinhaCupom() {
+            const container = document.getElementById('containerCuponsRaspa');
+            const div = document.createElement('div');
+            div.className = 'linha-cupom';
+            div.innerHTML = `
+                <input type="text" class="cupom-codigo" placeholder="Código" value="RASPA">
+                <input type="number" class="cupom-valor" placeholder="%" min="0" max="100" value="5">
+                <select class="cupom-tipo">
+                    <option value="percentual">%</option>
+                    <option value="fixo">R$ Fixo</option>
+                </select>
+                <input type="text" class="cupom-desc" placeholder="Descrição" value="5% OFF">
+                <button class="btn-danger" onclick="removerLinhaCupom(this)">-</button>
+            `;
+            container.appendChild(div);
+        }
+        function removerLinhaCupom(btn) { btn.parentElement.remove(); }
+
+        async function salvarConfigJogos() {
+            const sorteAtivo = document.getElementById('sorteAtivo').checked;
+            const sorteInicio = document.getElementById('sorteInicio').value;
+            const sorteFim = document.getElementById('sorteFim').value;
+            const raspaAtivo = document.getElementById('raspaAtivo').checked;
+            const raspaInicio = document.getElementById('raspaInicio').value;
+            const raspaFim = document.getElementById('raspaFim').value;
+
+            const cupons = [];
+            document.querySelectorAll('#containerCuponsRaspa .linha-cupom').forEach(row => {
+                const codigo = row.querySelector('.cupom-codigo').value.trim();
+                const valor = parseFloat(row.querySelector('.cupom-valor').value);
+                const tipo = row.querySelector('.cupom-tipo').value;
+                const descricao = row.querySelector('.cupom-desc').value.trim();
+                if (codigo && !isNaN(valor) && valor >= 0) {
+                    cupons.push({ codigo, valor, tipo, descricao });
+                }
+            });
+
+            const data = {
+                sorte: { ativo: sorteAtivo, inicio: sorteInicio, fim: sorteFim },
+                raspa: { ativo: raspaAtivo, inicio: raspaInicio, fim: raspaFim, cupons }
+            };
+            await db.collection('config').doc('jogos').set(data);
+            alert('Configurações de jogos salvas!');
+            carregarDados();
+        }
 
         async function salvarFrases() {
             const lista = document.getElementById('frasesInput').value.split('\n').map(s => s.trim()).filter(s => s);
