@@ -99,7 +99,6 @@
                 <label>Descrição da Promo</label><textarea id="prodDescPromo"></textarea>
             </div>
             
-            <!-- PREÇO PROGRESSIVO -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📊 Preço Progressivo (Desconto por quantidade)</label>
                 <div id="containerDescontoProgressivo">
@@ -149,7 +148,7 @@
                 <input type="number" id="configPrazoMax" min="2" value="5">
                 <label style="display:flex; align-items:center; gap:10px; margin-top:15px;">
                     <input type="checkbox" id="configPedidosEmAndamento" style="width:auto; transform:scale(1.5); margin-right:10px;">
-                    Há pedidos em andamento? (Se sim, o cliente só verá as datas com base no prazo mínimo. Se não, o site libera datas mais próximas).
+                    Há pedidos em andamento?
                 </label>
                 <button onclick="salvarConfigLoja()" style="margin-top:15px;">Salvar Configurações</button>
             </div>
@@ -176,6 +175,7 @@
     </div>
 
     <script>
+        const WA_NUMBER = '5521976121076'; // Definido para o aviso no Admin
         const firebaseConfig = {
             apiKey: "AIzaSyBLZysnzumgrJPHgFq918WGxH5cGBkv7PY",
             authDomain: "gudyx-ff54b.firebaseapp.com",
@@ -244,7 +244,6 @@
             });
         }
 
-        // CATEGORIAS
         async function salvarCategoria() {
             const id = document.getElementById('editCatId').value;
             const tipo = document.getElementById('catTipo').value;
@@ -296,9 +295,6 @@
             container.appendChild(div);
         }
         function removerLinhaDesconto(btn) { btn.parentElement.remove(); }
-
-        // PRODUTOS
-        function togglePromoFields() { document.getElementById('promoFields').classList.toggle('hidden', !document.getElementById('prodPromocao').checked); }
 
         async function salvarProduto() {
             const id = document.getElementById('editProdId').value;
@@ -411,7 +407,6 @@
             });
         }
 
-        // PEDIDOS
         function carregarPedidos() {
             const container = document.getElementById('listaPedidosAdmin');
             container.innerHTML = '<p style="text-align:center;">Carregando pedidos...</p>';
@@ -456,22 +451,18 @@
         }
 
         function avisoWhatsApp(id) {
-            // Substitua esse link pela URL da sua IMAGEM (figurinha) hospedada (ex: no Imgur ou Firebase Storage)
-            const linkImagem = "https://i.imgur.com/SuaImagemDeParabens.png"; 
-            
+            const linkImagem = "https://i.imgur.com/SuaImagemDeParabens.png"; // Troque pelo link da sua imagem!
             const mensagem = `*Gudyx Custom* 🎉\n\nSeu pedido está PRONTO para retirada!\n\n📍 Duque de Caxias - RJ\n\n🛎️ Venha retirar quando preferir!`;
             const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensagem + "\n\n" + linkImagem)}`;
             window.open(url, '_blank');
         }
 
-        // FRASES
         async function salvarFrases() {
             const lista = document.getElementById('frasesInput').value.split('\n').map(s => s.trim()).filter(s => s);
             await db.collection('config').doc('frases').set({ lista });
             alert('Frases salvas!');
         }
 
-        // FAQ
         function carregarFAQ() { document.getElementById('listaFaq').innerHTML = dados.faq.map((faq, i) => `<div class="item"><span><strong>P:</strong> ${faq.pergunta}<br>R: ${faq.resposta}</span><div><button class="btn-edit" onclick="editarFaq(${i})">✏️</button><button onclick="removerFaq(${i})">Remover</button></div></div>`).join('') || '<p>Nenhuma FAQ.</p>'; }
         async function salvarFaq() {
             const id = document.getElementById('editFaqId').value;
@@ -487,7 +478,6 @@
         function editarFaq(index) { const faq = dados.faq[index]; document.getElementById('editFaqId').value = index; document.getElementById('faqPergunta').value = faq.pergunta; document.getElementById('faqResposta').value = faq.resposta; }
         async function removerFaq(index) { if (confirm('Remover?')) { dados.faq.splice(index, 1); await db.collection('config').doc('faq').set({ perguntas: dados.faq }); carregarFAQ(); } }
 
-        // CONFIGURAÇÃO DA LOJA
         function carregarConfigLoja() {
             document.getElementById('configPrazoMin').value = configLoja.prazoMinimo || 3;
             document.getElementById('configPrazoMax').value = configLoja.prazoMaximo || 5;
@@ -504,13 +494,11 @@
             carregarConfigLoja();
         }
 
-        // RELATÓRIOS
         function carregarRelatorios() {
             const sorted = [...dados.produtos].sort((a, b) => (b.cliques || 0) - (a.cliques || 0));
             document.getElementById('relatorioContainer').innerHTML = sorted.slice(0, 20).map((p, i) => `<div style="display:flex;justify-content:space-between;padding:5px 0;"><span>${i+1}. ${p.nome}</span><span>${p.cliques || 0} cliques</span></div>`).join('') || '<p>Sem dados.</p>';
         }
 
-        // BACKUP
         async function exportarBackup() {
             await carregarDados();
             const data = { categorias: dados.categorias, produtos: dados.produtos, frases: dados.frases, faq: dados.faq };
