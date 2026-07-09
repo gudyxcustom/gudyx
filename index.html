@@ -164,23 +164,24 @@
         .categoria-card .categoria-img { width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--vidro-borda); }
         .categoria-card h4 { font-size:1.1rem; font-weight:500; }
         .produtos-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:15px; width:100%; max-width:1100px; margin-top:10px; }
-        /* --- INICIO CORREÇÃO DO CARD DO PRODUTO --- */
+        
+        /* --- INICIO CORREÇÃO DO CARD DO PRODUTO (MAIOR, BOTÕES SUBIDOS, FAVORITO NA DIREITA) --- */
         .produto-card {
             background: var(--vidro-fundo);
             backdrop-filter: blur(8px);
             border: 1px solid var(--vidro-borda);
             border-radius: 16px;
-            padding: 15px;
+            padding: 20px 20px 25px; /* Aumentei o padding (especialmente o inferior) */
             text-align: center;
             transition: var(--transicao);
             cursor: pointer;
             position: relative;
             display: flex;
             flex-direction: column;
-            align-items: stretch;
-            gap: 10px;
+            align-items: center;
+            gap: 12px; /* Mais espaço entre os elementos internos */
             justify-content: space-between;
-            min-height: 280px;
+            min-height: 320px; /* Aumentei a altura total do card */
             overflow: hidden;
         }
         .produto-card:hover {
@@ -190,18 +191,18 @@
         }
         .produto-card img {
             width: 100%;
-            height: 140px;
+            height: 160px; /* Aumentei a altura para preencher melhor o espaço */
             object-fit: contain; /* Mostra a imagem inteira sem cortar */
             border-radius: 12px;
             background: rgba(255,255,255,0.05);
-            padding: 5px;
+            padding: 8px;
             flex-shrink: 0;
         }
         .produto-card h5 {
-            font-size: 0.95rem;
+            font-size: 1.1rem; /* Fonte um pouco maior */
             font-weight: 500;
             margin: 0;
-            min-height: 2.5em; /* Garante altura uniforme para os títulos */
+            min-height: 3em; /* Garante altura uniforme */
             display: flex;
             align-items: center;
             justify-content: center;
@@ -209,7 +210,7 @@
         .produto-card .preco {
             font-weight: 700;
             color: var(--amarelo-neon);
-            font-size: 1rem;
+            font-size: 1.2rem; /* Fonte maior */
             margin: 0;
         }
         .produto-card .badge-promo { position:absolute; top:8px; right:8px; background:rgba(255,0,0,0.7); padding:2px 8px; border-radius:12px; font-weight:700; font-size:0.6rem; text-transform:uppercase; z-index:4; }
@@ -246,25 +247,77 @@
         /* Ajuste do Contador */
         .produto-card .contador-produto {
             position: absolute;
-            bottom: 5px;
-            left: 5px;
-            font-size: 0.65rem;
-            opacity: 0.6;
-            background: rgba(0,0,0,0.5);
-            padding: 2px 6px;
+            bottom: 8px; /* Ajustado para subir um pouco */
+            left: 8px;
+            font-size: 0.7rem;
+            opacity: 0.8;
+            background: rgba(0,0,0,0.6);
+            padding: 4px 8px;
             border-radius: 10px;
             z-index: 4;
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .btn-add-cart { display:inline-block; padding:8px 12px; background:linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; border-radius:50px; border:none; font-size:0.8rem; font-weight:600; cursor:pointer; transition:var(--transicao); }
-        .btn-add-cart:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(172,40,255,0.4); }
-        .btn-add-cart:disabled { background:#555; cursor:not-allowed; }
-        .btn-wa-card { display:inline-block; padding:8px 12px; background:#25D366; color:#fff; border-radius:50px; text-decoration:none; font-size:0.8rem; font-weight:600; transition:var(--transicao); margin-left:5px; }
-        .btn-wa-card:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(37,211,102,0.4); }
-        .btn-favorite { position:absolute; top:8px; left:8px; background:rgba(0,0,0,0.5); backdrop-filter:blur(4px); border:none; border-radius:50%; width:32px; height:32px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; cursor:pointer; transition:var(--transicao); color:#fff; z-index:6; }
+        /* Botão de Favorito - MUDOU DE LADO (Agora na Direita) */
+        .btn-favorite {
+            position: absolute;
+            top: 10px;
+            right: 10px; /* Antes era left: 8px */
+            left: auto;  /* Remove o alinhamento à esquerda */
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transicao);
+            color: #fff;
+            z-index: 6;
+        }
         .btn-favorite:hover { transform:scale(1.1); }
         .btn-favorite.active { color:#ff4455; }
         .btn-favorite.active i { color:#ff4455; }
+
+        /* Botões de Ação (WhatsApp e Carrinho) - SUBIRAM UM POUCO */
+        .produto-card .botoes-lista {
+            display: flex;
+            gap: 8px;
+            margin-top: 5px; /* Empurra levemente para cima dentro do card */
+            z-index: 5;
+        }
+        .btn-add-cart { 
+            display: inline-block; 
+            padding: 10px 16px; /* Botões um pouco maiores */
+            background: linear-gradient(135deg, #7b2ffc, #00f2fe);
+            color: #fff; 
+            border-radius: 50px; 
+            border:none; 
+            font-size: 0.9rem; 
+            font-weight:600; 
+            cursor:pointer; 
+            transition:var(--transicao); 
+        }
+        .btn-add-cart:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(172,40,255,0.4); }
+        .btn-add-cart:disabled { background:#555; cursor:not-allowed; }
+        .btn-wa-card { 
+            display: inline-block; 
+            padding: 10px 16px; /* Botões um pouco maiores */
+            background:#25D366; 
+            color:#fff; 
+            border-radius:50px; 
+            text-decoration:none; 
+            font-size: 0.9rem; 
+            font-weight:600; 
+            transition:var(--transicao); 
+        }
+        .btn-wa-card:hover { transform:scale(1.05); box-shadow:0 0 20px rgba(37,211,102,0.4); }
         /* --- FIM CORREÇÃO DO CARD DO PRODUTO --- */
 
         #productModal { position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(10px); z-index:99999; display:none; justify-content:center; align-items:center; padding:20px; }
@@ -529,7 +582,7 @@
             .cart-badge { width:20px; height:20px; font-size:0.7rem; }
             .btn-top { width:40px; height:40px; font-size:1.2rem; bottom:85px; }
             .produtos-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
-            .produto-card img { height:100px; }
+            .produto-card img { height:100px; } /* Em telas pequenas, a imagem diminui proporcionalmente */
             #cartDrawer { width:100vw; max-width:100vw; right:-100vw; }
             #cartDrawer.open { right:0; }
             .float-wa { width:50px; height:50px; font-size:1.5rem; bottom:85px; right:15px; }
@@ -1099,7 +1152,6 @@
             const quickView = `<div class="quick-view">R$ ${prod.preco} · Clique para detalhes</div>`;
             const contador = Math.floor(Math.random() * 5) + 1;
             const contadorHtml = `<div class="contador-produto">👀 ${contador} ${contador === 1 ? 'pessoa' : 'pessoas'} olhando agora</div>`;
-            // Adicionei a classe botoes-lista para alinhar os botões
             card.innerHTML = `${badges}${favBtn}${quickView}${contadorHtml}<img src="${getImagemPrincipal(prod)}" loading="lazy"><h5>${prod.nome}</h5>${precoHtml}<div class="botoes-lista">${btnAdd} ${waBtn}</div>`;
             container.appendChild(card);
         }
