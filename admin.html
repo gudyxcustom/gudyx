@@ -99,6 +99,7 @@
                 <label>Fim</label><input type="datetime-local" id="prodPromoEnd">
                 <label>Descrição da Promo</label><textarea id="prodDescPromo"></textarea>
             </div>
+            <!-- Área do Preço Progressivo -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📊 Preço Progressivo (Desconto por quantidade)</label>
                 <div id="containerDescontoProgressivo">
@@ -114,7 +115,7 @@
             <div class="admin-item-list" id="listaProdutos"></div>
         </div>
 
-        <!-- PEDIDOS -->
+        <!-- PEDIDOS (Módulo 1) -->
         <div id="abaPedidos" style="display:none;">
             <h3>📦 Gerenciar Pedidos</h3>
             <div id="listaPedidosAdmin" class="admin-item-list" style="max-height: none; padding: 10px;"></div>
@@ -137,7 +138,7 @@
             <div class="admin-item-list" id="listaFaq"></div>
         </div>
 
-        <!-- CONFIGURAÇÃO DA LOJA -->
+        <!-- CONFIGURAÇÃO DA LOJA (Módulo 1) -->
         <div id="abaConfigLoja" style="display:none;">
             <h3>⚙️ Configuração de Prazos e Retirada</h3>
             <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
@@ -147,7 +148,7 @@
                 <input type="number" id="configPrazoMax" min="2" value="5">
                 <label style="display:flex; align-items:center; gap:10px; margin-top:15px;">
                     <input type="checkbox" id="configPedidosEmAndamento" style="width:auto; transform:scale(1.5); margin-right:10px;">
-                    Há pedidos em andamento?
+                    Há pedidos em andamento? (Se sim, o site bloqueia as datas).
                 </label>
                 <button onclick="salvarConfigLoja()" style="margin-top:15px;">Salvar Configurações</button>
             </div>
@@ -407,11 +408,16 @@
             });
         }
 
+        // Lógica de Pedidos (Módulo 1)
         function carregarPedidos() {
             const container = document.getElementById('listaPedidosAdmin');
             container.innerHTML = '<p style="text-align:center;">Carregando pedidos...</p>';
+            
             db.collection('pedidos').orderBy('timestamp', 'desc').onSnapshot(snapshot => {
-                if (snapshot.empty) { container.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhum pedido registrado.</p>'; return; }
+                if (snapshot.empty) {
+                    container.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhum pedido registrado ainda.</p>';
+                    return;
+                }
                 let html = '';
                 snapshot.forEach(doc => {
                     const p = doc.data();
@@ -421,6 +427,7 @@
                     let statusText = p.status || 'Aguardando confirmação';
                     if(p.status === 'Pronto para retirar') { statusClass = 'status-pronto'; }
                     else if(p.status === 'Retirado') { statusClass = 'status-retirado'; }
+
                     html += `
                         <div class="pedido-card">
                             <div><strong>Status:</strong> <span class="status ${statusClass}">${statusText}</span></div>
@@ -430,7 +437,7 @@
                             <div class="acoes">
                                 ${p.status !== 'Pronto para retirar' ? `<button onclick="atualizarStatus('${id}', 'Pronto para retirar')" class="btn-edit">✅ Marcar como Pronto</button>` : ''}
                                 ${p.status !== 'Retirado' ? `<button onclick="atualizarStatus('${id}', 'Retirado')" class="btn-danger">🚪 Marcar como Retirado</button>` : ''}
-                                <button onclick="avisoWhatsApp('${id}')" class="btn-whatsapp-modal"><i class="fab fa-whatsapp"></i> Avisar Cliente</button>
+                                <button onclick="avisoWhatsApp()" class="btn-whatsapp-modal"><i class="fab fa-whatsapp"></i> Avisar Cliente (Módulo 2)</button>
                             </div>
                         </div>
                     `;
@@ -441,7 +448,10 @@
         function atualizarStatus(id, novoStatus) {
             db.collection('pedidos').doc(id).update({ status: novoStatus }).then(() => {}).catch(err => alert('Erro ao atualizar: ' + err));
         }
-        function avisoWhatsApp(id) {
+
+        // Função do Módulo 2 (Avisar cliente)
+        function avisoWhatsApp() {
+            // Substitua a URL abaixo pelo link da sua imagem (sua "figurinha") hospedada no Imgur ou Firebase
             const linkImagem = "https://i.imgur.com/SuaImagemDeParabens.png"; 
             const mensagem = `*Gudyx Custom* 🎉\n\nSeu pedido está PRONTO para retirada!\n\n📍 Duque de Caxias - RJ\n\n🛎️ Venha retirar quando preferir!`;
             const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensagem + "\n\n" + linkImagem)}`;
@@ -478,7 +488,7 @@
             const prazoMin = parseInt(document.getElementById('configPrazoMin').value);
             const prazoMax = parseInt(document.getElementById('configPrazoMax').value);
             const pedidosEmAndamento = document.getElementById('configPedidosEmAndamento').checked;
-            if (prazoMin < 1 || prazoMax < prazoMin) return alert('Defina prazos válidos.');
+            if (prazoMin < 1 || prazoMax < prazoMin) return alert('Defina prazos válidos (Mínimo >= 1 e Máximo >= Mínimo).');
             await db.collection('config').doc('loja').set({ prazoMinimo: prazoMin, prazoMaximo: prazoMax, pedidosEmAndamento });
             alert('Configurações salvas!');
             carregarConfigLoja();
@@ -522,7 +532,6 @@
         }
 
         function checkPassword() {
-            // Verificação corrigida e simplificada
             const pass = document.getElementById('adminPassInput').value;
             if (pass === 'gudyx2026') {
                 document.getElementById('passwordOverlay').classList.add('hidden');
