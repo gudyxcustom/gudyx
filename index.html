@@ -1155,84 +1155,51 @@
 
         function alterarQuantidade(delta) { quantidadeModal = Math.max(1, quantidadeModal+delta); document.getElementById('qtdModal').textContent = quantidadeModal; calcularPrecoProgressivo(quantidadeModal); }
 
-        // Cálculo de precificação automática
+        // ================= CORREÇÃO 1: A FUNÇÃO DE CALCULAR PREÇO =================
         function calcularPrecoTotal(prod, opcoesSelecionadas) {
+            // Verificação de segurança: Se o produto não tiver dados de precificação, usamos o preço fixo antigo
+            if (!prod.precoMaoObra && prod.preco) {
+                let precoBase = parseFloat(String(prod.preco).replace(',', '.')) || 0;
+                if (isPromoActive(prod) && prod.precoPromo) {
+                    precoBase = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
+                }
+                return precoBase.toFixed(2).replace('.', ',');
+            }
+
+            // Se tiver precificação, calculamos
             let precoMaterial = 0;
             const material = prod.material || 'offset';
-            if (material === 'offset') precoMaterial = parseFloat(configPrecificacao.offset.replace(',', '.')) || 0.3;
-            else if (material === 'matte') precoMaterial = parseFloat(configPrecificacao.matte.replace(',', '.')) || 0.4;
-            else if (material === 'glossy') precoMaterial = parseFloat(configPrecificacao.glossy.replace(',', '.')) || 0.5;
+            
+            // Verifica se a configPrecificacao já carregou, senão usa 0
+            const precoOffset = configPrecificacao.offset ? parseFloat(String(configPrecificacao.offset).replace(',', '.')) : 0;
+            const precoMatte = configPrecificacao.matte ? parseFloat(String(configPrecificacao.matte).replace(',', '.')) : 0;
+            const precoGlossy = configPrecificacao.glossy ? parseFloat(String(configPrecificacao.glossy).replace(',', '.')) : 0;
+
+            if (material === 'offset') precoMaterial = precoOffset || 0.30;
+            else if (material === 'matte') precoMaterial = precoMatte || 0.40;
+            else if (material === 'glossy') precoMaterial = precoGlossy || 0.50;
             
             const qtdFolhas = prod.qtdFolhas || 1;
-            const maoObra = parseFloat(prod.precoMaoObra.replace(',', '.')) || 0;
+            const maoObra = parseFloat(String(prod.precoMaoObra || '0').replace(',', '.')) || 0;
             
             let total = (precoMaterial * qtdFolhas) + maoObra;
 
             // Soma das opções
-            let opcoesHtml = '';
-            opcoesSelecionadas.forEach(op => {
-                total += parseFloat(op.preco.replace(',', '.')) || 0;
-            });
+            if (opcoesSelecionadas) {
+                opcoesSelecionadas.forEach(op => {
+                    total += parseFloat(String(op.preco || '0').replace(',', '.')) || 0;
+                });
+            }
 
             // Aplicar promoção se existir
             if (isPromoActive(prod) && prod.precoPromo) {
-                total = parseFloat(prod.precoPromo.replace(',', '.'));
+                total = parseFloat(String(prod.precoPromo).replace(',', '.')) || total;
             }
 
             return total.toFixed(2).replace('.', ',');
         }
 
-        function calcularPrecoProgressivo(qtd) {
-            if (!produtoModalAtual) return;
-            const prod = produtoModalAtual;
-            const precoBase = parseFloat(prod.precoMaoObra.replace(',', '.'));
-            let precoFinal = precoBase;
-            let maiorDesconto = 0;
-            if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
-                prod.descontoProgressivo.forEach(regra => {
-                    if (qtd >= regra.qtd && regra.desconto > maiorDesconto) {
-                        maiorDesconto = regra.desconto;
-                    }
-                });
-                if (maiorDesconto > 0) {
-                    precoFinal = precoBase * (1 - maiorDesconto / 100);
-                }
-            }
-            const precoExibicao = precoFinal.toFixed(2).replace('.', ',');
-            const containerProgressivo = document.getElementById('modalPrecoProgressivo');
-            if (maiorDesconto > 0) {
-                containerProgressivo.innerHTML = `💰 Preço unitário: <strong>R$ ${precoExibicao}</strong> (${maiorDesconto}% OFF para ${qtd} unidades)`;
-            } else {
-                containerProgressivo.innerHTML = '';
-            }
-        }
-
-        function simularAtacado() {
-            const qtd = parseInt(document.getElementById('simuladorQtd').value);
-            if (!qtd || qtd < 1) return alert('Digite uma quantidade válida.');
-            const prod = produtoModalAtual;
-            const precoBase = parseFloat(prod.precoMaoObra.replace(',', '.'));
-            let precoFinal = precoBase;
-            let maiorDesconto = 0;
-            if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
-                prod.descontoProgressivo.forEach(regra => {
-                    if (qtd >= regra.qtd && regra.desconto > maiorDesconto) {
-                        maiorDesconto = regra.desconto;
-                    }
-                });
-                if (maiorDesconto > 0) {
-                    precoFinal = precoBase * (1 - maiorDesconto / 100);
-                }
-            }
-            const total = precoFinal * qtd;
-            const resultado = document.getElementById('resultadoSimulacao');
-            if (maiorDesconto > 0) {
-                resultado.innerHTML = `🛒 ${qtd} unidades = R$ ${total.toFixed(2)} (${maiorDesconto}% OFF)`;
-            } else {
-                resultado.innerHTML = `🛒 ${qtd} unidades = R$ ${total.toFixed(2)} (Sem desconto aplicado)`;
-            }
-        }
-
+        // ================= CORREÇÃO 2: A FUNÇÃO DE ABRIR MODAL =================
         function abrirModal(prodId) { 
             const prod = dados.produtos.find(p=>p.id===prodId); 
             if(!prod) return; 
@@ -1245,7 +1212,7 @@
             document.getElementById('modalTitle').textContent=prod.nome; 
             document.getElementById('modalDesc').textContent=prod.descricao||''; 
             
-            // Calcular preço automático
+            // Calcular preço automático (agora com fallback de segurança)
             const precoCalculado = calcularPrecoTotal(prod, []);
             document.getElementById('modalPriceContainer').innerHTML = `<span class="modal-price">R$ ${precoCalculado}</span>`;
 
@@ -1271,8 +1238,11 @@
                 });
             }
 
-            // Renderizar opções adicionais
+            // Renderizar opções adicionais (com segurança contra produtos sem opções)
             const opcoesContainer = document.getElementById('modalOpcoesList');
+            const opcoesContainerBox = document.getElementById('modalOpcoesContainer');
+            if(!opcoesContainer || !opcoesContainerBox) return; // Segurança extra
+
             opcoesContainer.innerHTML = '';
             let todasOpcoes = [];
 
@@ -1290,7 +1260,7 @@
             }
 
             if (todasOpcoes.length > 0) {
-                document.getElementById('modalOpcoesContainer').style.display = 'block';
+                opcoesContainerBox.style.display = 'block';
                 todasOpcoes.forEach((op, index) => {
                     const div = document.createElement('div');
                     div.className = 'opcao-item';
@@ -1302,7 +1272,7 @@
                     opcoesContainer.appendChild(div);
                 });
             } else {
-                document.getElementById('modalOpcoesContainer').style.display = 'none';
+                opcoesContainerBox.style.display = 'none';
             }
 
             setTimeout(() => { document.querySelectorAll('#modalGallery img').forEach(img => { img.onclick = (e) => { e.stopPropagation(); abrirLightbox(img.src); }; }); }, 100); 
@@ -1321,6 +1291,58 @@
             });
             const precoTotal = calcularPrecoTotal(produtoModalAtual, opcoesSelecionadas);
             document.getElementById('modalPriceContainer').innerHTML = `<span class="modal-price">R$ ${precoTotal}</span>`;
+        }
+
+        // ================= CORREÇÃO 3: A FUNÇÃO DE PREÇO PROGRESSIVO =================
+        function calcularPrecoProgressivo(qtd) {
+            if (!produtoModalAtual) return;
+            const prod = produtoModalAtual;
+            const precoBase = parseFloat(String(prod.precoMaoObra || prod.preco || '0').replace(',', '.')) || 0;
+            let precoFinal = precoBase;
+            let maiorDesconto = 0;
+            if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
+                prod.descontoProgressivo.forEach(regra => {
+                    if (qtd >= regra.qtd && regra.desconto > maiorDesconto) {
+                        maiorDesconto = regra.desconto;
+                    }
+                });
+                if (maiorDesconto > 0) {
+                    precoFinal = precoBase * (1 - maiorDesconto / 100);
+                }
+            }
+            const precoExibicao = precoFinal.toFixed(2).replace('.', ',');
+            const containerProgressivo = document.getElementById('modalPrecoProgressivo');
+            if (maiorDesconto > 0) {
+                containerProgressivo.innerHTML = `💰 Preço unitário: <strong>R$ ${precoExibicao}</strong> (${maiorDesconto}% OFF para ${qtd} unidades)`;
+            } else {
+                containerProgressivo.innerHTML = '';
+            }
+        }
+
+        function simularAtacado() {
+            const qtd = parseInt(document.getElementById('simuladorQtd').value);
+            if (!qtd || qtd < 1) return alert('Digite uma quantidade válida.');
+            const prod = produtoModalAtual;
+            const precoBase = parseFloat(String(prod.precoMaoObra || prod.preco || '0').replace(',', '.')) || 0;
+            let precoFinal = precoBase;
+            let maiorDesconto = 0;
+            if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
+                prod.descontoProgressivo.forEach(regra => {
+                    if (qtd >= regra.qtd && regra.desconto > maiorDesconto) {
+                        maiorDesconto = regra.desconto;
+                    }
+                });
+                if (maiorDesconto > 0) {
+                    precoFinal = precoBase * (1 - maiorDesconto / 100);
+                }
+            }
+            const total = precoFinal * qtd;
+            const resultado = document.getElementById('resultadoSimulacao');
+            if (maiorDesconto > 0) {
+                resultado.innerHTML = `🛒 ${qtd} unidades = R$ ${total.toFixed(2)} (${maiorDesconto}% OFF)`;
+            } else {
+                resultado.innerHTML = `🛒 ${qtd} unidades = R$ ${total.toFixed(2)} (Sem desconto aplicado)`;
+            }
         }
 
         function fecharModal() { document.getElementById('productModal').classList.remove('active'); esconderMiniGluudyx(); }
