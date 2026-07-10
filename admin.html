@@ -602,7 +602,6 @@
             const descricao = document.getElementById('prodDescricao').value.trim();
             const usarPrecoManual = document.getElementById('prodPrecoManualToggle').checked;
             const precoManual = document.getElementById('prodPrecoManual').value.trim();
-            const usarPrecificacao = document.getElementById('prodUsarPrecificacao') ? document.getElementById('prodUsarPrecificacao').checked : false;
             const material = document.getElementById('prodMaterial') ? document.getElementById('prodMaterial').value : 'offset';
             const qtdFolhas = document.getElementById('prodQtdFolhas') ? parseInt(document.getElementById('prodQtdFolhas').value) || 1 : 1;
             const precoMaoObra = document.getElementById('prodPrecoMaoObra') ? document.getElementById('prodPrecoMaoObra').value.trim() : '';
@@ -614,12 +613,14 @@
             const promoEnd = document.getElementById('prodPromoEnd').value;
             const descPromo = document.getElementById('prodDescPromo').value.trim();
             let precoPromo = '', desconto = 0;
+
             if (promocao) {
                 desconto = parseFloat(document.getElementById('prodDesconto').value) || 0;
                 const num = parseFloat(precoMaoObra.replace(',', '.'));
                 if (!isNaN(num) && desconto > 0) precoPromo = (num * (1 - desconto / 100)).toFixed(2).replace('.', ',');
                 else precoPromo = precoMaoObra;
             }
+
             if (!catId || !nome) return alert('Preencha nome e categoria.');
             if (!usarPrecoManual && !precoMaoObra) return alert('Preencha o preço de mão de obra ou ative o preço manual.');
             if (usarPrecoManual && !precoManual) return alert('Preencha o preço manual.');
@@ -656,33 +657,45 @@
             async function processarProd(imagens) {
                 const produto = { 
                     tipoItem, componentes,
-                    usarPrecoManual,
+                    usarPrecoManual: usarPrecoManual,
                     precoManual: usarPrecoManual ? precoManual : null,
-                    usarPrecificacao, material, qtdFolhas, precoMaoObra, opcoesProduto,
+                    material, qtdFolhas, precoMaoObra, opcoesProduto,
                     categoriaId: catId, nome, descricao, estoque, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
                     descontoProgressivo
                 };
-                if (id) { 
-                    await db.collection('produtos').doc(id).update(produto); 
-                    alert('✅ Produto atualizado com sucesso!');
+
+                try {
+                    if (id) { 
+                        await db.collection('produtos').doc(id).update(produto); 
+                        alert('✅ Produto atualizado com sucesso!');
+                    } else { 
+                        const docRef = await db.collection('produtos').add(produto); 
+                        await db.collection('produtos').doc(docRef.id).update({ id: docRef.id });
+                        alert('✅ Produto criado com sucesso!');
+                    }
+                    
+                    limparFormularioProduto(); 
+                    await carregarDados(); 
+                    atualizarListaProdutos(); 
+                    atualizarSelectCategorias(); 
+
+                } catch (erro) {
+                    console.error("Erro detalhado:", erro);
+                    alert('❌ Erro ao salvar o item! Verifique o console do navegador (F12).\nMensagem: ' + erro.message);
                 }
-                else { 
-                    const docRef = await db.collection('produtos').add(produto); 
-                    await db.collection('produtos').doc(docRef.id).update({ id: docRef.id });
-                    alert('✅ Produto criado com sucesso!');
-                }
-                limparFormularioProduto(); 
-                await carregarDados();
-                atualizarListaProdutos(); 
-                atualizarSelectCategorias();
             }
-            if (fileInput.files.length > 0) {
+
+            if (fileInput && fileInput.files.length > 0) {
                 const imagens = [];
-                for (let f of Array.from(fileInput.files).slice(0, 3)) { imagens.push(await redimensionarImagem(f, 600, 0.5)); }
+                for (let f of Array.from(fileInput.files).slice(0, 3)) { 
+                    imagens.push(await redimensionarImagem(f, 600, 0.5)); 
+                }
                 processarProd(imagens);
-            } else { processarProd(id ? (dados.produtos.find(p => p.id === id)?.imagens || []) : []); }
+            } else { 
+                processarProd(id ? (dados.produtos.find(p => p.id === id)?.imagens || []) : []); 
+            }
         }
 
         function editarProduto(id) {
