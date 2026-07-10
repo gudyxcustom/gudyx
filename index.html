@@ -10,7 +10,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1"></script>
     <style>
-        /* --- ESTILOS ANTERIORES MANTIDOS --- */
         :root {
             --roxo-profundo: #0b041c;
             --roxo-meio: #1a0a33;
@@ -303,7 +302,6 @@
         .modal-simulador .btn-simular { padding: 8px 16px; background: linear-gradient(135deg, #a028ff, #00f2fe); border: none; border-radius: 20px; color: #fff; cursor: pointer; font-weight: 600; }
         .modal-simulador #resultadoSimulacao { margin-top: 8px; font-size: 1rem; font-weight: bold; color: var(--ciano-brilhante); }
 
-        /* NOVA SEÇÃO DE OPÇÕES DE PRECIFICAÇÃO */
         .modal-opcoes { margin: 15px 0; border-top: 1px solid var(--vidro-borda); padding-top: 15px; }
         .modal-opcoes label { font-size: 0.9rem; font-weight: 500; display: block; margin-bottom: 8px; }
         .opcao-item { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; background: rgba(255,255,255,0.03); padding: 6px 12px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; transition: 0.2s; }
@@ -573,7 +571,6 @@
         .avaliacao-box .btn-enviar-avaliacao { margin-top:20px; padding:12px; width:100%; background:linear-gradient(135deg,#a028ff,#00f2fe); color:#fff; border:none; border-radius:50px; font-weight:700; font-size:1.1rem; cursor:pointer; transition:var(--transicao); }
         .avaliacao-box .btn-enviar-avaliacao:hover { transform:scale(1.02); box-shadow:0 0 30px rgba(172,40,255,0.4); }
 
-        /* --- CSS DO GLUUDYX ESPIÃO --- */
         #spyGluudyx {
             position: fixed;
             bottom: 20px;
@@ -611,11 +608,9 @@
             to { opacity: 1; transform: translateX(0); }
         }
 
-        /* ================= REMOVER BOTÃO COMPRAR AGORA ================= */
         #modalWaBtn, .btn-whatsapp-modal {
             display: none !important;
         }
-        /* ============================================================= */
     </style>
 </head>
 <body>
@@ -627,13 +622,11 @@
     <div id="tourOverlay"><div class="tour-box" id="tourBox"><h3 id="tourTitulo"></h3><p id="tourTexto"></p><button onclick="proximoTour()" id="tourBtn">Próximo</button></div></div>
     <div id="raspadinhaModal"><div class="raspadinha-box"><h3>🎟️ Raspadinha de Cupom</h3><p>Raspe para revelar seu desconto!</p><canvas id="raspadinhaCanvas" width="300" height="150"></canvas><br><button onclick="fecharRaspadinha()" style="margin-top:10px;padding:8px 20px;border-radius:20px;border:none;background:#555;color:#fff;cursor:pointer;">Fechar</button></div></div>
 
-    <!-- GLUUDYX ESPIÃO -->
     <div id="spyGluudyx" onclick="falarMascote('Olá! Tá gostando do que viu? 😊')">
         <div class="spy-fala"></div>
         <img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx Espião" loading="lazy">
     </div>
 
-    <!-- MODAL DO PRODUTO -->
     <div id="productModal">
         <div class="modal-box">
             <button class="close-modal" onclick="fecharModal()">×</button>
@@ -643,7 +636,6 @@
             <div id="modalPriceContainer"></div>
             <div id="modalPrecoProgressivo" class="modal-desc-progressivo"></div>
             
-            <!-- SEÇÃO DE OPÇÕES DO PRODUTO -->
             <div class="modal-opcoes" id="modalOpcoesContainer">
                 <label>🔧 Opções adicionais:</label>
                 <div id="modalOpcoesList"></div>
@@ -659,7 +651,6 @@
             </div>
             <div class="quantidade-container"><label>Quantidade:</label><div class="qtd-control"><button onclick="alterarQuantidade(-1)">−</button><span id="qtdModal">1</span><button onclick="alterarQuantidade(1)">+</button></div></div>
             <div id="modalButtonsContainer">
-                <!-- BOTÃO COMPRAR AGORA REMOVIDO VISUALMENTE / APENAS CARRINHO -->
                 <button id="modalAddCartBtn" class="btn-add-cart-modal" onclick="addToCartFromModal()"><i class="fas fa-cart-plus"></i> Adicionar ao carrinho</button>
             </div>
             <div id="modalStockStatus" class="stock-status"></div>
@@ -670,7 +661,6 @@
         </div>
     </div>
 
-    <!-- MODAL DE AVALIAÇÃO PÓS-VENDA -->
     <div id="avaliacaoModal">
         <div class="avaliacao-box">
             <button class="close-modal" onclick="fecharModalAvaliacao()">×</button>
@@ -691,7 +681,6 @@
         </div>
     </div>
 
-    <!-- CARRINHO E FAVORITOS -->
     <div id="cartDrawerOverlay" onclick="fecharDrawer()"></div>
     <div id="cartDrawer">
         <div class="cart-drawer-header"><h3>🛒 Meu Carrinho</h3><button class="close-drawer" onclick="fecharDrawer()">×</button></div>
@@ -725,7 +714,6 @@
         <button class="btn-confirmar-agendamento" onclick="enviarPedidoComAgendamento()"><i class="fab fa-whatsapp"></i> Enviar Pedido e Agendar</button>
     </div></div>
 
-    <!-- RODAPÉ E DEMAIS ELEMENTOS -->
     <div class="float-cart" onclick="abrirDrawer()"><i class="fas fa-shopping-cart"></i><span class="cart-badge" id="cartBadge">0</span></div>
     <div class="float-fav" onclick="abrirFavDrawer()"><i class="fas fa-heart"></i></div>
     <div class="float-raspadinha" onclick="abrirRaspadinha()" id="floatRaspadinha"><i class="fas fa-ticket-alt"></i></div>
@@ -736,7 +724,6 @@
     <div id="trailContainer"><canvas id="trailCanvas"></canvas></div>
     <div id="peekingHead" onclick="trazerMascoteDeVolta()"><div class="peeking-fala">Oi, Você quer que o Gluudyx volte?</div><img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx cabeça" loading="lazy"></div>
 
-    <!-- ELEMENTOS QUE ESTAVAM FALTANDO E CAUSAVAM ERRO -->
     <div id="miniGluudyx" style="display: none; position: fixed; bottom: 95px; right: 15px; z-index: 99999; cursor: pointer; flex-direction: column; align-items: center; animation: peekingFloat 2s ease-in-out infinite;">
         <div class="mini-fala" style="background: rgba(11, 4, 28, 0.9); backdrop-filter: blur(8px); border: 1px solid var(--vidro-borda); border-radius: 16px; padding: 8px 14px; font-size: 0.8rem; color: #fff; margin-bottom: 10px; text-align: center; max-width: 180px; box-shadow: 0 0 20px rgba(172, 40, 255, 0.4); position: relative;">Finaliza essa compra! 🛒</div>
         <img src="https://i.imgur.com/Y5H9zqr.png" style="width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--ciano-brilhante); box-shadow: 0 0 30px rgba(172, 40, 255, 0.6);" alt="Mini Gluudyx" loading="lazy">
@@ -858,7 +845,6 @@
         let debounceTimerGlobal, debounceTimerProd, debounceTimerServ;
         let pedidoAvaliacaoAtual = null;
 
-        // Lógica do Espião
         let inactivityTimer = null;
         const spyMessages = [
             "E aí, tá comprando ou só olhando? 😂",
@@ -899,13 +885,11 @@
                 const snapJogos = await db.collection('config').doc('jogos').get(); if (snapJogos.exists) { configJogos = snapJogos.data(); }
                 const snapPrec = await db.collection('config').doc('precificacao').get(); if (snapPrec.exists) { configPrecificacao = snapPrec.data(); }
 
-                // ================= NOVA LÓGICA DE DESIGN =================
                 const snapDesign = await db.collection('config').doc('design').get();
                 let design = {};
                 if (snapDesign.exists) {
                     design = snapDesign.data();
                 } else {
-                    // Design Base Armazenado no código
                     design = {
                         bgUrl: 'https://i.imgur.com/UDwnKUg.png',
                         bgColor: '#0b041c',
@@ -914,7 +898,6 @@
                         mascoteUrl: 'https://i.imgur.com/Y5H9zqr.png'
                     };
                 }
-                // Aplicar Design
                 if (design.bgUrl) document.querySelector('.bg-container').style.backgroundImage = `url('${design.bgUrl}')`;
                 if (design.bgColor) document.documentElement.style.setProperty('--bg-body', design.bgColor);
                 if (design.cardBg) document.documentElement.style.setProperty('--vidro-fundo', design.cardBg);
@@ -925,7 +908,6 @@
                     document.querySelector('#chatModal .chat-header img').src = design.mascoteUrl;
                     document.getElementById('miniGluudyx').querySelector('img').src = design.mascoteUrl;
                 }
-                // =======================================================
 
             } catch(e) { console.error('Firestore:', e); } 
             carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); aplicarConfigDivertido(); 
@@ -934,9 +916,7 @@
             resetInactivityTimer();
         }
 
-        function aplicarConfigDivertido() { 
-            // A visibilidade é controlada pela função atualizarVisibilidadeJogos()
-        }
+        function aplicarConfigDivertido() { }
 
         function atualizarVisibilidadeJogos() {
             const agora = new Date();
@@ -1227,9 +1207,7 @@
 
         function alterarQuantidade(delta) { quantidadeModal = Math.max(1, quantidadeModal+delta); document.getElementById('qtdModal').textContent = quantidadeModal; calcularPrecoProgressivo(quantidadeModal); }
 
-        // ================= CORREÇÃO 1: A FUNÇÃO DE CALCULAR PREÇO =================
         function calcularPrecoTotal(prod, opcoesSelecionadas) {
-            // Se o Admin marcou "Usar Preço Manual", usa o preço manual
             if (prod.usarPrecoManual === true && prod.precoManual) {
                 let precoBase = parseFloat(String(prod.precoManual).replace(',', '.')) || 0;
                 if (isPromoActive(prod) && prod.precoPromo) {
@@ -1238,7 +1216,6 @@
                 return precoBase.toFixed(2).replace('.', ',');
             }
 
-            // Se o Admin desmarcou "Usar precificação automática", volta ao preço fixo
             if (prod.usarPrecificacao === false && prod.preco) {
                 let precoBase = parseFloat(String(prod.preco).replace(',', '.')) || 0;
                 if (isPromoActive(prod) && prod.precoPromo) {
@@ -1247,7 +1224,6 @@
                 return precoBase.toFixed(2).replace('.', ',');
             }
 
-            // Se tiver precificação automática, calculamos a partir daqui (como sempre foi)
             let precoMaterial = 0;
             const material = prod.material || 'offset';
             
@@ -1277,7 +1253,6 @@
             return total.toFixed(2).replace('.', ',');
         }
 
-        // ================= CORREÇÃO 2: A FUNÇÃO DE ABRIR MODAL =================
         function abrirModal(prodId) { 
             const prod = dados.produtos.find(p=>p.id===prodId); 
             if(!prod) return; 
@@ -1290,7 +1265,6 @@
             document.getElementById('modalTitle').textContent=prod.nome; 
             document.getElementById('modalDesc').textContent=prod.descricao||''; 
             
-            // Calcular preço automático (agora com fallback de segurança)
             const precoCalculado = calcularPrecoTotal(prod, []);
             document.getElementById('modalPriceContainer').innerHTML = `<span class="modal-price">R$ ${precoCalculado}</span>`;
 
@@ -1301,11 +1275,11 @@
             if(!isEmEstoque(prod)) { 
                 cartBtn.disabled=true; 
                 cartBtn.textContent='Esgotado'; 
-                if(waBtn) waBtn.style.opacity='0.5'; // Segurança para evitar erro caso o botão ainda exista no HTML
+                if(waBtn) waBtn.style.opacity='0.5';
             } else { 
                 cartBtn.disabled=false; 
                 cartBtn.innerHTML='<i class="fas fa-cart-plus"></i> Adicionar'; 
-                if(waBtn) waBtn.style.opacity='1'; 
+                if(waBtn) waBtn.style.opacity='1';
             } 
             
             document.getElementById('productModal').classList.add('active'); 
@@ -1327,21 +1301,18 @@
                 });
             }
 
-            // Renderizar opções adicionais (com segurança contra produtos sem opções)
             const opcoesContainer = document.getElementById('modalOpcoesList');
             const opcoesContainerBox = document.getElementById('modalOpcoesContainer');
-            if(!opcoesContainer || !opcoesContainerBox) return; // Segurança extra
+            if(!opcoesContainer || !opcoesContainerBox) return;
 
             opcoesContainer.innerHTML = '';
             let todasOpcoes = [];
 
-            // Serviços Globais
             if (configPrecificacao.servicos && configPrecificacao.servicos.length > 0) {
                 configPrecificacao.servicos.forEach(serv => {
                     todasOpcoes.push({ nome: serv.nome, preco: serv.preco, tipo: 'global' });
                 });
             }
-            // Opções específicas do produto
             if (prod.opcoesProduto && prod.opcoesProduto.length > 0) {
                 prod.opcoesProduto.forEach(op => {
                     todasOpcoes.push({ nome: op.nome, preco: op.preco, tipo: 'produto' });
@@ -1382,7 +1353,6 @@
             document.getElementById('modalPriceContainer').innerHTML = `<span class="modal-price">R$ ${precoTotal}</span>`;
         }
 
-        // ================= CORREÇÃO 3: A FUNÇÃO DE PREÇO PROGRESSIVO =================
         function calcularPrecoProgressivo(qtd) {
             if (!produtoModalAtual) return;
             const prod = produtoModalAtual;
@@ -1591,8 +1561,6 @@
         let categoriaSelecionada=null;
         function carregarCategorias(tipo){const container=document.getElementById(tipo==='produtos'?'produtosCategoriasContainer':'servicosCategoriasContainer');container.innerHTML='';dados.categorias.filter(c=>c.tipo===tipo).forEach(cat=>{const card=document.createElement('div');card.className='categoria-card';card.innerHTML=`${cat.imagem?`<img src="${cat.imagem}" class="categoria-img" loading="lazy">`:'<i class="fas fa-folder" style="font-size:3rem;"></i>'}<h4>${cat.nome}</h4>`;card.onclick=()=>selecionarCategoria(tipo,cat.id);container.appendChild(card);});}
         function selecionarCategoria(tipo,catId){categoriaSelecionada={tipo,id:catId};const container=document.getElementById(tipo==='produtos'?'produtosProdutosContainer':'servicosProdutosContainer');container.innerHTML='';container.style.display='grid';container.className='produtos-grid';dados.produtos.filter(p=>p.categoriaId===catId).forEach(prod=>{renderizarCardProduto(prod,container);});}
-        
-        // ================= CORREÇÃO NO RENDERIZAR CARD (PREÇO DA VITRINE) =================
         function renderizarCardProduto(prod, container) {
             const card = document.createElement('div'); card.className = 'produto-card'; card.dataset.id = prod.id; card.onclick = (e) => { if (e.target.closest('.btn-add-cart,.btn-wa-card,.btn-favorite')) return; abrirModal(prod.id); };
             const promo = isPromoActive(prod), estoque = isEmEstoque(prod);
@@ -1605,7 +1573,7 @@
             if (diasDesdeCriacao < 7) badges += '<div class="badge-novo">NOVO</div>';
             if (estoque && getEstoque(prod) <= 5) badges += '<div class="badge-estoque-baixo">Últimas!</div>';
             
-            // CORREÇÃO AQUI: Usar o mesmo preço calculado do modal
+            // CORREÇÃO DE PREÇO AQUI: Agora usa calcularPrecoTotal em vez de prod.preco
             const precoCalculado = calcularPrecoTotal(prod, []);
             let precoHtml = promo && prod.precoPromo ? 
                 `<div><span class="preco-promo">R$ ${precoCalculado}</span> <span class="preco-atual">R$ ${prod.precoPromo}</span> <span class="flame-icon">🔥</span></div>` : 
@@ -1621,7 +1589,6 @@
             card.innerHTML = `${badges}${favBtn}${quickView}${contadorHtml}<img src="${getImagemPrincipal(prod)}" loading="lazy"><h5>${prod.nome}</h5>${precoHtml}<div class="botoes-lista">${btnAdd} ${waBtn}</div>`;
             container.appendChild(card);
         }
-
         function alternarVisualizacao(modo){viewMode=modo;document.getElementById('viewGrid').classList.toggle('active',modo==='grid');document.getElementById('viewList').classList.toggle('active',modo==='lista');if(categoriaSelecionada)selecionarCategoria(categoriaSelecionada.tipo,categoriaSelecionada.id);}
 
         function animarCarrinho(){const f=document.querySelector('.float-cart');f.classList.add('bounce');setTimeout(()=>f.classList.remove('bounce'),600);}
@@ -1701,7 +1668,6 @@
             });
         }
 
-        // Eventos do Espião
         document.addEventListener('mousemove', resetInactivityTimer);
         document.addEventListener('scroll', resetInactivityTimer);
         document.addEventListener('click', resetInactivityTimer);
