@@ -21,6 +21,7 @@
         .btn-danger { background: #ff4455; }
         .btn-danger:hover { background: #cc1122; }
         .btn-secondary { background: #666; }
+        .btn-whatsapp-modal { background: #25D366 !important; }
         .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 300px; overflow-y: auto; }
         .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 5px; }
         .admin-item-list .item button { padding: 4px 12px; font-size: 0.8rem; background: #ff4455; margin: 2px; }
@@ -75,6 +76,7 @@
             <button onclick="abrirAba('avaliacoes')" id="tabAvaliacoes">Avaliações</button>
             <button onclick="abrirAba('jogos')" id="tabJogos">Jogos e Promos</button>
             <button onclick="abrirAba('precificacao')" id="tabPrecificacao">Precificação</button>
+            <button onclick="abrirAba('design')" id="tabDesign">🎨 Design</button>
             <button onclick="abrirAba('frases')" id="tabFrases">Frases</button>
             <button onclick="abrirAba('faq')" id="tabFaq">FAQ</button>
             <button onclick="abrirAba('configLoja')" id="tabConfigLoja">Config. Loja</button>
@@ -211,7 +213,7 @@
             </div>
         </div>
 
-        <!-- PRECIFICAÇÃO (NOVA ABA) -->
+        <!-- PRECIFICAÇÃO -->
         <div id="abaPrecificacao" style="display:none;">
             <h3>📈 Configuração de Preços de Materiais e Serviços Globais</h3>
             <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
@@ -235,6 +237,29 @@
                 <button onclick="adicionarLinhaServicoGlobal()" class="btn-secondary" style="margin-top:5px;">+ Adicionar serviço global</button>
                 <button onclick="salvarPrecificacao()" style="margin-top:15px;">Salvar Configurações</button>
             </div>
+        </div>
+
+        <!-- DESIGN (NOVA ABA) -->
+        <div id="abaDesign" style="display:none;">
+            <h3>🎨 Gerenciar Tema Visual (Fundo, Cards, Mascote)</h3>
+            <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
+                <label>🏞️ Imagem de Fundo (Cole o link do Imgur)</label>
+                <input type="text" id="designBgUrl" placeholder="https://i.imgur.com/...">
+
+                <label>🎨 Cor do Fundo (Se a imagem não carregar ou for transparente)</label>
+                <input type="text" id="designBgColor" placeholder="#0b041c ou rgba(...)">
+
+                <label>🃏 Cor de Fundo dos Cards</label>
+                <input type="text" id="designCardBg" placeholder="rgba(11, 4, 28, 0.65)">
+                
+                <label>🃏 Cor da Borda dos Cards</label>
+                <input type="text" id="designCardBorder" placeholder="rgba(172, 40, 255, 0.3)">
+
+                <label>🐶 Imagem do Mascote (Cole o link do Imgur)</label>
+                <input type="text" id="designMascoteUrl" placeholder="https://i.imgur.com/Y5H9zqr.png">
+            </div>
+            <button onclick="salvarDesign()">💾 Salvar Tema Atual</button>
+            <button class="btn-secondary" onclick="restaurarDesignBase()">↩️ Voltar ao Design Base</button>
         </div>
 
         <!-- FRASES -->
@@ -356,14 +381,12 @@
                     } else { adicionarLinhaCupom(); }
                 } else { adicionarLinhaCupom(); }
 
-                // Carregar Precificação
                 const snapPrec = await db.collection('config').doc('precificacao').get();
                 if (snapPrec.exists) {
                     configPrecificacao = snapPrec.data();
                     document.getElementById('precoOffset').value = configPrecificacao.offset || '';
                     document.getElementById('precoMatte').value = configPrecificacao.matte || '';
                     document.getElementById('precoGlossy').value = configPrecificacao.glossy || '';
-                    
                     const containerServ = document.getElementById('containerServicosGlobais');
                     containerServ.innerHTML = '';
                     if (configPrecificacao.servicos && configPrecificacao.servicos.length > 0) {
@@ -385,13 +408,14 @@
 
         function abrirAba(aba) {
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            ['abaCategorias','abaProdutos','abaPedidos','abaAvaliacoes','abaJogos','abaPrecificacao','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
+            ['abaCategorias','abaProdutos','abaPedidos','abaAvaliacoes','abaJogos','abaPrecificacao','abaDesign','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
             if (aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
             else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); toggleCamposKit(); }
             else if (aba === 'pedidos') { document.getElementById('abaPedidos').style.display = 'block'; document.getElementById('tabPedidos').classList.add('active'); carregarPedidos(); }
             else if (aba === 'avaliacoes') { document.getElementById('abaAvaliacoes').style.display = 'block'; document.getElementById('tabAvaliacoes').classList.add('active'); carregarAvaliacoesAdmin(); }
             else if (aba === 'jogos') { document.getElementById('abaJogos').style.display = 'block'; document.getElementById('tabJogos').classList.add('active'); }
             else if (aba === 'precificacao') { document.getElementById('abaPrecificacao').style.display = 'block'; document.getElementById('tabPrecificacao').classList.add('active'); }
+            else if (aba === 'design') { document.getElementById('abaDesign').style.display = 'block'; document.getElementById('tabDesign').classList.add('active'); carregarDesignAdmin(); }
             else if (aba === 'frases') { document.getElementById('abaFrases').style.display = 'block'; document.getElementById('tabFrases').classList.add('active'); document.getElementById('frasesInput').value = dados.frases.join('\n'); }
             else if (aba === 'faq') { document.getElementById('abaFaq').style.display = 'block'; document.getElementById('tabFaq').classList.add('active'); carregarFAQ(); }
             else if (aba === 'configLoja') { document.getElementById('abaConfigLoja').style.display = 'block'; document.getElementById('tabConfigLoja').classList.add('active'); carregarConfigLoja(); }
@@ -511,7 +535,6 @@
         }
         function removerLinhaComponente(btn) { btn.parentElement.remove(); }
 
-        // Lógica de Opções Extras do Produto
         function adicionarLinhaOpcaoProduto() {
             const container = document.getElementById('containerOpcoesProduto');
             const div = document.createElement('div');
@@ -569,7 +592,6 @@
                 if (componentes.length === 0) return alert('Um Kit precisa ter pelo menos 1 componente válido.');
             }
 
-            // Coletar Opções do Produto
             const opcoesProduto = [];
             document.querySelectorAll('#containerOpcoesProduto .linha-opcao-produto').forEach(row => {
                 const nomeOpcao = row.querySelector('.opcao-nome').value.trim();
@@ -675,7 +697,6 @@
             }
             toggleCamposKit();
 
-            // Carregar Opções do Produto
             const containerOpcoes = document.getElementById('containerOpcoesProduto');
             containerOpcoes.innerHTML = '';
             if (p.opcoesProduto && p.opcoesProduto.length > 0) {
@@ -867,6 +888,48 @@
             await db.collection('config').doc('precificacao').set(data);
             alert('Configurações de precificação salvas!');
             carregarDados();
+        }
+
+        // --- Design (Novo) ---
+        async function salvarDesign() {
+            const designData = {
+                bgUrl: document.getElementById('designBgUrl').value.trim() || '',
+                bgColor: document.getElementById('designBgColor').value.trim() || '#0b041c',
+                cardBg: document.getElementById('designCardBg').value.trim() || 'rgba(11, 4, 28, 0.65)',
+                cardBorder: document.getElementById('designCardBorder').value.trim() || 'rgba(172, 40, 255, 0.3)',
+                mascoteUrl: document.getElementById('designMascoteUrl').value.trim() || 'https://i.imgur.com/Y5H9zqr.png'
+            };
+            await db.collection('config').doc('design').set(designData);
+            alert('🎉 Tema salvo com sucesso! Recarregue o site para ver as mudanças.');
+            carregarDesignAdmin();
+        }
+
+        async function restaurarDesignBase() {
+            if(!confirm('Restaurar o design base? Isso desfará todas as alterações personalizadas.')) return;
+            const designBase = {
+                bgUrl: 'https://i.imgur.com/UDwnKUg.png',
+                bgColor: '#0b041c',
+                cardBg: 'rgba(11, 4, 28, 0.65)',
+                cardBorder: 'rgba(172, 40, 255, 0.3)',
+                mascoteUrl: 'https://i.imgur.com/Y5H9zqr.png'
+            };
+            await db.collection('config').doc('design').set(designBase);
+            alert('✅ Design Base restaurado.');
+            carregarDesignAdmin();
+        }
+
+        async function carregarDesignAdmin() {
+            const snap = await db.collection('config').doc('design').get();
+            if (snap.exists) {
+                const d = snap.data();
+                document.getElementById('designBgUrl').value = d.bgUrl || '';
+                document.getElementById('designBgColor').value = d.bgColor || '';
+                document.getElementById('designCardBg').value = d.cardBg || '';
+                document.getElementById('designCardBorder').value = d.cardBorder || '';
+                document.getElementById('designMascoteUrl').value = d.mascoteUrl || '';
+            } else {
+                restaurarDesignBase();
+            }
         }
 
         async function salvarFrases() {
