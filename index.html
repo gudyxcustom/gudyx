@@ -156,7 +156,7 @@
         .grid-categorias { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:20px; width:100%; max-width:1100px; }
         .categoria-card { background:var(--vidro-fundo); backdrop-filter:blur(12px); border:1px solid var(--vidro-borda); border-radius:20px; padding:25px 20px; text-align:center; transition:var(--transicao); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:12px; }
         .categoria-card:hover { background:rgba(172,40,255,0.2); transform:translateY(-6px); border-color:var(--ciano-brilhante); }
-        .categoria-card .categoria-img { width:80px; height:80px; border-radius:50%; object-fit:cover; border:2px solid var(--vidro-borda); }
+        .categoria-card .categoria-img { width:150px; height:150px; border-radius:50%; object-fit:cover; border:2px solid var(--vidro-borda); padding:4px; background:rgba(255,255,255,0.05); }
         .categoria-card h4 { font-size:1.1rem; font-weight:500; }
         .produtos-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:15px; width:100%; max-width:1100px; margin-top:10px; }
         .produto-card {
@@ -1201,8 +1201,8 @@
 
         // ================= CORREÇÃO 1: A FUNÇÃO DE CALCULAR PREÇO =================
         function calcularPrecoTotal(prod, opcoesSelecionadas) {
-            // Verificação de segurança: Se o produto não tiver dados de precificação, usamos o preço fixo antigo
-            if (!prod.precoMaoObra && prod.preco) {
+            // Se o Admin desmarcou "Usar precificação automática", volta ao preço fixo!
+            if (prod.usarPrecificacao === false) {
                 let precoBase = parseFloat(String(prod.preco).replace(',', '.')) || 0;
                 if (isPromoActive(prod) && prod.precoPromo) {
                     precoBase = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
@@ -1210,11 +1210,10 @@
                 return precoBase.toFixed(2).replace('.', ',');
             }
 
-            // Se tiver precificação, calculamos
+            // Se tiver precificação automática, calculamos a partir daqui (como sempre foi)
             let precoMaterial = 0;
             const material = prod.material || 'offset';
             
-            // Verifica se a configPrecificacao já carregou, senão usa 0
             const precoOffset = configPrecificacao.offset ? parseFloat(String(configPrecificacao.offset).replace(',', '.')) : 0;
             const precoMatte = configPrecificacao.matte ? parseFloat(String(configPrecificacao.matte).replace(',', '.')) : 0;
             const precoGlossy = configPrecificacao.glossy ? parseFloat(String(configPrecificacao.glossy).replace(',', '.')) : 0;
@@ -1228,14 +1227,12 @@
             
             let total = (precoMaterial * qtdFolhas) + maoObra;
 
-            // Soma das opções
             if (opcoesSelecionadas) {
                 opcoesSelecionadas.forEach(op => {
                     total += parseFloat(String(op.preco || '0').replace(',', '.')) || 0;
                 });
             }
 
-            // Aplicar promoção se existir
             if (isPromoActive(prod) && prod.precoPromo) {
                 total = parseFloat(String(prod.precoPromo).replace(',', '.')) || total;
             }
