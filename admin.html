@@ -22,7 +22,7 @@
         .btn-danger:hover { background: #cc1122; }
         .btn-secondary { background: #666; }
         .btn-whatsapp-modal { background: #25D366 !important; }
-        .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 300px; overflow-y: auto; }
+        .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 400px; overflow-y: auto; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
         .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 5px; }
         .admin-item-list .item button { padding: 4px 12px; font-size: 0.8rem; background: #ff4455; margin: 2px; }
         .admin-item-list .item .btn-edit { background: #a028ff; }
@@ -114,6 +114,10 @@
             <!-- CAMPOS DE PRECIFICAÇÃO AUTOMÁTICA -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📐 Configuração de Precificação</label>
+                <label style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+                    <input type="checkbox" id="prodUsarPrecificacao" checked style="width:auto; transform:scale(1.5); margin-right:10px;">
+                    Usar precificação automática (Calcular por folhas)
+                </label>
                 <label>Material Padrão:</label>
                 <select id="prodMaterial">
                     <option value="offset">Offset</option>
@@ -554,6 +558,7 @@
             const catId = document.getElementById('prodCategoria').value;
             const nome = document.getElementById('prodNome').value.trim();
             const descricao = document.getElementById('prodDescricao').value.trim();
+            const usarPrecificacao = document.getElementById('prodUsarPrecificacao').checked;
             const material = document.getElementById('prodMaterial').value;
             const qtdFolhas = parseInt(document.getElementById('prodQtdFolhas').value) || 1;
             const precoMaoObra = document.getElementById('prodPrecoMaoObra').value.trim();
@@ -604,7 +609,7 @@
             const fileInput = document.getElementById('prodImg');
             async function processarProd(imagens) {
                 const produto = { 
-                    tipoItem, componentes, material, qtdFolhas, precoMaoObra, opcoesProduto,
+                    tipoItem, componentes, usarPrecificacao, material, qtdFolhas, precoMaoObra, opcoesProduto,
                     categoriaId: catId, nome, descricao, estoque, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
@@ -631,6 +636,7 @@
             document.getElementById('prodCategoria').value = p.categoriaId;
             document.getElementById('prodNome').value = p.nome;
             document.getElementById('prodDescricao').value = p.descricao || '';
+            document.getElementById('prodUsarPrecificacao').checked = p.usarPrecificacao !== false;
             document.getElementById('prodMaterial').value = p.material || 'offset';
             document.getElementById('prodQtdFolhas').value = p.qtdFolhas || 1;
             document.getElementById('prodPrecoMaoObra').value = p.precoMaoObra || '';
@@ -890,7 +896,7 @@
             carregarDados();
         }
 
-        // --- Design (Novo) ---
+        // --- Design ---
         async function salvarDesign() {
             const designData = {
                 bgUrl: document.getElementById('designBgUrl').value.trim() || '',
