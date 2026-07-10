@@ -870,6 +870,35 @@
                 const snapConfigLoja = await db.collection('config').doc('loja').get(); if (snapConfigLoja.exists) { configLoja = snapConfigLoja.data(); }
                 const snapJogos = await db.collection('config').doc('jogos').get(); if (snapJogos.exists) { configJogos = snapJogos.data(); }
                 const snapPrec = await db.collection('config').doc('precificacao').get(); if (snapPrec.exists) { configPrecificacao = snapPrec.data(); }
+
+                // ================= NOVA LÓGICA DE DESIGN =================
+                const snapDesign = await db.collection('config').doc('design').get();
+                let design = {};
+                if (snapDesign.exists) {
+                    design = snapDesign.data();
+                } else {
+                    // Design Base Armazenado no código
+                    design = {
+                        bgUrl: 'https://i.imgur.com/UDwnKUg.png',
+                        bgColor: '#0b041c',
+                        cardBg: 'rgba(11, 4, 28, 0.65)',
+                        cardBorder: 'rgba(172, 40, 255, 0.3)',
+                        mascoteUrl: 'https://i.imgur.com/Y5H9zqr.png'
+                    };
+                }
+                // Aplicar Design
+                if (design.bgUrl) document.querySelector('.bg-container').style.backgroundImage = `url('${design.bgUrl}')`;
+                if (design.bgColor) document.documentElement.style.setProperty('--bg-body', design.bgColor);
+                if (design.cardBg) document.documentElement.style.setProperty('--vidro-fundo', design.cardBg);
+                if (design.cardBorder) document.documentElement.style.setProperty('--vidro-borda', design.cardBorder);
+                if (design.mascoteUrl) {
+                    document.getElementById('mascoteImg').src = design.mascoteUrl;
+                    document.querySelector('#peekingHead img').src = design.mascoteUrl;
+                    document.querySelector('#chatModal .chat-header img').src = design.mascoteUrl;
+                    document.querySelector('#miniGluudyx img').src = design.mascoteUrl;
+                }
+                // =======================================================
+
             } catch(e) { console.error('Firestore:', e); } 
             carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); aplicarConfigDivertido(); 
             verificarLinkAvaliacao();
@@ -915,6 +944,21 @@
             });
             db.collection('config').doc('precificacao').onSnapshot(s => {
                 if (s.exists) { configPrecificacao = s.data(); }
+            });
+            db.collection('config').doc('design').onSnapshot(s => {
+                if (s.exists) {
+                    const d = s.data();
+                    if (d.bgUrl) document.querySelector('.bg-container').style.backgroundImage = `url('${d.bgUrl}')`;
+                    if (d.bgColor) document.documentElement.style.setProperty('--bg-body', d.bgColor);
+                    if (d.cardBg) document.documentElement.style.setProperty('--vidro-fundo', d.cardBg);
+                    if (d.cardBorder) document.documentElement.style.setProperty('--vidro-borda', d.cardBorder);
+                    if (d.mascoteUrl) {
+                        document.getElementById('mascoteImg').src = d.mascoteUrl;
+                        document.querySelector('#peekingHead img').src = d.mascoteUrl;
+                        document.querySelector('#chatModal .chat-header img').src = d.mascoteUrl;
+                        document.querySelector('#miniGluudyx img').src = d.mascoteUrl;
+                    }
+                }
             });
         }
 
