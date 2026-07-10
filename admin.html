@@ -21,7 +21,6 @@
         .btn-danger { background: #ff4455; }
         .btn-danger:hover { background: #cc1122; }
         .btn-secondary { background: #666; }
-        .btn-whatsapp-modal { background: #25D366 !important; }
         .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 300px; overflow-y: auto; }
         .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 5px; }
         .admin-item-list .item button { padding: 4px 12px; font-size: 0.8rem; background: #ff4455; margin: 2px; }
@@ -44,6 +43,12 @@
         .linha-cupom input { width: 100px; margin-bottom: 0; }
         .linha-cupom select { width: 80px; margin-bottom: 0; }
         .linha-cupom button { background: #ff4455; padding: 5px 10px; margin: 0; }
+        .linha-servico { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; flex-wrap: wrap; }
+        .linha-servico input { width: 100px; margin-bottom: 0; }
+        .linha-servico button { background: #ff4455; padding: 5px 10px; margin: 0; }
+        .linha-opcao-produto { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; flex-wrap: wrap; }
+        .linha-opcao-produto input { width: 120px; margin-bottom: 0; }
+        .linha-opcao-produto button { background: #ff4455; padding: 5px 10px; margin: 0; }
         .pedido-card { border:1px solid var(--vidro-borda); padding:15px; margin-bottom:15px; border-radius:12px; background:rgba(255,255,255,0.03); }
         .pedido-card .status { display:inline-block; padding:4px 12px; border-radius:20px; font-weight:bold; font-size:0.8rem; }
         .status-aguardando { background:#b8860b; color:#fff; }
@@ -69,6 +74,7 @@
             <button onclick="abrirAba('pedidos')" id="tabPedidos">Pedidos</button>
             <button onclick="abrirAba('avaliacoes')" id="tabAvaliacoes">Avaliações</button>
             <button onclick="abrirAba('jogos')" id="tabJogos">Jogos e Promos</button>
+            <button onclick="abrirAba('precificacao')" id="tabPrecificacao">Precificação</button>
             <button onclick="abrirAba('frases')" id="tabFrases">Frases</button>
             <button onclick="abrirAba('faq')" id="tabFaq">FAQ</button>
             <button onclick="abrirAba('configLoja')" id="tabConfigLoja">Config. Loja</button>
@@ -102,21 +108,32 @@
             <label>Categoria</label><select id="prodCategoria"></select>
             <label>Nome</label><input type="text" id="prodNome">
             <label>Descrição</label><textarea id="prodDescricao"></textarea>
-            <label>Preço (R$)</label><input type="text" id="prodPreco">
-            <label>Estoque</label><input type="number" id="prodEstoque" min="0">
-            <label>Imagens (máx 3)</label><input type="file" id="prodImg" accept="image/*" multiple>
 
-            <!-- CAMPOS DO KIT -->
-            <div id="camposKit" class="hidden" style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
-                <label>📦 Componentes do Kit:</label>
-                <div id="containerComponentesKit">
-                    <div class="linha-componente">
-                        <select class="comp-produto"><option value="">Selecione um produto</option></select>
-                        <input type="number" class="comp-qtd" placeholder="Qtd" min="1" value="1">
-                        <button class="btn-danger" onclick="removerLinhaComponente(this)">-</button>
+            <!-- CAMPOS DE PRECIFICAÇÃO AUTOMÁTICA -->
+            <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
+                <label>📐 Configuração de Precificação</label>
+                <label>Material Padrão:</label>
+                <select id="prodMaterial">
+                    <option value="offset">Offset</option>
+                    <option value="matte">Matte</option>
+                    <option value="glossy">Glossy</option>
+                </select>
+                <label>Quantidade de folhas para produção:</label>
+                <input type="number" id="prodQtdFolhas" min="1" value="1">
+                <label>Preço Mão de Obra / Margem (R$):</label>
+                <input type="text" id="prodPrecoMaoObra" placeholder="Ex: 2,50">
+                
+                <div style="margin-top:10px;">
+                    <label>🔧 Opções Extras deste Produto (Ex: Laço, Caixa colorida):</label>
+                    <div id="containerOpcoesProduto">
+                        <div class="linha-opcao-produto">
+                            <input type="text" class="opcao-nome" placeholder="Ex: Laço de cetim">
+                            <input type="text" class="opcao-preco" placeholder="+ R$ 1,50">
+                            <button class="btn-danger" onclick="removerLinhaOpcaoProduto(this)">-</button>
+                        </div>
                     </div>
+                    <button onclick="adicionarLinhaOpcaoProduto()" class="btn-secondary" style="margin-top:5px;">+ Adicionar opção extra</button>
                 </div>
-                <button onclick="adicionarLinhaComponente()" class="btn-secondary" style="margin-top:5px;">+ Adicionar item ao Kit</button>
             </div>
 
             <div class="checkbox-group">
@@ -194,6 +211,32 @@
             </div>
         </div>
 
+        <!-- PRECIFICAÇÃO (NOVA ABA) -->
+        <div id="abaPrecificacao" style="display:none;">
+            <h3>📈 Configuração de Preços de Materiais e Serviços Globais</h3>
+            <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
+                <label>Preço da Folha Offset (R$):</label>
+                <input type="text" id="precoOffset" placeholder="Ex: 0,30">
+                <label>Preço da Folha Matte (R$):</label>
+                <input type="text" id="precoMatte" placeholder="Ex: 0,40">
+                <label>Preço da Folha Glossy (R$):</label>
+                <input type="text" id="precoGlossy" placeholder="Ex: 0,50">
+            </div>
+
+            <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
+                <label>🔧 Serviços Globais (Aparecem como opção em todos os produtos):</label>
+                <div id="containerServicosGlobais">
+                    <div class="linha-servico">
+                        <input type="text" class="servico-nome" placeholder="Nome do serviço (Ex: Plastificação)">
+                        <input type="text" class="servico-preco" placeholder="+ R$ 0,50">
+                        <button class="btn-danger" onclick="removerLinhaServicoGlobal(this)">-</button>
+                    </div>
+                </div>
+                <button onclick="adicionarLinhaServicoGlobal()" class="btn-secondary" style="margin-top:5px;">+ Adicionar serviço global</button>
+                <button onclick="salvarPrecificacao()" style="margin-top:15px;">Salvar Configurações</button>
+            </div>
+        </div>
+
         <!-- FRASES -->
         <div id="abaFrases" style="display:none;">
             <h3>Frases do Gluudyx</h3>
@@ -264,6 +307,7 @@
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
         var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false };
         var configJogos = { sorte: { ativo: false, inicio: '', fim: '' }, raspa: { ativo: false, inicio: '', fim: '', cupons: [] } };
+        var configPrecificacao = { offset: '0,30', matte: '0,40', glossy: '0,50', servicos: [] };
 
         async function carregarDados() {
             try {
@@ -285,14 +329,12 @@
                 const snapJogos = await db.collection('config').doc('jogos').get();
                 if (snapJogos.exists) {
                     configJogos = snapJogos.data();
-                    // Preencher campos
                     document.getElementById('sorteAtivo').checked = configJogos.sorte?.ativo || false;
                     document.getElementById('sorteInicio').value = configJogos.sorte?.inicio || '';
                     document.getElementById('sorteFim').value = configJogos.sorte?.fim || '';
                     document.getElementById('raspaAtivo').checked = configJogos.raspa?.ativo || false;
                     document.getElementById('raspaInicio').value = configJogos.raspa?.inicio || '';
                     document.getElementById('raspaFim').value = configJogos.raspa?.fim || '';
-                    // Preencher cupons
                     const containerCupons = document.getElementById('containerCuponsRaspa');
                     containerCupons.innerHTML = '';
                     if (configJogos.raspa?.cupons && configJogos.raspa.cupons.length > 0) {
@@ -311,24 +353,45 @@
                             `;
                             containerCupons.appendChild(div);
                         });
-                    } else {
-                        // Adicionar uma linha padrão
-                        adicionarLinhaCupom();
-                    }
-                } else {
-                    adicionarLinhaCupom();
-                }
+                    } else { adicionarLinhaCupom(); }
+                } else { adicionarLinhaCupom(); }
+
+                // Carregar Precificação
+                const snapPrec = await db.collection('config').doc('precificacao').get();
+                if (snapPrec.exists) {
+                    configPrecificacao = snapPrec.data();
+                    document.getElementById('precoOffset').value = configPrecificacao.offset || '';
+                    document.getElementById('precoMatte').value = configPrecificacao.matte || '';
+                    document.getElementById('precoGlossy').value = configPrecificacao.glossy || '';
+                    
+                    const containerServ = document.getElementById('containerServicosGlobais');
+                    containerServ.innerHTML = '';
+                    if (configPrecificacao.servicos && configPrecificacao.servicos.length > 0) {
+                        configPrecificacao.servicos.forEach(serv => {
+                            const div = document.createElement('div');
+                            div.className = 'linha-servico';
+                            div.innerHTML = `
+                                <input type="text" class="servico-nome" value="${serv.nome || ''}">
+                                <input type="text" class="servico-preco" value="${serv.preco || ''}">
+                                <button class="btn-danger" onclick="removerLinhaServicoGlobal(this)">-</button>
+                            `;
+                            containerServ.appendChild(div);
+                        });
+                    } else { adicionarLinhaServicoGlobal(); }
+                } else { adicionarLinhaServicoGlobal(); }
+
             } catch(e) { console.error(e); }
         }
 
         function abrirAba(aba) {
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            ['abaCategorias','abaProdutos','abaPedidos','abaAvaliacoes','abaJogos','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
+            ['abaCategorias','abaProdutos','abaPedidos','abaAvaliacoes','abaJogos','abaPrecificacao','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
             if (aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
             else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); toggleCamposKit(); }
             else if (aba === 'pedidos') { document.getElementById('abaPedidos').style.display = 'block'; document.getElementById('tabPedidos').classList.add('active'); carregarPedidos(); }
             else if (aba === 'avaliacoes') { document.getElementById('abaAvaliacoes').style.display = 'block'; document.getElementById('tabAvaliacoes').classList.add('active'); carregarAvaliacoesAdmin(); }
             else if (aba === 'jogos') { document.getElementById('abaJogos').style.display = 'block'; document.getElementById('tabJogos').classList.add('active'); }
+            else if (aba === 'precificacao') { document.getElementById('abaPrecificacao').style.display = 'block'; document.getElementById('tabPrecificacao').classList.add('active'); }
             else if (aba === 'frases') { document.getElementById('abaFrases').style.display = 'block'; document.getElementById('tabFrases').classList.add('active'); document.getElementById('frasesInput').value = dados.frases.join('\n'); }
             else if (aba === 'faq') { document.getElementById('abaFaq').style.display = 'block'; document.getElementById('tabFaq').classList.add('active'); carregarFAQ(); }
             else if (aba === 'configLoja') { document.getElementById('abaConfigLoja').style.display = 'block'; document.getElementById('tabConfigLoja').classList.add('active'); carregarConfigLoja(); }
@@ -448,13 +511,29 @@
         }
         function removerLinhaComponente(btn) { btn.parentElement.remove(); }
 
+        // Lógica de Opções Extras do Produto
+        function adicionarLinhaOpcaoProduto() {
+            const container = document.getElementById('containerOpcoesProduto');
+            const div = document.createElement('div');
+            div.className = 'linha-opcao-produto';
+            div.innerHTML = `
+                <input type="text" class="opcao-nome" placeholder="Ex: Laço de cetim">
+                <input type="text" class="opcao-preco" placeholder="+ R$ 1,50">
+                <button class="btn-danger" onclick="removerLinhaOpcaoProduto(this)">-</button>
+            `;
+            container.appendChild(div);
+        }
+        function removerLinhaOpcaoProduto(btn) { btn.parentElement.remove(); }
+
         async function salvarProduto() {
             const id = document.getElementById('editProdId').value;
             const tipoItem = document.getElementById('prodTipoItem').value;
             const catId = document.getElementById('prodCategoria').value;
             const nome = document.getElementById('prodNome').value.trim();
             const descricao = document.getElementById('prodDescricao').value.trim();
-            const preco = document.getElementById('prodPreco').value.trim();
+            const material = document.getElementById('prodMaterial').value;
+            const qtdFolhas = parseInt(document.getElementById('prodQtdFolhas').value) || 1;
+            const precoMaoObra = document.getElementById('prodPrecoMaoObra').value.trim();
             const estoque = parseInt(document.getElementById('prodEstoque').value) || 0;
             const promocao = document.getElementById('prodPromocao').checked;
             const destaque = document.getElementById('prodDestaque').checked;
@@ -465,11 +544,11 @@
             let precoPromo = '', desconto = 0;
             if (promocao) {
                 desconto = parseFloat(document.getElementById('prodDesconto').value) || 0;
-                const num = parseFloat(preco.replace(',', '.'));
+                const num = parseFloat(precoMaoObra.replace(',', '.'));
                 if (!isNaN(num) && desconto > 0) precoPromo = (num * (1 - desconto / 100)).toFixed(2).replace('.', ',');
-                else precoPromo = preco;
+                else precoPromo = precoMaoObra;
             }
-            if (!catId || !nome || !preco) return alert('Preencha nome e preço.');
+            if (!catId || !nome || !precoMaoObra) return alert('Preencha nome e preço.');
 
             const descontoProgressivo = [];
             document.querySelectorAll('.linha-desconto').forEach(row => {
@@ -490,12 +569,21 @@
                 if (componentes.length === 0) return alert('Um Kit precisa ter pelo menos 1 componente válido.');
             }
 
+            // Coletar Opções do Produto
+            const opcoesProduto = [];
+            document.querySelectorAll('#containerOpcoesProduto .linha-opcao-produto').forEach(row => {
+                const nomeOpcao = row.querySelector('.opcao-nome').value.trim();
+                const precoOpcao = row.querySelector('.opcao-preco').value.trim();
+                if (nomeOpcao && precoOpcao) {
+                    opcoesProduto.push({ nome: nomeOpcao, preco: precoOpcao });
+                }
+            });
+
             const fileInput = document.getElementById('prodImg');
             async function processarProd(imagens) {
                 const produto = { 
-                    tipoItem,
-                    componentes,
-                    categoriaId: catId, nome, descricao, preco, estoque, imagens: imagens || [], 
+                    tipoItem, componentes, material, qtdFolhas, precoMaoObra, opcoesProduto,
+                    categoriaId: catId, nome, descricao, estoque, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
                     descontoProgressivo
@@ -521,7 +609,9 @@
             document.getElementById('prodCategoria').value = p.categoriaId;
             document.getElementById('prodNome').value = p.nome;
             document.getElementById('prodDescricao').value = p.descricao || '';
-            document.getElementById('prodPreco').value = p.preco;
+            document.getElementById('prodMaterial').value = p.material || 'offset';
+            document.getElementById('prodQtdFolhas').value = p.qtdFolhas || 1;
+            document.getElementById('prodPrecoMaoObra').value = p.precoMaoObra || '';
             document.getElementById('prodEstoque').value = p.estoque || 0;
             document.getElementById('prodPromocao').checked = p.promocao || false;
             document.getElementById('prodDestaque').checked = p.destaque || false;
@@ -584,17 +674,36 @@
                 adicionarLinhaComponente();
             }
             toggleCamposKit();
+
+            // Carregar Opções do Produto
+            const containerOpcoes = document.getElementById('containerOpcoesProduto');
+            containerOpcoes.innerHTML = '';
+            if (p.opcoesProduto && p.opcoesProduto.length > 0) {
+                p.opcoesProduto.forEach(opcao => {
+                    const div = document.createElement('div');
+                    div.className = 'linha-opcao-produto';
+                    div.innerHTML = `
+                        <input type="text" class="opcao-nome" value="${opcao.nome || ''}">
+                        <input type="text" class="opcao-preco" value="${opcao.preco || ''}">
+                        <button class="btn-danger" onclick="removerLinhaOpcaoProduto(this)">-</button>
+                    `;
+                    containerOpcoes.appendChild(div);
+                });
+            } else {
+                adicionarLinhaOpcaoProduto();
+            }
         }
 
         async function removerProduto(id) { if (confirm('Remover?')) { await db.collection('produtos').doc(id).delete(); await carregarDados(); atualizarListaProdutos(); } }
         function limparFormularioProduto() { 
             document.getElementById('editProdId').value = ''; document.getElementById('prodNome').value = ''; document.getElementById('prodDescricao').value = ''; 
-            document.getElementById('prodPreco').value = ''; document.getElementById('prodEstoque').value = ''; document.getElementById('prodImg').value = ''; 
+            document.getElementById('prodPrecoMaoObra').value = ''; document.getElementById('prodEstoque').value = ''; document.getElementById('prodImg').value = ''; 
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
             document.getElementById('promoFields').classList.add('hidden');
             document.getElementById('containerDescontoProgressivo').innerHTML = ''; adicionarLinhaDesconto();
             document.getElementById('containerComponentesKit').innerHTML = ''; adicionarLinhaComponente();
             document.getElementById('camposKit').classList.add('hidden');
+            document.getElementById('containerOpcoesProduto').innerHTML = ''; adicionarLinhaOpcaoProduto();
         }
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
@@ -606,11 +715,11 @@
             dados.produtos.forEach(p => {
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
                 const tipo = p.tipoItem === 'kit' ? '[KIT] ' : '';
-                lista.innerHTML += `<div class="item"><span>${tipo}${cat?.nome || '?'} → ${p.nome} (R$ ${p.preco})</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
+                lista.innerHTML += `<div class="item"><span>${tipo}${cat?.nome || '?'} → ${p.nome} (R$ ${p.precoMaoObra || '0'})</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
             });
         }
 
-        // --- Pedidos e Avaliações ---
+        // --- Pedidos ---
         function carregarPedidos() {
             const container = document.getElementById('listaPedidosAdmin');
             container.innerHTML = '<p style="text-align:center;">Carregando pedidos...</p>';
@@ -686,7 +795,7 @@
         function desaprovarAvaliacao(id) { db.collection('avaliacoes').doc(id).update({ aprovado: false }); }
         function deletarAvaliacao(id) { if(confirm('Deletar avaliação?')) db.collection('avaliacoes').doc(id).delete(); }
 
-        // --- Jogos e Promoções ---
+        // --- Jogos ---
         function adicionarLinhaCupom() {
             const container = document.getElementById('containerCuponsRaspa');
             const div = document.createElement('div');
@@ -724,12 +833,39 @@
                 }
             });
 
-            const data = {
-                sorte: { ativo: sorteAtivo, inicio: sorteInicio, fim: sorteFim },
-                raspa: { ativo: raspaAtivo, inicio: raspaInicio, fim: raspaFim, cupons }
-            };
+            const data = { sorte: { ativo: sorteAtivo, inicio: sorteInicio, fim: sorteFim }, raspa: { ativo: raspaAtivo, inicio: raspaInicio, fim: raspaFim, cupons } };
             await db.collection('config').doc('jogos').set(data);
             alert('Configurações de jogos salvas!');
+            carregarDados();
+        }
+
+        // --- Precificação ---
+        function adicionarLinhaServicoGlobal() {
+            const container = document.getElementById('containerServicosGlobais');
+            const div = document.createElement('div');
+            div.className = 'linha-servico';
+            div.innerHTML = `
+                <input type="text" class="servico-nome" placeholder="Nome do serviço (Ex: Plastificação)">
+                <input type="text" class="servico-preco" placeholder="+ R$ 0,50">
+                <button class="btn-danger" onclick="removerLinhaServicoGlobal(this)">-</button>
+            `;
+            container.appendChild(div);
+        }
+        function removerLinhaServicoGlobal(btn) { btn.parentElement.remove(); }
+
+        async function salvarPrecificacao() {
+            const offset = document.getElementById('precoOffset').value.trim();
+            const matte = document.getElementById('precoMatte').value.trim();
+            const glossy = document.getElementById('precoGlossy').value.trim();
+            const servicos = [];
+            document.querySelectorAll('#containerServicosGlobais .linha-servico').forEach(row => {
+                const nome = row.querySelector('.servico-nome').value.trim();
+                const preco = row.querySelector('.servico-preco').value.trim();
+                if (nome && preco) servicos.push({ nome, preco });
+            });
+            const data = { offset, matte, glossy, servicos };
+            await db.collection('config').doc('precificacao').set(data);
+            alert('Configurações de precificação salvas!');
             carregarDados();
         }
 
