@@ -21,6 +21,7 @@
         .btn-danger { background: #ff4455; }
         .btn-danger:hover { background: #cc1122; }
         .btn-secondary { background: #666; }
+        .btn-whatsapp-modal { background: #25D366 !important; }
         .btn-refresh { background: #00f2fe; color: #000; }
         .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 400px; overflow-y: auto; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
         .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 5px; }
@@ -174,7 +175,6 @@
                 <button onclick="adicionarLinhaDesconto()" class="btn-secondary" style="margin-top:5px;">+ Adicionar faixa de desconto</button>
             </div>
             <button onclick="salvarProduto()" style="margin-top:15px;">Salvar Item</button>
-            <button onclick="forcarRecarregarDados()" class="btn-refresh" style="margin-left:10px;"><i class="fas fa-sync"></i> Recarregar Listas</button>
             <div class="admin-item-list" id="listaProdutos"></div>
         </div>
 
@@ -418,8 +418,8 @@
         function abrirAba(aba) {
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
             ['abaCategorias','abaProdutos','abaPedidos','abaAvaliacoes','abaJogos','abaPrecificacao','abaDesign','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
-            if (aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
-            else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); toggleCamposKit(); toggleManualPriceFields(); }
+            if (aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); atualizarListaCategorias(); }
+            else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); toggleCamposKit(); toggleManualPriceFields(); atualizarListaProdutos(); }
             else if (aba === 'pedidos') { document.getElementById('abaPedidos').style.display = 'block'; document.getElementById('tabPedidos').classList.add('active'); carregarPedidos(); }
             else if (aba === 'avaliacoes') { document.getElementById('abaAvaliacoes').style.display = 'block'; document.getElementById('tabAvaliacoes').classList.add('active'); carregarAvaliacoesAdmin(); }
             else if (aba === 'jogos') { document.getElementById('abaJogos').style.display = 'block'; document.getElementById('tabJogos').classList.add('active'); }
@@ -475,7 +475,9 @@
                 if (id) { await db.collection('categorias').doc(id).update(dadosCat); }
                 else { const docRef = await db.collection('categorias').add(dadosCat); await db.collection('categorias').doc(docRef.id).update({ id: docRef.id }); }
                 document.getElementById('editCatId').value = ''; document.getElementById('catNome').value = ''; document.getElementById('catImg').value = '';
-                await carregarDados(); atualizarListaCategorias(); atualizarSelectCategorias();
+                await carregarDados(); // Recarrega os dados do Firebase
+                atualizarListaCategorias(); // Atualiza a lista na tela
+                atualizarSelectCategorias(); // Atualiza o dropdown da aba Itens
             }
             if (fileInput.files[0]) { processarCat(await redimensionarImagem(fileInput.files[0], 400, 0.4)); }
             else { processarCat(null); }
@@ -493,7 +495,9 @@
             if (!confirm('Remover categoria e itens?')) return;
             await db.collection('categorias').doc(id).delete();
             for (const prod of dados.produtos.filter(p => p.categoriaId === id)) { await db.collection('produtos').doc(prod.id).delete(); }
-            await carregarDados(); atualizarListaCategorias(); atualizarSelectCategorias();
+            await carregarDados(); 
+            atualizarListaCategorias(); 
+            atualizarSelectCategorias(); 
         }
 
         function atualizarListaCategorias() {
@@ -582,11 +586,8 @@
             const catId = document.getElementById('prodCategoria').value;
             const nome = document.getElementById('prodNome').value.trim();
             const descricao = document.getElementById('prodDescricao').value.trim();
-            
-            // Novos campos
             const usarPrecoManual = document.getElementById('prodPrecoManualToggle').checked;
             const precoManual = document.getElementById('prodPrecoManual').value.trim();
-            
             const usarPrecificacao = document.getElementById('prodUsarPrecificacao') ? document.getElementById('prodUsarPrecificacao').checked : false;
             const material = document.getElementById('prodMaterial') ? document.getElementById('prodMaterial').value : 'offset';
             const qtdFolhas = document.getElementById('prodQtdFolhas') ? parseInt(document.getElementById('prodQtdFolhas').value) || 1 : 1;
@@ -651,7 +652,10 @@
                 };
                 if (id) { await db.collection('produtos').doc(id).update(produto); }
                 else { const docRef = await db.collection('produtos').add(produto); await db.collection('produtos').doc(docRef.id).update({ id: docRef.id }); }
-                limparFormularioProduto(); await carregarDados(); atualizarListaProdutos();
+                limparFormularioProduto(); 
+                await carregarDados(); // Recarrega os dados do Firebase
+                atualizarListaProdutos(); // Atualiza a lista na tela
+                atualizarSelectCategorias(); // Atualiza o dropdown caso necessário
             }
             if (fileInput.files.length > 0) {
                 const imagens = [];
@@ -670,12 +674,9 @@
             document.getElementById('prodCategoria').value = p.categoriaId;
             document.getElementById('prodNome').value = p.nome;
             document.getElementById('prodDescricao').value = p.descricao || '';
-            
-            // Carregar campos de preço manual
             document.getElementById('prodPrecoManualToggle').checked = p.usarPrecoManual || false;
             document.getElementById('prodPrecoManual').value = p.precoManual || '';
             toggleManualPriceFields();
-
             if (document.getElementById('prodUsarPrecificacao')) document.getElementById('prodUsarPrecificacao').checked = p.usarPrecificacao !== false;
             if (document.getElementById('prodMaterial')) document.getElementById('prodMaterial').value = p.material || 'offset';
             if (document.getElementById('prodQtdFolhas')) document.getElementById('prodQtdFolhas').value = p.qtdFolhas || 1;
@@ -777,9 +778,12 @@
         }
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
-            const select = document.getElementById('prodCategoria'); select.innerHTML = '<option value="">Selecione</option>';
+            const select = document.getElementById('prodCategoria'); 
+            select.innerHTML = '<option value="">Selecione</option>';
             if (dados.categorias && dados.categorias.length > 0) {
-                dados.categorias.filter(c => c.tipo === tipo).forEach(cat => { select.innerHTML += `<option value="${cat.id}">${cat.nome}</option>`; });
+                dados.categorias.filter(c => c.tipo === tipo).forEach(cat => { 
+                    select.innerHTML += `<option value="${cat.id}">${cat.nome}</option>`; 
+                });
             } else {
                 select.innerHTML = '<option value="">Nenhuma categoria encontrada</option>';
             }
@@ -796,15 +800,6 @@
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
                 const tipo = p.tipoItem === 'kit' ? '[KIT] ' : '';
                 lista.innerHTML += `<div class="item"><span>${tipo}${cat?.nome || '?'} → ${p.nome} (R$ ${p.precoMaoObra || p.precoManual || '0'})</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
-            });
-        }
-
-        function forcarRecarregarDados() {
-            carregarDados().then(() => {
-                atualizarListaCategorias();
-                atualizarSelectCategorias();
-                atualizarListaProdutos();
-                alert('Dados recarregados com sucesso!');
             });
         }
 
@@ -1073,15 +1068,18 @@
             document.getElementById('frasesInput').value = dados.frases.join('\n'); carregarFAQ(); carregarRelatorios();
         }
 
-        function checkPassword() {
+        async function checkPassword() {
             const pass = document.getElementById('adminPassInput').value;
             if (pass === 'gudyx2026') {
                 document.getElementById('passwordOverlay').classList.add('hidden');
                 document.getElementById('adminContent').style.display = 'block';
-                carregarDados().then(() => {
-                    atualizarListaCategorias(); atualizarSelectCategorias(); atualizarListaProdutos();
-                    document.getElementById('frasesInput').value = dados.frases.join('\n'); carregarFAQ(); carregarRelatorios();
-                });
+                await carregarDados(); // FORÇA O CARREGAMENTO DOS DADOS ANTES DE ABRIR
+                atualizarListaCategorias();
+                atualizarSelectCategorias();
+                atualizarListaProdutos();
+                document.getElementById('frasesInput').value = dados.frases.join('\n');
+                carregarFAQ();
+                carregarRelatorios();
             } else { document.getElementById('passError').style.display = 'block'; }
         }
         document.getElementById('adminPassInput').addEventListener('keypress', e => { if (e.key === 'Enter') checkPassword(); });
