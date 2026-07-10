@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <!-- ADICIONADO: BIBLIOTECA DE AUTENTICAÇÃO PARA CORRIGIR O ERRO -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <style>
         :root { --roxo-profundo: #0b041c; --ciano-brilhante: #00f2fe; --vidro-fundo: rgba(11,4,28,0.65); --vidro-borda: rgba(172,40,255,0.3); }
@@ -60,6 +59,12 @@
         .status-retirado { background:#00f2fe; color:#000; }
         .pedido-card .acoes { margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
         #passError { color:#ff4455; font-size:0.8rem; margin-top:10px; display:none; }
+        
+        /* CORREÇÃO DROPDOWN ADMIN */
+        select option {
+            color: #000000; 
+            background-color: #ffffff;
+        }
     </style>
 </head>
 <body>
@@ -338,7 +343,6 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        // AQUI ESTÁ A CORREÇÃO DA AUTENTICAÇÃO. SEM ELE, O JS TRÁS O ERRO "firebase.auth is not a function"
         firebase.auth().signInAnonymously().catch(e => console.error("Auth error:", e));
 
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
@@ -475,12 +479,19 @@
             const fileInput = document.getElementById('catImg');
             async function processarCat(imagem) {
                 const dadosCat = { tipo, nome, imagem: imagem || '' };
-                if (id) { await db.collection('categorias').doc(id).update(dadosCat); }
-                else { const docRef = await db.collection('categorias').add(dadosCat); await db.collection('categorias').doc(docRef.id).update({ id: docRef.id }); }
+                if (id) { 
+                    await db.collection('categorias').doc(id).update(dadosCat); 
+                    alert('✅ Categoria atualizada com sucesso!');
+                }
+                else { 
+                    const docRef = await db.collection('categorias').add(dadosCat); 
+                    await db.collection('categorias').doc(docRef.id).update({ id: docRef.id });
+                    alert('✅ Categoria criada com sucesso!');
+                }
                 document.getElementById('editCatId').value = ''; document.getElementById('catNome').value = ''; document.getElementById('catImg').value = '';
-                await carregarDados(); // Recarrega os dados do Firebase
-                atualizarListaCategorias(); // Atualiza a lista na tela
-                atualizarSelectCategorias(); // Atualiza o dropdown da aba Itens
+                await carregarDados();
+                atualizarListaCategorias();
+                atualizarSelectCategorias();
             }
             if (fileInput.files[0]) { processarCat(await redimensionarImagem(fileInput.files[0], 400, 0.4)); }
             else { processarCat(null); }
@@ -653,12 +664,19 @@
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
                     descontoProgressivo
                 };
-                if (id) { await db.collection('produtos').doc(id).update(produto); }
-                else { const docRef = await db.collection('produtos').add(produto); await db.collection('produtos').doc(docRef.id).update({ id: docRef.id }); }
+                if (id) { 
+                    await db.collection('produtos').doc(id).update(produto); 
+                    alert('✅ Produto atualizado com sucesso!');
+                }
+                else { 
+                    const docRef = await db.collection('produtos').add(produto); 
+                    await db.collection('produtos').doc(docRef.id).update({ id: docRef.id });
+                    alert('✅ Produto criado com sucesso!');
+                }
                 limparFormularioProduto(); 
-                await carregarDados(); // Recarrega os dados do Firebase
-                atualizarListaProdutos(); // Atualiza a lista na tela
-                atualizarSelectCategorias(); // Atualiza o dropdown caso necessário
+                await carregarDados();
+                atualizarListaProdutos(); 
+                atualizarSelectCategorias();
             }
             if (fileInput.files.length > 0) {
                 const imagens = [];
@@ -922,7 +940,7 @@
 
             const data = { sorte: { ativo: sorteAtivo, inicio: sorteInicio, fim: sorteFim }, raspa: { ativo: raspaAtivo, inicio: raspaInicio, fim: raspaFim, cupons } };
             await db.collection('config').doc('jogos').set(data);
-            alert('Configurações de jogos salvas!');
+            alert('✅ Configurações de jogos salvas!');
             carregarDados();
         }
 
@@ -952,7 +970,7 @@
             });
             const data = { offset, matte, glossy, servicos };
             await db.collection('config').doc('precificacao').set(data);
-            alert('Configurações de precificação salvas!');
+            alert('✅ Configurações de precificação salvas!');
             carregarDados();
         }
 
@@ -1001,7 +1019,7 @@
         async function salvarFrases() {
             const lista = document.getElementById('frasesInput').value.split('\n').map(s => s.trim()).filter(s => s);
             await db.collection('config').doc('frases').set({ lista });
-            alert('Frases salvas!');
+            alert('✅ Frases salvas!');
         }
 
         function carregarFAQ() { document.getElementById('listaFaq').innerHTML = dados.faq.map((faq, i) => `<div class="item"><span><strong>P:</strong> ${faq.pergunta}<br>R: ${faq.resposta}</span><div><button class="btn-edit" onclick="editarFaq(${i})">✏️</button><button onclick="removerFaq(${i})">Remover</button></div></div>`).join('') || '<p>Nenhuma FAQ.</p>'; }
@@ -1014,6 +1032,7 @@
             else { dados.faq.push({ pergunta, resposta }); }
             await db.collection('config').doc('faq').set({ perguntas: dados.faq });
             document.getElementById('editFaqId').value = ''; document.getElementById('faqPergunta').value = ''; document.getElementById('faqResposta').value = '';
+            alert('✅ FAQ salva!');
             carregarFAQ();
         }
         function editarFaq(index) { const faq = dados.faq[index]; document.getElementById('editFaqId').value = index; document.getElementById('faqPergunta').value = faq.pergunta; document.getElementById('faqResposta').value = faq.resposta; }
@@ -1030,7 +1049,7 @@
             const pedidosEmAndamento = document.getElementById('configPedidosEmAndamento').checked;
             if (prazoMin < 1 || prazoMax < prazoMin) return alert('Defina prazos válidos.');
             await db.collection('config').doc('loja').set({ prazoMinimo: prazoMin, prazoMaximo: prazoMax, pedidosEmAndamento });
-            alert('Configurações salvas!');
+            alert('✅ Configurações salvas!');
             carregarConfigLoja();
         }
 
@@ -1076,7 +1095,7 @@
             if (pass === 'gudyx2026') {
                 document.getElementById('passwordOverlay').classList.add('hidden');
                 document.getElementById('adminContent').style.display = 'block';
-                await carregarDados(); // FORÇA O CARREGAMENTO DOS DADOS ANTES DE ABRIR
+                await carregarDados(); 
                 atualizarListaCategorias();
                 atualizarSelectCategorias();
                 atualizarListaProdutos();
