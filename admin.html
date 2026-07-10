@@ -21,7 +21,7 @@
         .btn-danger { background: #ff4455; }
         .btn-danger:hover { background: #cc1122; }
         .btn-secondary { background: #666; }
-        .btn-whatsapp-modal { background: #25D366 !important; }
+        .btn-refresh { background: #00f2fe; color: #000; }
         .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 400px; overflow-y: auto; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
         .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 5px; }
         .admin-item-list .item button { padding: 4px 12px; font-size: 0.8rem; background: #ff4455; margin: 2px; }
@@ -106,18 +106,26 @@
                 <option value="kit">Kit / Combo</option>
             </select>
 
-            <label>Tipo</label><select id="prodTipo" onchange="atualizarSelectCategorias(); toggleCamposKit()"><option value="produtos">Produtos</option><option value="servicos">Serviços</option></select>
+            <label>Tipo</label><select id="prodTipo" onchange="atualizarSelectCategorias(); toggleCamposKit(); toggleManualPriceFields()"><option value="produtos">Produtos</option><option value="servicos">Serviços</option></select>
             <label>Categoria</label><select id="prodCategoria"></select>
             <label>Nome</label><input type="text" id="prodNome">
             <label>Descrição</label><textarea id="prodDescricao"></textarea>
 
-            <!-- CAMPOS DE PRECIFICAÇÃO AUTOMÁTICA -->
+            <!-- CAMPO DE PREÇO MANUAL -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
-                <label>📐 Configuração de Precificação</label>
-                <label style="display:flex; align-items:center; gap:10px; margin-top:10px;">
-                    <input type="checkbox" id="prodUsarPrecificacao" checked style="width:auto; transform:scale(1.5); margin-right:10px;">
-                    Usar precificação automática (Calcular por folhas)
+                <label style="display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="prodPrecoManualToggle" onchange="toggleManualPriceFields()" style="width:auto; transform:scale(1.5); margin-right:10px;">
+                    Usar Preço Manual (ignora precificação automática)
                 </label>
+                <div id="manualPriceFields" class="hidden" style="margin-top:10px;">
+                    <label>Preço Manual (R$):</label>
+                    <input type="text" id="prodPrecoManual" placeholder="Ex: 25,00">
+                </div>
+            </div>
+
+            <!-- CAMPOS DE PRECIFICAÇÃO AUTOMÁTICA -->
+            <div id="autoPriceFields" style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
+                <label>📐 Configuração de Precificação</label>
                 <label>Material Padrão:</label>
                 <select id="prodMaterial">
                     <option value="offset">Offset</option>
@@ -166,6 +174,7 @@
                 <button onclick="adicionarLinhaDesconto()" class="btn-secondary" style="margin-top:5px;">+ Adicionar faixa de desconto</button>
             </div>
             <button onclick="salvarProduto()" style="margin-top:15px;">Salvar Item</button>
+            <button onclick="forcarRecarregarDados()" class="btn-refresh" style="margin-left:10px;"><i class="fas fa-sync"></i> Recarregar Listas</button>
             <div class="admin-item-list" id="listaProdutos"></div>
         </div>
 
@@ -243,22 +252,18 @@
             </div>
         </div>
 
-        <!-- DESIGN (NOVA ABA) -->
+        <!-- DESIGN -->
         <div id="abaDesign" style="display:none;">
             <h3>🎨 Gerenciar Tema Visual (Fundo, Cards, Mascote)</h3>
             <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
                 <label>🏞️ Imagem de Fundo (Cole o link do Imgur)</label>
                 <input type="text" id="designBgUrl" placeholder="https://i.imgur.com/...">
-
                 <label>🎨 Cor do Fundo (Se a imagem não carregar ou for transparente)</label>
                 <input type="text" id="designBgColor" placeholder="#0b041c ou rgba(...)">
-
                 <label>🃏 Cor de Fundo dos Cards</label>
                 <input type="text" id="designCardBg" placeholder="rgba(11, 4, 28, 0.65)">
-                
                 <label>🃏 Cor da Borda dos Cards</label>
                 <input type="text" id="designCardBorder" placeholder="rgba(172, 40, 255, 0.3)">
-
                 <label>🐶 Imagem do Mascote (Cole o link do Imgur)</label>
                 <input type="text" id="designMascoteUrl" placeholder="https://i.imgur.com/Y5H9zqr.png">
             </div>
@@ -414,7 +419,7 @@
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
             ['abaCategorias','abaProdutos','abaPedidos','abaAvaliacoes','abaJogos','abaPrecificacao','abaDesign','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
             if (aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); }
-            else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); toggleCamposKit(); }
+            else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); toggleCamposKit(); toggleManualPriceFields(); }
             else if (aba === 'pedidos') { document.getElementById('abaPedidos').style.display = 'block'; document.getElementById('tabPedidos').classList.add('active'); carregarPedidos(); }
             else if (aba === 'avaliacoes') { document.getElementById('abaAvaliacoes').style.display = 'block'; document.getElementById('tabAvaliacoes').classList.add('active'); carregarAvaliacoesAdmin(); }
             else if (aba === 'jogos') { document.getElementById('abaJogos').style.display = 'block'; document.getElementById('tabJogos').classList.add('active'); }
@@ -425,6 +430,19 @@
             else if (aba === 'configLoja') { document.getElementById('abaConfigLoja').style.display = 'block'; document.getElementById('tabConfigLoja').classList.add('active'); carregarConfigLoja(); }
             else if (aba === 'relatorios') { document.getElementById('abaRelatorios').style.display = 'block'; document.getElementById('tabRelatorios').classList.add('active'); carregarRelatorios(); }
             else if (aba === 'backup') { document.getElementById('abaBackup').style.display = 'block'; document.getElementById('tabBackup').classList.add('active'); }
+        }
+
+        function toggleManualPriceFields() {
+            const checkbox = document.getElementById('prodPrecoManualToggle');
+            const manualFields = document.getElementById('manualPriceFields');
+            const autoFields = document.getElementById('autoPriceFields');
+            if (checkbox.checked) {
+                manualFields.classList.remove('hidden');
+                autoFields.classList.add('hidden');
+            } else {
+                manualFields.classList.add('hidden');
+                autoFields.classList.remove('hidden');
+            }
         }
 
         function redimensionarImagem(file, maxWidth, qualidade) {
@@ -479,7 +497,13 @@
         }
 
         function atualizarListaCategorias() {
-            const lista = document.getElementById('listaCategorias'); lista.innerHTML = '';
+            const lista = document.getElementById('listaCategorias');
+            if (!lista) return;
+            lista.innerHTML = '';
+            if (!dados.categorias || dados.categorias.length === 0) {
+                lista.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhuma categoria cadastrada.</p>';
+                return;
+            }
             dados.categorias.forEach(cat => {
                 lista.innerHTML += `<div class="item"><span>[${cat.tipo}] ${cat.nome}</span><div><button class="btn-edit" onclick="editarCategoria('${cat.id}')">✏️</button><button onclick="removerCategoria('${cat.id}')">Remover</button></div></div>`;
             });
@@ -558,10 +582,15 @@
             const catId = document.getElementById('prodCategoria').value;
             const nome = document.getElementById('prodNome').value.trim();
             const descricao = document.getElementById('prodDescricao').value.trim();
-            const usarPrecificacao = document.getElementById('prodUsarPrecificacao').checked;
-            const material = document.getElementById('prodMaterial').value;
-            const qtdFolhas = parseInt(document.getElementById('prodQtdFolhas').value) || 1;
-            const precoMaoObra = document.getElementById('prodPrecoMaoObra').value.trim();
+            
+            // Novos campos
+            const usarPrecoManual = document.getElementById('prodPrecoManualToggle').checked;
+            const precoManual = document.getElementById('prodPrecoManual').value.trim();
+            
+            const usarPrecificacao = document.getElementById('prodUsarPrecificacao') ? document.getElementById('prodUsarPrecificacao').checked : false;
+            const material = document.getElementById('prodMaterial') ? document.getElementById('prodMaterial').value : 'offset';
+            const qtdFolhas = document.getElementById('prodQtdFolhas') ? parseInt(document.getElementById('prodQtdFolhas').value) || 1 : 1;
+            const precoMaoObra = document.getElementById('prodPrecoMaoObra') ? document.getElementById('prodPrecoMaoObra').value.trim() : '';
             const estoque = parseInt(document.getElementById('prodEstoque').value) || 0;
             const promocao = document.getElementById('prodPromocao').checked;
             const destaque = document.getElementById('prodDestaque').checked;
@@ -576,7 +605,9 @@
                 if (!isNaN(num) && desconto > 0) precoPromo = (num * (1 - desconto / 100)).toFixed(2).replace('.', ',');
                 else precoPromo = precoMaoObra;
             }
-            if (!catId || !nome || !precoMaoObra) return alert('Preencha nome e preço.');
+            if (!catId || !nome) return alert('Preencha nome e categoria.');
+            if (!usarPrecoManual && !precoMaoObra) return alert('Preencha o preço de mão de obra ou ative o preço manual.');
+            if (usarPrecoManual && !precoManual) return alert('Preencha o preço manual.');
 
             const descontoProgressivo = [];
             document.querySelectorAll('.linha-desconto').forEach(row => {
@@ -609,7 +640,10 @@
             const fileInput = document.getElementById('prodImg');
             async function processarProd(imagens) {
                 const produto = { 
-                    tipoItem, componentes, usarPrecificacao, material, qtdFolhas, precoMaoObra, opcoesProduto,
+                    tipoItem, componentes,
+                    usarPrecoManual,
+                    precoManual: usarPrecoManual ? precoManual : null,
+                    usarPrecificacao, material, qtdFolhas, precoMaoObra, opcoesProduto,
                     categoriaId: catId, nome, descricao, estoque, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
@@ -636,10 +670,16 @@
             document.getElementById('prodCategoria').value = p.categoriaId;
             document.getElementById('prodNome').value = p.nome;
             document.getElementById('prodDescricao').value = p.descricao || '';
-            document.getElementById('prodUsarPrecificacao').checked = p.usarPrecificacao !== false;
-            document.getElementById('prodMaterial').value = p.material || 'offset';
-            document.getElementById('prodQtdFolhas').value = p.qtdFolhas || 1;
-            document.getElementById('prodPrecoMaoObra').value = p.precoMaoObra || '';
+            
+            // Carregar campos de preço manual
+            document.getElementById('prodPrecoManualToggle').checked = p.usarPrecoManual || false;
+            document.getElementById('prodPrecoManual').value = p.precoManual || '';
+            toggleManualPriceFields();
+
+            if (document.getElementById('prodUsarPrecificacao')) document.getElementById('prodUsarPrecificacao').checked = p.usarPrecificacao !== false;
+            if (document.getElementById('prodMaterial')) document.getElementById('prodMaterial').value = p.material || 'offset';
+            if (document.getElementById('prodQtdFolhas')) document.getElementById('prodQtdFolhas').value = p.qtdFolhas || 1;
+            if (document.getElementById('prodPrecoMaoObra')) document.getElementById('prodPrecoMaoObra').value = p.precoMaoObra || '';
             document.getElementById('prodEstoque').value = p.estoque || 0;
             document.getElementById('prodPromocao').checked = p.promocao || false;
             document.getElementById('prodDestaque').checked = p.destaque || false;
@@ -731,18 +771,40 @@
             document.getElementById('containerComponentesKit').innerHTML = ''; adicionarLinhaComponente();
             document.getElementById('camposKit').classList.add('hidden');
             document.getElementById('containerOpcoesProduto').innerHTML = ''; adicionarLinhaOpcaoProduto();
+            document.getElementById('prodPrecoManualToggle').checked = false;
+            document.getElementById('prodPrecoManual').value = '';
+            toggleManualPriceFields();
         }
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
             const select = document.getElementById('prodCategoria'); select.innerHTML = '<option value="">Selecione</option>';
-            dados.categorias.filter(c => c.tipo === tipo).forEach(cat => { select.innerHTML += `<option value="${cat.id}">${cat.nome}</option>`; });
+            if (dados.categorias && dados.categorias.length > 0) {
+                dados.categorias.filter(c => c.tipo === tipo).forEach(cat => { select.innerHTML += `<option value="${cat.id}">${cat.nome}</option>`; });
+            } else {
+                select.innerHTML = '<option value="">Nenhuma categoria encontrada</option>';
+            }
         }
         function atualizarListaProdutos() {
-            const lista = document.getElementById('listaProdutos'); lista.innerHTML = '';
+            const lista = document.getElementById('listaProdutos');
+            if (!lista) return;
+            lista.innerHTML = '';
+            if (!dados.produtos || dados.produtos.length === 0) {
+                lista.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhum item cadastrado.</p>';
+                return;
+            }
             dados.produtos.forEach(p => {
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
                 const tipo = p.tipoItem === 'kit' ? '[KIT] ' : '';
-                lista.innerHTML += `<div class="item"><span>${tipo}${cat?.nome || '?'} → ${p.nome} (R$ ${p.precoMaoObra || '0'})</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
+                lista.innerHTML += `<div class="item"><span>${tipo}${cat?.nome || '?'} → ${p.nome} (R$ ${p.precoMaoObra || p.precoManual || '0'})</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
+            });
+        }
+
+        function forcarRecarregarDados() {
+            carregarDados().then(() => {
+                atualizarListaCategorias();
+                atualizarSelectCategorias();
+                atualizarListaProdutos();
+                alert('Dados recarregados com sucesso!');
             });
         }
 
