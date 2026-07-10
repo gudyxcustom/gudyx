@@ -880,7 +880,6 @@
                 const snapProd = await db.collection('produtos').get(); dados.produtos = snapProd.docs.map(d => ({ id: d.id, ...d.data() })); 
                 const snapFrases = await db.collection('config').doc('frases').get(); dados.frases = snapFrases.exists ? snapFrases.data().lista : []; 
                 const snapFaq = await db.collection('config').doc('faq').get(); dados.faq = snapFaq.exists ? snapFaq.data().perguntas : []; 
-                const snapDivertido = await db.collection('config').doc('divertido').get(); if (snapDivertido.exists) { configDivertido = snapDivertido.data(); } else { const localDivertido = localStorage.getItem('gudyx_divertido'); if (localDivertido) configDivertido = JSON.parse(localDivertido); } 
                 const snapConfigLoja = await db.collection('config').doc('loja').get(); if (snapConfigLoja.exists) { configLoja = snapConfigLoja.data(); }
                 const snapJogos = await db.collection('config').doc('jogos').get(); if (snapJogos.exists) { configJogos = snapJogos.data(); }
                 const snapPrec = await db.collection('config').doc('precificacao').get(); if (snapPrec.exists) { configPrecificacao = snapPrec.data(); }
@@ -910,13 +909,11 @@
                 }
 
             } catch(e) { console.error('Firestore:', e); } 
-            carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); aplicarConfigDivertido(); 
+            carregarCarrinho(); carregarFavoritos(); carregarAvaliacoes(); carregarEstadoMascote(); 
             verificarLinkAvaliacao();
             atualizarVisibilidadeJogos();
             resetInactivityTimer();
         }
-
-        function aplicarConfigDivertido() { }
 
         function atualizarVisibilidadeJogos() {
             const agora = new Date();
@@ -1207,6 +1204,7 @@
 
         function alterarQuantidade(delta) { quantidadeModal = Math.max(1, quantidadeModal+delta); document.getElementById('qtdModal').textContent = quantidadeModal; calcularPrecoProgressivo(quantidadeModal); }
 
+        // CORREÇÃO DE PREÇO AQUI (SEGURANÇA)
         function calcularPrecoTotal(prod, opcoesSelecionadas) {
             if (prod.usarPrecoManual === true && prod.precoManual) {
                 let precoBase = parseFloat(String(prod.precoManual).replace(',', '.')) || 0;
@@ -1217,6 +1215,16 @@
             }
 
             if (prod.usarPrecificacao === false && prod.preco) {
+                let precoBase = parseFloat(String(prod.preco).replace(',', '.')) || 0;
+                if (isPromoActive(prod) && prod.precoPromo) {
+                    precoBase = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
+                }
+                return precoBase.toFixed(2).replace('.', ',');
+            }
+            
+            // CORREÇÃO DE SEGURANÇA PARA QUEM AINDA TEM O CAMPO 'preco' PREENCHIDO
+            // Se o código chegou até aqui, tenta pegar o preco fixo salvo antes de calcular automático
+            if (prod.preco) {
                 let precoBase = parseFloat(String(prod.preco).replace(',', '.')) || 0;
                 if (isPromoActive(prod) && prod.precoPromo) {
                     precoBase = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
@@ -1573,7 +1581,7 @@
             if (diasDesdeCriacao < 7) badges += '<div class="badge-novo">NOVO</div>';
             if (estoque && getEstoque(prod) <= 5) badges += '<div class="badge-estoque-baixo">Últimas!</div>';
             
-            // CORREÇÃO DE PREÇO AQUI: Agora usa calcularPrecoTotal em vez de prod.preco
+            // CORREÇÃO DE PREÇO AQUI: Agora usa calcularPrecoTotal
             const precoCalculado = calcularPrecoTotal(prod, []);
             let precoHtml = promo && prod.precoPromo ? 
                 `<div><span class="preco-promo">R$ ${precoCalculado}</span> <span class="preco-atual">R$ ${prod.precoPromo}</span> <span class="flame-icon">🔥</span></div>` : 
