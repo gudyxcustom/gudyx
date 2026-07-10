@@ -1201,8 +1201,17 @@
 
         // ================= CORREÇÃO 1: A FUNÇÃO DE CALCULAR PREÇO =================
         function calcularPrecoTotal(prod, opcoesSelecionadas) {
-            // Se o Admin desmarcou "Usar precificação automática", volta ao preço fixo!
-            if (prod.usarPrecificacao === false) {
+            // Se o Admin marcou "Usar Preço Manual", usa o preço manual
+            if (prod.usarPrecoManual === true && prod.precoManual) {
+                let precoBase = parseFloat(String(prod.precoManual).replace(',', '.')) || 0;
+                if (isPromoActive(prod) && prod.precoPromo) {
+                    precoBase = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
+                }
+                return precoBase.toFixed(2).replace('.', ',');
+            }
+
+            // Se o Admin desmarcou "Usar precificação automática", volta ao preço fixo
+            if (prod.usarPrecificacao === false && prod.preco) {
                 let precoBase = parseFloat(String(prod.preco).replace(',', '.')) || 0;
                 if (isPromoActive(prod) && prod.precoPromo) {
                     precoBase = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
