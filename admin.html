@@ -181,6 +181,13 @@
                 </div>
                 <button onclick="adicionarLinhaDesconto()" class="btn-secondary" style="margin-top:5px;">+ Adicionar faixa de desconto</button>
             </div>
+
+            <!-- CAMPO ESTOQUE (CORRIGIDO) -->
+            <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
+                <label>📦 Estoque Disponível</label>
+                <input type="number" id="prodEstoque" min="0" placeholder="Ex: 10 (deixe 0 para esgotado)">
+            </div>
+
             <button onclick="salvarProduto()" style="margin-top:15px;">Salvar Item</button>
             <div class="admin-item-list" id="listaProdutos"></div>
         </div>
@@ -605,7 +612,10 @@
             const material = document.getElementById('prodMaterial') ? document.getElementById('prodMaterial').value : 'offset';
             const qtdFolhas = document.getElementById('prodQtdFolhas') ? parseInt(document.getElementById('prodQtdFolhas').value) || 1 : 1;
             const precoMaoObra = document.getElementById('prodPrecoMaoObra') ? document.getElementById('prodPrecoMaoObra').value.trim() : '';
-            const estoque = parseInt(document.getElementById('prodEstoque').value) || 0;
+            // CORREÇÃO AQUI: Verificação de segurança para o campo de estoque que estava faltando
+            const estoqueInput = document.getElementById('prodEstoque');
+            const estoque = estoqueInput ? parseInt(estoqueInput.value) || 0 : 0;
+
             const promocao = document.getElementById('prodPromocao').checked;
             const destaque = document.getElementById('prodDestaque').checked;
             const exibirSlider = document.getElementById('prodSlider').checked;
@@ -654,13 +664,14 @@
             });
 
             const fileInput = document.getElementById('prodImg');
+            
             async function processarProd(imagens) {
                 const produto = { 
                     tipoItem, componentes,
                     usarPrecoManual: usarPrecoManual,
                     precoManual: usarPrecoManual ? precoManual : null,
                     material, qtdFolhas, precoMaoObra, opcoesProduto,
-                    categoriaId: catId, nome, descricao, estoque, imagens: imagens || [], 
+                    categoriaId: catId, nome, descricao, estoque: estoque, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
                     descontoProgressivo
@@ -715,7 +726,11 @@
             if (document.getElementById('prodMaterial')) document.getElementById('prodMaterial').value = p.material || 'offset';
             if (document.getElementById('prodQtdFolhas')) document.getElementById('prodQtdFolhas').value = p.qtdFolhas || 1;
             if (document.getElementById('prodPrecoMaoObra')) document.getElementById('prodPrecoMaoObra').value = p.precoMaoObra || '';
-            document.getElementById('prodEstoque').value = p.estoque || 0;
+            
+            // Adicionar o valor do Estoque ao editar
+            const estoqueInput = document.getElementById('prodEstoque');
+            if(estoqueInput) estoqueInput.value = p.estoque || 0;
+
             document.getElementById('prodPromocao').checked = p.promocao || false;
             document.getElementById('prodDestaque').checked = p.destaque || false;
             document.getElementById('prodSlider').checked = p.exibirSlider || false;
@@ -799,7 +814,7 @@
         async function removerProduto(id) { if (confirm('Remover?')) { await db.collection('produtos').doc(id).delete(); await carregarDados(); atualizarListaProdutos(); } }
         function limparFormularioProduto() { 
             document.getElementById('editProdId').value = ''; document.getElementById('prodNome').value = ''; document.getElementById('prodDescricao').value = ''; 
-            document.getElementById('prodPrecoMaoObra').value = ''; document.getElementById('prodEstoque').value = ''; document.getElementById('prodImg').value = ''; 
+            document.getElementById('prodPrecoMaoObra').value = ''; document.getElementById('prodImg').value = ''; 
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
             document.getElementById('promoFields').classList.add('hidden');
             document.getElementById('containerDescontoProgressivo').innerHTML = ''; adicionarLinhaDesconto();
@@ -808,6 +823,7 @@
             document.getElementById('containerOpcoesProduto').innerHTML = ''; adicionarLinhaOpcaoProduto();
             document.getElementById('prodPrecoManualToggle').checked = false;
             document.getElementById('prodPrecoManual').value = '';
+            document.getElementById('prodEstoque').value = 0; // Limpar estoque
             toggleManualPriceFields();
         }
         function atualizarSelectCategorias() {
