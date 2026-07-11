@@ -536,35 +536,57 @@
 
         function alterarQuantidade(delta) { quantidadeModal = Math.max(1, quantidadeModal+delta); document.getElementById('qtdModal').textContent = quantidadeModal; calcularPrecoProgressivo(quantidadeModal); }
 
-        // ================= CORREÇÃO DE SEGURANÇA AQUI =================
+        // ================= CORREÇÃO FINAL E BLINDADA =================
         function calcularPrecoTotal(prod, opcoesSelecionadas) {
-            if (prod.usarPrecoManual === true && prod.precoManual) {
-                let precoBase = parseFloat(String(prod.precoManual).replace(',', '.')) || 0;
+            // 1. Verifica se tem Preço Manual (no local CERTINHO OU dentro das opções extras se você errou)
+            let precoManualField = prod.precoManual; 
+            
+            // CORREÇÃO PROVISÓRIA PARA DADOS SALVOS ERRADOS (Como o seu GGG)
+            if (!precoManualField && prod.opcoesProduto) {
+                // Se for um array, procura o nome 'precoManual'
+                if (Array.isArray(prod.opcoesProduto)) {
+                    const found = prod.opcoesProduto.find(o => o.nome === 'precoManual');
+                    if (found) precoManualField = found.preco;
+                }
+                // Se for um objeto (como está na sua print), pega direto
+                else if (typeof prod.opcoesProduto === 'object' && prod.opcoesProduto.precoManual) {
+                    precoManualField = prod.opcoesProduto.precoManual;
+                }
+            }
+
+            // Se conseguiu encontrar o preço manual, usa ele
+            if (precoManualField) {
+                let precoBase = parseFloat(String(precoManualField).replace(',', '.')) || 0;
                 if (isPromoActive(prod) && prod.precoPromo) {
-                    precoBase = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
+                    let promoTotal = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
+                    if (promoTotal > 0) precoBase = promoTotal;
                 }
                 return precoBase.toFixed(2).replace('.', ',');
             }
 
+            // 2. Se desativou a precificação automática e colocou um preço fixo
             if (prod.usarPrecificacao === false && prod.preco) {
                 let precoBase = parseFloat(String(prod.preco).replace(',', '.')) || 0;
                 if (isPromoActive(prod) && prod.precoPromo) {
-                    precoBase = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
-                }
-                return precoBase.toFixed(2).replace('.', ',');
-            }
-            
-            if (prod.preco) {
-                let precoBase = parseFloat(String(prod.preco).replace(',', '.')) || 0;
-                if (isPromoActive(prod) && prod.precoPromo) {
-                    precoBase = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
+                    let promoTotal = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
+                    if (promoTotal > 0) precoBase = promoTotal;
                 }
                 return precoBase.toFixed(2).replace('.', ',');
             }
 
+            // 3. Fallback: Se o campo 'preco' genérico existir
+            if (prod.preco) {
+                let precoBase = parseFloat(String(prod.preco).replace(',', '.')) || 0;
+                if (isPromoActive(prod) && prod.precoPromo) {
+                    let promoTotal = parseFloat(String(prod.precoPromo).replace(',', '.')) || 0;
+                    if (promoTotal > 0) precoBase = promoTotal;
+                }
+                return precoBase.toFixed(2).replace('.', ',');
+            }
+
+            // 4. Lógica de Precificação Automática (Material + Mão de Obra)
             let precoMaterial = 0;
             const material = prod.material || 'offset';
-            
             const precoOffset = configPrecificacao.offset ? parseFloat(String(configPrecificacao.offset).replace(',', '.')) : 0;
             const precoMatte = configPrecificacao.matte ? parseFloat(String(configPrecificacao.matte).replace(',', '.')) : 0;
             const precoGlossy = configPrecificacao.glossy ? parseFloat(String(configPrecificacao.glossy).replace(',', '.')) : 0;
@@ -572,13 +594,13 @@
             if (material === 'offset') precoMaterial = precoOffset || 0.30;
             else if (material === 'matte') precoMaterial = precoMatte || 0.40;
             else if (material === 'glossy') precoMaterial = precoGlossy || 0.50;
-            
+
             const qtdFolhas = prod.qtdFolhas || 1;
             const maoObra = parseFloat(String(prod.precoMaoObra || '0').replace(',', '.')) || 0;
-            
+
             let total = (precoMaterial * qtdFolhas) + maoObra;
 
-            // SEGURANÇA: Se o total for inválido (undefined/null/NaN), força 0 para nunca aparecer "R$ undefined"
+            // SEGURANÇA EXTREMA
             if (isNaN(total) || total === undefined || total === null) {
                 total = 0;
             }
