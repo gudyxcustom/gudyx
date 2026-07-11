@@ -627,7 +627,11 @@
             document.getElementById('qtdModal').textContent='1'; 
             prod.cliques=(prod.cliques||0)+1; salvarDados(); carregarMaisVendidos(); 
             document.getElementById('modalTitle').textContent=prod.nome; document.getElementById('modalDesc').textContent=prod.descricao||''; 
-            const precoCalculado = calcularPrecoTotal(prod, []); document.getElementById('modalPriceContainer').innerHTML = `<span class="modal-price">R$ ${precoCalculado}</span>`;
+            
+            // 🔒 CORREÇÃO DO PREÇO COM FALLBACK DE SEGURANÇA
+            const precoCalculado = calcularPrecoTotal(prod, []) || '0,00'; 
+            document.getElementById('modalPriceContainer').innerHTML = `<span class="modal-price">R$ ${precoCalculado}</span>`;
+            
             document.getElementById('modalGallery').innerHTML = (prod.imagens?.length?prod.imagens:[getImagemPrincipal(prod)]).map(img=>`<img src="${img}" loading="lazy">`).join(''); 
             const cartBtn = document.getElementById('modalAddCartBtn'); const waBtn = document.getElementById('modalWaBtn');
             if(!isEmEstoque(prod)) { cartBtn.disabled=true; cartBtn.textContent='Esgotado'; if(waBtn) waBtn.style.opacity='0.5'; } else { cartBtn.disabled=false; cartBtn.innerHTML='<i class="fas fa-cart-plus"></i> Adicionar'; if(waBtn) waBtn.style.opacity='1'; } 
@@ -756,6 +760,7 @@
         let categoriaSelecionada=null;
         function carregarCategorias(tipo){const container=document.getElementById(tipo==='produtos'?'produtosCategoriasContainer':'servicosCategoriasContainer');container.innerHTML='';dados.categorias.filter(c=>c.tipo===tipo).forEach(cat=>{const card=document.createElement('div');card.className='categoria-card';card.innerHTML=`${cat.imagem?`<img src="${cat.imagem}" class="categoria-img" loading="lazy">`:'<i class="fas fa-folder" style="font-size:3rem;"></i>'}<h4>${cat.nome}</h4>`;card.onclick=()=>selecionarCategoria(tipo,cat.id);container.appendChild(card);});}
         function selecionarCategoria(tipo,catId){categoriaSelecionada={tipo,id:catId};const container=document.getElementById(tipo==='produtos'?'produtosProdutosContainer':'servicosProdutosContainer');container.innerHTML='';container.style.display='grid';container.className='produtos-grid';dados.produtos.filter(p=>p.categoriaId===catId).forEach(prod=>{renderizarCardProduto(prod,container);});}
+        
         function renderizarCardProduto(prod, container) {
             const card = document.createElement('div'); card.className = 'produto-card'; card.dataset.id = prod.id; card.onclick = (e) => { if (e.target.closest('.btn-add-cart,.btn-wa-card,.btn-favorite')) return; abrirModal(prod.id); };
             const promo = isPromoActive(prod), estoque = isEmEstoque(prod); const diasDesdeCriacao = prod.dataCriacao ? Math.floor((Date.now() - new Date(prod.dataCriacao).getTime()) / 86400000) : 999;
@@ -763,7 +768,10 @@
             if (prod.tipoItem === 'kit') badges += '<div class="badge-destaque" style="background:#ff8800;">KIT</div>';
             if (promo) badges += '<div class="badge-promo">PROMO</div>'; if (prod.destaque) badges += '<div class="badge-destaque">DESTAQUE</div>';
             if (!estoque) badges += '<div class="badge-esgotado">ESGOTADO</div>'; if (diasDesdeCriacao < 7) badges += '<div class="badge-novo">NOVO</div>'; if (estoque && getEstoque(prod) <= 5) badges += '<div class="badge-estoque-baixo">Últimas!</div>';
-            const precoCalculado = calcularPrecoTotal(prod, []); let precoHtml = promo && prod.precoPromo ? `<div><span class="preco-promo">R$ ${precoCalculado}</span> <span class="preco-atual">R$ ${prod.precoPromo}</span> <span class="flame-icon">🔥</span></div>` : `<div class="preco">R$ ${precoCalculado}</div>`;
+            
+            // 🔒 CORREÇÃO DO PREÇO COM FALLBACK DE SEGURANÇA
+            const precoCalculado = calcularPrecoTotal(prod, []) || '0,00'; 
+            let precoHtml = promo && prod.precoPromo ? `<div><span class="preco-promo">R$ ${precoCalculado}</span> <span class="preco-atual">R$ ${prod.precoPromo}</span> <span class="flame-icon">🔥</span></div>` : `<div class="preco">R$ ${precoCalculado}</div>`;
             const fav = favoritos.includes(prod.id) ? 'active' : '', favIcon = favoritos.includes(prod.id) ? 'fas' : 'far';
             const btnAdd = estoque ? `<button class="btn-add-cart" onclick="event.stopPropagation(); addToCart('${prod.id}')"><i class="fas fa-cart-plus"></i></button>` : `<button class="btn-add-cart" disabled>Esgotado</button>`;
             const waBtn = `<a href="https://wa.me/${WA_NUMBER}?text=${encodeURIComponent('Quero comprar: ' + prod.nome)}" target="_blank" class="btn-wa-card" onclick="event.stopPropagation();"><i class="fab fa-whatsapp"></i></a>`;
