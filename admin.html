@@ -107,7 +107,7 @@
                 <option value="kit">Kit / Combo</option>
             </select>
 
-            <!-- CAMPOS DE KIT (RESTAURADOS) -->
+            <!-- CAMPOS DE KIT (RESTAURADOS E SEGUROS) -->
             <div id="camposKit" class="hidden" style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>🔧 Componentes do Kit</label>
                 <div id="containerComponentesKit">
@@ -192,7 +192,7 @@
                 <button onclick="adicionarLinhaDesconto()" class="btn-secondary" style="margin-top:5px;">+ Adicionar faixa de desconto</button>
             </div>
 
-            <!-- CAMPO DE IMAGEM -->
+            <!-- CAMPO DE IMAGEM (BASE64) -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📸 Imagens do Produto</label>
                 <input type="file" id="prodImg" accept="image/*" multiple>
@@ -559,7 +559,6 @@
         function toggleCamposKit() {
             const tipoItem = document.getElementById('prodTipoItem').value;
             const campos = document.getElementById('camposKit');
-            // CORREÇÃO DE SEGURANÇA
             if (campos) {
                 if (tipoItem === 'kit') {
                     campos.classList.remove('hidden');
@@ -571,7 +570,6 @@
 
         function adicionarLinhaComponente() {
             const container = document.getElementById('containerComponentesKit');
-            // CORREÇÃO DE SEGURANÇA
             if (!container) return;
             const div = document.createElement('div');
             div.className = 'linha-componente';
@@ -832,7 +830,6 @@
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
             document.getElementById('promoFields').classList.add('hidden');
             
-            // CORREÇÃO DE SEGURANÇA: Verifica se o container existe antes de mexer no innerHTML
             const containerDesconto = document.getElementById('containerDescontoProgressivo');
             if(containerDesconto) { containerDesconto.innerHTML = ''; adicionarLinhaDesconto(); }
 
