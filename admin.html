@@ -632,16 +632,23 @@
             const descPromo = document.getElementById('prodDescPromo').value.trim();
             let precoPromo = '', desconto = 0;
 
+            if (!catId || !nome) return alert('Preencha nome e categoria.');
+
+            // 🔒 CORREÇÃO DA VALIDAÇÃO DE PREÇOS (AQUI!)
+            if (usarPrecoManual) {
+                const numManual = parseFloat(precoManual.replace(',', '.'));
+                if (isNaN(numManual) || numManual <= 0) return alert('Insira um valor numérico válido para o Preço Manual.');
+            } else {
+                const numMaoObra = parseFloat(precoMaoObra.replace(',', '.'));
+                if (isNaN(numMaoObra) || numMaoObra <= 0) return alert('Insira um valor numérico válido para o Preço de Mão de Obra.');
+            }
+
             if (promocao) {
                 desconto = parseFloat(document.getElementById('prodDesconto').value) || 0;
                 const num = parseFloat(precoMaoObra.replace(',', '.'));
                 if (!isNaN(num) && desconto > 0) precoPromo = (num * (1 - desconto / 100)).toFixed(2).replace('.', ',');
                 else precoPromo = precoMaoObra;
             }
-
-            if (!catId || !nome) return alert('Preencha nome e categoria.');
-            if (!usarPrecoManual && !precoMaoObra) return alert('Preencha o preço de mão de obra ou ative o preço manual.');
-            if (usarPrecoManual && !precoManual) return alert('Preencha o preço manual.');
 
             const descontoProgressivo = [];
             document.querySelectorAll('.linha-desconto').forEach(row => {
