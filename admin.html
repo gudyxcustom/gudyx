@@ -22,8 +22,6 @@
         .btn-danger { background: #ff4455; }
         .btn-danger:hover { background: #cc1122; }
         .btn-secondary { background: #666; }
-        .btn-whatsapp-modal { background: #25D366 !important; }
-        .btn-refresh { background: #00f2fe; color: #000; }
         .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 400px; overflow-y: auto; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
         .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 5px; }
         .admin-item-list .item button { padding: 4px 12px; font-size: 0.8rem; background: #ff4455; margin: 2px; }
@@ -109,6 +107,21 @@
                 <option value="kit">Kit / Combo</option>
             </select>
 
+            <!-- CAMPOS DE KIT (RESTAURADOS) -->
+            <div id="camposKit" class="hidden" style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
+                <label>🔧 Componentes do Kit</label>
+                <div id="containerComponentesKit">
+                    <div class="linha-componente">
+                        <select class="comp-produto">
+                            <option value="">Selecione um produto</option>
+                        </select>
+                        <input type="number" class="comp-qtd" placeholder="Qtd" min="1" value="1">
+                        <button class="btn-danger" onclick="removerLinhaComponente(this)">-</button>
+                    </div>
+                </div>
+                <button onclick="adicionarLinhaComponente()" class="btn-secondary" style="margin-top:5px;">+ Adicionar componente ao kit</button>
+            </div>
+
             <label>Tipo</label><select id="prodTipo" onchange="atualizarSelectCategorias(); toggleCamposKit(); toggleManualPriceFields()"><option value="produtos">Produtos</option><option value="servicos">Serviços</option></select>
             <label>Categoria</label><select id="prodCategoria"></select>
             <label>Nome</label><input type="text" id="prodNome">
@@ -179,7 +192,7 @@
                 <button onclick="adicionarLinhaDesconto()" class="btn-secondary" style="margin-top:5px;">+ Adicionar faixa de desconto</button>
             </div>
 
-            <!-- CAMPO DE IMAGEM (VOLTANDO AO MODELO ORIGINAL BASE64) -->
+            <!-- CAMPO DE IMAGEM -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📸 Imagens do Produto</label>
                 <input type="file" id="prodImg" accept="image/*" multiple>
@@ -546,15 +559,20 @@
         function toggleCamposKit() {
             const tipoItem = document.getElementById('prodTipoItem').value;
             const campos = document.getElementById('camposKit');
-            if (tipoItem === 'kit') {
-                campos.classList.remove('hidden');
-            } else {
-                campos.classList.add('hidden');
+            // CORREÇÃO DE SEGURANÇA
+            if (campos) {
+                if (tipoItem === 'kit') {
+                    campos.classList.remove('hidden');
+                } else {
+                    campos.classList.add('hidden');
+                }
             }
         }
 
         function adicionarLinhaComponente() {
             const container = document.getElementById('containerComponentesKit');
+            // CORREÇÃO DE SEGURANÇA
+            if (!container) return;
             const div = document.createElement('div');
             div.className = 'linha-componente';
             let select = document.createElement('select');
@@ -597,7 +615,6 @@
         }
         function removerLinhaOpcaoProduto(btn) { btn.parentElement.remove(); }
 
-        // CORREÇÃO DA FUNÇÃO DE SALVAR PRODUTO (COM BASE64 E ALERTAS)
         async function salvarProduto() {
             const id = document.getElementById('editProdId').value;
             const tipoItem = document.getElementById('prodTipoItem').value;
@@ -754,40 +771,41 @@
             } else { adicionarLinhaDesconto(); }
 
             const containerComp = document.getElementById('containerComponentesKit');
-            containerComp.innerHTML = '';
-            if (p.tipoItem === 'kit' && p.componentes && p.componentes.length > 0) {
-                p.componentes.forEach(comp => {
-                    const div = document.createElement('div');
-                    div.className = 'linha-componente';
-                    let select = document.createElement('select');
-                    select.className = 'comp-produto';
-                    select.innerHTML = '<option value="">Selecione um produto</option>';
-                    dados.produtos.filter(prod => prod.id !== p.id).forEach(prod => {
-                        let opt = document.createElement('option');
-                        opt.value = prod.id;
-                        opt.textContent = prod.nome;
-                        if(prod.id === comp.id) opt.selected = true;
-                        select.appendChild(opt);
+            if (containerComp) {
+                containerComp.innerHTML = '';
+                if (p.tipoItem === 'kit' && p.componentes && p.componentes.length > 0) {
+                    p.componentes.forEach(comp => {
+                        const div = document.createElement('div');
+                        div.className = 'linha-componente';
+                        let select = document.createElement('select');
+                        select.className = 'comp-produto';
+                        select.innerHTML = '<option value="">Selecione um produto</option>';
+                        dados.produtos.filter(prod => prod.id !== p.id).forEach(prod => {
+                            let opt = document.createElement('option');
+                            opt.value = prod.id;
+                            opt.textContent = prod.nome;
+                            if(prod.id === comp.id) opt.selected = true;
+                            select.appendChild(opt);
+                        });
+                        div.appendChild(select);
+                        let inputQtd = document.createElement('input');
+                        inputQtd.type = 'number';
+                        inputQtd.className = 'comp-qtd';
+                        inputQtd.placeholder = 'Qtd';
+                        inputQtd.min = 1;
+                        inputQtd.value = comp.quantidade;
+                        div.appendChild(inputQtd);
+                        let btn = document.createElement('button');
+                        btn.className = 'btn-danger';
+                        btn.textContent = '-';
+                        btn.onclick = function() { removerLinhaComponente(this); };
+                        div.appendChild(btn);
+                        containerComp.appendChild(div);
                     });
-                    div.appendChild(select);
-                    let inputQtd = document.createElement('input');
-                    inputQtd.type = 'number';
-                    inputQtd.className = 'comp-qtd';
-                    inputQtd.placeholder = 'Qtd';
-                    inputQtd.min = 1;
-                    inputQtd.value = comp.quantidade;
-                    div.appendChild(inputQtd);
-                    let btn = document.createElement('button');
-                    btn.className = 'btn-danger';
-                    btn.textContent = '-';
-                    btn.onclick = function() { removerLinhaComponente(this); };
-                    div.appendChild(btn);
-                    containerComp.appendChild(div);
-                });
-            } else {
-                adicionarLinhaComponente();
+                } else {
+                    adicionarLinhaComponente();
+                }
             }
-            toggleCamposKit();
 
             const containerOpcoes = document.getElementById('containerOpcoesProduto');
             containerOpcoes.innerHTML = '';
@@ -813,13 +831,16 @@
             document.getElementById('prodPrecoMaoObra').value = ''; document.getElementById('prodImg').value = ''; 
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
             document.getElementById('promoFields').classList.add('hidden');
-            document.getElementById('containerDescontoProgressivo').innerHTML = ''; adicionarLinhaDesconto();
-            document.getElementById('containerComponentesKit').innerHTML = ''; adicionarLinhaComponente();
-            document.getElementById('camposKit').classList.add('hidden');
+            
+            // CORREÇÃO DE SEGURANÇA: Verifica se o container existe antes de mexer no innerHTML
+            const containerDesconto = document.getElementById('containerDescontoProgressivo');
+            if(containerDesconto) { containerDesconto.innerHTML = ''; adicionarLinhaDesconto(); }
+
+            const containerComp = document.getElementById('containerComponentesKit');
+            if(containerComp) { containerComp.innerHTML = ''; adicionarLinhaComponente(); }
+
             document.getElementById('containerOpcoesProduto').innerHTML = ''; adicionarLinhaOpcaoProduto();
-            document.getElementById('prodPrecoManualToggle').checked = false;
-            document.getElementById('prodPrecoManual').value = '';
-            toggleManualPriceFields();
+            document.getElementById('prodPrecoManualToggle').checked = false; document.getElementById('prodPrecoManual').value = ''; toggleManualPriceFields();
         }
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
