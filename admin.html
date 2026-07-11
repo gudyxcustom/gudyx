@@ -264,11 +264,8 @@
         const db = firebase.firestore();
         const storage = firebase.storage();
         
-        // TRATAMENTO DE ERRO DE AUTENTICAÇÃO MAIS VISÍVEL
         firebase.auth().signInAnonymously().catch(e => {
             console.error("Auth error:", e);
-            // Se der erro de auth no carregamento, a tela de senha pode não funcionar, mas damos um alerta.
-            // O erro auth/configuration-not-found significa que você precisa ativar o Login Anônimo no Console do Firebase.
             alert("⚠️ Erro de autenticação com o Firebase.\n\nVerifique se você ativou o 'Login Anônimo' no console do Firebase (Authentication > Sign-in method > Anonymous).\n\nDetalhes: " + e.message);
         });
 
@@ -415,10 +412,8 @@
         }
         function removerLinhaDesconto(btn) { btn.parentElement.remove(); }
 
-        // CORREÇÃO DA FUNÇÃO TOGGLECAMPOSKIT (Agora com segurança contra elementos faltando)
         function toggleCamposKit() {
             const tipoItem = document.getElementById('prodTipoItem').value;
-            // Verificação de segurança: se o HTML não tiver 'camposKit', ele não quebra
             const campos = document.getElementById('camposKit');
             if (campos) {
                 if (tipoItem === 'kit') { campos.classList.remove('hidden'); } else { campos.classList.add('hidden'); }
@@ -427,7 +422,6 @@
 
         function adicionarLinhaComponente() {
             const container = document.getElementById('containerComponentesKit');
-            // Se o container não existir, sai da função sem quebrar
             if (!container) return;
             const div = document.createElement('div'); div.className = 'linha-componente';
             let select = document.createElement('select'); select.className = 'comp-produto';
@@ -472,7 +466,6 @@
             });
             const componentes = [];
             if (tipoItem === 'kit') {
-                // Verificação de segurança: Se não existir o container, não tenta ler
                 const containerComp = document.getElementById('containerComponentesKit');
                 if (containerComp) {
                     document.querySelectorAll('#containerComponentesKit .linha-componente').forEach(row => {
@@ -558,7 +551,6 @@
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
             document.getElementById('promoFields').classList.add('hidden');
             
-            // CORREÇÃO: Só tenta limpar o containerDescontoProgressivo se ele existir no HTML
             const containerDesconto = document.getElementById('containerDescontoProgressivo');
             if(containerDesconto) { containerDesconto.innerHTML = ''; adicionarLinhaDesconto(); }
 
