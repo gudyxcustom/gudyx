@@ -390,8 +390,46 @@
 
         function carregarCarrinho() { const sc = sessionStorage.getItem('gudyxCarrinho'); if(sc) { try { const d=JSON.parse(sc); carrinho=d.items||[]; cupomAtual=d.cupom||null; } catch(e) {} } atualizarBadgeCarrinho(); renderizarDrawer(); }
         function salvarCarrinho() { sessionStorage.setItem('gudyxCarrinho', JSON.stringify({items:carrinho,cupom:cupomAtual,timestamp:Date.now()})); atualizarBadgeCarrinho(); renderizarDrawer(); verificarCupomAutomatico(); atualizarBarraProgresso(); }
-        function atualizarBarraProgresso() { const total = carrinho.reduce((acc, c) => acc + parseFloat(c.preco.replace(',','.')) * c.quantidade, 0); const meta = 100; const progresso = Math.min((total / meta) * 100, 100); document.getElementById('progressoPreenchimento').style.width = progresso + '%'; if (total >= meta && !cupomAtual) { document.getElementById('progressoTexto').textContent = '🎉 Você ganhou 5% OFF!'; } else if (total > 0 && total < meta) { document.getElementById('progressoTexto').textContent = `Faltam R$ ${(meta - total).toFixed(2)} para 5% OFF`; } else { document.getElementById('progressoTexto').textContent = ''; } }
-        function renderizarDrawer() { const body = document.getElementById('cartDrawerBody'), totalEl = document.getElementById('cartDrawerTotal'); if (!carrinho.length) { body.innerHTML = '<div class="cart-empty">Carrinho vazio.</div>'; totalEl.textContent = 'R$ 0,00'; atualizarBarraProgresso(); return; } let html = '', total = 0; carrinho.forEach(item => { const sub = parseFloat(item.preco.replace(',','.')) * item.quantidade; total += sub; html += `<div class="cart-drawer-item"><img src="${item.imagem||'https://placehold.co/50'}" class="item-img" loading="lazy"><div class="item-info"><h4>${item.nome}</h4><div>R$ ${item.preco} x ${item.quantidade}</div></div><div class="item-actions"><button onclick="alterarQtdCarrinho('${item.id}',-1)">−</button><span class="qtd">${item.quantidade}</span><button onclick="alterarQtdCarrinho('${item.id}',1)">+</button><button class="btn-remove" onclick="alterarQtdCarrinho('${item.id}',-1)">🗑️</button></div></div>`; }); body.innerHTML = html; if (cupomAtual) { if (cupomAtual.tipo==='percentual') total *= (1-cupomAtual.valor/100); else total = Math.max(0, total-cupomAtual.valor); } totalEl.textContent = `R$ ${total.toFixed(2)}`; atualizarBarraProgresso(); }
+        function atualizarBarraProgresso() {
+            let total = 0;
+            carrinho.forEach(item => {
+                let val = parseFloat(String(item.preco || '0').replace(',', '.'));
+                if (isNaN(val)) val = 0;
+                total += val * item.quantidade;
+            });
+            if (isNaN(total)) total = 0;
+            const meta = 100;
+            const progresso = Math.min((total / meta) * 100, 100);
+            document.getElementById('progressoPreenchimento').style.width = progresso + '%';
+            if (total >= meta && !cupomAtual) {
+                document.getElementById('progressoTexto').textContent = '🎉 Você ganhou 5% OFF!';
+            } else if (total > 0 && total < meta) {
+                document.getElementById('progressoTexto').textContent = `Faltam R$ ${(meta - total).toFixed(2).replace('.', ',')} para 5% OFF`;
+            } else {
+                document.getElementById('progressoTexto').textContent = '';
+            }
+        }
+        function renderizarDrawer() {
+            const body = document.getElementById('cartDrawerBody'), totalEl = document.getElementById('cartDrawerTotal');
+            if (!carrinho.length) { body.innerHTML = '<div class="cart-empty">Carrinho vazio.</div>'; totalEl.textContent = 'R$ 0,00'; atualizarBarraProgresso(); return; }
+            let html = '', total = 0;
+            carrinho.forEach(item => {
+                let precoNumerico = parseFloat(String(item.preco || '0').replace(',', '.'));
+                if (isNaN(precoNumerico)) precoNumerico = 0;
+                const sub = precoNumerico * item.quantidade;
+                total += sub;
+                html += `<div class="cart-drawer-item"><img src="${item.imagem||'https://placehold.co/50'}" class="item-img" loading="lazy"><div class="item-info"><h4>${item.nome}</h4><div>R$ ${precoNumerico.toFixed(2).replace('.', ',')} x ${item.quantidade}</div></div><div class="item-actions"><button onclick="alterarQtdCarrinho('${item.id}',-1)">−</button><span class="qtd">${item.quantidade}</span><button onclick="alterarQtdCarrinho('${item.id}',1)">+</button><button class="btn-remove" onclick="alterarQtdCarrinho('${item.id}',-1)">🗑️</button></div></div>`;
+            });
+            body.innerHTML = html;
+            if (cupomAtual) {
+                const tipo = cupomAtual.tipo || 'percentual';
+                if (tipo === 'percentual') total *= (1 - parseFloat(cupomAtual.valor || 0) / 100);
+                else total = Math.max(0, total - parseFloat(cupomAtual.valor || 0));
+            }
+            if (isNaN(total)) total = 0;
+            totalEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
+            atualizarBarraProgresso();
+        }
         
         function addToCart(prodId, qtd=1) { 
             const prod = dados.produtos.find(p=>p.id===prodId); 
@@ -417,7 +455,8 @@
 
         function addToCartBase(prodId, qtd, prod) {
             const exist = carrinho.find(c=>c.id===prodId); 
-            const preco = isPromoActive(prod)?prod.precoPromo:prod.preco; 
+            // 🔒 CORREÇÃO DO CARRINHO: Usar a função de cálculo correta
+            const preco = calcularPrecoTotal(prod, []) || '0,00';
             if(exist) { 
                 exist.quantidade+=qtd; 
             } else carrinho.push({id:prodId,quantidade:qtd,preco,nome:prod.nome,imagem:getImagemPrincipal(prod)}); 
@@ -451,7 +490,22 @@
             } 
             salvarCarrinho(); 
         }
-        function verificarCupomAutomatico() { if (cupomAtual || carrinho.length===0) return; const total = carrinho.reduce((acc, c) => acc + parseFloat(c.preco.replace(',','.')) * c.quantidade, 0); if (total >= 100) { cupomAtual = { codigo: 'AUTO5', tipo: 'percentual', valor: 5, descricao: '5% OFF automático' }; document.getElementById('cupomMsg').textContent = '🎉 5% OFF!'; document.getElementById('cupomMsg').className = 'cupom-msg success'; salvarCarrinho(); } }
+        function verificarCupomAutomatico() {
+            if (cupomAtual || carrinho.length === 0) return;
+            let total = 0;
+            carrinho.forEach(item => {
+                let val = parseFloat(String(item.preco || '0').replace(',', '.'));
+                if (isNaN(val)) val = 0;
+                total += val * item.quantidade;
+            });
+            if (isNaN(total)) total = 0;
+            if (total >= 100) {
+                cupomAtual = { codigo: 'AUTO5', tipo: 'percentual', valor: 5, descricao: '5% OFF automático' };
+                document.getElementById('cupomMsg').textContent = '🎉 5% OFF!';
+                document.getElementById('cupomMsg').className = 'cupom-msg success';
+                salvarCarrinho();
+            }
+        }
         function itemSurpresa() {
             if (!configJogos.sorte || !configJogos.sorte.ativo) { return alert('Promoção indisponível no momento.'); }
             const agora = new Date();
@@ -532,7 +586,6 @@
         function abrirFavDrawer() { renderizarFavDrawer(); document.getElementById('favDrawerOverlay').classList.add('active'); document.getElementById('favDrawer').classList.add('open'); }
         function fecharFavDrawer() { document.getElementById('favDrawerOverlay').classList.remove('active'); document.getElementById('favDrawer').classList.remove('open'); }
         function renderizarFavDrawer() { const body = document.getElementById('favDrawerBody'); if (favoritos.length === 0) { body.innerHTML = '<div class="cart-empty">Nenhum favorito ainda.</div>'; return; } let html = ''; favoritos.forEach(id => { const prod = dados.produtos.find(p => p.id === id); if (!prod) return; 
-            // 🔒 CORREÇÃO DO PREÇO NOS FAVORITOS
             const precoFav = calcularPrecoTotal(prod, []) || '0,00';
             html += `<div class="cart-drawer-item"><img src="${getImagemPrincipal(prod)}" class="item-img" loading="lazy"><div class="item-info"><h4>${prod.nome}</h4><div class="item-price">R$ ${precoFav}</div></div><div class="item-actions"><button onclick="abrirModal('${prod.id}'); fecharFavDrawer();"><i class="fas fa-eye"></i></button><button class="btn-remove" onclick="toggleFavorito('${prod.id}'); renderizarFavDrawer();"><i class="fas fa-heart-broken"></i></button></div></div>`; }); body.innerHTML = html; }
         function compartilharFavoritos() { if (favoritos.length === 0) return alert('Nenhum favorito para compartilhar.'); const prods = favoritos.map(id => dados.produtos.find(p => p.id === id)).filter(p => p); const texto = prods.map(p => `🛒 ${p.nome} - R$ ${calcularPrecoTotal(p, []) || '0,00'}`).join('\n'); const msg = `*Minha lista de desejos da Gudyx:*\n\n${texto}\n\nQuero esses produtos!`; window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank'); }
@@ -715,7 +768,15 @@
             if(!data || !hora) return alert('Por favor, selecione a data e horário de retirada.');
             const dataObj = new Date(data + 'T00:00:00'); const diaSemana = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][dataObj.getDay()]; const dataFormatada = `${diaSemana}, ${dataObj.getDate()}/${dataObj.getMonth()+1}/${dataObj.getFullYear()}`;
             let msg = `*Gudyx Custom - Pedido de ${nome}*\n\n`, total=0; let itensPedido = [];
-            carrinho.forEach(item=>{ const sub=parseFloat(item.preco.replace(',','.'))*item.quantidade; total+=sub; msg+=`🛒 *${item.nome}* - ${item.quantidade}x - R$ ${item.preco}\n`; itensPedido.push({nome: item.nome, quantidade: item.quantidade, precoUnitario: item.preco, imagem: item.imagem}); }); 
+            carrinho.forEach(item=>{
+                let val = parseFloat(String(item.preco || '0').replace(',', '.'));
+                if (isNaN(val)) val = 0;
+                const sub = val * item.quantidade;
+                total += sub;
+                msg+=`🛒 *${item.nome}* - ${item.quantidade}x - R$ ${item.preco || '0,00'}\n`;
+                itensPedido.push({nome: item.nome, quantidade: item.quantidade, precoUnitario: item.preco || '0,00', imagem: item.imagem});
+            }); 
+            if(isNaN(total)) total = 0;
             if(cupomAtual) { if(cupomAtual.tipo==='percentual') total*=(1-cupomAtual.valor/100); else total=Math.max(0,total-cupomAtual.valor); msg+=`💳 Cupom ${cupomAtual.codigo}\n`; } 
             msg+=`\n💰 *Total: R$ ${total.toFixed(2)}*\n`; msg+=`📅 *Retirada agendada para:* ${dataFormatada} às ${hora}\n`; msg+=`📍 *Local:* Duque de Caxias - RJ\n`; msg+=`📝 *Forma de pagamento:* \n`; msg+=`\nAguardo a confirmação do meu pedido! 😊`;
             const pedido = { clienteNome: nome, clienteTelefone: telefone, itens: itensPedido, total: total.toFixed(2), dataRetirada: data, horaRetirada: hora, cupom: cupomAtual ? cupomAtual.codigo : null, status: 'Aguardando confirmação', timestamp: firebase.firestore.FieldValue.serverTimestamp() };
@@ -737,7 +798,6 @@
 
         let slideAtual=0,sliderIntervalo;
         function iniciarSlider(){const c=document.getElementById('dynamicSliderContainer'),d=document.getElementById('sliderDots');c.innerHTML='';d.innerHTML='';const itens=dados.produtos.filter(p=>p.exibirSlider&&(isPromoActive(p)||!p.promocao)&&isEmEstoque(p));if(!itens.length){c.innerHTML='<div style="padding:30px;text-align:center;">Sem promoções.</div>';return;}itens.forEach((p,i)=>{const s=document.createElement('div');s.className='slide-item'+(i===0?' active-slide':'');s.onclick=()=>abrirModal(p.id);
-        // 🔒 CORREÇÃO DO SLIDER
         const precoSlider = calcularPrecoTotal(p, []) || '0,00';
         s.innerHTML=`<img src="${getImagemPrincipal(p)}" loading="lazy"><h4>${p.nome}</h4><div class="preco">R$ ${precoSlider}</div>`;c.appendChild(s);const dot=document.createElement('button');dot.className='dot'+(i===0?' active-dot':'');dot.onclick=()=>{clearInterval(sliderIntervalo);mudarSlide(i);iniciarSliderLoop();};d.appendChild(dot);});slideAtual=0;iniciarSliderLoop();}
         function mudarSlide(i){document.querySelectorAll('#dynamicSliderContainer .slide-item').forEach((s,idx)=>s.classList.toggle('active-slide',idx===i));document.querySelectorAll('#sliderDots .dot').forEach((d,idx)=>d.classList.toggle('active-dot',idx===i));slideAtual=i;}
@@ -749,7 +809,6 @@
         document.getElementById('sliderBox').addEventListener('touchend',e=>{touchEndX=e.changedTouches[0].screenX;if(touchEndX<touchStartX-50)proximoSlide();if(touchEndX>touchStartX+50){const slides=document.querySelectorAll('#dynamicSliderContainer .slide-item');if(slides.length)mudarSlide((slideAtual-1+slides.length)%slides.length);}});
 
         function carregarMaisVendidos(){const grid=document.getElementById('maisVendidosGrid');grid.innerHTML='';const top=[...dados.produtos].sort((a,b)=>(b.cliques||0)-(a.cliques||0)).slice(0,5);if(!top.length){grid.innerHTML='<p style="text-align:center;">Sem dados.</p>';return;}top.forEach((p,i)=>{const card=document.createElement('div');card.className='card-vendido';card.onclick=()=>abrirModal(p.id);
-        // 🔒 CORREÇÃO DOS MAIS VENDIDOS
         const precoVendido = calcularPrecoTotal(p, []) || '0,00';
         card.innerHTML=`${i<3?'<div class="fire-badge-mini">HOT</div>':''}<img src="${getImagemPrincipal(p)}" style="width:60px;height:60px;border-radius:50%;object-fit:cover;" loading="lazy"><h4>${p.nome}</h4><div class="preco">R$ ${precoVendido}</div>`;grid.appendChild(card);});}
         function buscaGlobal() { const term = document.getElementById('searchGlobal').value.toLowerCase().trim(); if (term === 'caderno') { document.body.classList.add('festa'); confetti({particleCount:200,spread:100}); falarMascote('🎉 Achou o easter egg do caderno!'); setTimeout(()=>document.body.classList.remove('festa'),3000); return; } if (term === 'desconto') { cupomAtual = {codigo:'SECRETO',tipo:'percentual',valor:15,descricao:'15% OFF easter egg'}; salvarCarrinho(); falarMascote('🎉 Cupom secreto de 15% aplicado!'); return; } if (term === 'festa') { document.body.classList.add('festa'); confetti({particleCount:500,spread:180}); setTimeout(()=>document.body.classList.remove('festa'),5000); return; } if (term.length < 2) return; const resultados = dados.produtos.filter(p => p.nome.toLowerCase().includes(term) || (p.descricao||'').toLowerCase().includes(term)); if (resultados.length === 0) { alert('Nenhum produto encontrado.'); return; } mostrarTela('produtosScreen'); carregarCategorias('produtos'); const container = document.getElementById('produtosProdutosContainer'); container.innerHTML = ''; container.style.display = 'grid'; container.className = 'produtos-grid'; resultados.forEach(prod => { renderizarCardProduto(prod, container); }); }
@@ -778,7 +837,6 @@
             if (promo) badges += '<div class="badge-promo">PROMO</div>'; if (prod.destaque) badges += '<div class="badge-destaque">DESTAQUE</div>';
             if (!estoque) badges += '<div class="badge-esgotado">ESGOTADO</div>'; if (diasDesdeCriacao < 7) badges += '<div class="badge-novo">NOVO</div>'; if (estoque && getEstoque(prod) <= 5) badges += '<div class="badge-estoque-baixo">Últimas!</div>';
             
-            // 🔒 CORREÇÃO DO PREÇO COM FALLBACK DE SEGURANÇA
             const precoCalculado = calcularPrecoTotal(prod, []) || '0,00'; 
             let precoHtml = promo && prod.precoPromo ? `<div><span class="preco-promo">R$ ${precoCalculado}</span> <span class="preco-atual">R$ ${prod.precoPromo}</span> <span class="flame-icon">🔥</span></div>` : `<div class="preco">R$ ${precoCalculado}</div>`;
             const fav = favoritos.includes(prod.id) ? 'active' : '', favIcon = favoritos.includes(prod.id) ? 'fas' : 'far';
@@ -803,7 +861,6 @@
         function debounceBuscarServicos() { clearTimeout(debounceTimerServ); debounceTimerServ = setTimeout(() => buscarItems('servicos'), 500); }
 
         function buscarItems(tipo){const term=document.getElementById(tipo==='produtos'?'searchProdutos':'searchServicos').value.toLowerCase();const container=document.getElementById(tipo==='produtos'?'produtosProdutosContainer':'servicosProdutosContainer');if(term==='gudyx'){container.innerHTML='<div class="produto-card" style="grid-column:1/-1;text-align:center;"><img src="https://i.imgur.com/Y5H9zqr.png" style="width:150px;height:150px;margin:0 auto;border-radius:50%;" loading="lazy"><h5>🥚 Ovo Cósmico</h5><div class="preco">R$ 0,01</div></div>';return;}if(!categoriaSelecionada)return;
-        // 🔒 CORREÇÃO DA BUSCA
         container.innerHTML=dados.produtos.filter(p=>p.categoriaId===categoriaSelecionada.id&&p.nome.toLowerCase().includes(term)).map(p=>{
             const precoBusca = calcularPrecoTotal(p, []) || '0,00';
             return `<div class="produto-card" onclick="abrirModal('${p.id}')"><img src="${getImagemPrincipal(p)}" loading="lazy"><h5>${p.nome}</h5><div class="preco">R$ ${precoBusca}</div></div>`;
