@@ -107,7 +107,6 @@
                 <option value="kit">Kit / Combo</option>
             </select>
 
-            <!-- CAMPOS DE KIT (RESTAURADOS E SEGUROS) -->
             <div id="camposKit" class="hidden" style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>🔧 Componentes do Kit</label>
                 <div id="containerComponentesKit">
@@ -127,7 +126,6 @@
             <label>Nome</label><input type="text" id="prodNome">
             <label>Descrição</label><textarea id="prodDescricao"></textarea>
 
-            <!-- CAMPO DE PREÇO MANUAL -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label style="display:flex; align-items:center; gap:10px;">
                     <input type="checkbox" id="prodPrecoManualToggle" onchange="toggleManualPriceFields()" style="width:auto; transform:scale(1.5); margin-right:10px;">
@@ -139,7 +137,6 @@
                 </div>
             </div>
 
-            <!-- CAMPOS DE PRECIFICAÇÃO AUTOMÁTICA -->
             <div id="autoPriceFields" style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📐 Configuração de Precificação</label>
                 <label>Material Padrão:</label>
@@ -192,7 +189,6 @@
                 <button onclick="adicionarLinhaDesconto()" class="btn-secondary" style="margin-top:5px;">+ Adicionar faixa de desconto</button>
             </div>
 
-            <!-- CAMPO DE IMAGEM (BASE64) -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📸 Imagens do Produto</label>
                 <input type="file" id="prodImg" accept="image/*" multiple>
@@ -312,7 +308,7 @@
             <div class="admin-item-list" id="listaFaq"></div>
         </div>
 
-        <!-- CONFIGURAÇÃO DA LOJA -->
+        <!-- CONFIGURAÇÃO DA LOJA - COM DESCONTO AUTOMÁTICO -->
         <div id="abaConfigLoja" style="display:none;">
             <h3>⚙️ Configuração de Prazos e Retirada</h3>
             <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
@@ -324,8 +320,24 @@
                     <input type="checkbox" id="configPedidosEmAndamento" style="width:auto; transform:scale(1.5); margin-right:10px;">
                     Há pedidos em andamento?
                 </label>
-                <button onclick="salvarConfigLoja()" style="margin-top:15px;">Salvar Configurações</button>
             </div>
+
+            <!-- NOVOS CONTROLES DE DESCONTO AUTOMÁTICO -->
+            <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px; margin-top:10px;">
+                <h4 style="margin-bottom:10px; color:var(--ciano-brilhante);">📉 Desconto Automático por Valor no Carrinho</h4>
+                <label style="display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="configAutoDescontoAtivo" onchange="toggleAutoDescontoFields()" style="width:auto; transform:scale(1.5); margin-right:10px;">
+                    Ativar Desconto Automático
+                </label>
+                <div id="autoDescontoFields" class="hidden" style="margin-top:10px; border-top:1px solid var(--vidro-borda); padding-top:10px;">
+                    <label>Meta de Valor (R$):</label>
+                    <input type="number" id="configMetaDesconto" value="100" min="0" step="5">
+                    <label>Porcentagem de Desconto (%):</label>
+                    <input type="number" id="configPercentualDesconto" value="5" min="0" max="100">
+                </div>
+            </div>
+
+            <button onclick="salvarConfigLoja()" style="margin-top:15px;">Salvar Configurações</button>
         </div>
 
         <!-- RELATÓRIOS -->
@@ -363,7 +375,7 @@
         firebase.auth().signInAnonymously().catch(e => console.error("Auth error:", e));
 
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
-        var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false };
+        var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false, autoDiscount: { ativo: false, meta: 100, percentual: 5 } };
         var configJogos = { sorte: { ativo: false, inicio: '', fim: '' }, raspa: { ativo: false, inicio: '', fim: '', cupons: [] } };
         var configPrecificacao = { offset: '0,30', matte: '0,40', glossy: '0,50', servicos: [] };
 
@@ -383,6 +395,14 @@
                     document.getElementById('configPrazoMin').value = configLoja.prazoMinimo;
                     document.getElementById('configPrazoMax').value = configLoja.prazoMaximo;
                     document.getElementById('configPedidosEmAndamento').checked = configLoja.pedidosEmAndamento;
+                    
+                    // 🔒 Carregar dados de Desconto Automático
+                    if(configLoja.autoDiscount) {
+                        document.getElementById('configAutoDescontoAtivo').checked = configLoja.autoDiscount.ativo || false;
+                        document.getElementById('configMetaDesconto').value = configLoja.autoDiscount.meta || 100;
+                        document.getElementById('configPercentualDesconto').value = configLoja.autoDiscount.percentual || 5;
+                        toggleAutoDescontoFields();
+                    }
                 }
                 const snapJogos = await db.collection('config').doc('jogos').get();
                 if (snapJogos.exists) {
@@ -466,6 +486,16 @@
             } else {
                 manualFields.classList.add('hidden');
                 autoFields.classList.remove('hidden');
+            }
+        }
+
+        function toggleAutoDescontoFields() {
+            const checkbox = document.getElementById('configAutoDescontoAtivo');
+            const fields = document.getElementById('autoDescontoFields');
+            if (checkbox.checked) {
+                fields.classList.remove('hidden');
+            } else {
+                fields.classList.add('hidden');
             }
         }
 
@@ -634,7 +664,6 @@
 
             if (!catId || !nome) return alert('Preencha nome e categoria.');
 
-            // 🔒 CORREÇÃO DA VALIDAÇÃO DE PREÇOS (AQUI!)
             if (usarPrecoManual) {
                 const numManual = parseFloat(precoManual.replace(',', '.'));
                 if (isNaN(numManual) || numManual <= 0) return alert('Insira um valor numérico válido para o Preço Manual.');
@@ -1091,13 +1120,38 @@
             document.getElementById('configPrazoMin').value = configLoja.prazoMinimo || 3;
             document.getElementById('configPrazoMax').value = configLoja.prazoMaximo || 5;
             document.getElementById('configPedidosEmAndamento').checked = configLoja.pedidosEmAndamento || false;
+            
+            // 🔒 Carregar Desconto Automático
+            if(configLoja.autoDiscount) {
+                document.getElementById('configAutoDescontoAtivo').checked = configLoja.autoDiscount.ativo || false;
+                document.getElementById('configMetaDesconto').value = configLoja.autoDiscount.meta || 100;
+                document.getElementById('configPercentualDesconto').value = configLoja.autoDiscount.percentual || 5;
+                toggleAutoDescontoFields();
+            }
         }
         async function salvarConfigLoja() {
             const prazoMin = parseInt(document.getElementById('configPrazoMin').value);
             const prazoMax = parseInt(document.getElementById('configPrazoMax').value);
             const pedidosEmAndamento = document.getElementById('configPedidosEmAndamento').checked;
             if (prazoMin < 1 || prazoMax < prazoMin) return alert('Defina prazos válidos.');
-            await db.collection('config').doc('loja').set({ prazoMinimo: prazoMin, prazoMaximo: prazoMax, pedidosEmAndamento });
+
+            // 🔒 Salvar Desconto Automático
+            const autoDescontoAtivo = document.getElementById('configAutoDescontoAtivo').checked;
+            const autoDescontoMeta = parseFloat(document.getElementById('configMetaDesconto').value) || 0;
+            const autoDescontoPercentual = parseFloat(document.getElementById('configPercentualDesconto').value) || 0;
+
+            const data = {
+                prazoMinimo: prazoMin,
+                prazoMaximo: prazoMax,
+                pedidosEmAndamento,
+                autoDiscount: {
+                    ativo: autoDescontoAtivo,
+                    meta: autoDescontoMeta,
+                    percentual: autoDescontoPercentual
+                }
+            };
+
+            await db.collection('config').doc('loja').set(data);
             alert('✅ Configurações salvas!');
             carregarConfigLoja();
         }
