@@ -58,11 +58,18 @@
             <div class="content-card">
                 <h3>Adicionar / Editar Item</h3>
                 <input type="hidden" id="editProdId">
-                <label>Tipo do Item</label><select id="prodTipoItem" onchange="toggleCamposKit()"><option value="simples">Produto Simples</option><option value="kit">Kit / Combo</option></select>
+                
+                <label>Tipo do Item</label>
+                <select id="prodTipoItem" onchange="toggleCamposKit()">
+                    <option value="simples">Produto Simples</option>
+                    <option value="kit">Kit / Combo</option>
+                </select>
+
                 <label>Tipo</label><select id="prodTipo" onchange="atualizarSelectCategorias(); toggleCamposKit(); toggleManualPriceFields()"><option value="produtos">Produtos</option><option value="servicos">Serviços</option></select>
                 <label>Categoria</label><select id="prodCategoria"></select>
                 <label>Nome</label><input type="text" id="prodNome">
                 <label>Descrição</label><textarea id="prodDescricao"></textarea>
+
                 <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:15px; padding-top:15px;">
                     <label style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="prodPrecoManualToggle" onchange="toggleManualPriceFields()" style="width:auto; transform:scale(1.2); margin-right:10px;"> Usar Preço Manual</label>
                     <div id="manualPriceFields" class="hidden" style="margin-top:10px;"><label>Preço Manual (R$):</label><input type="text" id="prodPrecoManual" placeholder="Ex: 25,00"></div>
@@ -98,7 +105,6 @@
                     <button onclick="adicionarLinhaDesconto()" class="btn-primary btn-sm btn-secondary" style="margin-top:5px;">+ Adicionar faixa de desconto</button>
                 </div>
                 
-                <!-- CAMPO DE IMAGEM -->
                 <div style="border-top:1px solid rgba(255,255,255,0.08); margin-top:15px; padding-top:15px;">
                     <label>📸 Imagens do Produto</label>
                     <input type="file" id="prodImg" accept="image/*" multiple>
@@ -257,7 +263,14 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const storage = firebase.storage();
-        firebase.auth().signInAnonymously().catch(e => console.error("Auth error:", e));
+        
+        // TRATAMENTO DE ERRO DE AUTENTICAÇÃO MAIS VISÍVEL
+        firebase.auth().signInAnonymously().catch(e => {
+            console.error("Auth error:", e);
+            // Se der erro de auth no carregamento, a tela de senha pode não funcionar, mas damos um alerta.
+            // O erro auth/configuration-not-found significa que você precisa ativar o Login Anônimo no Console do Firebase.
+            alert("⚠️ Erro de autenticação com o Firebase.\n\nVerifique se você ativou o 'Login Anônimo' no console do Firebase (Authentication > Sign-in method > Anonymous).\n\nDetalhes: " + e.message);
+        });
 
         var dados = { categorias: [], produtos: [], frases: [], faq: [], cupons: [] };
         var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false };
@@ -328,7 +341,7 @@
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
             ['abaCategorias','abaProdutos','abaPedidos','abaAvaliacoes','abaJogos','abaPrecificacao','abaDesign','abaFrases','abaFaq','abaConfigLoja','abaCupons','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
             if (aba === 'categorias') { document.getElementById('abaCategorias').style.display = 'block'; document.getElementById('tabCategorias').classList.add('active'); atualizarListaCategorias(); }
-            else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); toggleCamposKit(); toggleManualPriceFields(); atualizarListaProdutos(); }
+            else if (aba === 'produtos') { document.getElementById('abaProdutos').style.display = 'block'; document.getElementById('tabProdutos').classList.add('active'); atualizarSelectCategorias(); toggleManualPriceFields(); atualizarListaProdutos(); }
             else if (aba === 'pedidos') { document.getElementById('abaPedidos').style.display = 'block'; document.getElementById('tabPedidos').classList.add('active'); carregarPedidos(); }
             else if (aba === 'avaliacoes') { document.getElementById('abaAvaliacoes').style.display = 'block'; document.getElementById('tabAvaliacoes').classList.add('active'); carregarAvaliacoesAdmin(); }
             else if (aba === 'jogos') { document.getElementById('abaJogos').style.display = 'block'; document.getElementById('tabJogos').classList.add('active'); }
@@ -359,7 +372,6 @@
                 return await ref.getDownloadURL();
             } catch (e) {
                 console.error("Erro no upload da imagem:", e);
-                // Joga o erro para o bloco try/catch da função chamadora
                 throw new Error("❌ Erro ao fazer upload da imagem. Verifique as regras de CORS do Firebase Storage (use gsutil) ou sua conexão.");
             }
         }
@@ -403,14 +415,20 @@
         }
         function removerLinhaDesconto(btn) { btn.parentElement.remove(); }
 
+        // CORREÇÃO DA FUNÇÃO TOGGLECAMPOSKIT (Agora com segurança contra elementos faltando)
         function toggleCamposKit() {
             const tipoItem = document.getElementById('prodTipoItem').value;
+            // Verificação de segurança: se o HTML não tiver 'camposKit', ele não quebra
             const campos = document.getElementById('camposKit');
-            if (tipoItem === 'kit') { campos.classList.remove('hidden'); } else { campos.classList.add('hidden'); }
+            if (campos) {
+                if (tipoItem === 'kit') { campos.classList.remove('hidden'); } else { campos.classList.add('hidden'); }
+            }
         }
 
         function adicionarLinhaComponente() {
             const container = document.getElementById('containerComponentesKit');
+            // Se o container não existir, sai da função sem quebrar
+            if (!container) return;
             const div = document.createElement('div'); div.className = 'linha-componente';
             let select = document.createElement('select'); select.className = 'comp-produto';
             select.innerHTML = '<option value="">Selecione um produto</option>';
@@ -454,7 +472,14 @@
             });
             const componentes = [];
             if (tipoItem === 'kit') {
-                document.querySelectorAll('.linha-componente').forEach(row => { const prodId = row.querySelector('.comp-produto').value; const qtd = parseInt(row.querySelector('.comp-qtd').value); if (prodId && qtd && qtd > 0) { componentes.push({ id: prodId, quantidade: qtd }); } });
+                // Verificação de segurança: Se não existir o container, não tenta ler
+                const containerComp = document.getElementById('containerComponentesKit');
+                if (containerComp) {
+                    document.querySelectorAll('#containerComponentesKit .linha-componente').forEach(row => {
+                        const prodId = row.querySelector('.comp-produto').value; const qtd = parseInt(row.querySelector('.comp-qtd').value);
+                        if (prodId && qtd && qtd > 0) { componentes.push({ id: prodId, quantidade: qtd }); }
+                    });
+                }
                 if (componentes.length === 0) return alert('Um Kit precisa ter pelo menos 1 componente válido.');
             }
             const opcoesProduto = [];
@@ -468,7 +493,6 @@
                     limparFormularioProduto(); await carregarDados(); atualizarListaProdutos(); atualizarSelectCategorias(); 
                 } catch (erro) {
                     console.error("Erro detalhado:", erro);
-                    // AVISO NA TELA DO ERRO
                     alert('❌ Erro ao salvar o item! \n\nMensagem: ' + erro.message + '\n\nVerifique o console do navegador (F12) para mais detalhes.');
                 }
             }
@@ -500,20 +524,23 @@
                     containerDesconto.appendChild(div);
                 });
             } else { adicionarLinhaDesconto(); }
-            const containerComp = document.getElementById('containerComponentesKit'); containerComp.innerHTML = '';
-            if (p.tipoItem === 'kit' && p.componentes && p.componentes.length > 0) {
-                p.componentes.forEach(comp => {
-                    const div = document.createElement('div'); div.className = 'linha-componente';
-                    let select = document.createElement('select'); select.className = 'comp-produto';
-                    select.innerHTML = '<option value="">Selecione um produto</option>';
-                    dados.produtos.filter(prod => prod.id !== p.id).forEach(prod => { let opt = document.createElement('option'); opt.value = prod.id; opt.textContent = prod.nome; if(prod.id === comp.id) opt.selected = true; select.appendChild(opt); });
-                    div.appendChild(select);
-                    let inputQtd = document.createElement('input'); inputQtd.type = 'number'; inputQtd.className = 'comp-qtd'; inputQtd.placeholder = 'Qtd'; inputQtd.min = 1; inputQtd.value = comp.quantidade;
-                    div.appendChild(inputQtd);
-                    let btn = document.createElement('button'); btn.className = 'btn-primary btn-sm btn-danger'; btn.textContent = '-'; btn.onclick = function() { removerLinhaComponente(this); };
-                    div.appendChild(btn); containerComp.appendChild(div);
-                });
-            } else { adicionarLinhaComponente(); } toggleCamposKit();
+            const containerComp = document.getElementById('containerComponentesKit');
+            if (containerComp) {
+                containerComp.innerHTML = '';
+                if (p.tipoItem === 'kit' && p.componentes && p.componentes.length > 0) {
+                    p.componentes.forEach(comp => {
+                        const div = document.createElement('div'); div.className = 'linha-componente';
+                        let select = document.createElement('select'); select.className = 'comp-produto';
+                        select.innerHTML = '<option value="">Selecione um produto</option>';
+                        dados.produtos.filter(prod => prod.id !== p.id).forEach(prod => { let opt = document.createElement('option'); opt.value = prod.id; opt.textContent = prod.nome; if(prod.id === comp.id) opt.selected = true; select.appendChild(opt); });
+                        div.appendChild(select);
+                        let inputQtd = document.createElement('input'); inputQtd.type = 'number'; inputQtd.className = 'comp-qtd'; inputQtd.placeholder = 'Qtd'; inputQtd.min = 1; inputQtd.value = comp.quantidade;
+                        div.appendChild(inputQtd);
+                        let btn = document.createElement('button'); btn.className = 'btn-primary btn-sm btn-danger'; btn.textContent = '-'; btn.onclick = function() { removerLinhaComponente(this); };
+                        div.appendChild(btn); containerComp.appendChild(div);
+                    });
+                } else { adicionarLinhaComponente(); }
+            }
             const containerOpcoes = document.getElementById('containerOpcoesProduto'); containerOpcoes.innerHTML = '';
             if (p.opcoesProduto && p.opcoesProduto.length > 0) {
                 p.opcoesProduto.forEach(opcao => {
@@ -525,7 +552,22 @@
         }
 
         async function removerProduto(id) { if (confirm('Remover?')) { await db.collection('produtos').doc(id).delete(); await carregarDados(); atualizarListaProdutos(); } }
-        function limparFormularioProduto() { document.getElementById('editProdId').value = ''; document.getElementById('prodNome').value = ''; document.getElementById('prodDescricao').value = ''; document.getElementById('prodPrecoMaoObra').value = ''; document.getElementById('prodImg').value = ''; document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; document.getElementById('promoFields').classList.add('hidden'); document.getElementById('containerDescontoProgressivo').innerHTML = ''; adicionarLinhaDesconto(); document.getElementById('containerComponentesKit').innerHTML = ''; adicionarLinhaComponente(); document.getElementById('camposKit').classList.add('hidden'); document.getElementById('containerOpcoesProduto').innerHTML = ''; adicionarLinhaOpcaoProduto(); document.getElementById('prodPrecoManualToggle').checked = false; document.getElementById('prodPrecoManual').value = ''; toggleManualPriceFields(); }
+        function limparFormularioProduto() { 
+            document.getElementById('editProdId').value = ''; document.getElementById('prodNome').value = ''; document.getElementById('prodDescricao').value = ''; 
+            document.getElementById('prodPrecoMaoObra').value = ''; document.getElementById('prodImg').value = ''; 
+            document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
+            document.getElementById('promoFields').classList.add('hidden');
+            
+            // CORREÇÃO: Só tenta limpar o containerDescontoProgressivo se ele existir no HTML
+            const containerDesconto = document.getElementById('containerDescontoProgressivo');
+            if(containerDesconto) { containerDesconto.innerHTML = ''; adicionarLinhaDesconto(); }
+
+            const containerComp = document.getElementById('containerComponentesKit');
+            if(containerComp) { containerComp.innerHTML = ''; adicionarLinhaComponente(); }
+
+            document.getElementById('containerOpcoesProduto').innerHTML = ''; adicionarLinhaOpcaoProduto();
+            document.getElementById('prodPrecoManualToggle').checked = false; document.getElementById('prodPrecoManual').value = ''; toggleManualPriceFields();
+        }
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value; const select = document.getElementById('prodCategoria'); select.innerHTML = '<option value="">Selecione</option>';
             if (dados.categorias && dados.categorias.length > 0) { dados.categorias.filter(c => c.tipo === tipo).forEach(cat => { select.innerHTML += `<option value="${cat.id}">${cat.nome}</option>`; }); } else { select.innerHTML = '<option value="">Nenhuma categoria encontrada</option>'; }
