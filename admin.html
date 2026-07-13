@@ -20,21 +20,32 @@
         
         /* Ajustes do Editor Quill para o Tema Escuro */
         #editor-container .ql-editor { min-height: 150px; color: #fff; }
-        #editor-container { background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid var(--vidro-borda); margin-bottom: 15px; color: #fff; }
+        #editor-container { background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid var(--vidro-borda); margin-bottom: 15px; color: #fff; position: relative; }
         #editor-container .ql-toolbar { border-bottom: 1px solid var(--vidro-borda); border-radius: 10px 10px 0 0; background: rgba(0,0,0,0.4); }
         #editor-container .ql-container { border: none; border-radius: 0 0 10px 10px; }
         #editor-container .ql-picker-label { color: #fff; }
         #editor-container .ql-stroke { stroke: #fff; }
         #editor-container .ql-fill { fill: #fff; }
         #editor-container .ql-toolbar button:hover .ql-stroke, .ql-toolbar button.ql-active .ql-stroke { stroke: var(--ciano-brilhante); }
-        /* Botão do Emoji Customizado */
-        .ql-toolbar .ql-custom-emoji { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #fff; background: transparent; border: 1px solid transparent; border-radius: 4px; cursor: pointer; margin-right: 4px; }
-        .ql-toolbar .ql-custom-emoji:hover { border-color: var(--ciano-brilhante); background: rgba(172,40,255,0.3); }
 
-        /* Seletor de Emojis Flutuante */
-        #emoji-picker-container { position: fixed; display: none; background: #1a0a33; border: 1px solid var(--vidro-borda); border-radius: 12px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.8); z-index: 9999; width: 280px; }
-        #emoji-picker-container .emoji-item { display: inline-block; font-size: 1.8rem; padding: 6px; cursor: pointer; border-radius: 6px; transition: 0.2s; }
-        #emoji-picker-container .emoji-item:hover { background: rgba(172,40,255,0.5); transform: scale(1.1); }
+        /* BOTÃO DE EMOJI COM ÍCONE CORRIGIDO */
+        .ql-toolbar .ql-custom-emoji { width: 32px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; background: transparent; border: 1px solid transparent; padding: 0; }
+        .ql-toolbar .ql-custom-emoji:hover { background: rgba(172,40,255,0.3); border-color: var(--ciano-brilhante); }
+        .ql-toolbar .ql-custom-emoji svg { width: 22px; height: 22px; stroke: #fff; stroke-width: 2; fill: none; }
+
+        /* SELETOR DE EMOJIS COMPLETO COM CATEGORIAS E BUSCA */
+        #emoji-picker-container { position: absolute; top: 45px; left: 0; display: none; background: #1a0a33; border: 1px solid var(--vidro-borda); border-radius: 12px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.9); z-index: 9999; width: 440px; max-height: 380px; flex-direction: column; }
+        #emoji-picker-container.active { display: flex; }
+        #emoji-search { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--vidro-borda); background: rgba(255,255,255,0.1); color: #fff; margin-bottom: 10px; font-size: 0.9rem; box-sizing: border-box; }
+        #emoji-search::placeholder { color: rgba(255,255,255,0.5); }
+        #emoji-categories { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
+        #emoji-categories span { cursor: pointer; font-size: 0.8rem; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.05); transition: 0.2s; }
+        #emoji-categories span:hover, #emoji-categories span.active { background: rgba(172,40,255,0.4); color: #fff; }
+        #emoji-grid { display: flex; flex-wrap: wrap; gap: 4px; max-height: 240px; overflow-y: auto; padding-right: 5px; align-content: flex-start; }
+        #emoji-grid::-webkit-scrollbar { width: 6px; }
+        #emoji-grid::-webkit-scrollbar-thumb { background: var(--vidro-borda); border-radius: 10px; }
+        #emoji-grid .emoji-item { font-size: 1.8rem; padding: 4px; cursor: pointer; border-radius: 6px; transition: 0.2s; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; }
+        #emoji-grid .emoji-item:hover { background: rgba(172,40,255,0.6); transform: scale(1.15); }
 
         input[type="file"], input[type="checkbox"] { padding: 5px; width: auto; }
         button { padding: 10px 20px; border: none; border-radius: 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; margin-right: 10px; margin-bottom: 5px; }
@@ -147,9 +158,11 @@
             
             <label>Descrição (Use o editor abaixo para formatar, adicionar emojis, cores e negrito)</label>
             
-            <!-- SELETOR DE EMOJIS FLUTUANTE -->
+            <!-- SELETOR DE EMOJIS COMPLETO COM CATEGORIAS E BUSCA -->
             <div id="emoji-picker-container">
-                <div id="emoji-list" style="display: flex; flex-wrap: wrap; gap: 4px;"></div>
+                <input type="text" id="emoji-search" placeholder="🔍 Buscar emoji...">
+                <div id="emoji-categories"></div>
+                <div id="emoji-grid"></div>
             </div>
             <!-- EDITOR DE TEXTO -->
             <div id="editor-container"></div>
@@ -641,13 +654,14 @@
         function removerLinhaOpcaoProduto(btn) { btn.parentElement.remove(); }
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Configuração da barra de ferramentas com o botão Emoji customizado
             var toolbarOptions = [
                 ['bold', 'italic', 'underline', 'strike'],
                 [{ 'header': [1, 2, false] }],
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                 [{ 'color': [] }, { 'background': [] }],
                 ['link', 'clean'],
-                [{ 'custom-emoji': '😊' }] // 🔥 BOTÃO DE EMOJI CUSTOMIZADO AQUI
+                ['custom-emoji'] // 🟢 FERRAMENTA REGISTRADA
             ];
 
             quillEditor = new Quill('#editor-container', {
@@ -658,50 +672,122 @@
                 placeholder: "Digite a descrição do produto aqui..."
             });
 
-            // 🔥 Lógica para o Seletor de Emojis
-            const emojiContainer = document.getElementById('emoji-picker-container');
-            const emojiList = document.getElementById('emoji-list');
-            const emojis = ['🔥', '✨', '🎁', '🛒', '😍', '🤩', '✅', '🎉', '❤️', '😊', '🚀', '📦', '💎', '💰', '🎯', '👍', '🎨', '💡', '🏆', '🧡'];
-
-            // Preencher o container com os emojis
-            emojis.forEach(function(emoji) {
-                const span = document.createElement('span');
-                span.className = 'emoji-item';
-                span.textContent = emoji;
-                span.onclick = function(e) {
-                    e.stopPropagation();
-                    const range = quillEditor.getSelection();
-                    if (range) {
-                        quillEditor.insertText(range.index, emoji);
-                    } else {
-                        quillEditor.insertText(quillEditor.getLength(), emoji);
-                    }
-                    emojiContainer.style.display = 'none';
-                };
-                emojiList.appendChild(span);
+            // 🔥 Criar o ícone do botão via JS (Garante que nunca ficará roxo)
+            var toolbar = quillEditor.getModule('toolbar');
+            toolbar.addHandler('custom-emoji', function() {
+                document.getElementById('emoji-picker-container').classList.toggle('active');
             });
+            
+            // Substituir o texto do botão por um SVG
+            setTimeout(function() {
+                var emojiBtn = document.querySelector('.ql-toolbar .ql-custom-emoji');
+                if (emojiBtn) {
+                    emojiBtn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" fill="#fff"/></svg>`;
+                }
+            }, 100); // Pequeno delay para garantir que o DOM do Quill esteja pronto
 
-            // Encontrar o botão customizado na barra de ferramentas e adicionar o evento de clique
-            const emojiButton = document.querySelector('.ql-custom-emoji');
-            if (emojiButton) {
-                emojiButton.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    const isVisible = emojiContainer.style.display === 'block';
-                    emojiContainer.style.display = isVisible ? 'none' : 'block';
-                    
-                    if (!isVisible) {
-                        // Posicionar a janela de emojis logo abaixo do botão
-                        const rect = emojiButton.getBoundingClientRect();
-                        emojiContainer.style.left = rect.left + 'px';
-                        emojiContainer.style.top = (rect.bottom + 5) + 'px';
-                    }
+            // 🔥 BIBLIOTECA COMPLETA DE EMOJIS (MUITO MAIS DO QUE 20!)
+            const emojiLibrary = [
+                // SORRISOS
+                { category: 'Sorrisos', list: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥶', '🥵', '🤠', '😎', '🤡', '😈', '👿', '👹', '👺', '💀', '☠️', '👻', '👽', '👾', '🤖', '💩', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'] },
+                // PESSOAS
+                { category: 'Pessoas', list: ['👶', '🧒', '👦', '👧', '🧑', '👨', '👩', '🧓', '👴', '👵', '👲', '👳‍♂️', '👳‍♀️', '🧕', '🤵‍♂️', '🤵‍♀️', '👰‍♂️', '👰‍♀️', '🤰', '🤱', '👼', '🎅', '🤶', '🧑‍🎄', '🦸‍♂️', '🦸‍♀️', '🦹‍♂️', '🦹‍♀️', '🧙‍♂️', '🧙‍♀️', '🧝‍♂️', '🧝‍♀️', '🧛‍♂️', '🧛‍♀️', '🧟‍♂️', '🧟‍♀️', '🧞‍♂️', '🧞‍♀️', '🧜‍♂️', '🧜‍♀️', '🧚‍♂️', '🧚‍♀️', '👯‍♂️', '👯‍♀️', '🧑‍🤝‍🧑', '👫', '👬', '👭', '💏', '👩‍❤️‍👨', '👩‍❤️‍👩', '👨‍❤️‍👨', '💑', '👩‍❤️‍💋‍👨', '👩‍❤️‍💋‍👩', '👨‍❤️‍💋‍👨', '👪', '🧑‍🧑‍🧒', '🧑‍🧑‍🧒‍🧒', '🧑‍🧒', '🧑‍🧒‍🧒'] },
+                // ANIMAIS E NATUREZA
+                { category: 'Animais', list: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜', '🦟', '🦗', '🦂', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🦣', '🐘', '🦛', '🦏', '🐪', '🐫', '🦒', '🦘', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🦙', '🐐', '🦌', '🐕', '🐩', '🦮', '🐕‍🦺', '🐈', '🐈‍⬛', '🪶', '🐓', '🦃', '🦚', '🦜', '🦢', '🦩', '🕊️', '🐇', '🦝', '🦨', '🦡', '🦫', '🦦', '🦥', '🐿️'] },
+                // COMIDAS E BEBIDAS
+                { category: 'Comidas', list: ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🥐', '🥯', '🍞', '🥖', '🥨', '🧀', '🥚', '🍳', '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🦴', '🌭', '🍔', '🍟', '🍕', '🫓', '🥪', '🥙', '🧆', '🌮', '🌯', '🫔', '🥗', '🥘', '🫕', '🥫', '🍝', '🍜', '🍲', '🍛', '🍚', '🍙', '🍣', '🍱', '🥟', '🦪', '🍤', '🍥', '🥮', '🍡', '🥠', '🥡', '🍦', '🍧', '🍨', '🍩', '🍪', '🎂', '🧁', '🥧', '🍰', '🧋', '☕', '🫖', '🍵', '🍶', '🍺', '🍻', '🥂', '🍷', '🥃', '🍸', '🍹', '🧉', '🧊'] },
+                // ATIVIDADES
+                { category: 'Atividades', list: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🪃', '🥅', '⛳', '🏌️‍♂️', '🏌️‍♀️', '🏂', '🏄‍♂️', '🏄‍♀️', '🤿', '🏊‍♂️', '🏊‍♀️', '🤽‍♂️', '🤽‍♀️', '🚣‍♂️', '🚣‍♀️', '🏇', '🚴‍♂️', '🚴‍♀️', '🚵‍♂️', '🚵‍♀️', '🧗‍♂️', '🧗‍♀️', '🤸‍♂️', '🤸‍♀️', '🤹‍♂️', '🤹‍♀️', '🧘‍♂️', '🧘‍♀️', '🏋️‍♂️', '🏋️‍♀️', '🤼‍♂️', '🤼‍♀️', '🤺', '🥊', '🥋', '🤾‍♂️', '🤾‍♀️', '🏹', '🧘', '🎣', '🤿', '🥇', '🥈', '🥉', '🏆', '🏅', '🎖️', '🎗️'] },
+                // VIAGENS
+                { category: 'Viagens', list: ['🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🚐', '🛻', '🚚', '🚛', '🚜', '🛴', '🚲', '🛵', '🏍️', '🛺', '🚨', '🚔', '🚍', '🚘', '🚖', '🚡', '🚠', '🚟', '🚃', '🚋', '🚝', '🚄', '🚅', '🚈', '🚂', '🚆', '🚇', '🚊', '🚉', '🚁', '🛩️', '✈️', '🛫', '🛬', '🪂', '🚀', '🛸', '🚢', '🛥️', '⛴️', '🛳️', '⛵', '🛶', '🚤', '🛟'] },
+                // OBJETOS
+                { category: 'Objetos', list: ['⌚', '📱', '📲', '💻', '⌨️', '🖥️', '🖨️', '🖱️', '🖲️', '💾', '💿', '📀', '🧾', '📝', '📖', '📚', '📓', '📔', '📒', '📕', '📗', '📘', '📙', '📜', '📃', '📄', '📑', '📊', '📈', '📉', '📋', '📁', '📂', '🗂️', '🗃️', '🗄️', '🗑️', '🔒', '🔓', '🔏', '🔐', '🔑', '🗝️', '🔨', '🪓', '⛏️', '⚒️', '🛠️', '🗡️', '⚔️', '🔫', '🪃', '🏹', '🛡️', '🪚', '🔧', '🔩', '⚙️', '🗜️', '⚖️', '🪤', '🪢', '⛓️', '🧰', '🧲', '🪝'] },
+                // SÍMBOLOS
+                { category: 'Símbolos', list: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❤️‍🔥', '❤️‍🩹', '💕', '💞', '💗', '💖', '💘', '💝', '💟', '☮️', '✝️', '☪️', '🕉️', '☸️', '✡️', '🔯', '🕎', '☯️', '☦️', '🛐', '⛎', '♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓', '🆔', '⚛️', '🉑', '☢️', '☣️', '📴', '📳', '🈶', '🈚', '🈸', '🈺', '🈷️', '✴️', '🆚', '💮', '🉐', '㊙️', '㊗️', '🈴', '🈵', '🈹', '🈲', '🅰️', '🅱️', '🆎', '🅾️', '🆑', '🆘', '🆕', '🆖', '🆗', '🆙', '🆒', '🆓', 'ℹ️'] }
+            ];
+
+            // Renderizar o seletor de emojis
+            const picker = document.getElementById('emoji-picker-container');
+            const grid = document.getElementById('emoji-grid');
+            const search = document.getElementById('emoji-search');
+            const categoriesContainer = document.getElementById('emoji-categories');
+
+            function renderEmojis(categoryName, searchTerm) {
+                grid.innerHTML = '';
+                let emojisToShow = [];
+
+                if (searchTerm) {
+                    const term = searchTerm.toLowerCase();
+                    emojiLibrary.forEach(cat => {
+                        cat.list.forEach(emoji => {
+                            if (emoji.toLowerCase().includes(term)) {
+                                emojisToShow.push(emoji);
+                            }
+                        });
+                    });
+                } else {
+                    const cat = emojiLibrary.find(c => c.category === categoryName);
+                    if (cat) emojisToShow = cat.list;
+                    else emojisToShow = emojiLibrary[0].list; // Fallback
+                }
+
+                emojisToShow.forEach(emoji => {
+                    const span = document.createElement('span');
+                    span.className = 'emoji-item';
+                    span.textContent = emoji;
+                    span.onclick = function(e) {
+                        e.stopPropagation();
+                        const range = quillEditor.getSelection();
+                        if (range) {
+                            quillEditor.insertText(range.index, emoji);
+                        } else {
+                            quillEditor.insertText(quillEditor.getLength(), emoji);
+                        }
+                        picker.classList.remove('active');
+                    };
+                    grid.appendChild(span);
                 });
             }
 
-            // Fechar o seletor de emojis se clicar em qualquer outro lugar da tela
+            // Criar abas de categorias
+            emojiLibrary.forEach(cat => {
+                const btn = document.createElement('span');
+                btn.textContent = cat.category;
+                btn.dataset.category = cat.category;
+                btn.onclick = function() {
+                    document.querySelectorAll('#emoji-categories span').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    search.value = '';
+                    renderEmojis(cat.category, '');
+                };
+                categoriesContainer.appendChild(btn);
+            });
+
+            // Selecionar a primeira categoria por padrão
+            const firstBtn = categoriesContainer.querySelector('span');
+            if (firstBtn) {
+                firstBtn.classList.add('active');
+                renderEmojis(firstBtn.dataset.category, '');
+            }
+
+            // Evento de busca
+            search.addEventListener('input', function() {
+                const term = this.value.trim();
+                if (term) {
+                    document.querySelectorAll('#emoji-categories span').forEach(b => b.classList.remove('active'));
+                    renderEmojis('', term);
+                } else {
+                    const activeCategory = document.querySelector('#emoji-categories span.active');
+                    if (activeCategory) {
+                        renderEmojis(activeCategory.dataset.category, '');
+                    }
+                }
+            });
+
+            // Fechar se clicar fora
             document.addEventListener('click', function(e) {
-                if (!emojiContainer.contains(e.target) && e.target !== emojiButton) {
-                    emojiContainer.style.display = 'none';
+                if (!picker.contains(e.target) && !e.target.closest('.ql-custom-emoji')) {
+                    picker.classList.remove('active');
                 }
             });
         });
