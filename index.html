@@ -499,7 +499,7 @@
             if(!isEmEstoque(prod)) { cartBtn.disabled=true; cartBtn.textContent='Esgotado'; if(waBtn) waBtn.style.opacity='0.5'; } else { cartBtn.disabled=false; cartBtn.innerHTML='<i class="fas fa-cart-plus"></i> Adicionar'; if(waBtn) waBtn.style.opacity='1'; } 
             document.getElementById('productModal').classList.add('active'); mostrarMiniGluudyx(); renderizarAvaliacoes(prodId); renderizarSugestoes(prodId); document.getElementById('contadorAoVivo').textContent = `👀 ${Math.floor(Math.random()*5)+1} pessoas estão vendo este produto agora`; 
 
-            // 🔸 Renderizar a Tabela de Preços Progressivo
+            // 🔸 Renderizar a Tabela de Preços Progressivo (CORRIGIDO)
             const tabelaContainer = document.getElementById('tabelaPrecosContainer');
             const tabelaGrid = document.getElementById('tabelaPrecosGrid');
             tabelaGrid.innerHTML = '';
