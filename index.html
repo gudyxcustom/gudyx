@@ -37,6 +37,15 @@
         .toast-item.success i { color: #00e676; }
         .toast-item.error i { color: #ff4455; }
         @keyframes slideInToast { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        /* 🔥 ESTILOS DA NOVA TABELA DE PREÇOS PROGRESSIVO */
+        .tabela-precos-container { border-top: 1px solid var(--vidro-borda); padding-top: 15px; margin-top: 15px; }
+        .tabela-precos-container h4 { color: var(--ciano-brilhante); font-size: 1.1rem; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .tabela-precos-grid { display: flex; flex-direction: column; gap: 6px; }
+        .tabela-precos-grid .linha-tabela { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255, 255, 255, 0.03); border: 1px solid transparent; border-radius: 8px; transition: var(--transicao); font-size: 0.95rem; color: rgba(255, 255, 255, 0.6); }
+        .tabela-precos-grid .linha-tabela .preco-tabela { color: var(--amarelo-neon); font-weight: 700; }
+        .tabela-precos-grid .linha-tabela.active { background: rgba(172, 40, 255, 0.2); border-color: var(--ciano-brilhante); box-shadow: 0 0 15px rgba(0, 242, 254, 0.15); color: #fff; }
+        .tabela-precos-grid .linha-tabela.active .preco-tabela { color: var(--ciano-brilhante); text-shadow: 0 0 10px rgba(0, 242, 254, 0.3); }
     </style>
 </head>
 <body>
@@ -73,6 +82,12 @@
             <div class="avaliacoes-container" id="avaliacoesContainer"><h4>⭐ Avaliações</h4><div id="avaliacoesList"></div><div class="form-avaliacao" id="formAvaliacao"><select id="avaliacaoNota"><option value="5">5 estrelas</option><option value="4">4 estrelas</option><option value="3">3 estrelas</option><option value="2">2 estrelas</option><option value="1">1 estrela</option></select><textarea id="avaliacaoComentario" placeholder="Deixe seu comentário..."></textarea><input type="file" id="avaliacaoFoto" accept="image/*"><button onclick="salvarAvaliacao()">Enviar avaliação</button></div></div>
             <div class="sugestoes-container" id="sugestoesContainer"><h4>🛒 Quem comprou também comprou</h4><div class="sugestoes-grid" id="sugestoesGrid"></div></div>
             <div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap;"><button onclick="compartilharProduto()" style="padding:8px 16px;background:rgba(255,255,255,0.1);border:1px solid var(--vidro-borda);border-radius:20px;color:var(--cor-texto);cursor:pointer;transition:var(--transicao);"><i class="fas fa-share-alt"></i> Compartilhar</button></div>
+
+            <!-- 🔥 NOVO CONTAINER DA TABELA DE PREÇOS -->
+            <div id="tabelaPrecosContainer" class="tabela-precos-container" style="display:none;">
+                <h4>📊 Preço por Quantidade</h4>
+                <div id="tabelaPrecosGrid" class="tabela-precos-grid"></div>
+            </div>
         </div>
     </div>
 
@@ -431,12 +446,11 @@
             addToCartBase(prodId, qtd, prod);
         }
 
-        // 🔸 Função corrigida para ler o preço final das faixas 🔸
         function addToCartBase(prodId, qtd, prod) {
             const exist = carrinho.find(c=>c.id===prodId); 
             let precoUnitario = parseFloat(String(prod.precoMaoObra || prod.preco || '0').replace(',', '.')) || 0;
 
-            // Buscar o preço certo baseado na quantidade
+            // 🔸 Buscar o preço certo baseado na quantidade
             if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
                 let precoEncontrado = 0;
                 prod.descontoProgressivo.forEach(regra => {
@@ -681,7 +695,42 @@
             document.getElementById('modalGallery').innerHTML = (prod.imagens?.length?prod.imagens:[getImagemPrincipal(prod)]).map(img=>`<img src="${img}" loading="lazy">`).join(''); 
             const cartBtn = document.getElementById('modalAddCartBtn'); const waBtn = document.getElementById('modalWaBtn');
             if(!isEmEstoque(prod)) { cartBtn.disabled=true; cartBtn.textContent='Esgotado'; if(waBtn) waBtn.style.opacity='0.5'; } else { cartBtn.disabled=false; cartBtn.innerHTML='<i class="fas fa-cart-plus"></i> Adicionar'; if(waBtn) waBtn.style.opacity='1'; } 
-            document.getElementById('productModal').classList.add('active'); mostrarMiniGluudyx(); renderizarAvaliacoes(prodId); renderizarSugestoes(prodId); document.getElementById('contadorAoVivo').textContent = `👀 ${Math.floor(Math.random()*5)+1} pessoas estão vendo este produto agora`; calcularPrecoProgressivo(1); document.getElementById('resultadoSimulacao').innerHTML = ''; document.getElementById('simuladorQtd').value = '';
+            document.getElementById('productModal').classList.add('active'); mostrarMiniGluudyx(); renderizarAvaliacoes(prodId); renderizarSugestoes(prodId); document.getElementById('contadorAoVivo').textContent = `👀 ${Math.floor(Math.random()*5)+1} pessoas estão vendo este produto agora`; 
+
+            // 🔸 Renderizar a Tabela de Preços Progressivo
+            const tabelaContainer = document.getElementById('tabelaPrecosContainer');
+            const tabelaGrid = document.getElementById('tabelaPrecosGrid');
+            tabelaGrid.innerHTML = '';
+            
+            if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
+                tabelaContainer.style.display = 'block';
+                prod.descontoProgressivo.forEach((regra, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'linha-tabela';
+                    div.dataset.index = index;
+                    
+                    let valorExibido = '0,00';
+                    if (regra.preco_final && regra.preco_final > 0) {
+                        valorExibido = regra.preco_final.toFixed(2).replace('.', ',');
+                    } else if (regra.desconto && regra.desconto > 0) {
+                        // Se for sistema antigo
+                        const base = parseFloat(String(prod.precoMaoObra || prod.preco || '0').replace(',', '.')) || 0;
+                        const final = base * (1 - regra.desconto / 100);
+                        valorExibido = final.toFixed(2).replace('.', ',');
+                    }
+
+                    div.innerHTML = `
+                        <span>${regra.min} a ${regra.max} unidades</span>
+                        <span class="preco-tabela">R$ ${valorExibido}</span>
+                    `;
+                    tabelaGrid.appendChild(div);
+                });
+                calcularPrecoProgressivo(1); // Destaca a primeira linha
+            } else {
+                tabelaContainer.style.display = 'none';
+            }
+
+            document.getElementById('resultadoSimulacao').innerHTML = ''; document.getElementById('simuladorQtd').value = '';
             if(prod.tipoItem === 'kit') { document.getElementById('modalDesc').innerHTML += `<br><br><strong>📦 Este produto é um KIT e contém:</strong><br>`; prod.componentes.forEach(comp => { const compProd = dados.produtos.find(p => p.id === comp.id); if(compProd) { document.getElementById('modalDesc').innerHTML += `- ${compProd.nome} (x${comp.quantidade})<br>`; } }); }
             const opcoesContainer = document.getElementById('modalOpcoesList'); const opcoesContainerBox = document.getElementById('modalOpcoesContainer'); if(!opcoesContainer || !opcoesContainerBox) return;
             opcoesContainer.innerHTML = ''; let todasOpcoes = [];
@@ -703,11 +752,19 @@
             const prod = produtoModalAtual; 
             let precoFinal = parseFloat(String(prod.precoMaoObra || prod.preco || '0').replace(',', '.')) || 0;
 
+            // 🔸 Destacar a linha correta na tabela
+            const linhas = document.querySelectorAll('#tabelaPrecosGrid .linha-tabela');
+            linhas.forEach(linha => linha.classList.remove('active'));
+
             if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
                 let valorEncontrado = 0;
-                prod.descontoProgressivo.forEach(regra => {
+                prod.descontoProgressivo.forEach((regra, index) => {
                     if (qtd >= regra.min && qtd <= regra.max) {
-                        // 🔸 Verifica se existe preco_final ou o antigo desconto (%) e aplica
+                        // Destacar a linha
+                        if (linhas[index]) {
+                            linhas[index].classList.add('active');
+                        }
+                        
                         if (regra.preco_final && regra.preco_final > 0) {
                             valorEncontrado = regra.preco_final;
                         } else if (regra.desconto && regra.desconto > 0) {
@@ -719,7 +776,8 @@
                     precoFinal = valorEncontrado;
                 }
             }
-            const precoExibicao = precoFinal.toFixed(2).replace('.', ','); const containerProgressivo = document.getElementById('modalPrecoProgressivo');
+            const precoExibicao = precoFinal.toFixed(2).replace('.', ','); 
+            const containerProgressivo = document.getElementById('modalPrecoProgressivo');
             if (precoFinal > 0) { containerProgressivo.innerHTML = `💰 Preço unitário: <strong>R$ ${precoExibicao}</strong>`; } else { containerProgressivo.innerHTML = ''; }
         }
 
