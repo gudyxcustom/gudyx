@@ -5,13 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Gudyx Custom</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Adição das bibliotecas Quill para o Editor de Texto -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    
-    <!-- CSS e JS do Quill Emoji para o botão de emojis -->
-    <link href="https://unpkg.com/quill-emoji@0.3.3/dist/quill-emoji.css" rel="stylesheet">
-    <script src="https://unpkg.com/quill-emoji@0.3.3/dist/quill-emoji.min.js"></script>
-
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -23,7 +17,8 @@
         h1 { text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
         label { display: block; margin: 10px 0 5px; font-size: 0.9rem; opacity: 0.8; }
         input, select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--vidro-borda); background: rgba(255,255,255,0.05); color: #fff; font-size: 0.95rem; margin-bottom: 10px; font-family: inherit; }
-        /* Ajuste para o Quill Editor ficar bonito no tema escuro */
+        
+        /* Ajustes do Editor Quill para o Tema Escuro */
         #editor-container .ql-editor { min-height: 150px; color: #fff; }
         #editor-container { background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid var(--vidro-borda); margin-bottom: 15px; color: #fff; }
         #editor-container .ql-toolbar { border-bottom: 1px solid var(--vidro-borda); border-radius: 10px 10px 0 0; background: rgba(0,0,0,0.4); }
@@ -32,11 +27,14 @@
         #editor-container .ql-stroke { stroke: #fff; }
         #editor-container .ql-fill { fill: #fff; }
         #editor-container .ql-toolbar button:hover .ql-stroke, .ql-toolbar button.ql-active .ql-stroke { stroke: var(--ciano-brilhante); }
+        /* Botão do Emoji Customizado */
+        .ql-toolbar .ql-custom-emoji { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 1.3rem; color: #fff; background: transparent; border: 1px solid transparent; border-radius: 4px; cursor: pointer; margin-right: 4px; }
+        .ql-toolbar .ql-custom-emoji:hover { border-color: var(--ciano-brilhante); background: rgba(172,40,255,0.3); }
 
-        /* Ajustes para o seletor de Emojis no tema escuro */
-        .ql-emoji-picker { background: #1a0a33 !important; border: 1px solid var(--vidro-borda) !important; color: #fff !important; }
-        .ql-emoji-picker .ql-emoji-category { background: rgba(255,255,255,0.05) !important; }
-        .ql-emoji-picker .ql-emoji-item:hover { background: rgba(172,40,255,0.3) !important; }
+        /* Seletor de Emojis Flutuante */
+        #emoji-picker-container { position: fixed; display: none; background: #1a0a33; border: 1px solid var(--vidro-borda); border-radius: 12px; padding: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.8); z-index: 9999; width: 280px; }
+        #emoji-picker-container .emoji-item { display: inline-block; font-size: 1.8rem; padding: 6px; cursor: pointer; border-radius: 6px; transition: 0.2s; }
+        #emoji-picker-container .emoji-item:hover { background: rgba(172,40,255,0.5); transform: scale(1.1); }
 
         input[type="file"], input[type="checkbox"] { padding: 5px; width: auto; }
         button { padding: 10px 20px; border: none; border-radius: 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; margin-right: 10px; margin-bottom: 5px; }
@@ -129,7 +127,6 @@
                 <option value="kit">Kit / Combo</option>
             </select>
 
-            <!-- CAMPOS DE KIT -->
             <div id="camposKit" class="hidden" style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>🔧 Componentes do Kit</label>
                 <div id="containerComponentesKit">
@@ -149,7 +146,12 @@
             <label>Nome</label><input type="text" id="prodNome">
             
             <label>Descrição (Use o editor abaixo para formatar, adicionar emojis, cores e negrito)</label>
-            <!-- Substituição do textarea pelo Editor Quill -->
+            
+            <!-- SELETOR DE EMOJIS FLUTUANTE -->
+            <div id="emoji-picker-container">
+                <div id="emoji-list" style="display: flex; flex-wrap: wrap; gap: 4px;"></div>
+            </div>
+            <!-- EDITOR DE TEXTO -->
             <div id="editor-container"></div>
 
             <!-- CAMPO DE PREÇO MANUAL -->
@@ -164,7 +166,6 @@
                 </div>
             </div>
 
-            <!-- CAMPOS DE PRECIFICAÇÃO AUTOMÁTICA -->
             <div id="autoPriceFields" style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📐 Configuração de Precificação</label>
                 <label>Material Padrão:</label>
@@ -217,7 +218,6 @@
                 <button onclick="adicionarLinhaDesconto()" class="btn-secondary" style="margin-top:5px;">+ Adicionar faixa de desconto</button>
             </div>
 
-            <!-- CAMPO DE IMAGEM (BASE64) -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📸 Imagens do Produto</label>
                 <input type="file" id="prodImg" accept="image/*" multiple>
@@ -392,7 +392,7 @@
         var configJogos = { sorte: { ativo: false, inicio: '', fim: '' }, raspa: { ativo: false, inicio: '', fim: '', cupons: [] } };
         var configPrecificacao = { offset: '0,30', matte: '0,40', glossy: '0,50', servicos: [] };
 
-        let quillEditor; // Variável global para o editor
+        let quillEditor; 
 
         async function carregarDados() {
             try {
@@ -640,28 +640,69 @@
         }
         function removerLinhaOpcaoProduto(btn) { btn.parentElement.remove(); }
 
-        // Inicializar o editor assim que a aba produtos for aberta ou a página carregar
         document.addEventListener('DOMContentLoaded', function() {
-            // Configuração da barra de ferramentas com o botão de Emoji incluído
             var toolbarOptions = [
                 ['bold', 'italic', 'underline', 'strike'],
                 [{ 'header': [1, 2, false] }],
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                 [{ 'color': [] }, { 'background': [] }],
                 ['link', 'clean'],
-                ['emoji'] // 🔥 BOTÃO DE EMOJI ADICIONADO AQUI
+                [{ 'custom-emoji': '😊' }] // 🔥 BOTÃO DE EMOJI CUSTOMIZADO AQUI
             ];
 
-            // Inicializa o Quill com o módulo de Emojis
             quillEditor = new Quill('#editor-container', {
                 theme: 'snow',
                 modules: {
-                    toolbar: toolbarOptions,
-                    'emoji-toolbar': true,   // Ativa a barra de emojis
-                    'emoji-textarea': false,
-                    'emoji-shortcut': true
+                    toolbar: toolbarOptions
                 },
                 placeholder: "Digite a descrição do produto aqui..."
+            });
+
+            // 🔥 Lógica para o Seletor de Emojis
+            const emojiContainer = document.getElementById('emoji-picker-container');
+            const emojiList = document.getElementById('emoji-list');
+            const emojis = ['🔥', '✨', '🎁', '🛒', '😍', '🤩', '✅', '🎉', '❤️', '😊', '🚀', '📦', '💎', '💰', '🎯', '👍', '🎨', '💡', '🏆', '🧡'];
+
+            // Preencher o container com os emojis
+            emojis.forEach(function(emoji) {
+                const span = document.createElement('span');
+                span.className = 'emoji-item';
+                span.textContent = emoji;
+                span.onclick = function(e) {
+                    e.stopPropagation();
+                    const range = quillEditor.getSelection();
+                    if (range) {
+                        quillEditor.insertText(range.index, emoji);
+                    } else {
+                        quillEditor.insertText(quillEditor.getLength(), emoji);
+                    }
+                    emojiContainer.style.display = 'none';
+                };
+                emojiList.appendChild(span);
+            });
+
+            // Encontrar o botão customizado na barra de ferramentas e adicionar o evento de clique
+            const emojiButton = document.querySelector('.ql-custom-emoji');
+            if (emojiButton) {
+                emojiButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const isVisible = emojiContainer.style.display === 'block';
+                    emojiContainer.style.display = isVisible ? 'none' : 'block';
+                    
+                    if (!isVisible) {
+                        // Posicionar a janela de emojis logo abaixo do botão
+                        const rect = emojiButton.getBoundingClientRect();
+                        emojiContainer.style.left = rect.left + 'px';
+                        emojiContainer.style.top = (rect.bottom + 5) + 'px';
+                    }
+                });
+            }
+
+            // Fechar o seletor de emojis se clicar em qualquer outro lugar da tela
+            document.addEventListener('click', function(e) {
+                if (!emojiContainer.contains(e.target) && e.target !== emojiButton) {
+                    emojiContainer.style.display = 'none';
+                }
             });
         });
 
@@ -670,7 +711,6 @@
             const tipoItem = document.getElementById('prodTipoItem').value;
             const catId = document.getElementById('prodCategoria').value;
             const nome = document.getElementById('prodNome').value.trim();
-            // 🔒 Pega o HTML do Quill, NÃO o texto puro
             const descricao = quillEditor.root.innerHTML;
             const usarPrecoManual = document.getElementById('prodPrecoManualToggle').checked;
             const precoManual = document.getElementById('prodPrecoManual').value.trim();
@@ -787,7 +827,6 @@
             atualizarSelectCategorias();
             document.getElementById('prodCategoria').value = p.categoriaId;
             document.getElementById('prodNome').value = p.nome;
-            // 🔒 Carregar o HTML no Quill
             quillEditor.root.innerHTML = p.descricao || '';
             document.getElementById('prodPrecoManualToggle').checked = p.usarPrecoManual || false;
             document.getElementById('prodPrecoManual').value = p.precoManual || '';
@@ -886,7 +925,7 @@
         async function removerProduto(id) { if (confirm('Remover?')) { await db.collection('produtos').doc(id).delete(); await carregarDados(); atualizarListaProdutos(); } }
         function limparFormularioProduto() { 
             document.getElementById('editProdId').value = ''; document.getElementById('prodNome').value = ''; 
-            quillEditor.root.innerHTML = ''; // Limpa o editor
+            quillEditor.root.innerHTML = ''; 
             document.getElementById('prodPrecoMaoObra').value = ''; document.getElementById('prodImg').value = ''; 
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
             document.getElementById('promoFields').classList.add('hidden');
