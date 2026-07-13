@@ -5,17 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin - Gudyx Custom</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Adição das bibliotecas Quill para o Editor de Texto -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <style>
         :root { --roxo-profundo: #0b041c; --ciano-brilhante: #00f2fe; --vidro-fundo: rgba(11,4,28,0.65); --vidro-borda: rgba(172,40,255,0.3); }
         body { font-family: 'Poppins', sans-serif; background: #0b041c; color: #f0eaff; padding: 20px; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; margin: 0; }
         .admin-container { background: var(--vidro-fundo); backdrop-filter: blur(12px); border: 1px solid var(--vidro-borda); border-radius: 24px; padding: 30px; max-width: 900px; width: 100%; }
         h1 { text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
         label { display: block; margin: 10px 0 5px; font-size: 0.9rem; opacity: 0.8; }
-        input, select, textarea { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--vidro-borda); background: rgba(255,255,255,0.05); color: #fff; font-size: 0.95rem; margin-bottom: 10px; font-family: inherit; }
-        textarea { resize: vertical; min-height: 60px; }
+        input, select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--vidro-borda); background: rgba(255,255,255,0.05); color: #fff; font-size: 0.95rem; margin-bottom: 10px; font-family: inherit; }
+        /* Ajuste para o Quill Editor ficar bonito no tema escuro */
+        #editor-container .ql-editor { min-height: 150px; color: #fff; }
+        #editor-container { background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid var(--vidro-borda); margin-bottom: 15px; color: #fff; }
+        #editor-container .ql-toolbar { border-bottom: 1px solid var(--vidro-borda); border-radius: 10px 10px 0 0; background: rgba(0,0,0,0.4); }
+        #editor-container .ql-container { border: none; border-radius: 0 0 10px 10px; }
+        #editor-container .ql-picker-label { color: #fff; }
+        #editor-container .ql-stroke { stroke: #fff; }
+        #editor-container .ql-fill { fill: #fff; }
+        #editor-container .ql-toolbar button:hover .ql-stroke, .ql-toolbar button.ql-active .ql-stroke { stroke: var(--ciano-brilhante); }
+
         input[type="file"], input[type="checkbox"] { padding: 5px; width: auto; }
         button { padding: 10px 20px; border: none; border-radius: 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; margin-right: 10px; margin-bottom: 5px; }
         button:hover { transform: scale(1.05); }
@@ -107,6 +119,7 @@
                 <option value="kit">Kit / Combo</option>
             </select>
 
+            <!-- CAMPOS DE KIT -->
             <div id="camposKit" class="hidden" style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>🔧 Componentes do Kit</label>
                 <div id="containerComponentesKit">
@@ -124,8 +137,12 @@
             <label>Tipo</label><select id="prodTipo" onchange="atualizarSelectCategorias(); toggleCamposKit(); toggleManualPriceFields()"><option value="produtos">Produtos</option><option value="servicos">Serviços</option></select>
             <label>Categoria</label><select id="prodCategoria"></select>
             <label>Nome</label><input type="text" id="prodNome">
-            <label>Descrição</label><textarea id="prodDescricao"></textarea>
+            
+            <label>Descrição (Use o editor abaixo para formatar com cores, negrito e itálico)</label>
+            <!-- Substituição do textarea pelo Editor Quill -->
+            <div id="editor-container"></div>
 
+            <!-- CAMPO DE PREÇO MANUAL -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label style="display:flex; align-items:center; gap:10px;">
                     <input type="checkbox" id="prodPrecoManualToggle" onchange="toggleManualPriceFields()" style="width:auto; transform:scale(1.5); margin-right:10px;">
@@ -137,6 +154,7 @@
                 </div>
             </div>
 
+            <!-- CAMPOS DE PRECIFICAÇÃO AUTOMÁTICA -->
             <div id="autoPriceFields" style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📐 Configuração de Precificação</label>
                 <label>Material Padrão:</label>
@@ -189,6 +207,7 @@
                 <button onclick="adicionarLinhaDesconto()" class="btn-secondary" style="margin-top:5px;">+ Adicionar faixa de desconto</button>
             </div>
 
+            <!-- CAMPO DE IMAGEM (BASE64) -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label>📸 Imagens do Produto</label>
                 <input type="file" id="prodImg" accept="image/*" multiple>
@@ -308,7 +327,7 @@
             <div class="admin-item-list" id="listaFaq"></div>
         </div>
 
-        <!-- CONFIGURAÇÃO DA LOJA - COM DESCONTO AUTOMÁTICO -->
+        <!-- CONFIGURAÇÃO DA LOJA -->
         <div id="abaConfigLoja" style="display:none;">
             <h3>⚙️ Configuração de Prazos e Retirada</h3>
             <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
@@ -321,22 +340,6 @@
                     Há pedidos em andamento?
                 </label>
             </div>
-
-            <!-- NOVOS CONTROLES DE DESCONTO AUTOMÁTICO -->
-            <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px; margin-top:10px;">
-                <h4 style="margin-bottom:10px; color:var(--ciano-brilhante);">📉 Desconto Automático por Valor no Carrinho</h4>
-                <label style="display:flex; align-items:center; gap:10px;">
-                    <input type="checkbox" id="configAutoDescontoAtivo" onchange="toggleAutoDescontoFields()" style="width:auto; transform:scale(1.5); margin-right:10px;">
-                    Ativar Desconto Automático
-                </label>
-                <div id="autoDescontoFields" class="hidden" style="margin-top:10px; border-top:1px solid var(--vidro-borda); padding-top:10px;">
-                    <label>Meta de Valor (R$):</label>
-                    <input type="number" id="configMetaDesconto" value="100" min="0" step="5">
-                    <label>Porcentagem de Desconto (%):</label>
-                    <input type="number" id="configPercentualDesconto" value="5" min="0" max="100">
-                </div>
-            </div>
-
             <button onclick="salvarConfigLoja()" style="margin-top:15px;">Salvar Configurações</button>
         </div>
 
@@ -375,9 +378,11 @@
         firebase.auth().signInAnonymously().catch(e => console.error("Auth error:", e));
 
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
-        var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false, autoDiscount: { ativo: false, meta: 100, percentual: 5 } };
+        var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false };
         var configJogos = { sorte: { ativo: false, inicio: '', fim: '' }, raspa: { ativo: false, inicio: '', fim: '', cupons: [] } };
         var configPrecificacao = { offset: '0,30', matte: '0,40', glossy: '0,50', servicos: [] };
+
+        let quillEditor; // Variável global para o editor
 
         async function carregarDados() {
             try {
@@ -395,14 +400,6 @@
                     document.getElementById('configPrazoMin').value = configLoja.prazoMinimo;
                     document.getElementById('configPrazoMax').value = configLoja.prazoMaximo;
                     document.getElementById('configPedidosEmAndamento').checked = configLoja.pedidosEmAndamento;
-                    
-                    // 🔒 Carregar dados de Desconto Automático
-                    if(configLoja.autoDiscount) {
-                        document.getElementById('configAutoDescontoAtivo').checked = configLoja.autoDiscount.ativo || false;
-                        document.getElementById('configMetaDesconto').value = configLoja.autoDiscount.meta || 100;
-                        document.getElementById('configPercentualDesconto').value = configLoja.autoDiscount.percentual || 5;
-                        toggleAutoDescontoFields();
-                    }
                 }
                 const snapJogos = await db.collection('config').doc('jogos').get();
                 if (snapJogos.exists) {
@@ -486,16 +483,6 @@
             } else {
                 manualFields.classList.add('hidden');
                 autoFields.classList.remove('hidden');
-            }
-        }
-
-        function toggleAutoDescontoFields() {
-            const checkbox = document.getElementById('configAutoDescontoAtivo');
-            const fields = document.getElementById('autoDescontoFields');
-            if (checkbox.checked) {
-                fields.classList.remove('hidden');
-            } else {
-                fields.classList.add('hidden');
             }
         }
 
@@ -643,12 +630,31 @@
         }
         function removerLinhaOpcaoProduto(btn) { btn.parentElement.remove(); }
 
+        // Inicializar o editor assim que a aba produtos for aberta ou a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializa o Quill
+            quillEditor = new Quill('#editor-container', {
+                theme: 'snow',
+                modules: {
+                    toolbar: [
+                        ['bold', 'italic', 'underline', 'strike'],
+                        [{ 'header': [1, 2, false] }],
+                        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                        [{ 'color': [] }, { 'background': [] }],
+                        ['link', 'clean']
+                    ]
+                },
+                placeholder: "Digite a descrição do produto aqui..."
+            });
+        });
+
         async function salvarProduto() {
             const id = document.getElementById('editProdId').value;
             const tipoItem = document.getElementById('prodTipoItem').value;
             const catId = document.getElementById('prodCategoria').value;
             const nome = document.getElementById('prodNome').value.trim();
-            const descricao = document.getElementById('prodDescricao').value.trim();
+            // 🔒 Pega o HTML do Quill, NÃO o texto puro
+            const descricao = quillEditor.root.innerHTML;
             const usarPrecoManual = document.getElementById('prodPrecoManualToggle').checked;
             const precoManual = document.getElementById('prodPrecoManual').value.trim();
             const material = document.getElementById('prodMaterial') ? document.getElementById('prodMaterial').value : 'offset';
@@ -764,7 +770,8 @@
             atualizarSelectCategorias();
             document.getElementById('prodCategoria').value = p.categoriaId;
             document.getElementById('prodNome').value = p.nome;
-            document.getElementById('prodDescricao').value = p.descricao || '';
+            // 🔒 Carregar o HTML no Quill
+            quillEditor.root.innerHTML = p.descricao || '';
             document.getElementById('prodPrecoManualToggle').checked = p.usarPrecoManual || false;
             document.getElementById('prodPrecoManual').value = p.precoManual || '';
             toggleManualPriceFields();
@@ -861,7 +868,8 @@
 
         async function removerProduto(id) { if (confirm('Remover?')) { await db.collection('produtos').doc(id).delete(); await carregarDados(); atualizarListaProdutos(); } }
         function limparFormularioProduto() { 
-            document.getElementById('editProdId').value = ''; document.getElementById('prodNome').value = ''; document.getElementById('prodDescricao').value = ''; 
+            document.getElementById('editProdId').value = ''; document.getElementById('prodNome').value = ''; 
+            quillEditor.root.innerHTML = ''; // Limpa o editor
             document.getElementById('prodPrecoMaoObra').value = ''; document.getElementById('prodImg').value = ''; 
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
             document.getElementById('promoFields').classList.add('hidden');
@@ -1120,38 +1128,13 @@
             document.getElementById('configPrazoMin').value = configLoja.prazoMinimo || 3;
             document.getElementById('configPrazoMax').value = configLoja.prazoMaximo || 5;
             document.getElementById('configPedidosEmAndamento').checked = configLoja.pedidosEmAndamento || false;
-            
-            // 🔒 Carregar Desconto Automático
-            if(configLoja.autoDiscount) {
-                document.getElementById('configAutoDescontoAtivo').checked = configLoja.autoDiscount.ativo || false;
-                document.getElementById('configMetaDesconto').value = configLoja.autoDiscount.meta || 100;
-                document.getElementById('configPercentualDesconto').value = configLoja.autoDiscount.percentual || 5;
-                toggleAutoDescontoFields();
-            }
         }
         async function salvarConfigLoja() {
             const prazoMin = parseInt(document.getElementById('configPrazoMin').value);
             const prazoMax = parseInt(document.getElementById('configPrazoMax').value);
             const pedidosEmAndamento = document.getElementById('configPedidosEmAndamento').checked;
             if (prazoMin < 1 || prazoMax < prazoMin) return alert('Defina prazos válidos.');
-
-            // 🔒 Salvar Desconto Automático
-            const autoDescontoAtivo = document.getElementById('configAutoDescontoAtivo').checked;
-            const autoDescontoMeta = parseFloat(document.getElementById('configMetaDesconto').value) || 0;
-            const autoDescontoPercentual = parseFloat(document.getElementById('configPercentualDesconto').value) || 0;
-
-            const data = {
-                prazoMinimo: prazoMin,
-                prazoMaximo: prazoMax,
-                pedidosEmAndamento,
-                autoDiscount: {
-                    ativo: autoDescontoAtivo,
-                    meta: autoDescontoMeta,
-                    percentual: autoDescontoPercentual
-                }
-            };
-
-            await db.collection('config').doc('loja').set(data);
+            await db.collection('config').doc('loja').set({ prazoMinimo: prazoMin, prazoMaximo: prazoMax, pedidosEmAndamento });
             alert('✅ Configurações salvas!');
             carregarConfigLoja();
         }
