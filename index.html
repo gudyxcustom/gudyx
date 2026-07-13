@@ -73,6 +73,13 @@
             <p id="modalDesc" class="modal-desc">Descrição</p>
             <div id="modalPriceContainer"></div>
             <div id="modalPrecoProgressivo" class="modal-desc-progressivo"></div>
+
+            <!-- 🔥 TABELA DE PREÇOS MOVIDA PARA AQUI (BEM NA FRENTE DO CLIENTE!) 🔥 -->
+            <div id="tabelaPrecosContainer" class="tabela-precos-container" style="display:none;">
+                <h4>📊 Preço por Quantidade</h4>
+                <div id="tabelaPrecosGrid" class="tabela-precos-grid"></div>
+            </div>
+
             <div class="modal-opcoes" id="modalOpcoesContainer"><label>🔧 Opções adicionais:</label><div id="modalOpcoesList"></div></div>
             <div class="modal-simulador"><label>📊 Simular Atacado</label><div class="simulador-inputs"><input type="number" id="simuladorQtd" min="1" placeholder="Ex: 20"><button onclick="simularAtacado()" class="btn-simular">Simular</button></div><div id="resultadoSimulacao"></div></div>
             <div class="quantidade-container"><label>Quantidade:</label><div class="qtd-control"><button onclick="alterarQuantidade(-1)">−</button><span id="qtdModal">1</span><button onclick="alterarQuantidade(1)">+</button></div></div>
@@ -82,12 +89,6 @@
             <div class="avaliacoes-container" id="avaliacoesContainer"><h4>⭐ Avaliações</h4><div id="avaliacoesList"></div><div class="form-avaliacao" id="formAvaliacao"><select id="avaliacaoNota"><option value="5">5 estrelas</option><option value="4">4 estrelas</option><option value="3">3 estrelas</option><option value="2">2 estrelas</option><option value="1">1 estrela</option></select><textarea id="avaliacaoComentario" placeholder="Deixe seu comentário..."></textarea><input type="file" id="avaliacaoFoto" accept="image/*"><button onclick="salvarAvaliacao()">Enviar avaliação</button></div></div>
             <div class="sugestoes-container" id="sugestoesContainer"><h4>🛒 Quem comprou também comprou</h4><div class="sugestoes-grid" id="sugestoesGrid"></div></div>
             <div style="margin-top:15px;display:flex;gap:10px;flex-wrap:wrap;"><button onclick="compartilharProduto()" style="padding:8px 16px;background:rgba(255,255,255,0.1);border:1px solid var(--vidro-borda);border-radius:20px;color:var(--cor-texto);cursor:pointer;transition:var(--transicao);"><i class="fas fa-share-alt"></i> Compartilhar</button></div>
-
-            <!-- 🔥 NOVO CONTAINER DA TABELA DE PREÇOS -->
-            <div id="tabelaPrecosContainer" class="tabela-precos-container" style="display:none;">
-                <h4>📊 Preço por Quantidade</h4>
-                <div id="tabelaPrecosGrid" class="tabela-precos-grid"></div>
-            </div>
         </div>
     </div>
 
