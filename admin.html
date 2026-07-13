@@ -45,7 +45,6 @@
         #emoji-grid .emoji-item { font-size: 1.8rem; padding: 4px; cursor: pointer; border-radius: 6px; transition: 0.2s; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; }
         #emoji-grid .emoji-item:hover { background: rgba(172,40,255,0.6); transform: scale(1.15); }
 
-        /* 🔸 Alteração do width dos inputs de preço progressivo 🔸 */
         .linha-desconto { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; flex-wrap: wrap; }
         .linha-desconto input { width: 120px; margin-bottom: 0; }
         .linha-desconto button { background: #ff4455; padding: 5px 10px; margin: 0; }
@@ -219,7 +218,6 @@
                         <input type="number" class="input-qtd-min" placeholder="Mínimo" min="1" style="width:100px; margin-bottom:0;">
                         <span style="color:#fff; opacity:0.7;">até</span>
                         <input type="number" class="input-qtd-max" placeholder="Máximo" min="1" style="width:100px; margin-bottom:0;">
-                        <!-- 🔸 ALTERAÇÃO AQUI: Campo de Preço Final 🔸 -->
                         <input type="text" class="input-desc" placeholder="Preço final (Ex: 3,50)" style="width:140px; margin-bottom:0;">
                         <button class="btn-danger" onclick="removerLinhaDesconto(this)" style="padding: 5px 10px; margin:0;">-</button>
                     </div>
@@ -346,9 +344,9 @@
             <div class="admin-item-list" id="listaFaq"></div>
         </div>
 
-        <!-- CONFIGURAÇÃO DA LOJA -->
+        <!-- CONFIGURAÇÃO DA LOJA - COM CONTATOS -->
         <div id="abaConfigLoja" style="display:none;">
-            <h3>⚙️ Configuração de Prazos e Retirada</h3>
+            <h3>⚙️ Configuração de Prazos, Retirada e Contato</h3>
             <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
                 <label>Prazo Mínimo para ficar pronto (em dias)</label>
                 <input type="number" id="configPrazoMin" min="1" value="3">
@@ -359,6 +357,20 @@
                     Há pedidos em andamento?
                 </label>
             </div>
+
+            <!-- NOVOS CONTROLES DE CONTATO -->
+            <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px; margin-top:10px;">
+                <h4 style="margin-bottom:10px; color:var(--ciano-brilhante);">📞 Informações de Contato (Fale Conosco)</h4>
+                <label>Número do WhatsApp (com DDD):</label>
+                <input type="text" id="configContatoWhatsApp" placeholder="21976121076">
+                <label>E-mail para contato:</label>
+                <input type="text" id="configContatoEmail" placeholder="contato@gudyx.com">
+                <label>Endereço da loja:</label>
+                <input type="text" id="configContatoEndereco" placeholder="Duque de Caxias - RJ">
+                <label>Horário de atendimento:</label>
+                <input type="text" id="configContatoHorario" placeholder="Segunda a Sábado">
+            </div>
+
             <button onclick="salvarConfigLoja()" style="margin-top:15px;">Salvar Configurações</button>
         </div>
 
@@ -397,7 +409,7 @@
         firebase.auth().signInAnonymously().catch(e => console.error("Auth error:", e));
 
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
-        var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false };
+        var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false, contato: { whatsApp: '', email: '', endereco: '', horario: '' } };
         var configJogos = { sorte: { ativo: false, inicio: '', fim: '' }, raspa: { ativo: false, inicio: '', fim: '', cupons: [] } };
         var configPrecificacao = { offset: '0,30', matte: '0,40', glossy: '0,50', servicos: [] };
 
@@ -419,6 +431,14 @@
                     document.getElementById('configPrazoMin').value = configLoja.prazoMinimo;
                     document.getElementById('configPrazoMax').value = configLoja.prazoMaximo;
                     document.getElementById('configPedidosEmAndamento').checked = configLoja.pedidosEmAndamento;
+                    
+                    // 🔒 Carregar dados de Contato
+                    if(configLoja.contato) {
+                        document.getElementById('configContatoWhatsApp').value = configLoja.contato.whatsApp || '';
+                        document.getElementById('configContatoEmail').value = configLoja.contato.email || '';
+                        document.getElementById('configContatoEndereco').value = configLoja.contato.endereco || '';
+                        document.getElementById('configContatoHorario').value = configLoja.contato.horario || '';
+                    }
                 }
                 const snapJogos = await db.collection('config').doc('jogos').get();
                 if (snapJogos.exists) {
@@ -816,7 +836,6 @@
                 else precoPromo = precoMaoObra;
             }
 
-            // 🔸 Lógica do Preço Progressivo com valor final 🔸
             const descontoProgressivo = [];
             document.querySelectorAll('.linha-desconto').forEach(row => {
                 const min = parseInt(row.querySelector('.input-qtd-min').value);
@@ -861,7 +880,7 @@
                     categoriaId: catId, nome, descricao, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
-                    descontoProgressivo // Salva o novo formato de preço final
+                    descontoProgressivo
                 };
 
                 try {
@@ -924,7 +943,6 @@
                 document.getElementById('promoFields').classList.remove('hidden');
             } else { document.getElementById('promoFields').classList.add('hidden'); }
 
-            // 🔸 Carregar Preço Progressivo 🔸
             const containerDesconto = document.getElementById('containerDescontoProgressivo');
             containerDesconto.innerHTML = '';
             if (p.descontoProgressivo && p.descontoProgressivo.length > 0) {
@@ -935,7 +953,6 @@
                     div.style.gap = '10px';
                     div.style.alignItems = 'center';
                     div.style.marginBottom = '5px';
-                    // O sistema carrega o preco_final
                     div.innerHTML = `
                         <input type="number" class="input-qtd-min" value="${item.min}" placeholder="Mínimo" min="1" style="width:100px; margin-bottom:0;">
                         <span style="color:#fff; opacity:0.7;">até</span>
@@ -1264,13 +1281,37 @@
             document.getElementById('configPrazoMin').value = configLoja.prazoMinimo || 3;
             document.getElementById('configPrazoMax').value = configLoja.prazoMaximo || 5;
             document.getElementById('configPedidosEmAndamento').checked = configLoja.pedidosEmAndamento || false;
+            
+            // 🔒 Carregar Contatos
+            if(configLoja.contato) {
+                document.getElementById('configContatoWhatsApp').value = configLoja.contato.whatsApp || '';
+                document.getElementById('configContatoEmail').value = configLoja.contato.email || '';
+                document.getElementById('configContatoEndereco').value = configLoja.contato.endereco || '';
+                document.getElementById('configContatoHorario').value = configLoja.contato.horario || '';
+            }
         }
         async function salvarConfigLoja() {
             const prazoMin = parseInt(document.getElementById('configPrazoMin').value);
             const prazoMax = parseInt(document.getElementById('configPrazoMax').value);
             const pedidosEmAndamento = document.getElementById('configPedidosEmAndamento').checked;
             if (prazoMin < 1 || prazoMax < prazoMin) return alert('Defina prazos válidos.');
-            await db.collection('config').doc('loja').set({ prazoMinimo: prazoMin, prazoMaximo: prazoMax, pedidosEmAndamento });
+
+            // 🔒 Salvar Contatos
+            const contatoData = {
+                whatsApp: document.getElementById('configContatoWhatsApp').value.trim(),
+                email: document.getElementById('configContatoEmail').value.trim(),
+                endereco: document.getElementById('configContatoEndereco').value.trim(),
+                horario: document.getElementById('configContatoHorario').value.trim()
+            };
+
+            const data = {
+                prazoMinimo: prazoMin,
+                prazoMaximo: prazoMax,
+                pedidosEmAndamento,
+                contato: contatoData
+            };
+
+            await db.collection('config').doc('loja').set(data);
             alert('✅ Configurações salvas!');
             carregarConfigLoja();
         }
