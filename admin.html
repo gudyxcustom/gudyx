@@ -28,12 +28,10 @@
         #editor-container .ql-fill { fill: #fff; }
         #editor-container .ql-toolbar button:hover .ql-stroke, .ql-toolbar button.ql-active .ql-stroke { stroke: var(--ciano-brilhante); }
 
-        /* BOTÃO DE EMOJI COM ÍCONE CORRIGIDO */
         .ql-toolbar .ql-custom-emoji { width: 32px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; background: transparent; border: 1px solid transparent; padding: 0; }
         .ql-toolbar .ql-custom-emoji:hover { background: rgba(172,40,255,0.3); border-color: var(--ciano-brilhante); }
         .ql-toolbar .ql-custom-emoji svg { width: 22px; height: 22px; stroke: #fff; stroke-width: 2; fill: #fff; }
 
-        /* SELETOR DE EMOJIS COMPLETO COM CATEGORIAS E BUSCA */
         #emoji-picker-container { position: absolute; top: 45px; left: 0; display: none; background: #1a0a33; border: 1px solid var(--vidro-borda); border-radius: 12px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.9); z-index: 9999; width: 440px; max-height: 380px; flex-direction: column; }
         #emoji-picker-container.active { display: flex; }
         #emoji-search { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--vidro-borda); background: rgba(255,255,255,0.1); color: #fff; margin-bottom: 10px; font-size: 0.9rem; box-sizing: border-box; }
@@ -47,25 +45,9 @@
         #emoji-grid .emoji-item { font-size: 1.8rem; padding: 4px; cursor: pointer; border-radius: 6px; transition: 0.2s; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; }
         #emoji-grid .emoji-item:hover { background: rgba(172,40,255,0.6); transform: scale(1.15); }
 
-        input[type="file"], input[type="checkbox"] { padding: 5px; width: auto; }
-        button { padding: 10px 20px; border: none; border-radius: 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; margin-right: 10px; margin-bottom: 5px; }
-        button:hover { transform: scale(1.05); }
-        .btn-danger { background: #ff4455; }
-        .btn-danger:hover { background: #cc1122; }
-        .btn-secondary { background: #666; }
-        .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 400px; overflow-y: auto; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
-        .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 5px; }
-        .admin-item-list .item button { padding: 4px 12px; font-size: 0.8rem; background: #ff4455; margin: 2px; }
-        .admin-item-list .item .btn-edit { background: #a028ff; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .tabs button { flex: 1; background: rgba(255,255,255,0.1); min-width: 80px; }
-        .tabs button.active { background: linear-gradient(135deg, #a028ff, #00f2fe); }
-        .hidden { display: none !important; }
-        #passwordOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column; }
-        #passwordOverlay.hidden { display:none; }
-        #passwordOverlay input { max-width:300px; margin:10px auto; padding:10px; border-radius:8px; border:1px solid var(--vidro-borda); background:rgba(255,255,255,0.1); color:#fff; text-align:center;}
-        .linha-desconto { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; }
-        .linha-desconto input { width: 100px; margin-bottom: 0; }
+        /* 🔸 Alteração do width dos inputs de preço progressivo 🔸 */
+        .linha-desconto { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; flex-wrap: wrap; }
+        .linha-desconto input { width: 120px; margin-bottom: 0; }
         .linha-desconto button { background: #ff4455; padding: 5px 10px; margin: 0; }
         .linha-componente { display: flex; gap: 10px; align-items: center; margin-bottom: 5px; }
         .linha-componente select { flex: 1; margin-bottom: 0; }
@@ -89,6 +71,23 @@
         .pedido-card .acoes { margin-top:10px; display:flex; gap:10px; flex-wrap:wrap; }
         #passError { color:#ff4455; font-size:0.8rem; margin-top:10px; display:none; }
         select option { color: #000; background-color: #fff; }
+        input[type="file"], input[type="checkbox"] { padding: 5px; width: auto; }
+        button { padding: 10px 20px; border: none; border-radius: 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; margin-right: 10px; margin-bottom: 5px; }
+        button:hover { transform: scale(1.05); }
+        .btn-danger { background: #ff4455; }
+        .btn-danger:hover { background: #cc1122; }
+        .btn-secondary { background: #666; }
+        .admin-item-list { margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; max-height: 400px; overflow-y: auto; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 15px; }
+        .admin-item-list .item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); flex-wrap: wrap; gap: 5px; }
+        .admin-item-list .item button { padding: 4px 12px; font-size: 0.8rem; background: #ff4455; margin: 2px; }
+        .admin-item-list .item .btn-edit { background: #a028ff; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .tabs button { flex: 1; background: rgba(255,255,255,0.1); min-width: 80px; }
+        .tabs button.active { background: linear-gradient(135deg, #a028ff, #00f2fe); }
+        .hidden { display: none !important; }
+        #passwordOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column; }
+        #passwordOverlay.hidden { display:none; }
+        #passwordOverlay input { max-width:300px; margin:10px auto; padding:10px; border-radius:8px; border:1px solid var(--vidro-borda); background:rgba(255,255,255,0.1); color:#fff; text-align:center;}
     </style>
 </head>
 <body>
@@ -157,17 +156,13 @@
             <label>Nome</label><input type="text" id="prodNome">
             
             <label>Descrição (Use o editor abaixo para formatar, adicionar emojis, cores e negrito)</label>
-            
-            <!-- SELETOR DE EMOJIS COMPLETO COM CATEGORIAS E BUSCA -->
             <div id="emoji-picker-container">
                 <input type="text" id="emoji-search" placeholder="🔍 Buscar emoji...">
                 <div id="emoji-categories"></div>
                 <div id="emoji-grid"></div>
             </div>
-            <!-- EDITOR DE TEXTO -->
             <div id="editor-container"></div>
 
-            <!-- CAMPO DE PREÇO MANUAL -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label style="display:flex; align-items:center; gap:10px;">
                     <input type="checkbox" id="prodPrecoManualToggle" onchange="toggleManualPriceFields()" style="width:auto; transform:scale(1.5); margin-right:10px;">
@@ -221,10 +216,11 @@
                 <label>📊 Preço Progressivo (Desconto por faixa de quantidade)</label>
                 <div id="containerDescontoProgressivo">
                     <div class="linha-desconto" style="display:flex; gap:10px; align-items:center; margin-bottom:5px;">
-                        <input type="number" class="input-qtd-min" placeholder="Mínimo (Ex: 1)" min="1" style="width:100px; margin-bottom:0;">
+                        <input type="number" class="input-qtd-min" placeholder="Mínimo" min="1" style="width:100px; margin-bottom:0;">
                         <span style="color:#fff; opacity:0.7;">até</span>
-                        <input type="number" class="input-qtd-max" placeholder="Máximo (Ex: 10)" min="1" style="width:100px; margin-bottom:0;">
-                        <input type="number" class="input-desc" placeholder="% de desconto" min="0" max="100" style="width:120px; margin-bottom:0;">
+                        <input type="number" class="input-qtd-max" placeholder="Máximo" min="1" style="width:100px; margin-bottom:0;">
+                        <!-- 🔸 ALTERAÇÃO AQUI: Campo de Preço Final 🔸 -->
+                        <input type="text" class="input-desc" placeholder="Preço final (Ex: 3,50)" style="width:140px; margin-bottom:0;">
                         <button class="btn-danger" onclick="removerLinhaDesconto(this)" style="padding: 5px 10px; margin:0;">-</button>
                     </div>
                 </div>
@@ -586,10 +582,10 @@
             div.style.alignItems = 'center';
             div.style.marginBottom = '5px';
             div.innerHTML = `
-                <input type="number" class="input-qtd-min" placeholder="Mínimo (Ex: 1)" min="1" style="width:100px; margin-bottom:0;">
+                <input type="number" class="input-qtd-min" placeholder="Mínimo" min="1" style="width:100px; margin-bottom:0;">
                 <span style="color:#fff; opacity:0.7;">até</span>
-                <input type="number" class="input-qtd-max" placeholder="Máximo (Ex: 10)" min="1" style="width:100px; margin-bottom:0;">
-                <input type="number" class="input-desc" placeholder="% de desconto" min="0" max="100" style="width:120px; margin-bottom:0;">
+                <input type="number" class="input-qtd-max" placeholder="Máximo" min="1" style="width:100px; margin-bottom:0;">
+                <input type="text" class="input-desc" placeholder="Preço final (Ex: 3,50)" style="width:140px; margin-bottom:0;">
                 <button class="btn-danger" onclick="removerLinhaDesconto(this)" style="padding: 5px 10px; margin:0;">-</button>
             `;
             container.appendChild(div);
@@ -654,14 +650,13 @@
         function removerLinhaOpcaoProduto(btn) { btn.parentElement.remove(); }
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Configuração da barra de ferramentas com o botão Emoji customizado
             var toolbarOptions = [
                 ['bold', 'italic', 'underline', 'strike'],
                 [{ 'header': [1, 2, false] }],
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                 [{ 'color': [] }, { 'background': [] }],
                 ['link', 'clean'],
-                ['custom-emoji'] // 🟢 BOTÃO DE EMOJI REGISTRADO NO QUIL
+                ['custom-emoji']
             ];
 
             quillEditor = new Quill('#editor-container', {
@@ -672,11 +667,9 @@
                 placeholder: "Digite a descrição do produto aqui..."
             });
 
-            // 🔥 CORREÇÃO DO BOTÃO: Forçar o clique manualmente ignorando o sistema do Quill
             setTimeout(function() {
                 const emojiBtn = document.querySelector('.ql-toolbar .ql-custom-emoji');
                 if (emojiBtn) {
-                    // Limpa o texto padrão do Quill e insere o SVG corretamente
                     emojiBtn.innerHTML = '';
                     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
                     svg.setAttribute('viewBox', '0 0 24 24');
@@ -684,8 +677,6 @@
                     svg.setAttribute('height', '22');
                     svg.innerHTML = `<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" fill="#fff"/>`;
                     emojiBtn.appendChild(svg);
-                    
-                    // Aplica o evento de clique manualmente no botão
                     emojiBtn.onclick = function(e) {
                         e.preventDefault();
                         e.stopPropagation();
@@ -695,29 +686,19 @@
                         }
                     };
                 }
-            }, 200); // Delay pequeno para garantir que o DOM do botão já exista
+            }, 200);
 
-            // 🔥 BIBLIOTECA COMPLETA DE EMOJIS (+800 EMOJIS)
             const emojiLibrary = [
-                // SORRISOS
                 { category: 'Sorrisos', list: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥶', '🥵', '🤠', '😎', '🤡', '😈', '👿', '👹', '👺', '💀', '☠️', '👻', '👽', '👾', '🤖', '💩', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'] },
-                // PESSOAS
                 { category: 'Pessoas', list: ['👶', '🧒', '👦', '👧', '🧑', '👨', '👩', '🧓', '👴', '👵', '👲', '👳‍♂️', '👳‍♀️', '🧕', '🤵‍♂️', '🤵‍♀️', '👰‍♂️', '👰‍♀️', '🤰', '🤱', '👼', '🎅', '🤶', '🧑‍🎄', '🦸‍♂️', '🦸‍♀️', '🦹‍♂️', '🦹‍♀️', '🧙‍♂️', '🧙‍♀️', '🧝‍♂️', '🧝‍♀️', '🧛‍♂️', '🧛‍♀️', '🧟‍♂️', '🧟‍♀️', '🧞‍♂️', '🧞‍♀️', '🧜‍♂️', '🧜‍♀️', '🧚‍♂️', '🧚‍♀️', '👯‍♂️', '👯‍♀️', '🧑‍🤝‍🧑', '👫', '👬', '👭', '💏', '👩‍❤️‍👨', '👩‍❤️‍👩', '👨‍❤️‍👨', '💑', '👩‍❤️‍💋‍👨', '👩‍❤️‍💋‍👩', '👨‍❤️‍💋‍👨', '👪', '🧑‍🧑‍🧒', '🧑‍🧑‍🧒‍🧒', '🧑‍🧒', '🧑‍🧒‍🧒'] },
-                // ANIMAIS E NATUREZA
                 { category: 'Animais', list: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦅', '🦉', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐞', '🐜', '🦟', '🦗', '🦂', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🦧', '🦣', '🐘', '🦛', '🦏', '🐪', '🐫', '🦒', '🦘', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🦙', '🐐', '🦌', '🐕', '🐩', '🦮', '🐕‍🦺', '🐈', '🐈‍⬛', '🪶', '🐓', '🦃', '🦚', '🦜', '🦢', '🦩', '🕊️', '🐇', '🦝', '🦨', '🦡', '🦫', '🦦', '🦥', '🐿️'] },
-                // COMIDAS E BEBIDAS
                 { category: 'Comidas', list: ['🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🫐', '🍈', '🍒', '🍑', '🥭', '🍍', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥬', '🥒', '🌶️', '🫑', '🌽', '🥕', '🫒', '🧄', '🧅', '🥔', '🍠', '🥐', '🥯', '🍞', '🥖', '🥨', '🧀', '🥚', '🍳', '🧈', '🥞', '🧇', '🥓', '🥩', '🍗', '🍖', '🦴', '🌭', '🍔', '🍟', '🍕', '🫓', '🥪', '🥙', '🧆', '🌮', '🌯', '🫔', '🥗', '🥘', '🫕', '🥫', '🍝', '🍜', '🍲', '🍛', '🍚', '🍙', '🍣', '🍱', '🥟', '🦪', '🍤', '🍥', '🥮', '🍡', '🥠', '🥡', '🍦', '🍧', '🍨', '🍩', '🍪', '🎂', '🧁', '🥧', '🍰', '🧋', '☕', '🫖', '🍵', '🍶', '🍺', '🍻', '🥂', '🍷', '🥃', '🍸', '🍹', '🧉', '🧊'] },
-                // ATIVIDADES
                 { category: 'Atividades', list: ['⚽', '🏀', '🏈', '⚾', '🥎', '🎾', '🏐', '🏉', '🥏', '🎱', '🪀', '🏓', '🏸', '🏒', '🏑', '🥍', '🏏', '🪃', '🥅', '⛳', '🏌️‍♂️', '🏌️‍♀️', '🏂', '🏄‍♂️', '🏄‍♀️', '🤿', '🏊‍♂️', '🏊‍♀️', '🤽‍♂️', '🤽‍♀️', '🚣‍♂️', '🚣‍♀️', '🏇', '🚴‍♂️', '🚴‍♀️', '🚵‍♂️', '🚵‍♀️', '🧗‍♂️', '🧗‍♀️', '🤸‍♂️', '🤸‍♀️', '🤹‍♂️', '🤹‍♀️', '🧘‍♂️', '🧘‍♀️', '🏋️‍♂️', '🏋️‍♀️', '🤼‍♂️', '🤼‍♀️', '🤺', '🥊', '🥋', '🤾‍♂️', '🤾‍♀️', '🏹', '🧘', '🎣', '🤿', '🥇', '🥈', '🥉', '🏆', '🏅', '🎖️', '🎗️'] },
-                // VIAGENS
                 { category: 'Viagens', list: ['🚗', '🚕', '🚙', '🚌', '🚎', '🏎️', '🚓', '🚑', '🚒', '🚐', '🛻', '🚚', '🚛', '🚜', '🛴', '🚲', '🛵', '🏍️', '🛺', '🚨', '🚔', '🚍', '🚘', '🚖', '🚡', '🚠', '🚟', '🚃', '🚋', '🚝', '🚄', '🚅', '🚈', '🚂', '🚆', '🚇', '🚊', '🚉', '🚁', '🛩️', '✈️', '🛫', '🛬', '🪂', '🚀', '🛸', '🚢', '🛥️', '⛴️', '🛳️', '⛵', '🛶', '🚤', '🛟'] },
-                // OBJETOS
                 { category: 'Objetos', list: ['⌚', '📱', '📲', '💻', '⌨️', '🖥️', '🖨️', '🖱️', '🖲️', '💾', '💿', '📀', '🧾', '📝', '📖', '📚', '📓', '📔', '📒', '📕', '📗', '📘', '📙', '📜', '📃', '📄', '📑', '📊', '📈', '📉', '📋', '📁', '📂', '🗂️', '🗃️', '🗄️', '🗑️', '🔒', '🔓', '🔏', '🔐', '🔑', '🗝️', '🔨', '🪓', '⛏️', '⚒️', '🛠️', '🗡️', '⚔️', '🔫', '🪃', '🏹', '🛡️', '🪚', '🔧', '🔩', '⚙️', '🗜️', '⚖️', '🪤', '🪢', '⛓️', '🧰', '🧲', '🪝'] },
-                // SÍMBOLOS
                 { category: 'Símbolos', list: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '🤍', '🤎', '💔', '❤️‍🔥', '❤️‍🩹', '💕', '💞', '💗', '💖', '💘', '💝', '💟', '☮️', '✝️', '☪️', '🕉️', '☸️', '✡️', '🔯', '🕎', '☯️', '☦️', '🛐', '⛎', '♈', '♉', '♊', '♋', '♌', '♍', '♎', '♏', '♐', '♑', '♒', '♓', '🆔', '⚛️', '🉑', '☢️', '☣️', '📴', '📳', '🈶', '🈚', '🈸', '🈺', '🈷️', '✴️', '🆚', '💮', '🉐', '㊙️', '㊗️', '🈴', '🈵', '🈹', '🈲', '🅰️', '🅱️', '🆎', '🅾️', '🆑', '🆘', '🆕', '🆖', '🆗', '🆙', '🆒', '🆓', 'ℹ️'] }
             ];
 
-            // Renderizar o seletor de emojis
             const picker = document.getElementById('emoji-picker-container');
             const grid = document.getElementById('emoji-grid');
             const search = document.getElementById('emoji-search');
@@ -739,7 +720,7 @@
                 } else {
                     const cat = emojiLibrary.find(c => c.category === categoryName);
                     if (cat) emojisToShow = cat.list;
-                    else emojisToShow = emojiLibrary[0].list; // Fallback
+                    else emojisToShow = emojiLibrary[0].list;
                 }
 
                 emojisToShow.forEach(emoji => {
@@ -760,7 +741,6 @@
                 });
             }
 
-            // Criar abas de categorias
             emojiLibrary.forEach(cat => {
                 const btn = document.createElement('span');
                 btn.textContent = cat.category;
@@ -774,14 +754,12 @@
                 categoriesContainer.appendChild(btn);
             });
 
-            // Selecionar a primeira categoria por padrão
             const firstBtn = categoriesContainer.querySelector('span');
             if (firstBtn) {
                 firstBtn.classList.add('active');
                 renderEmojis(firstBtn.dataset.category, '');
             }
 
-            // Evento de busca
             search.addEventListener('input', function() {
                 const term = this.value.trim();
                 if (term) {
@@ -795,7 +773,6 @@
                 }
             });
 
-            // Fechar se clicar fora
             document.addEventListener('click', function(e) {
                 if (!picker.contains(e.target) && !e.target.closest('.ql-custom-emoji')) {
                     picker.classList.remove('active');
@@ -839,13 +816,17 @@
                 else precoPromo = precoMaoObra;
             }
 
+            // 🔸 Lógica do Preço Progressivo com valor final 🔸
             const descontoProgressivo = [];
             document.querySelectorAll('.linha-desconto').forEach(row => {
                 const min = parseInt(row.querySelector('.input-qtd-min').value);
                 const max = parseInt(row.querySelector('.input-qtd-max').value);
-                const desc = parseFloat(row.querySelector('.input-desc').value);
-                if(min && max && desc && desc > 0 && max >= min) {
-                    descontoProgressivo.push({ min, max, desconto: desc });
+                const precoFinalRaw = row.querySelector('.input-desc').value.trim();
+                if (min && max && precoFinalRaw) {
+                    const precoFinal = parseFloat(precoFinalRaw.replace(',', '.'));
+                    if (!isNaN(precoFinal) && precoFinal > 0 && max >= min) {
+                        descontoProgressivo.push({ min, max, preco_final: precoFinal });
+                    }
                 }
             });
 
@@ -880,7 +861,7 @@
                     categoriaId: catId, nome, descricao, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
-                    descontoProgressivo
+                    descontoProgressivo // Salva o novo formato de preço final
                 };
 
                 try {
@@ -943,6 +924,7 @@
                 document.getElementById('promoFields').classList.remove('hidden');
             } else { document.getElementById('promoFields').classList.add('hidden'); }
 
+            // 🔸 Carregar Preço Progressivo 🔸
             const containerDesconto = document.getElementById('containerDescontoProgressivo');
             containerDesconto.innerHTML = '';
             if (p.descontoProgressivo && p.descontoProgressivo.length > 0) {
@@ -953,11 +935,12 @@
                     div.style.gap = '10px';
                     div.style.alignItems = 'center';
                     div.style.marginBottom = '5px';
+                    // O sistema carrega o preco_final
                     div.innerHTML = `
                         <input type="number" class="input-qtd-min" value="${item.min}" placeholder="Mínimo" min="1" style="width:100px; margin-bottom:0;">
                         <span style="color:#fff; opacity:0.7;">até</span>
                         <input type="number" class="input-qtd-max" value="${item.max}" placeholder="Máximo" min="1" style="width:100px; margin-bottom:0;">
-                        <input type="number" class="input-desc" value="${item.desconto}" placeholder="% de desconto" min="0" max="100" style="width:120px; margin-bottom:0;">
+                        <input type="text" class="input-desc" value="${(item.preco_final || 0).toFixed(2).replace('.', ',')}" placeholder="Preço final" style="width:140px; margin-bottom:0;">
                         <button class="btn-danger" onclick="removerLinhaDesconto(this)" style="padding: 5px 10px; margin:0;">-</button>
                     `;
                     containerDesconto.appendChild(div);
