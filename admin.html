@@ -31,7 +31,7 @@
         /* BOTÃO DE EMOJI COM ÍCONE CORRIGIDO */
         .ql-toolbar .ql-custom-emoji { width: 32px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; background: transparent; border: 1px solid transparent; padding: 0; }
         .ql-toolbar .ql-custom-emoji:hover { background: rgba(172,40,255,0.3); border-color: var(--ciano-brilhante); }
-        .ql-toolbar .ql-custom-emoji svg { width: 22px; height: 22px; stroke: #fff; stroke-width: 2; fill: none; }
+        .ql-toolbar .ql-custom-emoji svg { width: 22px; height: 22px; stroke: #fff; stroke-width: 2; fill: #fff; }
 
         /* SELETOR DE EMOJIS COMPLETO COM CATEGORIAS E BUSCA */
         #emoji-picker-container { position: absolute; top: 45px; left: 0; display: none; background: #1a0a33; border: 1px solid var(--vidro-borda); border-radius: 12px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.9); z-index: 9999; width: 440px; max-height: 380px; flex-direction: column; }
@@ -661,7 +661,7 @@
                 [{ 'list': 'ordered'}, { 'list': 'bullet' }],
                 [{ 'color': [] }, { 'background': [] }],
                 ['link', 'clean'],
-                ['custom-emoji'] // 🟢 FERRAMENTA REGISTRADA
+                ['custom-emoji'] // 🟢 BOTÃO DE EMOJI REGISTRADO NO QUIL
             ];
 
             quillEditor = new Quill('#editor-container', {
@@ -672,21 +672,32 @@
                 placeholder: "Digite a descrição do produto aqui..."
             });
 
-            // 🔥 Criar o ícone do botão via JS (Garante que nunca ficará roxo)
-            var toolbar = quillEditor.getModule('toolbar');
-            toolbar.addHandler('custom-emoji', function() {
-                document.getElementById('emoji-picker-container').classList.toggle('active');
-            });
-            
-            // Substituir o texto do botão por um SVG
+            // 🔥 CORREÇÃO DO BOTÃO: Forçar o clique manualmente ignorando o sistema do Quill
             setTimeout(function() {
-                var emojiBtn = document.querySelector('.ql-toolbar .ql-custom-emoji');
+                const emojiBtn = document.querySelector('.ql-toolbar .ql-custom-emoji');
                 if (emojiBtn) {
-                    emojiBtn.innerHTML = `<svg viewBox="0 0 24 24" width="20" height="20"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" fill="#fff"/></svg>`;
+                    // Limpa o texto padrão do Quill e insere o SVG corretamente
+                    emojiBtn.innerHTML = '';
+                    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                    svg.setAttribute('viewBox', '0 0 24 24');
+                    svg.setAttribute('width', '22');
+                    svg.setAttribute('height', '22');
+                    svg.innerHTML = `<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" fill="#fff"/>`;
+                    emojiBtn.appendChild(svg);
+                    
+                    // Aplica o evento de clique manualmente no botão
+                    emojiBtn.onclick = function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const picker = document.getElementById('emoji-picker-container');
+                        if (picker) {
+                            picker.classList.toggle('active');
+                        }
+                    };
                 }
-            }, 100); // Pequeno delay para garantir que o DOM do Quill esteja pronto
+            }, 200); // Delay pequeno para garantir que o DOM do botão já exista
 
-            // 🔥 BIBLIOTECA COMPLETA DE EMOJIS (MUITO MAIS DO QUE 20!)
+            // 🔥 BIBLIOTECA COMPLETA DE EMOJIS (+800 EMOJIS)
             const emojiLibrary = [
                 // SORRISOS
                 { category: 'Sorrisos', list: ['😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '😊', '😇', '🙂', '🙃', '😉', '😌', '😍', '🥰', '😘', '😗', '😙', '😚', '😋', '😛', '😜', '🤪', '😝', '🤑', '🤗', '🤭', '🤫', '🤔', '🤐', '🤨', '😐', '😑', '😶', '😏', '😒', '🙄', '😬', '🤥', '😔', '😪', '🤤', '😴', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '🥶', '🥵', '🤠', '😎', '🤡', '😈', '👿', '👹', '👺', '💀', '☠️', '👻', '👽', '👾', '🤖', '💩', '😺', '😸', '😹', '😻', '😼', '😽', '🙀', '😿', '😾'] },
