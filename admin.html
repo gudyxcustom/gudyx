@@ -221,9 +221,14 @@
                 <button onclick="adicionarLinhaDesconto()" class="btn-secondary" style="margin-top:5px;">+ Adicionar faixa de desconto</button>
             </div>
 
+            <!-- 🔥 CAMPO DE IMAGENS MÚLTIPLAS COM GALERIA 🔥 -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
-                <label>📸 Imagens do Produto</label>
-                <input type="file" id="prodImg" accept="image/*" multiple>
+                <label>📸 Imagens do Produto <span style="opacity:0.6; font-size:0.8rem;">(Clique para adicionar. Limite de 5 imagens)</span></label>
+                <div id="image-upload-container">
+                    <button type="button" onclick="document.getElementById('fileInput').click()" class="btn-secondary" style="margin-bottom:10px; display:inline-block;">+ Adicionar Imagem</button>
+                    <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" onchange="handleImageUpload(event)">
+                    <div id="image-preview-list" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; min-height: 20px;"></div>
+                </div>
             </div>
 
             <button onclick="salvarProduto()" style="margin-top:15px;">Salvar Item</button>
@@ -424,6 +429,7 @@
         var configPrecificacao = { offset: '0,30', matte: '0,40', glossy: '0,50', servicos: [] };
 
         let quillEditor; 
+        let imagensProdutoAtual = []; // 🔥 Array para guardar as imagens em Base64
 
         async function carregarDados() {
             try {
@@ -562,6 +568,43 @@
                     img.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
+            });
+        }
+
+        // 🔥 NOVAS FUNÇÕES DE UPLOAD DE IMAGEM
+        function handleImageUpload(event) {
+            const files = event.target.files;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (imagensProdutoAtual.length >= 5) {
+                    alert("Máximo de 5 imagens por produto.");
+                    break;
+                }
+                redimensionarImagem(file, 600, 0.5).then(base64 => {
+                    imagensProdutoAtual.push(base64);
+                    renderizarPreviews();
+                });
+            }
+            event.target.value = ''; // Limpa o input para permitir re-selecionar o mesmo arquivo se quiser
+        }
+
+        function removerImagem(index) {
+            imagensProdutoAtual.splice(index, 1);
+            renderizarPreviews();
+        }
+
+        function renderizarPreviews() {
+            const container = document.getElementById('image-preview-list');
+            container.innerHTML = '';
+            imagensProdutoAtual.forEach((imgBase64, index) => {
+                const div = document.createElement('div');
+                div.style.position = 'relative';
+                div.style.display = 'inline-block';
+                div.innerHTML = `
+                    <img src="${imgBase64}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid var(--vidro-borda);">
+                    <button type="button" onclick="removerImagem(${index})" style="position: absolute; top: -8px; right: -8px; background: #ff4455; border: none; border-radius: 50%; width: 20px; height: 20px; color: #fff; cursor: pointer; font-size: 12px; line-height: 1; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">×</button>
+                `;
+                container.appendChild(div);
             });
         }
 
@@ -871,7 +914,7 @@
                 }
             });
 
-            const fileInput = document.getElementById('prodImg');
+            // 🔥 MODIFICAÇÃO: Usar o array imagensProdutoAtual em vez do fileInput antigo
             async function processarProd(imagens) {
                 const produto = { 
                     tipoItem, componentes,
@@ -904,15 +947,8 @@
                 }
             }
 
-            if (fileInput && fileInput.files.length > 0) {
-                const imagens = [];
-                for (let f of Array.from(fileInput.files).slice(0, 3)) { 
-                    imagens.push(await redimensionarImagem(f, 600, 0.5)); 
-                }
-                processarProd(imagens);
-            } else { 
-                processarProd(id ? (dados.produtos.find(p => p.id === id)?.imagens || []) : []); 
-            }
+            // 🔥 Passar o array visual ao invés do input de arquivo
+            processarProd(imagensProdutoAtual);
         }
 
         function editarProduto(id) {
@@ -1009,13 +1045,22 @@
                     containerOpcoes.appendChild(div);
                 });
             } else { adicionarLinhaOpcaoProduto(); }
+
+            // 🔥 Carregar as imagens existentes do produto na galeria
+            imagensProdutoAtual = p.imagens ? [...p.imagens] : [];
+            renderizarPreviews();
         }
 
         async function removerProduto(id) { if (confirm('Remover?')) { await db.collection('produtos').doc(id).delete(); await carregarDados(); atualizarListaProdutos(); } }
         function limparFormularioProduto() { 
             document.getElementById('editProdId').value = ''; document.getElementById('prodNome').value = ''; 
             quillEditor.root.innerHTML = ''; 
-            document.getElementById('prodPrecoMaoObra').value = ''; document.getElementById('prodImg').value = ''; 
+            document.getElementById('prodPrecoMaoObra').value = ''; 
+            
+            // 🔥 Limpar imagens e previews
+            imagensProdutoAtual = [];
+            renderizarPreviews();
+
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
             document.getElementById('promoFields').classList.add('hidden');
             const containerDesconto = document.getElementById('containerDescontoProgressivo');
@@ -1066,7 +1111,6 @@
                     const p = doc.data();
                     const id = doc.id;
                     
-                    // Cria uma lista organizada de itens
                     let itensHtml = '';
                     if (p.itens && p.itens.length > 0) {
                         itensHtml = `<ul style="list-style:none; padding:0; margin:5px 0;">`;
@@ -1112,6 +1156,7 @@
                                 ${p.status !== 'Pronto para retirar' ? `<button onclick="atualizarStatus('${id}', 'Pronto para retirar')" style="background:#00b894; padding:8px 20px; border:none; border-radius:30px; color:#fff; font-weight:600; cursor:pointer;">✅ Marcar como Pronto</button>` : ''}
                                 ${p.status !== 'Retirado' ? `<button onclick="atualizarStatus('${id}', 'Retirado')" style="background:#ff4455; padding:8px 20px; border:none; border-radius:30px; color:#fff; font-weight:600; cursor:pointer;">🚪 Marcar como Retirado</button>` : ''}
                                 ${p.status === 'Retirado' ? `<button onclick="enviarLinkAvaliacao('${id}')" style="background:#636e72; padding:8px 20px; border:none; border-radius:30px; color:#fff; font-weight:600; cursor:pointer;"><i class="fas fa-star"></i> Enviar link de Avaliação</button>` : ''}
+                                <button onclick="deletarPedido('${id}')" style="background:#d9534f; padding:8px 20px; border:none; border-radius:30px; color:#fff; font-weight:600; cursor:pointer;">🗑️ Excluir Pedido</button>
                             </div>
                         </div>
                     `;
@@ -1128,6 +1173,16 @@
             const mensagem = `*Gudyx Custom* 🎉\n\nSeu pedido foi retirado com sucesso!\n\n📝 Gostaríamos de saber como foi sua experiência. Avalie seu pedido clicando no link abaixo:\n\n${linkAvaliacao}\n\n⭐ Sua opinião é muito importante para nós!`;
             const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensagem)}`;
             window.open(url, '_blank');
+        }
+        function deletarPedido(id) {
+            if (confirm('⚠️ ATENÇÃO! Você está prestes a DELETAR PERMANENTEMENTE este pedido do banco de dados. Essa ação NÃO pode ser desfeita. Deseja continuar?')) {
+                db.collection('pedidos').doc(id).delete().then(() => {
+                    alert('✅ Pedido excluído com sucesso!');
+                }).catch(err => {
+                    console.error('Erro ao excluir pedido:', err);
+                    alert('❌ Erro ao tentar excluir o pedido.');
+                });
+            }
         }
 
         function carregarAvaliacoesAdmin() {
