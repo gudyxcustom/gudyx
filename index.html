@@ -792,40 +792,42 @@
         document.getElementById('agendamentoModal').addEventListener('click', function(e) { if(e.target === this) fecharModalAgendamento(); });
 
         // 🔥 FUNÇÃO AGENDA AUTOMÁTICA ATUALIZADA
-        async function gerarOpcoesAgendamento() {
-            const dataSelect = document.getElementById('dataRetirada'); const horaSelect = document.getElementById('horaRetirada'); const infoPrazo = document.getElementById('infoPrazoAgendamento');
-            dataSelect.innerHTML = '<option value="">Carregando...</option>'; horaSelect.innerHTML = ''; infoPrazo.textContent = '🔄 Calculando datas disponíveis...';
+                async function gerarOpcoesAgendamento() {
+            const dataSelect = document.getElementById('dataRetirada'); 
+            const horaSelect = document.getElementById('horaRetirada'); 
+            const infoPrazo = document.getElementById('infoPrazoAgendamento');
+            
+            dataSelect.innerHTML = '<option value="">Carregando...</option>'; 
+            horaSelect.innerHTML = ''; 
+            infoPrazo.textContent = '🔄 Calculando datas disponíveis...';
+
             try {
-                const snapConfig = await db.collection('config').doc('loja').get(); if(snapConfig.exists) configLoja = snapConfig.data();
+                const snapConfig = await db.collection('config').doc('loja').get(); 
+                if(snapConfig.exists) configLoja = snapConfig.data();
                 
-                // 🔥 Lógica da Agenda: verificar se há pedido em andamento
+                // 🔥 Lógica da Agenda: calcular quantos dias pular
                 let tempoAdicional = 0;
-                let nomePedidoAndamento = '';
+                let mensagemPrazo = '📅 O prazo estimado é de ';
+
                 if (configLoja.pedidosEmAndamento && configLoja.pedidoEmFocoId) {
                     const snapPedido = await db.collection('pedidos').doc(configLoja.pedidoEmFocoId).get();
                     if (snapPedido.exists) {
-                        const pedido = snapPedido.data();
-                        nomePedidoAndamento = pedido.clienteNome || 'um cliente';
+                        // Removemos a exposição do nome do cliente, apenas calculamos o prazo
                         tempoAdicional = configLoja.prazoFoco || configLoja.prazoMaximo;
-                        infoPrazo.textContent = `⏳ Estamos trabalhando no pedido de ${nomePedidoAndamento}. O prazo estimado para o seu pedido é de ${tempoAdicional} dias úteis.`;
+                        mensagemPrazo += `${tempoAdicional} dias úteis para produção.`;
                     } else {
-                        infoPrazo.textContent = `⚠️ Pedido em andamento não encontrado. O prazo estimado é de ${configLoja.prazoMaximo} dias.`;
                         tempoAdicional = configLoja.prazoMaximo;
+                        mensagemPrazo += `${tempoAdicional} dias úteis para produção.`;
                     }
                 } else {
-                    const hoje = new Date();
-                    if (configLoja.pedidosEmAndamento) {
-                        infoPrazo.textContent = `📦 Estamos com pedidos em andamento. O prazo para retirada é de ${configLoja.prazoMinimo} a ${configLoja.prazoMaximo} dias.`;
-                    } else {
-                        let dataInicio = new Date(hoje);
-                        dataInicio.setDate(dataInicio.getDate() + 1);
-                        infoPrazo.textContent = `✅ Não temos pedidos em andamento. Você pode retirar a partir de amanhã!`;
-                    }
                     tempoAdicional = configLoja.prazoMinimo || 1;
+                    mensagemPrazo += `${tempoAdicional} dias úteis para produção.`;
                 }
+                infoPrazo.textContent = mensagemPrazo;
 
-                // Calcular datas baseadas no prazo adicional
-                const hoje = new Date(); let dataInicio = new Date(hoje);
+                // Calcular as datas de retirada automaticamente baseadas no tempoAdicional
+                const hoje = new Date(); 
+                let dataInicio = new Date(hoje);
                 dataInicio.setDate(dataInicio.getDate() + tempoAdicional);
                 let dataFim = new Date(dataInicio);
                 dataFim.setDate(dataFim.getDate() + (configLoja.prazoMaximo || 2));
@@ -833,14 +835,28 @@
                 dataSelect.innerHTML = '';
                 for(let d = new Date(dataInicio); d <= dataFim; d.setDate(d.getDate() + 1)) { 
                     if (d.getDay() === 0 || d.getDay() === 6) continue; 
-                    const dia = String(d.getDate()).padStart(2, '0'); const mes = String(d.getMonth() + 1).padStart(2, '0'); const ano = d.getFullYear(); 
+                    const dia = String(d.getDate()).padStart(2, '0'); 
+                    const mes = String(d.getMonth() + 1).padStart(2, '0'); 
+                    const ano = d.getFullYear(); 
                     const diaSemana = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][d.getDay()]; 
-                    const option = document.createElement('option'); option.value = `${ano}-${mes}-${dia}`; option.textContent = `${dia}/${mes}/${ano} (${diaSemana})`; dataSelect.appendChild(option); 
+                    const option = document.createElement('option'); 
+                    option.value = `${ano}-${mes}-${dia}`; 
+                    option.textContent = `${dia}/${mes}/${ano} (${diaSemana})`; 
+                    dataSelect.appendChild(option); 
                 }
-                horaSelect.innerHTML = ''; for (let h = 9; h <= 18; h++) { const horaStr = String(h).padStart(2, '0') + ':00'; const option = document.createElement('option'); option.value = horaStr; option.textContent = horaStr; horaSelect.appendChild(option); }
-            } catch(e) { console.error(e); infoPrazo.textContent = '❌ Erro ao carregar datas. Tente novamente.'; }
+                horaSelect.innerHTML = ''; 
+                for (let h = 9; h <= 18; h++) { 
+                    const horaStr = String(h).padStart(2, '0') + ':00'; 
+                    const option = document.createElement('option'); 
+                    option.value = horaStr; 
+                    option.textContent = horaStr; 
+                    horaSelect.appendChild(option); 
+                }
+            } catch(e) { 
+                console.error(e); 
+                infoPrazo.textContent = '❌ Erro ao carregar datas. Tente novamente.'; 
+            }
         }
-
         function enviarPedidoComAgendamento() {
             const nome = document.getElementById('clienteNome').value.trim(); const telefone = document.getElementById('clienteWhatsApp').value.trim();
             const data = document.getElementById('dataRetirada').value; const hora = document.getElementById('horaRetirada').value;
