@@ -17,8 +17,6 @@
         h1 { text-align: center; margin-bottom: 20px; letter-spacing: 2px; }
         label { display: block; margin: 10px 0 5px; font-size: 0.9rem; opacity: 0.8; }
         input, select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--vidro-borda); background: rgba(255,255,255,0.05); color: #fff; font-size: 0.95rem; margin-bottom: 10px; font-family: inherit; }
-        
-        /* Ajustes do Editor Quill para o Tema Escuro */
         #editor-container .ql-editor { min-height: 150px; color: #fff; }
         #editor-container { background: rgba(255,255,255,0.05); border-radius: 10px; border: 1px solid var(--vidro-borda); margin-bottom: 15px; color: #fff; position: relative; }
         #editor-container .ql-toolbar { border-bottom: 1px solid var(--vidro-borda); border-radius: 10px 10px 0 0; background: rgba(0,0,0,0.4); }
@@ -27,15 +25,12 @@
         #editor-container .ql-stroke { stroke: #fff; }
         #editor-container .ql-fill { fill: #fff; }
         #editor-container .ql-toolbar button:hover .ql-stroke, .ql-toolbar button.ql-active .ql-stroke { stroke: var(--ciano-brilhante); }
-
         .ql-toolbar .ql-custom-emoji { width: 32px; height: 28px; display: inline-flex; align-items: center; justify-content: center; border-radius: 4px; cursor: pointer; background: transparent; border: 1px solid transparent; padding: 0; }
         .ql-toolbar .ql-custom-emoji:hover { background: rgba(172,40,255,0.3); border-color: var(--ciano-brilhante); }
         .ql-toolbar .ql-custom-emoji svg { width: 22px; height: 22px; stroke: #fff; stroke-width: 2; fill: #fff; }
-
         #emoji-picker-container { position: absolute; top: 45px; left: 0; display: none; background: #1a0a33; border: 1px solid var(--vidro-borda); border-radius: 12px; padding: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.9); z-index: 9999; width: 440px; max-height: 380px; flex-direction: column; }
         #emoji-picker-container.active { display: flex; }
         #emoji-search { width: 100%; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--vidro-borda); background: rgba(255,255,255,0.1); color: #fff; margin-bottom: 10px; font-size: 0.9rem; box-sizing: border-box; }
-        #emoji-search::placeholder { color: rgba(255,255,255,0.5); }
         #emoji-categories { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px; }
         #emoji-categories span { cursor: pointer; font-size: 0.8rem; padding: 4px 10px; border-radius: 12px; background: rgba(255,255,255,0.05); transition: 0.2s; }
         #emoji-categories span:hover, #emoji-categories span.active { background: rgba(172,40,255,0.4); color: #fff; }
@@ -344,18 +339,33 @@
             <div class="admin-item-list" id="listaFaq"></div>
         </div>
 
-        <!-- CONFIGURAÇÃO DA LOJA - COM CONTATOS -->
+        <!-- CONFIGURAÇÃO DA LOJA - COM PRAZOS E AGENDA -->
         <div id="abaConfigLoja" style="display:none;">
             <h3>⚙️ Configuração de Prazos, Retirada e Contato</h3>
+            
             <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px;">
                 <label>Prazo Mínimo para ficar pronto (em dias)</label>
                 <input type="number" id="configPrazoMin" min="1" value="3">
                 <label>Prazo Máximo para ficar pronto (em dias)</label>
                 <input type="number" id="configPrazoMax" min="2" value="5">
-                <label style="display:flex; align-items:center; gap:10px; margin-top:15px;">
-                    <input type="checkbox" id="configPedidosEmAndamento" style="width:auto; transform:scale(1.5); margin-right:10px;">
-                    Há pedidos em andamento?
-                </label>
+                
+                <div style="margin-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;">
+                    <label style="display:flex; align-items:center; gap:10px; margin-top:0;">
+                        <input type="checkbox" id="configPedidosEmAndamento" style="width:auto; transform:scale(1.5); margin-right:10px;">
+                        Há pedidos em andamento?
+                    </label>
+                    
+                    <!-- 🔥 CAMPOS DA AGENDA AUTOMÁTICA -->
+                    <div id="divPedidoAtual" class="hidden" style="margin-top: 10px;">
+                        <label>Qual pedido está sendo produzido agora?</label>
+                        <select id="configPedidoEmFoco" style="width: 100%; padding: 8px;">
+                            <option value="">Nenhum pedido em produção</option>
+                        </select>
+                        
+                        <label>Prazo estimado para finalizar este pedido (em dias):</label>
+                        <input type="number" id="configPrazoFoco" min="1" placeholder="Ex: 3" style="width: 100%; padding: 8px;">
+                    </div>
+                </div>
             </div>
 
             <!-- NOVOS CONTROLES DE CONTATO -->
@@ -409,7 +419,7 @@
         firebase.auth().signInAnonymously().catch(e => console.error("Auth error:", e));
 
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
-        var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false, contato: { whatsApp: '', email: '', endereco: '', horario: '' } };
+        var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false, pedidoEmFocoId: '', prazoFoco: 0, contato: { whatsApp: '', email: '', endereco: '', horario: '' } };
         var configJogos = { sorte: { ativo: false, inicio: '', fim: '' }, raspa: { ativo: false, inicio: '', fim: '', cupons: [] } };
         var configPrecificacao = { offset: '0,30', matte: '0,40', glossy: '0,50', servicos: [] };
 
@@ -428,17 +438,16 @@
                 const snapConfigLoja = await db.collection('config').doc('loja').get();
                 if (snapConfigLoja.exists) {
                     configLoja = snapConfigLoja.data();
+                    if(!configLoja.contato) configLoja.contato = {};
                     document.getElementById('configPrazoMin').value = configLoja.prazoMinimo;
                     document.getElementById('configPrazoMax').value = configLoja.prazoMaximo;
                     document.getElementById('configPedidosEmAndamento').checked = configLoja.pedidosEmAndamento;
+                    document.getElementById('configPrazoFoco').value = configLoja.prazoFoco || '';
                     
-                    // 🔒 Carregar dados de Contato
-                    if(configLoja.contato) {
-                        document.getElementById('configContatoWhatsApp').value = configLoja.contato.whatsApp || '';
-                        document.getElementById('configContatoEmail').value = configLoja.contato.email || '';
-                        document.getElementById('configContatoEndereco').value = configLoja.contato.endereco || '';
-                        document.getElementById('configContatoHorario').value = configLoja.contato.horario || '';
-                    }
+                    document.getElementById('configContatoWhatsApp').value = configLoja.contato.whatsApp || '';
+                    document.getElementById('configContatoEmail').value = configLoja.contato.email || '';
+                    document.getElementById('configContatoEndereco').value = configLoja.contato.endereco || '';
+                    document.getElementById('configContatoHorario').value = configLoja.contato.horario || '';
                 }
                 const snapJogos = await db.collection('config').doc('jogos').get();
                 if (snapJogos.exists) {
@@ -495,6 +504,24 @@
             } catch(e) { console.error(e); }
         }
 
+        // 🔥 NOVA FUNÇÃO: Carregar Dropdown de Pedidos
+        async function carregarPedidosDropdown() {
+            const select = document.getElementById('configPedidoEmFoco');
+            select.innerHTML = '<option value="">Nenhum pedido em produção</option>';
+            if(!configLoja.pedidosEmAndamento) return;
+            try {
+                const snap = await db.collection('pedidos').where('status', 'in', ['Aguardando confirmação', 'Aguardando']).get();
+                snap.forEach(doc => {
+                    const p = doc.data();
+                    const opt = document.createElement('option');
+                    opt.value = doc.id;
+                    opt.textContent = `Pedido #${doc.id.substring(0,6)} - ${p.clienteNome || 'Cliente'}`;
+                    if (configLoja.pedidoEmFocoId === doc.id) opt.selected = true;
+                    select.appendChild(opt);
+                });
+            } catch (e) { console.error("Erro ao carregar dropdown pedidos:", e); }
+        }
+
         function abrirAba(aba) {
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
             ['abaCategorias','abaProdutos','abaPedidos','abaAvaliacoes','abaJogos','abaPrecificacao','abaDesign','abaFrases','abaFaq','abaConfigLoja','abaRelatorios','abaBackup'].forEach(id => document.getElementById(id).style.display = 'none');
@@ -516,13 +543,8 @@
             const checkbox = document.getElementById('prodPrecoManualToggle');
             const manualFields = document.getElementById('manualPriceFields');
             const autoFields = document.getElementById('autoPriceFields');
-            if (checkbox.checked) {
-                manualFields.classList.remove('hidden');
-                autoFields.classList.add('hidden');
-            } else {
-                manualFields.classList.add('hidden');
-                autoFields.classList.remove('hidden');
-            }
+            if (checkbox.checked) { manualFields.classList.remove('hidden'); autoFields.classList.add('hidden'); } 
+            else { manualFields.classList.add('hidden'); autoFields.classList.remove('hidden'); }
         }
 
         function redimensionarImagem(file, maxWidth, qualidade) {
@@ -616,11 +638,8 @@
             const tipoItem = document.getElementById('prodTipoItem').value;
             const campos = document.getElementById('camposKit');
             if (campos) {
-                if (tipoItem === 'kit') {
-                    campos.classList.remove('hidden');
-                } else {
-                    campos.classList.add('hidden');
-                }
+                if (tipoItem === 'kit') { campos.classList.remove('hidden'); } 
+                else { campos.classList.add('hidden'); }
             }
         }
 
@@ -681,9 +700,7 @@
 
             quillEditor = new Quill('#editor-container', {
                 theme: 'snow',
-                modules: {
-                    toolbar: toolbarOptions
-                },
+                modules: { toolbar: toolbarOptions },
                 placeholder: "Digite a descrição do produto aqui..."
             });
 
@@ -698,12 +715,9 @@
                     svg.innerHTML = `<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z" fill="#fff"/>`;
                     emojiBtn.appendChild(svg);
                     emojiBtn.onclick = function(e) {
-                        e.preventDefault();
-                        e.stopPropagation();
+                        e.preventDefault(); e.stopPropagation();
                         const picker = document.getElementById('emoji-picker-container');
-                        if (picker) {
-                            picker.classList.toggle('active');
-                        }
+                        if (picker) { picker.classList.toggle('active'); }
                     };
                 }
             }, 200);
@@ -727,14 +741,11 @@
             function renderEmojis(categoryName, searchTerm) {
                 grid.innerHTML = '';
                 let emojisToShow = [];
-
                 if (searchTerm) {
                     const term = searchTerm.toLowerCase();
                     emojiLibrary.forEach(cat => {
                         cat.list.forEach(emoji => {
-                            if (emoji.toLowerCase().includes(term)) {
-                                emojisToShow.push(emoji);
-                            }
+                            if (emoji.toLowerCase().includes(term)) { emojisToShow.push(emoji); }
                         });
                     });
                 } else {
@@ -742,7 +753,6 @@
                     if (cat) emojisToShow = cat.list;
                     else emojisToShow = emojiLibrary[0].list;
                 }
-
                 emojisToShow.forEach(emoji => {
                     const span = document.createElement('span');
                     span.className = 'emoji-item';
@@ -750,11 +760,8 @@
                     span.onclick = function(e) {
                         e.stopPropagation();
                         const range = quillEditor.getSelection();
-                        if (range) {
-                            quillEditor.insertText(range.index, emoji);
-                        } else {
-                            quillEditor.insertText(quillEditor.getLength(), emoji);
-                        }
+                        if (range) { quillEditor.insertText(range.index, emoji); } 
+                        else { quillEditor.insertText(quillEditor.getLength(), emoji); }
                         picker.classList.remove('active');
                     };
                     grid.appendChild(span);
@@ -775,10 +782,7 @@
             });
 
             const firstBtn = categoriesContainer.querySelector('span');
-            if (firstBtn) {
-                firstBtn.classList.add('active');
-                renderEmojis(firstBtn.dataset.category, '');
-            }
+            if (firstBtn) { firstBtn.classList.add('active'); renderEmojis(firstBtn.dataset.category, ''); }
 
             search.addEventListener('input', function() {
                 const term = this.value.trim();
@@ -787,9 +791,7 @@
                     renderEmojis('', term);
                 } else {
                     const activeCategory = document.querySelector('#emoji-categories span.active');
-                    if (activeCategory) {
-                        renderEmojis(activeCategory.dataset.category, '');
-                    }
+                    if (activeCategory) { renderEmojis(activeCategory.dataset.category, ''); }
                 }
             });
 
@@ -897,7 +899,6 @@
                     await carregarDados(); 
                     atualizarListaProdutos(); 
                     atualizarSelectCategorias(); 
-
                 } catch (erro) {
                     console.error("Erro detalhado:", erro);
                     alert('❌ Erro ao salvar o item! Verifique o console do navegador (F12).\nMensagem: ' + erro.message);
@@ -928,7 +929,6 @@
             document.getElementById('prodPrecoManualToggle').checked = p.usarPrecoManual || false;
             document.getElementById('prodPrecoManual').value = p.precoManual || '';
             toggleManualPriceFields();
-            if (document.getElementById('prodUsarPrecificacao')) document.getElementById('prodUsarPrecificacao').checked = p.usarPrecificacao !== false;
             if (document.getElementById('prodMaterial')) document.getElementById('prodMaterial').value = p.material || 'offset';
             if (document.getElementById('prodQtdFolhas')) document.getElementById('prodQtdFolhas').value = p.qtdFolhas || 1;
             if (document.getElementById('prodPrecoMaoObra')) document.getElementById('prodPrecoMaoObra').value = p.precoMaoObra || '';
@@ -949,10 +949,7 @@
                 p.descontoProgressivo.forEach(item => {
                     const div = document.createElement('div');
                     div.className = 'linha-desconto';
-                    div.style.display = 'flex';
-                    div.style.gap = '10px';
-                    div.style.alignItems = 'center';
-                    div.style.marginBottom = '5px';
+                    div.style.display = 'flex'; div.style.gap = '10px'; div.style.alignItems = 'center'; div.style.marginBottom = '5px';
                     div.innerHTML = `
                         <input type="number" class="input-qtd-min" value="${item.min}" placeholder="Mínimo" min="1" style="width:100px; margin-bottom:0;">
                         <span style="color:#fff; opacity:0.7;">até</span>
@@ -996,9 +993,7 @@
                         div.appendChild(btn);
                         containerComp.appendChild(div);
                     });
-                } else {
-                    adicionarLinhaComponente();
-                }
+                } else { adicionarLinhaComponente(); }
             }
 
             const containerOpcoes = document.getElementById('containerOpcoesProduto');
@@ -1014,9 +1009,7 @@
                     `;
                     containerOpcoes.appendChild(div);
                 });
-            } else {
-                adicionarLinhaOpcaoProduto();
-            }
+            } else { adicionarLinhaOpcaoProduto(); }
         }
 
         async function removerProduto(id) { if (confirm('Remover?')) { await db.collection('produtos').doc(id).delete(); await carregarDados(); atualizarListaProdutos(); } }
@@ -1026,13 +1019,10 @@
             document.getElementById('prodPrecoMaoObra').value = ''; document.getElementById('prodImg').value = ''; 
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
             document.getElementById('promoFields').classList.add('hidden');
-            
             const containerDesconto = document.getElementById('containerDescontoProgressivo');
             if(containerDesconto) { containerDesconto.innerHTML = ''; adicionarLinhaDesconto(); }
-
             const containerComp = document.getElementById('containerComponentesKit');
             if(containerComp) { containerComp.innerHTML = ''; adicionarLinhaComponente(); }
-
             document.getElementById('containerOpcoesProduto').innerHTML = ''; adicionarLinhaOpcaoProduto();
             document.getElementById('prodPrecoManualToggle').checked = false; document.getElementById('prodPrecoManual').value = ''; toggleManualPriceFields();
         }
@@ -1277,26 +1267,54 @@
         function editarFaq(index) { const faq = dados.faq[index]; document.getElementById('editFaqId').value = index; document.getElementById('faqPergunta').value = faq.pergunta; document.getElementById('faqResposta').value = faq.resposta; }
         async function removerFaq(index) { if (confirm('Remover?')) { dados.faq.splice(index, 1); await db.collection('config').doc('faq').set({ perguntas: dados.faq }); carregarFAQ(); } }
 
+        // 🔥 FUNÇÕES ATUALIZADAS DE CONFIG DA LOJA E AGENDA
         function carregarConfigLoja() {
             document.getElementById('configPrazoMin').value = configLoja.prazoMinimo || 3;
             document.getElementById('configPrazoMax').value = configLoja.prazoMaximo || 5;
             document.getElementById('configPedidosEmAndamento').checked = configLoja.pedidosEmAndamento || false;
+            document.getElementById('configPrazoFoco').value = configLoja.prazoFoco || '';
             
-            // 🔒 Carregar Contatos
             if(configLoja.contato) {
                 document.getElementById('configContatoWhatsApp').value = configLoja.contato.whatsApp || '';
                 document.getElementById('configContatoEmail').value = configLoja.contato.email || '';
                 document.getElementById('configContatoEndereco').value = configLoja.contato.endereco || '';
                 document.getElementById('configContatoHorario').value = configLoja.contato.horario || '';
             }
+
+            const divPedido = document.getElementById('divPedidoAtual');
+            if (configLoja.pedidosEmAndamento) {
+                divPedido.classList.remove('hidden');
+                carregarPedidosDropdown(); // Preenche o dropdown de pedidos
+            } else {
+                divPedido.classList.add('hidden');
+            }
         }
+
+        // Evento para mostrar/esconder campo de pedido ao marcar checkbox
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkbox = document.getElementById('configPedidosEmAndamento');
+            if(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    const div = document.getElementById('divPedidoAtual');
+                    if (this.checked) {
+                        div.classList.remove('hidden');
+                        carregarPedidosDropdown();
+                    } else {
+                        div.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
         async function salvarConfigLoja() {
             const prazoMin = parseInt(document.getElementById('configPrazoMin').value);
             const prazoMax = parseInt(document.getElementById('configPrazoMax').value);
             const pedidosEmAndamento = document.getElementById('configPedidosEmAndamento').checked;
+            const pedidoEmFocoId = document.getElementById('configPedidoEmFoco').value;
+            const prazoFoco = parseInt(document.getElementById('configPrazoFoco').value) || 0;
+
             if (prazoMin < 1 || prazoMax < prazoMin) return alert('Defina prazos válidos.');
 
-            // 🔒 Salvar Contatos
             const contatoData = {
                 whatsApp: document.getElementById('configContatoWhatsApp').value.trim(),
                 email: document.getElementById('configContatoEmail').value.trim(),
@@ -1307,12 +1325,14 @@
             const data = {
                 prazoMinimo: prazoMin,
                 prazoMaximo: prazoMax,
-                pedidosEmAndamento,
+                pedidosEmAndamento: pedidosEmAndamento,
+                pedidoEmFocoId: pedidoEmFocoId,
+                prazoFoco: prazoFoco,
                 contato: contatoData
             };
 
             await db.collection('config').doc('loja').set(data);
-            alert('✅ Configurações salvas!');
+            alert('✅ Configurações e agenda salvas!');
             carregarConfigLoja();
         }
 
