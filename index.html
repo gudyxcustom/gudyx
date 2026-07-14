@@ -961,10 +961,23 @@
         function carregarDepoimentos() { const container = document.getElementById('depoimentosGrid'); container.innerHTML = ''; carregarDepoimentosFirebase(); }
         function carregarDepoimentosFirebase() {
             const container = document.getElementById('depoimentosGrid');
-            db.collection('avaliacoes').where('aprovado', '==', true).orderBy('timestamp', 'desc').limit(5).get().then(snapshot => {
-                if (snapshot.empty) { container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div>`; return; }
-                let html = ''; snapshot.forEach(doc => { const av = doc.data(); const estrelas = '★'.repeat(av.nota) + '☆'.repeat(5 - av.nota); html += `<div class="depoimento-card"><div class="estrelas">${estrelas}</div><div class="texto">"${av.comentario || 'Ótima experiência!'}"</div><div class="autor">— ${av.autor || 'Cliente'}</div></div>`; }); container.innerHTML = html;
-            }).catch(err => console.error('Erro ao carregar avaliações:', err));
+            db.collection('avaliacoes').where('aprovado', '==', true).limit(5).get().then(snapshot => {
+                if (snapshot.empty) { 
+                    container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div>`; 
+                    return; 
+                }
+                let html = ''; 
+                snapshot.forEach(doc => { 
+                    const av = doc.data(); 
+                    const estrelas = '★'.repeat(av.nota) + '☆'.repeat(5 - av.nota); 
+                    html += `<div class="depoimento-card"><div class="estrelas">${estrelas}</div><div class="texto">"${av.comentario || 'Ótima experiência!'}"</div><div class="autor">— ${av.autor || 'Cliente'}</div></div>`; 
+                }); 
+                container.innerHTML = html;
+            }).catch(err => {
+                console.error("Erro ao carregar avaliações (Ignorado):", err);
+                // Fallback silencioso
+                container.innerHTML = `<div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"A caixa personalizada ficou perfeita!"</div><div class="autor">— Maria S.</div></div><div class="depoimento-card"><div class="estrelas">★★★★★</div><div class="texto">"Atendimento rápido e produto de qualidade!"</div><div class="autor">— João P.</div></div>`;
+            });
         }
 
         function carregarInstagram() { const container = document.getElementById('instagramGrid'); container.style.display = 'flex'; container.style.justifyContent = 'center'; container.style.alignItems = 'center'; container.style.width = '100%'; container.innerHTML = `<iframe src="https://www.instagram.com/gudyxcustom/embed" width="100%" height="550" frameborder="0" scrolling="no" allowtransparency="true" style="border-radius: 20px; max-width: 600px; border: 1px solid rgba(255,255,255,0.1); background: rgba(11,4,28,0.6);"></iframe>`; }
