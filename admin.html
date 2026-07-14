@@ -355,7 +355,7 @@
                         Há pedidos em andamento?
                     </label>
                     
-                    <!-- 🔥 CAMPOS DA AGENDA AUTOMÁTICA -->
+                    <!-- CAMPOS DA AGENDA AUTOMÁTICA -->
                     <div id="divPedidoAtual" class="hidden" style="margin-top: 10px;">
                         <label>Qual pedido está sendo produzido agora?</label>
                         <select id="configPedidoEmFoco" style="width: 100%; padding: 8px;">
@@ -504,7 +504,7 @@
             } catch(e) { console.error(e); }
         }
 
-        // 🔥 NOVA FUNÇÃO: Carregar Dropdown de Pedidos
+        // 🔥 CARREGAR PEDIDOS NO DROPDOWN
         async function carregarPedidosDropdown() {
             const select = document.getElementById('configPedidoEmFoco');
             select.innerHTML = '<option value="">Nenhum pedido em produção</option>';
@@ -1284,13 +1284,12 @@
             const divPedido = document.getElementById('divPedidoAtual');
             if (configLoja.pedidosEmAndamento) {
                 divPedido.classList.remove('hidden');
-                carregarPedidosDropdown(); // Preenche o dropdown de pedidos
+                carregarPedidosDropdown();
             } else {
                 divPedido.classList.add('hidden');
             }
         }
 
-        // Evento para mostrar/esconder campo de pedido ao marcar checkbox
         document.addEventListener('DOMContentLoaded', function() {
             const checkbox = document.getElementById('configPedidosEmAndamento');
             if(checkbox) {
