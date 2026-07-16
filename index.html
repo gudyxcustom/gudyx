@@ -52,6 +52,16 @@
             .close-modal, .close-drawer, .close-popup-icon, .close-faq, .close-modal-page {
                 padding: 10px !important; min-width: 44px !important; min-height: 44px !important;
             }
+
+            /* 🔥 BOTÃO ACESSAR CATÁLOGO MAIOR NO MOBILE */
+            .btn-acessar {
+                padding: 20px 40px !important;
+                font-size: 1.3rem !important;
+                width: 100% !important;
+                max-width: 350px !important;
+                display: block !important;
+                margin: 0 auto !important;
+            }
             
             /* MANTER O MASCOTE ATIVO */
             .mascote-wrapper { animation: floatMascote 6s ease-in-out infinite !important; }
@@ -93,6 +103,50 @@
         .tabela-precos-grid .linha-tabela .preco-tabela { color: var(--amarelo-neon); font-weight: 700; }
         .tabela-precos-grid .linha-tabela.active { background: rgba(172, 40, 255, 0.2); border-color: var(--ciano-brilhante); box-shadow: 0 0 15px rgba(0, 242, 254, 0.15); color: #fff; }
         .tabela-precos-grid .linha-tabela.active .preco-tabela { color: var(--ciano-brilhante); text-shadow: 0 0 10px rgba(0, 242, 254, 0.3); }
+
+        /* 🔥 WELCOME MODAL STYLES */
+        #welcomeModal .modal-box {
+            text-align: center;
+            max-width: 400px;
+            padding: 40px 30px;
+        }
+        #welcomeModal .modal-box img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 10px auto;
+            display: block;
+            border: 3px solid var(--ciano-brilhante);
+            box-shadow: 0 0 30px rgba(172, 40, 255, 0.6);
+        }
+        #welcomeModal .modal-box h2 {
+            color: var(--ciano-brilhante);
+            margin-top: 15px;
+            font-size: 1.8rem;
+        }
+        #welcomeModal .modal-box p {
+            opacity: 0.8;
+            margin: 15px 0;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        #welcomeModal .modal-box .btn-welcome {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg,#a028ff 0%,var(--ciano-brilhante) 100%);
+            border: none;
+            border-radius: 50px;
+            color: #fff;
+            cursor: pointer;
+            transition: var(--transicao);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+        }
+        #welcomeModal .modal-box .btn-welcome:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 50px rgba(172,40,255,0.8);
+        }
     </style>
 </head>
 <body>
@@ -168,6 +222,16 @@
     </div>
 
     <div id="firstVisitPopup"><div class="popup-box"><button class="close-popup-icon" onclick="fecharPopup()">×</button><h2>🔥 Bem-vindo à Gudyx!</h2><p>Ganhe <strong>10% OFF</strong> na sua primeira compra! Use o cupom: <strong>BEMVINDO10</strong></p><div class="cupom-box" onclick="copiarCupom()"><span id="cupomText">BEMVINDO10</span> <i class="fas fa-copy"></i></div><button class="btn-fechar-popup" onclick="fecharPopup()">Fechar e continuar</button></div></div>
+
+    <div id="welcomeModal" class="modal-page">
+        <div class="modal-box">
+            <div style="font-size:3.5rem; margin-bottom:10px;">👋</div>
+            <img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx Mascote">
+            <h2>Bem-vindo ao Catálogo Gudyx!</h2>
+            <p>Aqui você encontra papelaria personalizada e gráfica rápida. Adicione os itens no carrinho e finalize pelo WhatsApp com a gente!</p>
+            <button class="btn-welcome" onclick="fecharWelcomeModal()">Entrar</button>
+        </div>
+    </div>
 
     <div id="modalSobre" class="modal-page" onclick="fecharModalSobre(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalSobre()">×</button><h2><i class="fas fa-star"></i> Sobre a Gudyx</h2><p>Somos uma papelaria personalizada e gráfica rápida apaixonada por detalhes! Criamos produtos únicos que transformam momentos especiais em memórias inesquecíveis.</p><div style="margin-top: 20px; display: flex; flex-direction: column; gap: 10px; align-items: center;"><div class="info-item"><i class="fas fa-paint-brush"></i> Papelaria Personalizada</div><div class="info-item"><i class="fas fa-print"></i> Gráfica Rápida</div><div class="info-item"><i class="fas fa-heart"></i> Feito com alma taurina ♉</div></div></div></div>
     <div id="modalContato" class="modal-page" onclick="fecharModalContato(event)"><div class="modal-box"><button class="close-modal-page" onclick="fecharModalContato()">×</button><h2><i class="fas fa-headset"></i> Fale Conosco</h2><p>Estamos prontos para te atender e criar o produto dos seus sonhos!</p><div style="margin-top: 20px; display: flex; flex-direction: column; gap: 15px; align-items: center;"><div class="info-item"><i class="fab fa-whatsapp" style="color: #25D366;"></i> <span id="modalContatoWhatsApp">(21) 97612-1076</span></div><div class="info-item"><i class="fas fa-envelope" style="color: var(--rosa-neon);"></i> <span id="modalContatoEmail">contato@gudyx.com</span></div><div class="info-item"><i class="fas fa-map-marker-alt" style="color: var(--ciano-brilhante);"></i> <span id="modalContatoEndereco">Duque de Caxias - RJ</span></div></div><p style="margin-top: 20px; font-size: 0.85rem; opacity: 0.6;">
@@ -432,7 +496,7 @@
         function salvarDados() { localStorage.setItem('gudyxDados', JSON.stringify(dados)); }
         function mostrarTela(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
-        // 🔥 NOVO SISTEMA DE NAVEGAÇÃO COM HISTÓRICO (BOTÃO VOLTAR DO CELULAR) E CARREGAMENTO DE CATEGORIAS
+        // 🔥 SISTEMA DE NAVEGAÇÃO COM HISTÓRICO (BOTÃO VOLTAR DO CELULAR)
         function navegarPara(id) {
             mostrarTela(id);
             window.history.pushState({ screen: id }, '', '#' + id);
@@ -445,7 +509,43 @@
             }
         }
 
+        // 🔥 PRIORIDADE: FECHAR MODAIS ANTES DE NAVEGAR
+        function isAnyModalOpen() {
+            return document.querySelector('#productModal.active, #cartDrawer.open, #favDrawer.open, #agendamentoModal.active, #avaliacaoModal.active, #welcomeModal.active, #modalSobre.active, #modalContato.active, #comoFuncionaModal.active, #faqModal.active, #raspadinhaModal.active, #lightboxOverlay.active, #tourOverlay.active, #alertaContainer.active') !== null;
+        }
+
+        function closeAllModals() {
+            document.querySelectorAll('.modal-page.active, #productModal.active, #agendamentoModal.active, #avaliacaoModal.active, #faqModal.active, #raspadinhaModal.active, #lightboxOverlay.active, #tourOverlay.active, #alertaContainer.active, #welcomeModal.active').forEach(el => {
+                if(el) el.classList.remove('active');
+            });
+            if (document.getElementById('cartDrawer').classList.contains('open')) {
+                fecharDrawer();
+            }
+            if (document.getElementById('favDrawer').classList.contains('open')) {
+                fecharFavDrawer();
+            }
+            if (document.getElementById('comoFuncionaModal').classList.contains('active')) {
+                fecharComoFunciona();
+            }
+            if (document.getElementById('modalSobre').classList.contains('active')) {
+                fecharModalSobre();
+            }
+            if (document.getElementById('modalContato').classList.contains('active')) {
+                fecharModalContato();
+            }
+        }
+
         window.addEventListener('popstate', function(event) {
+            // Se existir qualquer modal/drawer aberto, feche-o primeiro
+            if (isAnyModalOpen()) {
+                closeAllModals();
+                // Re-push state para evitar que o navegador saia da página
+                const currentHash = window.location.hash || '#homeScreen';
+                history.pushState({ screen: 'current' }, '', currentHash);
+                return;
+            }
+
+            // Caso contrário, navegação normal de telas
             if (event.state && event.state.screen) {
                 mostrarTela(event.state.screen);
             } else {
@@ -474,7 +574,7 @@
         function falarMascote(msgP = null) { if (estaFugindo || estaVoltando || estaSumido || estaContando) return; if (!mascoteMensagens.length) atualizarMensagensMascote(); const falaContainer = document.getElementById('falaContainer'); if (!falaContainer) return; const msg = msgP || mascoteMensagens[mascoteMsgIdx % mascoteMensagens.length]; mascoteMsgIdx++; falaContainer.classList.add('falando'); estaFalando = true; typewriterEffect(falaContainer, msg); if (timeoutFala) clearTimeout(timeoutFala); timeoutFala = setTimeout(() => { falaContainer.classList.remove('falando'); estaFalando = false; }, msg.length * 40 + 1500); }
         function mostrarExpressao(exp) { const w = document.getElementById('mascoteWrapper'); w.classList.remove('feliz','triste','surpreso','irritado-1','irritado-2','fugindo','voltando'); if (exp) w.classList.add(exp); }
 
-        // 🔥 NOVO LISTENER DO MASCOTE (FUNCIONA NO MOBILE E DESKTOP)
+        // 🔥 LISTENER DO MASCOTE (FUNCIONA NO MOBILE E DESKTOP)
         const mascoteEl = document.getElementById('mascoteWrapper');
         function tratarCliqueMascote(e) {
             if (e.type === 'touchstart') e.preventDefault();
@@ -1187,6 +1287,18 @@
         function verificarPrimeiraVisita(){if(!localStorage.getItem('visitou_popup')){setTimeout(()=>{document.getElementById('firstVisitPopup').classList.add('active');localStorage.setItem('visitou_popup','1');},2000);}}
         function fecharPopup(){document.getElementById('firstVisitPopup').classList.remove('active');}
         function copiarCupom(){navigator.clipboard.writeText('BEMVINDO10');alert('Cupom copiado!');}
+
+        // 🔥 WELCOME MODAL LOGIC
+        let welcomeModalShown = sessionStorage.getItem('welcomeModalShown');
+        if (!welcomeModalShown) {
+            setTimeout(() => {
+                document.getElementById('welcomeModal').classList.add('active');
+                sessionStorage.setItem('welcomeModalShown', 'true');
+            }, 1500);
+        }
+        function fecharWelcomeModal() {
+            document.getElementById('welcomeModal').classList.remove('active');
+        }
 
         (function(){const c=document.getElementById('meteorCanvas'),ctx=c.getContext('2d');let w,h,meteors=[];let animFrameId = null;function resize(){w=c.width=innerWidth;h=c.height=innerHeight;}window.addEventListener('resize',resize);resize();for(let i=0;i<30;i++)meteors.push({x:Math.random()*w,y:Math.random()*h,size:Math.random()*3+1,speed:Math.random()*5+2});function draw(){
             // 🔥 DESATIVA METEOROS NO MOBILE PARA ECONOMIZAR PROCESSAMENTO
