@@ -536,19 +536,19 @@
             }
         }
 
-        // 🔥 NOVO LISTENER DO BOTÃO VOLTAR (100% CORRETO)
+        // 🔥 NOVO LISTENER DO BOTÃO VOLTAR (100% CORRETO E À PROVA DE FALHAS)
         window.addEventListener('popstate', function(event) {
-            // 1. PRIORIDADE MÁXIMA: Se tiver algum modal/drawer aberto, feche e TRAVE a saída
+            // 1. PRIORIDADE ABSOLUTA: Se algum modal/drawer estiver aberto, feche e TRAVE a saída
             if (isAnyModalOpen()) {
                 closeAllModals();
-                // Re-push the current screen state to prevent the browser from leaving
+                // Re-push o estado atual para travar a saída da página
                 const currentHash = window.location.hash || '#homeScreen';
                 const currentScreen = currentHash.replace('#', '');
                 history.pushState({ screen: currentScreen }, '', currentHash);
                 return;
             }
 
-            // 2. Caso contrário, navegação normal de telas
+            // 2. Se não houver modal, lidar com a navegação normal de telas
             if (event.state && event.state.screen) {
                 mostrarTela(event.state.screen);
             } else {
