@@ -509,44 +509,39 @@
             }
         }
 
+        // 🔥 FUNÇÃO PARA ABRIR MODAIS E EMPURRAR ESTADO NO HISTÓRICO
+        function pushModalState(modalName) {
+            window.history.pushState({ modal: modalName }, '');
+        }
+
         // 🔥 PRIORIDADE: FECHAR MODAIS ANTES DE NAVEGAR
-        function isAnyModalOpen() {
-            return document.querySelector('#productModal.active, #cartDrawer.open, #favDrawer.open, #agendamentoModal.active, #avaliacaoModal.active, #welcomeModal.active, #modalSobre.active, #modalContato.active, #comoFuncionaModal.active, #faqModal.active, #raspadinhaModal.active, #lightboxOverlay.active, #tourOverlay.active, #alertaContainer.active') !== null;
-        }
-
-        function closeAllModals() {
-            document.querySelectorAll('.modal-page.active, #productModal.active, #agendamentoModal.active, #avaliacaoModal.active, #faqModal.active, #raspadinhaModal.active, #lightboxOverlay.active, #tourOverlay.active, #alertaContainer.active, #welcomeModal.active').forEach(el => {
-                if(el) el.classList.remove('active');
-            });
-            if (document.getElementById('cartDrawer').classList.contains('open')) {
-                fecharDrawer();
-            }
-            if (document.getElementById('favDrawer').classList.contains('open')) {
-                fecharFavDrawer();
-            }
-            if (document.getElementById('comoFuncionaModal').classList.contains('active')) {
-                fecharComoFunciona();
-            }
-            if (document.getElementById('modalSobre').classList.contains('active')) {
-                fecharModalSobre();
-            }
-            if (document.getElementById('modalContato').classList.contains('active')) {
-                fecharModalContato();
-            }
-        }
-
         window.addEventListener('popstate', function(event) {
-            // Se existir qualquer modal/drawer aberto, feche-o primeiro
-            if (isAnyModalOpen()) {
-                closeAllModals();
-                // Re-push state para evitar que o navegador saia da página
-                const currentHash = window.location.hash || '#homeScreen';
-                history.pushState({ screen: 'current' }, '', currentHash);
+            // 1. Se o estado for nulo (primeira página), redireciona para home sem sair
+            if (!event.state) {
+                history.replaceState({ screen: 'homeScreen' }, '', '#homeScreen');
+                mostrarTela('homeScreen');
                 return;
             }
 
-            // Caso contrário, navegação normal de telas
-            if (event.state && event.state.screen) {
+            // 2. Se o estado tiver 'modal', fecha o respectivo modal e para a execução
+            if (event.state.modal) {
+                if (event.state.modal === 'productModal') fecharModal();
+                else if (event.state.modal === 'cartDrawer') fecharDrawer();
+                else if (event.state.modal === 'favDrawer') fecharFavDrawer();
+                else if (event.state.modal === 'agendamentoModal') fecharModalAgendamento();
+                else if (event.state.modal === 'modalSobre') fecharModalSobre();
+                else if (event.state.modal === 'modalContato') fecharModalContato();
+                else if (event.state.modal === 'comoFuncionaModal') fecharComoFunciona();
+                else if (event.state.modal === 'faqModal') fecharFAQ();
+                else if (event.state.modal === 'raspadinhaModal') fecharRaspadinha();
+                else if (event.state.modal === 'lightboxOverlay') fecharLightbox();
+                else if (event.state.modal === 'firstVisitPopup') fecharPopup();
+                else if (event.state.modal === 'welcomeModal') fecharWelcomeModal();
+                return;
+            }
+
+            // 3. Se for tela, navega normalmente
+            if (event.state.screen) {
                 mostrarTela(event.state.screen);
             } else {
                 mostrarTela('homeScreen');
@@ -726,7 +721,13 @@
         function addToCartFromModal() { if(produtoModalAtual) { addToCart(produtoModalAtual.id, quantidadeModal); fecharModal(); } }
         function alterarQtdCarrinho(id, delta) { const item = carrinho.find(c=>c.id===id); if(!item) return; const n = item.quantidade+delta; if(n<1) { carrinho = carrinho.filter(c=>c.id!==id); } else item.quantidade=n; salvarCarrinho(); }
         function atualizarBadgeCarrinho() { const t = carrinho.reduce((a,c)=>a+c.quantidade,0); const b = document.getElementById('cartBadge'); b.textContent=t; b.style.display=t?'flex':'none'; }
-        function abrirDrawer() { renderizarDrawer(); document.getElementById('cartDrawerOverlay').classList.add('active'); document.getElementById('cartDrawer').classList.add('open'); mostrarMiniGluudyx(); }
+        function abrirDrawer() { 
+            renderizarDrawer(); 
+            document.getElementById('cartDrawerOverlay').classList.add('active'); 
+            document.getElementById('cartDrawer').classList.add('open'); 
+            mostrarMiniGluudyx();
+            pushModalState('cartDrawer'); // 🔥 Adiciona estado no histórico
+        }
         function fecharDrawer() { document.getElementById('cartDrawerOverlay').classList.remove('active'); document.getElementById('cartDrawer').classList.remove('open'); esconderMiniGluudyx(); }
         function limparCarrinho() { carrinho=[]; cupomAtual=null; salvarCarrinho(); }
         function aplicarCupom() { 
@@ -773,6 +774,7 @@
             if (configJogos.raspa.fim && new Date(configJogos.raspa.fim) < agora) return alert('Essa promoção já encerrou!');
             if (raspadinhaUsada) return alert('Você já usou sua raspadinha hoje! Volte amanhã!');
             document.getElementById('raspadinhaModal').classList.add('active'); initRaspadinha();
+            pushModalState('raspadinhaModal'); // 🔥
         }
         function fecharRaspadinha() { document.getElementById('raspadinhaModal').classList.remove('active'); }
 
@@ -826,7 +828,12 @@
         function salvarFavoritos() { localStorage.setItem('gudyxFavoritos', JSON.stringify(favoritos)); }
         function toggleFavorito(prodId) { if(favoritos.includes(prodId)) favoritos = favoritos.filter(id=>id!==prodId); else favoritos.push(prodId); salvarFavoritos(); atualizarFavoritosUI(); }
         function atualizarFavoritosUI() { document.querySelectorAll('.btn-favorite').forEach(b => { const id = b.dataset.id; if(favoritos.includes(id)) { b.classList.add('active'); b.querySelector('i').className='fas fa-heart'; } else { b.classList.remove('active'); b.querySelector('i').className='far fa-heart'; } }); }
-        function abrirFavDrawer() { renderizarFavDrawer(); document.getElementById('favDrawerOverlay').classList.add('active'); document.getElementById('favDrawer').classList.add('open'); }
+        function abrirFavDrawer() { 
+            renderizarFavDrawer(); 
+            document.getElementById('favDrawerOverlay').classList.add('active'); 
+            document.getElementById('favDrawer').classList.add('open');
+            pushModalState('favDrawer'); // 🔥
+        }
         function fecharFavDrawer() { document.getElementById('favDrawerOverlay').classList.remove('active'); document.getElementById('favDrawer').classList.remove('open'); }
         function renderizarFavDrawer() { const body = document.getElementById('favDrawerBody'); if (favoritos.length === 0) { body.innerHTML = '<div class="cart-empty">Nenhum favorito ainda.</div>'; return; } let html = ''; favoritos.forEach(id => { const prod = dados.produtos.find(p => p.id === id); if (!prod) return; 
             const precoFav = calcularPrecoTotal(prod, []) || '0,00';
@@ -944,6 +951,7 @@
             const cartBtn = document.getElementById('modalAddCartBtn'); const waBtn = document.getElementById('modalWaBtn');
             if(!isEmEstoque(prod)) { cartBtn.disabled=true; cartBtn.textContent='Esgotado'; if(waBtn) waBtn.style.opacity='0.5'; } else { cartBtn.disabled=false; cartBtn.innerHTML='<i class="fas fa-cart-plus"></i> Adicionar'; if(waBtn) waBtn.style.opacity='1'; } 
             document.getElementById('productModal').classList.add('active'); mostrarMiniGluudyx(); renderizarAvaliacoes(prodId); renderizarSugestoes(prodId); document.getElementById('contadorAoVivo').textContent = `👀 ${Math.floor(Math.random()*5)+1} pessoas estão vendo este produto agora`; 
+            pushModalState('productModal'); // 🔥 Adiciona estado no histórico
 
             // 🔸 Renderizar a Tabela de Preços Progressivo
             const tabelaContainer = document.getElementById('tabelaPrecosContainer');
@@ -1053,7 +1061,7 @@
         function fecharModal() { document.getElementById('productModal').classList.remove('active'); esconderMiniGluudyx(); }
         document.getElementById('productModal').addEventListener('click', function(e) { if(e.target===this) fecharModal(); });
 
-        function abrirLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxOverlay').classList.add('active'); }
+        function abrirLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxOverlay').classList.add('active'); pushModalState('lightboxOverlay'); }
         function fecharLightbox() { document.getElementById('lightboxOverlay').classList.remove('active'); }
 
         function renderizarSugestoes(prodId) { const container=document.getElementById('sugestoesGrid'); const prod=dados.produtos.find(p=>p.id===prodId); if(!prod){container.innerHTML='';return;} let sugestoes = dados.produtos.filter(p=>p.id!==prodId&&p.categoriaId===prod.categoriaId&&isEmEstoque(p)).slice(0,3); if (sugestoes.length < 2) { sugestoes = dados.produtos.filter(p=>p.id!==prodId&&isEmEstoque(p)).sort(()=>Math.random()-0.5).slice(0,3); } container.innerHTML=sugestoes.length?sugestoes.map(s=>{const preco=calcularPrecoTotal(s, []) || '0,00'; return`<div class="sugestao-card" onclick="abrirModal('${s.id}')"><img src="${getImagemPrincipal(s)}" loading="lazy"><h5>${s.nome}</h5><div class="preco">R$ ${preco}</div></div>`;}).join(''):'<p style="opacity:0.6;">Nenhum relacionado.</p>'; }
@@ -1062,6 +1070,7 @@
             if(carrinho.length === 0) return alert('Seu carrinho está vazio!');
             document.getElementById('agendamentoModal').classList.add('active');
             gerarOpcoesAgendamento();
+            pushModalState('agendamentoModal');
         }
         function fecharModalAgendamento() { document.getElementById('agendamentoModal').classList.remove('active'); }
         document.getElementById('agendamentoModal').addEventListener('click', function(e) { if(e.target === this) fecharModalAgendamento(); });
@@ -1103,7 +1112,7 @@
             window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); playVictorySound(); confetti({particleCount:200,spread:100,origin:{y:0.5}}); 
         }
 
-        function abrirComoFunciona() { document.getElementById('comoFuncionaModal').classList.add('active'); }
+        function abrirComoFunciona() { document.getElementById('comoFuncionaModal').classList.add('active'); pushModalState('comoFuncionaModal'); }
         function fecharComoFunciona() { document.getElementById('comoFuncionaModal').classList.remove('active'); }
         document.getElementById('comoFuncionaModal').addEventListener('click', function(e) { if(e.target === this) fecharComoFunciona(); });
 
@@ -1277,12 +1286,12 @@
             return `<div class="produto-card" onclick="abrirModal('${p.id}')"><img src="${getImagemPrincipal(p)}" loading="lazy"><h5>${p.nome}</h5><div class="preco">R$ ${precoBusca}</div></div>`;
         }).join('')||'<p>Nenhum item.</p>';}
 
-        function abrirFAQ(){document.getElementById('faqModal').classList.add('active');}
+        function abrirFAQ(){document.getElementById('faqModal').classList.add('active'); pushModalState('faqModal'); }
         function fecharFAQ(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('faqModal').classList.remove('active');}
         
-        function abrirModalSobre(){document.getElementById('modalSobre').classList.add('active');}
+        function abrirModalSobre(){document.getElementById('modalSobre').classList.add('active'); pushModalState('modalSobre'); }
         function fecharModalSobre(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('modalSobre').classList.remove('active');}
-        function abrirModalContato(){document.getElementById('modalContato').classList.add('active');}
+        function abrirModalContato(){document.getElementById('modalContato').classList.add('active'); pushModalState('modalContato'); }
         function fecharModalContato(e){if(e&&e.target!==e.currentTarget)return;document.getElementById('modalContato').classList.remove('active');}
         function verificarPrimeiraVisita(){if(!localStorage.getItem('visitou_popup')){setTimeout(()=>{document.getElementById('firstVisitPopup').classList.add('active');localStorage.setItem('visitou_popup','1');},2000);}}
         function fecharPopup(){document.getElementById('firstVisitPopup').classList.remove('active');}
@@ -1294,6 +1303,7 @@
             setTimeout(() => {
                 document.getElementById('welcomeModal').classList.add('active');
                 sessionStorage.setItem('welcomeModalShown', 'true');
+                pushModalState('welcomeModal'); // 🔥
             }, 1500);
         }
         function fecharWelcomeModal() {
