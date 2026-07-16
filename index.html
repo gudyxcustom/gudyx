@@ -432,10 +432,17 @@
         function salvarDados() { localStorage.setItem('gudyxDados', JSON.stringify(dados)); }
         function mostrarTela(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
-        // 🔥 NOVO SISTEMA DE NAVEGAÇÃO COM HISTÓRICO (BOTÃO VOLTAR DO CELULAR)
+        // 🔥 NOVO SISTEMA DE NAVEGAÇÃO COM HISTÓRICO (BOTÃO VOLTAR DO CELULAR) E CARREGAMENTO DE CATEGORIAS
         function navegarPara(id) {
             mostrarTela(id);
             window.history.pushState({ screen: id }, '', '#' + id);
+
+            // 🔥 CARREGA AS CATEGORIAS E PRODUTOS AUTOMATICAMENTE AO ENTRAR NAS TELAS
+            if (id === 'servicosScreen') {
+                carregarCategorias('servicos');
+            } else if (id === 'produtosScreen') {
+                carregarCategorias('produtos');
+            }
         }
 
         window.addEventListener('popstate', function(event) {
@@ -455,9 +462,6 @@
                 window.history.replaceState({ screen: hash }, '', '#' + hash);
             }
         }
-
-        function voltarParaHome() { navegarPara('homeScreen'); }
-        function voltarParaEscolha() { navegarPara('escolhaScreen'); }
 
         function alternarModo() { document.body.classList.toggle('modo-claro'); const icon = document.querySelector('#modoToggle i'); if (document.body.classList.contains('modo-claro')) { icon.className = 'fas fa-moon'; localStorage.setItem('gudyx_modo', 'claro'); } else { icon.className = 'fas fa-sun'; localStorage.setItem('gudyx_modo', 'escuro'); } }
         if (localStorage.getItem('gudyx_modo') === 'claro') { document.body.classList.add('modo-claro'); document.querySelector('#modoToggle i').className = 'fas fa-moon'; }
@@ -1052,7 +1056,24 @@
         function verificarRetorno() { const ultimaVisita = localStorage.getItem('gudyx_ultima_visita'); const agora = Date.now(); if (ultimaVisita && (agora - parseInt(ultimaVisita)) > 86400000) { setTimeout(() => falarMascote('Que bom te ver de novo! 😍'), 4000); document.getElementById('badgeVip').style.display = 'inline-block'; } localStorage.setItem('gudyx_ultima_visita', agora.toString()); }
 
         let categoriaSelecionada=null;
-        function carregarCategorias(tipo){const container=document.getElementById(tipo==='produtos'?'produtosCategoriasContainer':'servicosCategoriasContainer');container.innerHTML='';dados.categorias.filter(c=>c.tipo===tipo).forEach(cat=>{const card=document.createElement('div');card.className='categoria-card';card.innerHTML=`${cat.imagem?`<img src="${cat.imagem}" class="categoria-img" loading="lazy">`:'<i class="fas fa-folder" style="font-size:3rem;"></i>'}<h4>${cat.nome}</h4>`;card.onclick=()=>selecionarCategoria(tipo,cat.id);container.appendChild(card);});}
+        function carregarCategorias(tipo) {
+            const container = document.getElementById(tipo === 'produtos' ? 'produtosCategoriasContainer' : 'servicosCategoriasContainer');
+            
+            // 🔥 Mostra um indicador de carregamento para não deixar a tela vazia
+            container.innerHTML = '<p style="text-align:center; opacity:0.7; padding:20px;">🔄 Carregando categorias...</p>';
+
+            // Pequeno delay para garantir que o usuário veja o carregamento
+            setTimeout(() => {
+                container.innerHTML = '';
+                dados.categorias.filter(c => c.tipo === tipo).forEach(cat => {
+                    const card = document.createElement('div');
+                    card.className = 'categoria-card';
+                    card.innerHTML = `${cat.imagem ? `<img src="${cat.imagem}" class="categoria-img" loading="lazy">` : '<i class="fas fa-folder" style="font-size:3rem;"></i>'}<h4>${cat.nome}</h4>`;
+                    card.onclick = () => selecionarCategoria(tipo, cat.id);
+                    container.appendChild(card);
+                });
+            }, 50);
+        }
 
         function selecionarCategoria(tipo,catId){
             categoriaSelecionada={tipo,id:catId};
