@@ -1291,14 +1291,6 @@
         function fecharPopup(){document.getElementById('firstVisitPopup').classList.remove('active');}
         function copiarCupom(){navigator.clipboard.writeText('BEMVINDO10');alert('Cupom copiado!');}
 
-        // 🔥 WELCOME MODAL LOGIC
-        let welcomeModalShown = sessionStorage.getItem('welcomeModalShown');
-        if (!welcomeModalShown) {
-            setTimeout(() => {
-                document.getElementById('welcomeModal').classList.add('active');
-                sessionStorage.setItem('welcomeModalShown', 'true');
-            }, 1500);
-        }
         function fecharWelcomeModal() {
             document.getElementById('welcomeModal').classList.remove('active');
         }
@@ -1352,9 +1344,8 @@
 
         carregarDadosFirebase().then(()=>{
             setTimeout(() => { localStorage.removeItem('gudyx_mascote_state'); const wrapper = document.getElementById('mascoteWrapper'); if (wrapper) { wrapper.classList.remove('somiu', 'fugindo', 'voltando'); wrapper.style.display = 'block'; } if (!dados.frases || dados.frases.length === 0) { dados.frases = ['Olá, sou o Gluudyx! ✦', 'Que bom te ver! 🎉', 'Vamos explorar juntos!', 'Curta a Gudyx! 😍']; } setTimeout(() => falarMascote('Oi! Estou de volta! 🚀'), 500); }, 2000);
-            contarVisita(); resetarSlider(); carregarMaisVendidos(); verificarPrimeiraVisita(); carregarAtalhos(); carregarDepoimentos(); carregarInstagram(); verificarRetorno(); verificarAbandono(); iniciarListenerFirebase();
+            contarVisita(); resetarSlider(); carregarMaisVendidos(); carregarAtalhos(); carregarDepoimentos(); carregarInstagram(); verificarRetorno(); verificarAbandono(); iniciarListenerFirebase();
             setTimeout(() => { atualizarMensagensMascote(); falarMascote(); }, 3000);
-            if (!localStorage.getItem('tour_feito')) { setTimeout(iniciarTour, 1500); }
             // Inicializa os gestos de swipe
             initSwipeDrawer();
             initSwipeFav();
