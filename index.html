@@ -1071,36 +1071,49 @@
             const precoTotal = calcularPrecoTotal(produtoModalAtual, opcoesSelecionadas, quantidadeModal); document.getElementById('modalPriceContainer').innerHTML = `<span class="modal-price">R$ ${precoTotal}</span>`;
         }
 
+        // 🔥 FUNÇÃO CALCULAR PRECO PROGRESSIVO CORRIGIDA
         function calcularPrecoProgressivo(qtd) {
             if (!produtoModalAtual) return;
             const prod = produtoModalAtual; 
+            const containerProgressivo = document.getElementById('modalPrecoProgressivo');
+
+            // CORREÇÃO: Se não houver tabela progressiva, LIMPA o texto e sai da função
+            if (!prod.descontoProgressivo || prod.descontoProgressivo.length === 0) {
+                containerProgressivo.innerHTML = '';
+                return;
+            }
+
             let precoFinal = parseFloat(String(prod.precoMaoObra || prod.preco || '0').replace(',', '.')) || 0;
 
             const linhas = document.querySelectorAll('#tabelaPrecosGrid .linha-tabela');
             linhas.forEach(linha => linha.classList.remove('active'));
 
-            if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
-                let valorEncontrado = 0;
-                prod.descontoProgressivo.forEach((regra, index) => {
-                    if (qtd >= regra.min && qtd <= regra.max) {
-                        if (linhas[index]) {
-                            linhas[index].classList.add('active');
-                        }
-                        
-                        if (regra.preco_final && regra.preco_final > 0) {
-                            valorEncontrado = regra.preco_final;
-                        } else if (regra.desconto && regra.desconto > 0) {
-                            valorEncontrado = precoFinal * (1 - regra.desconto / 100);
-                        }
+            let valorEncontrado = 0;
+            prod.descontoProgressivo.forEach((regra, index) => {
+                if (qtd >= regra.min && qtd <= regra.max) {
+                    if (linhas[index]) {
+                        linhas[index].classList.add('active');
                     }
-                });
-                if (valorEncontrado > 0) {
-                    precoFinal = valorEncontrado;
+                    
+                    if (regra.preco_final && regra.preco_final > 0) {
+                        valorEncontrado = regra.preco_final;
+                    } else if (regra.desconto && regra.desconto > 0) {
+                        valorEncontrado = precoFinal * (1 - regra.desconto / 100);
+                    }
                 }
+            });
+            if (valorEncontrado > 0) {
+                precoFinal = valorEncontrado;
             }
-            const precoExibicao = precoFinal.toFixed(2).replace('.', ','); 
-            const containerProgressivo = document.getElementById('modalPrecoProgressivo');
-            if (precoFinal > 0) { containerProgressivo.innerHTML = `💰 Preço unitário: <strong>R$ ${precoExibicao}</strong>`; } else { containerProgressivo.innerHTML = ''; }
+
+            const precoExibicao = precoFinal.toFixed(2).replace('.', ',');
+            
+            // Só exibe se realmente tiver um preço progressivo válido
+            if (precoFinal > 0) { 
+                containerProgressivo.innerHTML = `💰 Preço unitário: <strong>R$ ${precoExibicao}</strong>`; 
+            } else { 
+                containerProgressivo.innerHTML = ''; 
+            }
         }
 
         function simularAtacado() {
