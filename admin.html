@@ -195,6 +195,19 @@
                 </div>
             </div>
 
+            <!-- 🔥 NOVO: DIMENSÕES DO ITEM -->
+            <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
+                <label style="display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="prodMostrarDimensoes" style="width:auto; transform:scale(1.5); margin-right:10px;">
+                    Mostrar Dimensões do item no catálogo?
+                </label>
+                <div id="divDimensoes" class="hidden" style="margin-top:10px;">
+                    <label>Dimensões (Ex: 20cm x 15cm):</label>
+                    <input type="text" id="prodDimensoes" placeholder="Ex: 20cm x 15cm x 2cm">
+                </div>
+            </div>
+            <!-- FIM NOVO -->
+
             <div class="checkbox-group">
                 <label><input type="checkbox" id="prodPromocao" onchange="togglePromoFields()"> Promoção</label>
                 <label><input type="checkbox" id="prodDestaque"> Destaque</label>
@@ -361,7 +374,6 @@
                         Há pedidos em andamento?
                     </label>
                     
-                    <!-- CAMPOS DA AGENDA AUTOMÁTICA -->
                     <div id="divPedidoAtual" class="hidden" style="margin-top: 10px;">
                         <label>Qual pedido está sendo produzido agora?</label>
                         <select id="configPedidoEmFoco" style="width: 100%; padding: 8px;">
@@ -374,7 +386,7 @@
                 </div>
             </div>
 
-            <!-- NOVOS CONTROLES DE CONTATO -->
+            <!-- CONTROLES DE CONTATO -->
             <div style="background:rgba(255,255,255,0.05); border-radius:12px; padding:15px; margin-bottom:15px; margin-top:10px;">
                 <h4 style="margin-bottom:10px; color:var(--ciano-brilhante);">📞 Informações de Contato (Fale Conosco)</h4>
                 <label>Número do WhatsApp (com DDD):</label>
@@ -429,7 +441,12 @@
         var configPrecificacao = { offset: '0,30', matte: '0,40', glossy: '0,50', servicos: [] };
 
         let quillEditor; 
-        let imagensProdutoAtual = []; // 🔥 Array para guardar as imagens em Base64
+        let imagensProdutoAtual = [];
+
+        // 🔥 FUNÇÃO DE VIBRAÇÃO PARA O ADMIN
+        function vibrar(ms = 15) {
+            if (navigator.vibrate) navigator.vibrate(ms);
+        }
 
         async function carregarDados() {
             try {
@@ -571,7 +588,6 @@
             });
         }
 
-        // 🔥 NOVAS FUNÇÕES DE UPLOAD DE IMAGEM
         function handleImageUpload(event) {
             const files = event.target.files;
             for (let i = 0; i < files.length; i++) {
@@ -585,7 +601,7 @@
                     renderizarPreviews();
                 });
             }
-            event.target.value = ''; // Limpa o input para permitir re-selecionar o mesmo arquivo se quiser
+            event.target.value = '';
         }
 
         function removerImagem(index) {
@@ -609,6 +625,7 @@
         }
 
         async function salvarCategoria() {
+            vibrar(15); // 🔥 VIBRAÇÃO NO CLIQUE
             const id = document.getElementById('editCatId').value;
             const tipo = document.getElementById('catTipo').value;
             const nome = document.getElementById('catNome').value.trim();
@@ -842,9 +859,23 @@
                     picker.classList.remove('active');
                 }
             });
+
+            // 🔥 LISTENER PARA O CHECKBOX DE DIMENSÕES
+            const chkDim = document.getElementById('prodMostrarDimensoes');
+            if (chkDim) {
+                chkDim.addEventListener('change', function() {
+                    const divDim = document.getElementById('divDimensoes');
+                    if (this.checked) {
+                        divDim.classList.remove('hidden');
+                    } else {
+                        divDim.classList.add('hidden');
+                    }
+                });
+            }
         });
 
         async function salvarProduto() {
+            vibrar(15); // 🔥 VIBRAÇÃO NO CLIQUE PARA SALVAR
             const id = document.getElementById('editProdId').value;
             const tipoItem = document.getElementById('prodTipoItem').value;
             const catId = document.getElementById('prodCategoria').value;
@@ -862,6 +893,10 @@
             const promoEnd = document.getElementById('prodPromoEnd').value;
             const descPromo = document.getElementById('prodDescPromo').value.trim();
             let precoPromo = '', desconto = 0;
+
+            // 🔥 LEITURA DOS CAMPOS DE DIMENSÕES
+            const mostrarDimensoes = document.getElementById('prodMostrarDimensoes').checked;
+            const dimensoes = document.getElementById('prodDimensoes').value.trim();
 
             if (!catId || !nome) return alert('Preencha nome e categoria.');
 
@@ -914,7 +949,6 @@
                 }
             });
 
-            // 🔥 MODIFICAÇÃO: Usar o array imagensProdutoAtual em vez do fileInput antigo
             async function processarProd(imagens) {
                 const produto = { 
                     tipoItem, componentes,
@@ -924,7 +958,9 @@
                     categoriaId: catId, nome, descricao, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
-                    descontoProgressivo
+                    descontoProgressivo,
+                    // 🔥 ADICIONAR DIMENSÕES AO OBJETO
+                    mostrarDimensoes, dimensoes
                 };
 
                 try {
@@ -947,7 +983,6 @@
                 }
             }
 
-            // 🔥 Passar o array visual ao invés do input de arquivo
             processarProd(imagensProdutoAtual);
         }
 
@@ -977,6 +1012,12 @@
                 document.getElementById('prodPromoEnd').value = p.promoEnd || '';
                 document.getElementById('promoFields').classList.remove('hidden');
             } else { document.getElementById('promoFields').classList.add('hidden'); }
+
+            // 🔥 CARREGAR DIMENSÕES
+            document.getElementById('prodMostrarDimensoes').checked = p.mostrarDimensoes || false;
+            document.getElementById('prodDimensoes').value = p.dimensoes || '';
+            const divDim = document.getElementById('divDimensoes');
+            if (p.mostrarDimensoes) { divDim.classList.remove('hidden'); } else { divDim.classList.add('hidden'); }
 
             const containerDesconto = document.getElementById('containerDescontoProgressivo');
             containerDesconto.innerHTML = '';
@@ -1046,7 +1087,6 @@
                 });
             } else { adicionarLinhaOpcaoProduto(); }
 
-            // 🔥 Carregar as imagens existentes do produto na galeria
             imagensProdutoAtual = p.imagens ? [...p.imagens] : [];
             renderizarPreviews();
         }
@@ -1057,7 +1097,6 @@
             quillEditor.root.innerHTML = ''; 
             document.getElementById('prodPrecoMaoObra').value = ''; 
             
-            // 🔥 Limpar imagens e previews
             imagensProdutoAtual = [];
             renderizarPreviews();
 
@@ -1069,6 +1108,11 @@
             if(containerComp) { containerComp.innerHTML = ''; adicionarLinhaComponente(); }
             document.getElementById('containerOpcoesProduto').innerHTML = ''; adicionarLinhaOpcaoProduto();
             document.getElementById('prodPrecoManualToggle').checked = false; document.getElementById('prodPrecoManual').value = ''; toggleManualPriceFields();
+            
+            // 🔥 LIMPAR CAMPOS DE DIMENSÕES
+            document.getElementById('prodMostrarDimensoes').checked = false;
+            document.getElementById('prodDimensoes').value = '';
+            document.getElementById('divDimensoes').classList.add('hidden');
         }
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
@@ -1093,11 +1137,12 @@
             dados.produtos.forEach(p => {
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
                 const tipo = p.tipoItem === 'kit' ? '[KIT] ' : '';
-                lista.innerHTML += `<div class="item"><span>${tipo}${cat?.nome || '?'} → ${p.nome}</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
+                const temDim = p.mostrarDimensoes ? '📐 ' : '';
+                lista.innerHTML += `<div class="item"><span>${tipo}${temDim}${cat?.nome || '?'} → ${p.nome}</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
             });
         }
 
-        // --- Pedidos (NOVO LAYOUT ATUALIZADO) ---
+        // --- Pedidos ---
         function carregarPedidos() {
             const container = document.getElementById('listaPedidosAdmin');
             container.innerHTML = '<p style="text-align:center; padding:20px;">Carregando pedidos...</p>';
@@ -1166,9 +1211,11 @@
         }
 
         function atualizarStatus(id, novoStatus) {
+            vibrar(10); // 🔥 VIBRAÇÃO
             db.collection('pedidos').doc(id).update({ status: novoStatus }).then(() => {}).catch(err => alert('Erro ao atualizar: ' + err));
         }
         function enviarLinkAvaliacao(id) {
+            vibrar(10);
             const linkAvaliacao = window.location.origin + window.location.pathname.replace('admin.html', 'index.html') + '#avaliar=' + id;
             const mensagem = `*Gudyx Custom* 🎉\n\nSeu pedido foi retirado com sucesso!\n\n📝 Gostaríamos de saber como foi sua experiência. Avalie seu pedido clicando no link abaixo:\n\n${linkAvaliacao}\n\n⭐ Sua opinião é muito importante para nós!`;
             const url = `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(mensagem)}`;
@@ -1214,8 +1261,8 @@
                 container.innerHTML = html;
             });
         }
-        function aprovarAvaliacao(id) { db.collection('avaliacoes').doc(id).update({ aprovado: true }); }
-        function desaprovarAvaliacao(id) { db.collection('avaliacoes').doc(id).update({ aprovado: false }); }
+        function aprovarAvaliacao(id) { vibrar(10); db.collection('avaliacoes').doc(id).update({ aprovado: true }); }
+        function desaprovarAvaliacao(id) { vibrar(10); db.collection('avaliacoes').doc(id).update({ aprovado: false }); }
         function deletarAvaliacao(id) { if(confirm('Deletar avaliação?')) db.collection('avaliacoes').doc(id).delete(); }
 
         // --- Jogos ---
@@ -1238,6 +1285,7 @@
         function removerLinhaCupom(btn) { btn.parentElement.remove(); }
 
         async function salvarConfigJogos() {
+            vibrar(15);
             const sorteAtivo = document.getElementById('sorteAtivo').checked;
             const sorteInicio = document.getElementById('sorteInicio').value;
             const sorteFim = document.getElementById('sorteFim').value;
@@ -1277,6 +1325,7 @@
         function removerLinhaServicoGlobal(btn) { btn.parentElement.remove(); }
 
         async function salvarPrecificacao() {
+            vibrar(15);
             const offset = document.getElementById('precoOffset').value.trim();
             const matte = document.getElementById('precoMatte').value.trim();
             const glossy = document.getElementById('precoGlossy').value.trim();
@@ -1294,6 +1343,7 @@
 
         // --- Design ---
         async function salvarDesign() {
+            vibrar(15);
             const designData = {
                 bgUrl: document.getElementById('designBgUrl').value.trim() || '',
                 bgColor: document.getElementById('designBgColor').value.trim() || '#0b041c',
@@ -1335,6 +1385,7 @@
         }
 
         async function salvarFrases() {
+            vibrar(15);
             const lista = document.getElementById('frasesInput').value.split('\n').map(s => s.trim()).filter(s => s);
             await db.collection('config').doc('frases').set({ lista });
             alert('✅ Frases salvas!');
@@ -1342,6 +1393,7 @@
 
         function carregarFAQ() { document.getElementById('listaFaq').innerHTML = dados.faq.map((faq, i) => `<div class="item"><span><strong>P:</strong> ${faq.pergunta}<br>R: ${faq.resposta}</span><div><button class="btn-edit" onclick="editarFaq(${i})">✏️</button><button onclick="removerFaq(${i})">Remover</button></div></div>`).join('') || '<p>Nenhuma FAQ.</p>'; }
         async function salvarFaq() {
+            vibrar(15);
             const id = document.getElementById('editFaqId').value;
             const pergunta = document.getElementById('faqPergunta').value.trim();
             const resposta = document.getElementById('faqResposta').value.trim();
@@ -1395,6 +1447,7 @@
         });
 
         async function salvarConfigLoja() {
+            vibrar(15);
             const prazoMin = parseInt(document.getElementById('configPrazoMin').value);
             const prazoMax = parseInt(document.getElementById('configPrazoMax').value);
             const pedidosEmAndamento = document.getElementById('configPedidosEmAndamento').checked;
