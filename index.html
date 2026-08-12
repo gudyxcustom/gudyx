@@ -1308,7 +1308,7 @@
             }
         }
 
-        // 🔥 FUNÇÃO SELECIONAR CATEGORIA CORRIGIDA (SEM SCROLL FORÇADO PARA BAIXO)
+        // 🔥 FUNÇÃO SELECIONAR CATEGORIA CORRIGIDA (COM SCROLL SUAVE ATÉ OS PRODUTOS)
         function selecionarCategoria(tipo,catId){
             // 🔥 VIBRAÇÃO TÁTIL AO SELECIONAR UMA CATEGORIA NO MOBILE
             if (window.innerWidth <= 768 && navigator.vibrate) {
@@ -1357,6 +1357,17 @@
                 container.addEventListener('scroll', onScrollMobile);
 
                 document.getElementById('paginacaoContainer').innerHTML = '';
+
+                // 🔥 CORREÇÃO: Rolar suavemente até o início da lista de produtos
+                setTimeout(() => {
+                    // Garante que o container já carregou os primeiros elementos
+                    if (container.children.length > 0) {
+                        const headerHeight = document.getElementById('stickyCategories')?.offsetHeight || 0;
+                        // Calcula a posição do topo do container menos a altura do header grudado
+                        const scrollY = container.offsetTop - headerHeight - 10;
+                        window.scrollTo({ top: scrollY, behavior: 'smooth' });
+                    }
+                }, 400);
             } else {
                 produtosFiltrados.forEach((prod, index) => {
                     renderizarCardProduto(prod, container, index);
