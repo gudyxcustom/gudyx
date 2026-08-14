@@ -433,7 +433,7 @@
             <div class="main-area">
                 <div class="mascote-block">
                     <div class="mascote-wrapper" id="mascoteWrapper"><div class="mascote-glow"></div><img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx" id="mascoteImg" loading="lazy"><div class="fala-container" id="falaContainer"><span class="fala-cursor">|</span></div></div>
-                    <button class="btn-acessar" onclick="navegarPara('escolhaScreen')"><span>Acessar Catálogo</span></button>
+                    <button class="btn-acessar" onclick="abrirCatalogoInicial()"><span>Acessar Catálogo</span></button>
                 </div>
                 <div class="promo-slider-container"><div class="slider-box" id="sliderBox"><div class="fire-badge">PROMO</div><div id="dynamicSliderContainer"></div><div id="sliderDots"></div></div></div>
             </div>
@@ -1104,7 +1104,38 @@ html lang="pt-BR">
         function isEmEstoque(prod) { return true; }
 
         function salvarDados() { localStorage.setItem('gudyxDados', JSON.stringify(dados)); }
-        function mostrarTela(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function mostrarTela(id) {
+            const alvo = document.getElementById(id);
+            if (!alvo) {
+                console.error('Tela não encontrada:', id);
+                return false;
+            }
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+                screen.style.display = 'none';
+            });
+            alvo.classList.add('active');
+            alvo.style.display = 'flex';
+            return true;
+        }
+
+        function abrirCatalogoInicial() {
+            const escolha = document.getElementById('escolhaScreen');
+            if (!escolha) {
+                navegarPara('produtosScreen');
+                return;
+            }
+
+            // Abre a tela de escolha de forma explícita, sem depender apenas do CSS.
+            mostrarTela('escolhaScreen');
+            atualizarNavMobile('escolhaScreen');
+            try {
+                window.history.pushState({ screen: 'escolhaScreen' }, '', '#escolhaScreen');
+            } catch (e) {
+                console.warn('Histórico do navegador indisponível:', e);
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         // 🔥 SISTEMA DE NAVEGAÇÃO COM HISTÓRICO (BOTÃO VOLTAR DO CELULAR) E SCROLL TOPO
         function atualizarNavMobile(id) {
