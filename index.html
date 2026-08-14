@@ -235,6 +235,38 @@
   #stickyCategories{position:sticky;top:53px;z-index:110;padding:8px 2px;margin:0 0 8px;border:0;border-radius:0;background:rgba(9,4,22,.84);max-width:none;gap:7px;}
   #stickyCategories button{font-size:.72rem;padding:7px 12px;border-radius:12px;}
   .produtos-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:6px;}
+  /* CORREÇÃO DEFINITIVA: categorias reais do catálogo em grade no mobile */
+  .grid-categorias{
+    display:grid !important;
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:10px !important;
+    width:100% !important;
+    max-width:100% !important;
+    margin:8px 0 0 !important;
+    align-items:stretch !important;
+  }
+  .grid-categorias .categoria-card{
+    width:100% !important;
+    min-width:0 !important;
+    min-height:170px !important;
+    padding:14px 10px !important;
+    border-radius:18px !important;
+    gap:9px !important;
+    justify-content:center !important;
+  }
+  .grid-categorias .categoria-card .categoria-img{
+    width:92px !important;
+    height:92px !important;
+    flex-shrink:0 !important;
+  }
+  .grid-categorias .categoria-card h4{
+    font-size:.78rem !important;
+    line-height:1.15 !important;
+    min-height:2.2em;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
   .produto-card{padding:9px 8px 11px;min-height:252px;border-radius:16px;gap:7px;overflow:visible;}
   .produto-card img{height:112px;border-radius:11px;padding:4px;}
   .produto-card h5{font-size:.76rem;line-height:1.14;min-height:2.3em;}
