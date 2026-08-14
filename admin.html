@@ -67,6 +67,19 @@
         #passError { color:#ff4455; font-size:0.8rem; margin-top:10px; display:none; }
         select option { color: #000; background-color: #fff; }
         input[type="file"], input[type="checkbox"] { padding: 5px; width: auto; }
+
+        .cadastro-helper { margin: 12px 0 15px; padding: 14px; border: 1px solid var(--vidro-borda); border-radius: 14px; background: rgba(255,255,255,0.035); }
+        .cadastro-helper-title { display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+        .cadastro-helper-title strong { font-size:0.95rem; }
+        .helper-actions { display:flex; gap:8px; flex-wrap:wrap; }
+        .helper-actions button { margin:0; padding:8px 14px; font-size:0.82rem; }
+        .descricao-sugestoes { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:8px; margin-top:10px; }
+        .descricao-sugestao { text-align:left; border:1px solid rgba(255,255,255,0.08); background:rgba(255,255,255,0.04); border-radius:10px; padding:10px; color:#fff; cursor:pointer; }
+        .descricao-sugestao:hover { border-color:var(--ciano-brilhante); background:rgba(172,40,255,0.12); }
+        .descricao-sugestao small { display:block; opacity:0.6; margin-top:3px; }
+        .gerador-status { font-size:0.8rem; opacity:0.7; margin-top:8px; min-height:18px; }
+        .produto-quick-actions { display:flex; gap:5px; flex-wrap:wrap; justify-content:flex-end; }
+        .produto-quick-actions button { padding:4px 9px !important; font-size:0.75rem !important; }
         button { padding: 10px 20px; border: none; border-radius: 30px; background: linear-gradient(135deg, #a028ff, #00f2fe); color: #fff; font-weight: 600; cursor: pointer; transition: 0.3s; margin-right: 10px; margin-bottom: 5px; }
         button:hover { transform: scale(1.05); }
         .btn-danger { background: #ff4455; }
@@ -157,6 +170,22 @@
                 <div id="emoji-grid"></div>
             </div>
             <div id="editor-container"></div>
+
+            <!-- FACILITADORES DE CADASTRO -->
+            <div class="cadastro-helper">
+                <div class="cadastro-helper-title">
+                    <strong>⚡ Facilitadores de cadastro</strong>
+                    <span style="font-size:0.78rem;opacity:0.6;">Use seus próprios produtos como referência</span>
+                </div>
+                <div class="helper-actions">
+                    <button type="button" class="btn-secondary" onclick="gerarDescricaoBaseadaNosProdutos()">✨ Gerar descrição</button>
+                    <button type="button" class="btn-secondary" onclick="usarDescricaoModelo()">🧩 Usar modelo</button>
+                    <button type="button" class="btn-secondary" onclick="duplicarProdutoAtual()">📋 Duplicar produto</button>
+                    <button type="button" class="btn-secondary" onclick="limparFormularioProduto()">🆕 Novo produto</button>
+                </div>
+                <div id="descricaoSugestoes" class="descricao-sugestoes"></div>
+                <div id="geradorStatus" class="gerador-status"></div>
+            </div>
 
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label style="display:flex; align-items:center; gap:10px;">
@@ -958,6 +987,7 @@
                     categoriaId: catId, nome, descricao, imagens: imagens || [], 
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
+                    dataCriacao: id ? (dados.produtos.find(p => p.id === id)?.dataCriacao || new Date().toISOString()) : new Date().toISOString(),
                     descontoProgressivo,
                     // 🔥 ADICIONAR DIMENSÕES AO OBJETO
                     mostrarDimensoes, dimensoes
@@ -996,6 +1026,7 @@
             document.getElementById('prodCategoria').value = p.categoriaId;
             document.getElementById('prodNome').value = p.nome;
             quillEditor.root.innerHTML = p.descricao || '';
+            document.getElementById('geradorStatus').textContent = '💡 Você está editando este produto. Também pode duplicá-lo para criar uma nova variação.';
             document.getElementById('prodPrecoManualToggle').checked = p.usarPrecoManual || false;
             document.getElementById('prodPrecoManual').value = p.precoManual || '';
             toggleManualPriceFields();
@@ -1091,6 +1122,129 @@
             renderizarPreviews();
         }
 
+        function limparTextoHtml(texto = '') {
+            const temp = document.createElement('div');
+            temp.innerHTML = texto;
+            return (temp.textContent || temp.innerText || '').replace(/\s+/g, ' ').trim();
+        }
+
+        function escaparHtml(texto = '') {
+            return texto.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+        }
+
+        function produtoAtualDoFormulario() {
+            const id = document.getElementById('editProdId').value;
+            return id ? dados.produtos.find(p => p.id === id) : null;
+        }
+
+        function obterProdutosReferencia() {
+            const catId = document.getElementById('prodCategoria').value;
+            const nomeAtual = document.getElementById('prodNome').value.trim().toLowerCase();
+            let candidatos = (dados.produtos || []).filter(p => p.id !== document.getElementById('editProdId').value && p.descricao);
+            if (catId) candidatos = candidatos.filter(p => p.categoriaId === catId).concat(candidatos.filter(p => p.categoriaId !== catId));
+            const termos = nomeAtual.split(/\s+/).filter(t => t.length > 2);
+            candidatos.sort((a,b) => {
+                const score = p => {
+                    const nome = (p.nome || '').toLowerCase();
+                    const catScore = p.categoriaId === catId ? 10 : 0;
+                    const termoScore = termos.reduce((acc,t) => acc + (nome.includes(t) ? 3 : 0), 0);
+                    return catScore + termoScore + Math.min(limparTextoHtml(p.descricao || '').length / 500, 3);
+                };
+                return score(b) - score(a);
+            });
+            return candidatos.slice(0, 5);
+        }
+
+        function extrairFrasesReferencia(produtos) {
+            const frases = [];
+            produtos.forEach(p => {
+                const texto = limparTextoHtml(p.descricao || '');
+                if (!texto) return;
+                texto.split(/(?<=[.!?])\s+/).map(x => x.trim()).filter(x => x.length >= 35 && x.length <= 180).slice(0, 4).forEach(fr => frases.push(fr));
+            });
+            return [...new Set(frases)].slice(0, 8);
+        }
+
+        function gerarVariacoesDescricao(nome, categoria, frases) {
+            const ref1 = frases[0] || 'Uma opção personalizada para deixar sua comemoração ainda mais especial.';
+            const ref2 = frases[1] || 'Produzido com atenção aos detalhes e pensado para combinar com o seu momento.';
+            const assunto = categoria ? categoria.toLowerCase() : 'produto';
+            return [
+                {
+                    titulo: 'Vendedora',
+                    texto: `<p>✨ <strong>${escaparHtml(nome)}</strong></p><p>${escaparHtml(ref1)}</p><p>💜 Uma escolha especial para quem procura um ${escaparHtml(assunto)} personalizado e cheio de detalhes.</p>`
+                },
+                {
+                    titulo: 'Elegante',
+                    texto: `<p><strong>${escaparHtml(nome)}</strong></p><p>${escaparHtml(ref2)}</p><p>✨ Personalização pensada para valorizar cada detalhe da sua ocasião.</p>`
+                },
+                {
+                    titulo: 'Direta',
+                    texto: `<p>✨ <strong>${escaparHtml(nome)}</strong></p><ul><li>Personalizado para sua ocasião</li><li>Acabamento cuidadoso</li><li>Produção feita sob encomenda</li></ul><p>${escaparHtml(ref1)}</p>`
+                }
+            ];
+        }
+
+        function gerarDescricaoBaseadaNosProdutos() {
+            const nome = document.getElementById('prodNome').value.trim();
+            const catId = document.getElementById('prodCategoria').value;
+            const cat = dados.categorias.find(c => c.id === catId);
+            const status = document.getElementById('geradorStatus');
+            const box = document.getElementById('descricaoSugestoes');
+            if (!nome) return alert('Digite primeiro o nome do produto.');
+            const referencias = obterProdutosReferencia();
+            if (!referencias.length) {
+                status.textContent = 'Não encontrei descrições de referência suficientes. Você ainda pode usar um modelo.';
+                box.innerHTML = '';
+                return;
+            }
+            const frases = extrairFrasesReferencia(referencias);
+            const variacoes = gerarVariacoesDescricao(nome, cat?.nome || 'Produto', frases);
+            box.innerHTML = variacoes.map((v,i) => `<button type="button" class="descricao-sugestao" onclick="aplicarSugestaoDescricao(${i})"><strong>${v.titulo}</strong><small>Gerada a partir do estilo de ${referencias.length} produto(s) semelhante(s)</small></button>`).join('');
+            window._gudyxSugestoesDescricao = variacoes;
+            status.textContent = `Referências usadas: ${referencias.map(p => p.nome).slice(0,3).join(', ')}${referencias.length > 3 ? '...' : ''}`;
+        }
+
+        function aplicarSugestaoDescricao(index) {
+            const sugestao = window._gudyxSugestoesDescricao?.[index];
+            if (!sugestao || !quillEditor) return;
+            quillEditor.root.innerHTML = sugestao.texto;
+            document.getElementById('geradorStatus').textContent = '✅ Descrição aplicada. Você pode editar antes de salvar.';
+        }
+
+        function usarDescricaoModelo() {
+            const nome = document.getElementById('prodNome').value.trim();
+            const catId = document.getElementById('prodCategoria').value;
+            const cat = dados.categorias.find(c => c.id === catId);
+            if (!nome) return alert('Digite primeiro o nome do produto.');
+            const modelo = `<p>✨ <strong>${escaparHtml(nome)}</strong></p><p>Personalizado para deixar sua ocasião ainda mais especial.</p><p>💜 Produção feita com atenção aos detalhes e de acordo com a sua necessidade.</p><p>📌 Consulte as opções de personalização disponíveis para ${escaparHtml((cat?.nome || 'este produto').toLowerCase())}.</p>`;
+            quillEditor.root.innerHTML = modelo;
+            document.getElementById('geradorStatus').textContent = '✅ Modelo aplicado. Personalize o texto conforme necessário.';
+        }
+
+        async function duplicarProduto(id) {
+            const p = dados.produtos.find(prod => prod.id === id);
+            if (!p) return;
+            const copia = JSON.parse(JSON.stringify(p));
+            delete copia.id;
+            delete copia.cliques;
+            copia.nome = `${p.nome} - Cópia`;
+            copia.dataCriacao = new Date().toISOString();
+            const docRef = await db.collection('produtos').add(copia);
+            await db.collection('produtos').doc(docRef.id).update({ id: docRef.id });
+            await carregarDados();
+            atualizarListaProdutos();
+            editarProduto(docRef.id);
+            document.getElementById('geradorStatus').textContent = '✅ Produto duplicado. Altere nome, imagens e o que precisar e salve.';
+            alert('✅ Produto duplicado! Agora você está editando a cópia.');
+        }
+
+        async function duplicarProdutoAtual() {
+            const atual = produtoAtualDoFormulario();
+            if (!atual) return alert('Abra um produto existente para duplicá-lo ou salve um novo produto primeiro.');
+            await duplicarProduto(atual.id);
+        }
+
         async function removerProduto(id) { if (confirm('Remover?')) { await db.collection('produtos').doc(id).delete(); await carregarDados(); atualizarListaProdutos(); } }
         function limparFormularioProduto() { 
             document.getElementById('editProdId').value = ''; document.getElementById('prodNome').value = ''; 
@@ -1113,6 +1267,9 @@
             document.getElementById('prodMostrarDimensoes').checked = false;
             document.getElementById('prodDimensoes').value = '';
             document.getElementById('divDimensoes').classList.add('hidden');
+            document.getElementById('descricaoSugestoes').innerHTML = '';
+            document.getElementById('geradorStatus').textContent = '';
+            window._gudyxSugestoesDescricao = [];
         }
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
@@ -1138,7 +1295,7 @@
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
                 const tipo = p.tipoItem === 'kit' ? '[KIT] ' : '';
                 const temDim = p.mostrarDimensoes ? '📐 ' : '';
-                lista.innerHTML += `<div class="item"><span>${tipo}${temDim}${cat?.nome || '?'} → ${p.nome}</span><div><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️</button><button onclick="removerProduto('${p.id}')">Remover</button></div></div>`;
+                lista.innerHTML += `<div class="item"><span>${tipo}${temDim}${cat?.nome || '?'} → ${p.nome}</span><div class="produto-quick-actions"><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️ Editar</button><button class="btn-secondary" onclick="duplicarProduto('${p.id}')">📋 Duplicar</button><button onclick="removerProduto('${p.id}')">🗑️ Remover</button></div></div>`;
             });
         }
 
