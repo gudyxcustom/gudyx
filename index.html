@@ -153,7 +153,113 @@
             transform: translateY(-3px);
             box-shadow: 0 0 50px rgba(172,40,255,0.8);
         }
-    </style>
+    
+/* ==============================
+   GUDYX MOBILE 2026 — VITRINE
+   ============================== */
+@media (max-width:768px){
+  body{background:#090416;color:#f8f4ff;padding-bottom:74px;}
+  .home-screen{padding:12px 12px 90px;gap:14px;max-width:100%;}
+  .header-top{padding:4px 0 0;}
+  .header-top .logo-img{max-height:135px;max-width:78vw;}
+  .header-top .subtitle{font-size:.72rem;letter-spacing:1.2px;line-height:1.35;max-width:320px;}
+  .header-top .slogan{font-size:.72rem;letter-spacing:.5px;opacity:.65;max-width:300px;}
+  .modo-toggle{top:3px;right:2px;width:38px;height:38px;padding:0;border-radius:14px;font-size:1rem;display:flex;align-items:center;justify-content:center;}
+  .search-global{margin:8px 0 2px;padding:7px 10px;border-radius:16px;max-width:none;box-shadow:0 8px 30px rgba(0,0,0,.25);}
+  .search-global input{font-size:.92rem;padding:9px 5px;}
+  .main-area{display:flex;flex-direction:column;gap:12px;padding:0;}
+  .mascote-block{display:none;}
+  .promo-slider-container{width:100%;max-width:none;min-width:0;margin:0;padding:0;}
+  .slider-box{border-radius:20px;}
+  #dynamicSliderContainer .slide-item{padding:13px 10px 10px;}
+  #dynamicSliderContainer .slide-item img{max-height:190px;border-radius:14px;}
+  .mobile-shop-intro{display:block;}
+  .mobile-shop-intro h2{font-size:1.15rem;letter-spacing:.2px;margin:0 0 3px;font-weight:700;}
+  .mobile-shop-intro p{font-size:.78rem;opacity:.62;margin:0;}
+  .mobile-section-head{display:flex;justify-content:space-between;align-items:center;margin:4px 0 7px;}
+  .mobile-section-head strong{font-size:.92rem;letter-spacing:.3px;}
+  .mobile-section-head button{background:none;border:0;color:var(--ciano-brilhante);font-size:.75rem;font-weight:700;padding:5px;}
+  .mobile-category-scroller{display:flex;gap:10px;overflow-x:auto;padding:3px 2px 10px;scroll-snap-type:x proximity;-webkit-overflow-scrolling:touch;}
+  .mobile-category-scroller::-webkit-scrollbar{display:none;}
+  .mobile-cat{position:relative;flex:0 0 108px;height:122px;border:1px solid rgba(255,255,255,.1);border-radius:18px;overflow:hidden;background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(172,40,255,.11));box-shadow:0 8px 25px rgba(0,0,0,.18);scroll-snap-align:start;cursor:pointer;}
+  .mobile-cat:active{transform:scale(.97);}
+  .mobile-cat img{width:100%;height:100%;object-fit:cover;opacity:.78;}
+  .mobile-cat::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,rgba(8,3,20,.95) 0%,rgba(8,3,20,.16) 65%,transparent 100%);}
+  .mobile-cat .mobile-cat-text{position:absolute;left:9px;right:7px;bottom:9px;z-index:2;font-size:.76rem;font-weight:700;line-height:1.05;text-align:left;}
+  .mobile-cat .mobile-cat-icon{position:absolute;top:8px;left:8px;z-index:2;width:28px;height:28px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(11,4,28,.65);border:1px solid rgba(255,255,255,.12);font-size:.78rem;}
+  .mobile-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}
+  .mobile-quick{border:1px solid rgba(255,255,255,.09);background:rgba(255,255,255,.045);border-radius:15px;padding:12px;display:flex;align-items:center;gap:10px;min-height:58px;text-align:left;color:#fff;}
+  .mobile-quick i{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(160,40,255,.25),rgba(0,242,254,.13));color:var(--ciano-brilhante);font-size:.9rem;flex-shrink:0;}
+  .mobile-quick b{font-size:.76rem;display:block;}
+  .mobile-quick span{font-size:.64rem;opacity:.52;display:block;margin-top:2px;}
+  .atalhos-container{display:none;}
+  .mais-vendidos-section,.depoimentos-section,.instagram-section{padding:14px 0;border-top:1px solid rgba(255,255,255,.07);}
+  .mais-vendidos-section .section-title,.depoimentos-section .section-title,.instagram-section .section-title{font-size:.94rem;letter-spacing:1.6px;text-align:left;font-weight:700;margin-bottom:8px;}
+  .grid-vendidos{display:flex;overflow-x:auto;gap:10px;padding:2px 2px 8px;scroll-snap-type:x proximity;}
+  .grid-vendidos::-webkit-scrollbar{display:none;}
+  .card-vendido{flex:0 0 145px;min-height:188px;padding:10px;border-radius:16px;gap:6px;scroll-snap-align:start;}
+  .card-vendido img{width:100%;height:105px;object-fit:contain;border-radius:12px;}
+  .card-vendido h4{font-size:.78rem;line-height:1.15;min-height:34px;}
+  .card-vendido .preco{font-size:.9rem;}
+  .fire-badge-mini{top:-8px;left:-5px;font-size:.55rem;padding:4px 8px;letter-spacing:1px;}
+
+  .screen#escolhaScreen .listagem-screen{padding:18px 12px 90px!important;}
+  .screen#escolhaScreen h2{font-size:1.3rem!important;letter-spacing:.5px!important;}
+  .screen#escolhaScreen > .listagem-screen > div{gap:10px!important;margin-top:14px!important;}
+  .screen#escolhaScreen .categoria-card{padding:26px 18px!important;min-height:155px;border-radius:20px!important;}
+  .screen#escolhaScreen .categoria-card i{font-size:3rem!important;}
+
+  .listagem-screen{padding:12px 10px 88px;width:100%;background:transparent;}
+  .listagem-header{position:sticky;top:0;z-index:120;background:rgba(9,4,22,.86);backdrop-filter:blur(15px);padding:8px 2px;border-radius:0 0 16px 16px;gap:8px;}
+  .listagem-header .btn-voltar{display:none;}
+  .listagem-header h2{font-size:1.1rem;letter-spacing:1.4px;text-align:left;flex:1;}
+  .listagem-header > .btn-voltar:last-of-type{display:flex!important;padding:8px 12px;font-size:.72rem;}
+  .view-toggle{margin-left:0;}
+  .view-toggle button{padding:7px 9px;font-size:.75rem;}
+  .search-box{max-width:none;border-radius:16px;padding:5px 11px;margin:8px 0;}
+  .search-box input{font-size:.87rem;}
+  .filtros-container{display:flex;overflow-x:auto;flex-wrap:nowrap;margin:6px 0 8px;gap:7px;padding-bottom:4px;}
+  .filtros-container::-webkit-scrollbar{display:none;}
+  .filtros-container>label:first-child{display:none;}
+  .filtros-container select,.filtros-container input,.filtros-container button{font-size:.72rem;padding:7px 10px;white-space:nowrap;}
+  .filtros-container .preco-range{display:none;}
+
+  #stickyCategories{position:sticky;top:51px;z-index:110;padding:8px 2px;margin:0 0 8px;border:0;border-radius:0;background:rgba(9,4,22,.82);max-width:none;gap:7px;}
+  #stickyCategories button{font-size:.72rem;padding:7px 12px;border-radius:12px;}
+  #produtosCategoriasContainer,#servicosCategoriasContainer{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-bottom:8px;}
+  .categoria-card{padding:13px 9px;border-radius:16px;gap:8px;}
+  .categoria-card .categoria-img{width:92px;height:92px;border-radius:22px;}
+  .categoria-card h4{font-size:.78rem;line-height:1.15;}
+
+  .produtos-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;margin-top:6px;}
+  .produto-card{padding:9px 8px 11px;min-height:252px;border-radius:16px;gap:7px;overflow:visible;}
+  .produto-card img{height:112px;border-radius:11px;padding:4px;}
+  .produto-card h5{font-size:.76rem;line-height:1.14;min-height:2.3em;}
+  .produto-card .preco,.produto-card .preco-atual{font-size:.9rem;}
+  .produto-card .preco-promo{font-size:.7rem;}
+  .produto-card .descricao{font-size:.67rem;-webkit-line-clamp:2;line-height:1.25;}
+  .produto-card .botoes-lista{gap:4px;}
+  .btn-add-cart,.btn-wa-card{padding:8px 9px;font-size:.68rem;}
+  .btn-favorite{width:28px;height:28px;font-size:1rem;top:7px;right:7px;}
+  .quick-view{display:none!important;}
+  .badge-promo,.badge-destaque,.badge-novo{font-size:.48rem!important;padding:2px 6px!important;}
+  .badge-esgotado{font-size:.62rem;padding:4px 8px;}
+  .badge-estoque-baixo{font-size:.48rem;padding:2px 6px;bottom:3px;}
+
+  .mobile-nav{height:68px;padding:7px 6px;background:rgba(8,3,18,.96);border-top:1px solid rgba(255,255,255,.09);box-shadow:0 -12px 35px rgba(0,0,0,.28);}
+  .mobile-nav button,.mobile-nav a{min-width:0;flex:1;font-size:1.08rem;justify-content:center;color:#8f8a9e!important;position:relative;}
+  .mobile-nav button span,.mobile-nav a span{font-size:.58rem;line-height:1;}
+  .mobile-nav button.active,.mobile-nav button.mobile-nav-active,.mobile-nav a.mobile-nav-active{color:var(--ciano-brilhante)!important;}
+  .mobile-nav button.active::before,.mobile-nav button.mobile-nav-active::before,.mobile-nav a.mobile-nav-active::before{content:"";position:absolute;top:-5px;width:24px;height:3px;border-radius:99px;background:linear-gradient(90deg,var(--rosa-neon),var(--ciano-brilhante));}
+  .float-cart{bottom:82px!important;right:12px!important;width:48px;height:48px;font-size:1.3rem;}
+  .float-fav{bottom:139px!important;right:12px!important;width:40px;height:40px;font-size:1.1rem;}
+  .float-wa{bottom:190px!important;right:12px!important;width:46px;height:46px;font-size:1.35rem;}
+  .btn-top{bottom:245px!important;right:12px!important;width:36px;height:36px;font-size:1rem;}
+  .footer{padding:13px 12px 82px!important;font-size:.67rem;}
+}
+@media (min-width:769px){.mobile-shop-intro,.mobile-only{display:none!important;}.mobile-category-scroller,.mobile-quick-grid{display:none!important;}}
+
+</style>
 </head>
 <body>
     <!-- CONTAINER DE TOASTS -->
@@ -318,6 +424,25 @@
                 </div>
             </div>
             <div class="search-global"><i class="fas fa-search"></i><input type="text" id="searchGlobal" placeholder="O que você procura?" oninput="debounceBuscaGlobal()"><button onclick="buscaGlobal()"><i class="fas fa-search"></i></button></div>
+
+            <div class="mobile-shop-intro mobile-only">
+                <h2>✨ Encontre seu próximo personalizado</h2>
+                <p>Escolha uma categoria ou pesquise pelo que você precisa.</p>
+            </div>
+            <div class="mobile-only">
+                <div class="mobile-section-head"><strong>🛍️ Categorias</strong><button onclick="abrirCategoriasMobile()">Ver todas <i class="fas fa-chevron-right"></i></button></div>
+                <div class="mobile-category-scroller" id="mobileHomeCategories"></div>
+            </div>
+            <div class="mobile-only">
+                <div class="mobile-section-head"><strong>💡 Procure por ocasião</strong></div>
+                <div class="mobile-quick-grid">
+                    <button class="mobile-quick" onclick="buscarPorPalavraMobile('aniversário')"><i class="fas fa-cake-candles"></i><span><b>Aniversário</b><span>Festas e lembranças</span></span></button>
+                    <button class="mobile-quick" onclick="buscarPorPalavraMobile('personalizado')"><i class="fas fa-wand-magic-sparkles"></i><span><b>Personalizados</b><span>Feitos para você</span></span></button>
+                    <button class="mobile-quick" onclick="buscarPorPalavraMobile('presente')"><i class="fas fa-gift"></i><span><b>Presentear</b><span>Ideias para surpreender</span></span></button>
+                    <button class="mobile-quick" onclick="buscarPorPalavraMobile('adesivo')"><i class="fas fa-tag"></i><span><b>Impressos</b><span>Adesivos, cards e mais</span></span></button>
+                </div>
+            </div>
+
             <div class="main-area">
                 <div class="mascote-block">
                     <div class="mascote-wrapper" id="mascoteWrapper"><div class="mascote-glow"></div><img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx" id="mascoteImg" loading="lazy"><div class="fala-container" id="falaContainer"><span class="fala-cursor">|</span></div></div>
@@ -369,12 +494,12 @@
         </div>
     </div>
 
-    <nav class="mobile-nav">
-        <button onclick="navegarPara('homeScreen')" class="active"><i class="fas fa-home"></i><span>Home</span></button>
-        <button onclick="navegarPara('escolhaScreen')"><i class="fas fa-search"></i><span>Buscar</span></button>
-        <button onclick="abrirDrawer()"><i class="fas fa-shopping-cart"></i><span>Carrinho</span></button>
-        <button onclick="abrirFavDrawer()"><i class="fas fa-heart"></i><span>Favoritos</span></button>
-        <a href="https://wa.me/5521976121076" target="_blank" style="text-decoration:none;color:var(--cor-texto);display:flex;flex-direction:column;align-items:center;gap:2px;"><i class="fab fa-whatsapp" style="color:#25D366;"></i><span>WhatsApp</span></a>
+    <nav class="mobile-nav" id="mobileNav">
+        <button data-nav="homeScreen" onclick="navegarPara('homeScreen')" class="active"><i class="fas fa-home"></i><span>Início</span></button>
+        <button data-nav="produtosScreen" onclick="abrirCategoriasMobile()"><i class="fas fa-layer-group"></i><span>Categorias</span></button>
+        <button data-nav="produtosScreen" onclick="abrirBuscaMobile()"><i class="fas fa-search"></i><span>Buscar</span></button>
+        <button data-action="cart" onclick="abrirDrawer()"><i class="fas fa-shopping-cart"></i><span>Carrinho</span></button>
+        <button data-action="fav" onclick="abrirFavDrawer()"><i class="fas fa-heart"></i><span>Favoritos</span></button>
     </nav>
 
     <footer class="footer">
@@ -435,7 +560,7 @@
 
         async function carregarDadosFirebase() { 
             try { 
-                const snapCat = await db.collection('categorias').get(); dados.categorias = snapCat.docs.map(d => ({ id: d.id, ...d.data() })); 
+                const snapCat = await db.collection('categorias').get(); dados.categorias = snapCat.docs.map(d => ({ id: d.id, ...d.data() })); atualizarVitrineMobile(); 
                 const snapProd = await db.collection('produtos').get(); dados.produtos = snapProd.docs.map(d => ({ id: d.id, ...d.data() })); 
                 const snapFrases = await db.collection('config').doc('frases').get(); dados.frases = snapFrases.exists ? snapFrases.data().lista : []; 
                 const snapFaq = await db.collection('config').doc('faq').get(); dados.faq = snapFaq.exists ? snapFaq.data().perguntas : []; 
@@ -490,7 +615,8 @@
         }
 
         function iniciarListenerFirebase() { 
-            db.collection('produtos').onSnapshot(s => { dados.produtos = s.docs.map(d => ({ id: d.id, ...d.data() })); if (document.getElementById('homeScreen').classList.contains('active')) { resetarSlider(); carregarMaisVendidos(); } });
+            db.collection('produtos').onSnapshot(s => { dados.produtos = s.docs.map(d => ({ id: d.id, ...d.data() })); if (document.getElementById('homeScreen').classList.contains('active')) { resetarSlider(); carregarMaisVendidos(); atualizarVitrineMobile(); } });
+            db.collection('categorias').onSnapshot(s => { dados.categorias = s.docs.map(d => ({ id: d.id, ...d.data() })); atualizarVitrineMobile(); });
             db.collection('config').doc('jogos').onSnapshot(s => { if (s.exists) { configJogos = s.data(); atualizarVisibilidadeJogos(); } });
             db.collection('config').doc('precificacao').onSnapshot(s => { if (s.exists) { configPrecificacao = s.data(); } });
             db.collection('config').doc('design').onSnapshot(s => { if (s.exists) { const d = s.data(); if (d.bgUrl) document.querySelector('.bg-container').style.backgroundImage = `url('${d.bgUrl}')`; if (d.bgColor) document.documentElement.style.setProperty('--bg-body', d.bgColor); if (d.cardBg) document.documentElement.style.setProperty('--vidro-fundo', d.cardBg); if (d.cardBorder) document.documentElement.style.setProperty('--vidro-borda', d.cardBorder); if (d.mascoteUrl) { document.getElementById('mascoteImg').src = d.mascoteUrl; document.querySelector('#peekingHead img').src = d.mascoteUrl; document.querySelector('#chatModal .chat-header img').src = d.mascoteUrl; document.getElementById('miniGluudyx').querySelector('img').src = d.mascoteUrl; } } });
@@ -517,8 +643,59 @@
         function mostrarTela(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
 
         // 🔥 SISTEMA DE NAVEGAÇÃO COM HISTÓRICO (BOTÃO VOLTAR DO CELULAR) E SCROLL TOPO
+        function atualizarNavMobile(id) {
+            document.querySelectorAll('#mobileNav [data-nav]').forEach(btn => btn.classList.toggle('mobile-nav-active', btn.dataset.nav === id));
+            if (id === 'homeScreen') { const home = document.querySelector('#mobileNav [data-nav="homeScreen"]'); if (home) home.classList.add('mobile-nav-active'); }
+            else if (id === 'produtosScreen' || id === 'servicosScreen') { const cat = document.querySelector('#mobileNav [data-nav="produtosScreen"]'); if (cat) cat.classList.add('mobile-nav-active'); }
+            else document.querySelectorAll('#mobileNav [data-nav]').forEach(btn => btn.classList.remove('mobile-nav-active'));
+        }
+
+        function abrirBuscaMobile() {
+            navegarPara('produtosScreen');
+            setTimeout(() => {
+                const input = document.getElementById('searchProdutos');
+                if (input) { input.focus(); input.scrollIntoView({behavior:'smooth', block:'center'}); }
+            }, 250);
+        }
+
+        function abrirCategoriasMobile() {
+            navegarPara('produtosScreen');
+            setTimeout(() => {
+                carregarCategorias('produtos');
+                const alvo = document.getElementById('produtosCategoriasContainer');
+                if (alvo) alvo.scrollIntoView({behavior:'smooth', block:'start'});
+            }, 200);
+        }
+
+        function buscarPorPalavraMobile(termo) {
+            const input = document.getElementById('searchProdutos');
+            navegarPara('produtosScreen');
+            setTimeout(() => {
+                if (input) { input.value = termo; buscarItems('produtos'); }
+                else buscaGlobal();
+            }, 250);
+        }
+
+        function atualizarVitrineMobile() {
+            const container = document.getElementById('mobileHomeCategories');
+            if (!container) return;
+            container.innerHTML = '';
+            const cats = (dados.categorias || []).filter(c => c.tipo === 'produtos');
+            const icones = ['fa-cake-candles','fa-box-open','fa-tags','fa-id-card','fa-bag-shopping','fa-image'];
+            cats.slice(0,10).forEach((cat,i) => {
+                const el = document.createElement('button');
+                el.className='mobile-cat';
+                const imagem = cat.imagem ? `<img src="${cat.imagem}" loading="lazy" alt="">` : '';
+                el.innerHTML = `${imagem}<span class="mobile-cat-icon"><i class="fas ${icones[i % icones.length]}"></i></span><span class="mobile-cat-text">${cat.nome}</span>`;
+                el.onclick = () => { navegarPara('produtosScreen'); setTimeout(() => selecionarCategoria('produtos', cat.id), 220); };
+                container.appendChild(el);
+            });
+            if (!cats.length) container.innerHTML='<span style="opacity:.5;font-size:.75rem;padding:10px;">Categorias aparecerão aqui quando forem cadastradas.</span>';
+        }
+
         function navegarPara(id) {
             mostrarTela(id);
+            atualizarNavMobile(id);
             window.history.pushState({ screen: id }, '', '#' + id);
 
             // 🔥 FORÇA O NAVEGADOR A IR PARA O TOPO DA PÁGINA ASSIM QUE A TELA ABRIR
@@ -1316,6 +1493,7 @@
             }
 
             categoriaSelecionada={tipo,id:catId};
+            if (tipo === 'produtos') { document.querySelectorAll('#stickyCategories button').forEach(b => b.classList.remove('active')); }
             const container=document.getElementById(tipo==='produtos'?'produtosProdutosContainer':'servicosProdutosContainer');
             container.innerHTML=''; 
             container.style.display='grid'; 
