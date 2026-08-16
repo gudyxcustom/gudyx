@@ -96,18 +96,124 @@
         #passwordOverlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); display:flex; justify-content:center; align-items:center; z-index:9999; flex-direction:column; }
         #passwordOverlay.hidden { display:none; }
         #passwordOverlay input { max-width:300px; margin:10px auto; padding:10px; border-radius:8px; border:1px solid var(--vidro-borda); background:rgba(255,255,255,0.1); color:#fff; text-align:center;}
+
+        /* ADMIN V2 — cadastro e edicao mobile-first */
+        * { box-sizing: border-box; }
+        textarea { width:100%; min-height:100px; resize:vertical; padding:10px; border-radius:10px; border:1px solid var(--vidro-borda); background:rgba(255,255,255,0.05); color:#fff; font:inherit; }
+        button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible { outline:3px solid var(--ciano-brilhante); outline-offset:2px; }
+        .login-card { width:min(92vw,390px); padding:28px; border:1px solid var(--vidro-borda); border-radius:24px; background:rgba(11,4,28,.92); box-shadow:0 25px 80px rgba(0,0,0,.55); text-align:center; }
+        .login-card h2 { margin:0 0 6px; }
+        .login-card p { margin:0 0 18px; opacity:.65; font-size:.86rem; }
+        .login-card input { max-width:none!important; text-align:left!important; }
+        .login-card button { width:100%; min-height:46px; margin:4px 0 0; }
+        #passError { line-height:1.35; }
+        .admin-header { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:16px; }
+        .admin-header h1 { text-align:left; margin:0; font-size:clamp(1.35rem,4vw,2rem); }
+        .admin-header p { margin:4px 0 0; opacity:.55; font-size:.82rem; }
+        .admin-header-actions { display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end; }
+        .admin-header-actions a, .admin-header-actions button { min-height:42px; display:inline-flex; align-items:center; justify-content:center; padding:9px 14px; margin:0; border-radius:14px; color:#fff; text-decoration:none; font-size:.78rem; }
+        .admin-header-actions a { background:rgba(255,255,255,.08); border:1px solid var(--vidro-borda); }
+        .admin-summary { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin:0 0 16px; }
+        .summary-card { border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.035); border-radius:16px; padding:12px; min-height:76px; display:flex; flex-direction:column; justify-content:center; cursor:pointer; color:#fff; text-align:left; margin:0; }
+        .summary-card strong { font-size:1.35rem; color:var(--ciano-brilhante); }
+        .summary-card span { font-size:.72rem; opacity:.68; margin-top:2px; }
+        .tabs { position:sticky; top:0; z-index:100; flex-wrap:nowrap; overflow-x:auto; padding:8px 0; background:rgba(11,4,28,.95); scrollbar-width:none; }
+        .tabs::-webkit-scrollbar { display:none; }
+        .tabs button { flex:0 0 auto; min-width:auto; min-height:42px; padding:9px 15px; margin:0; white-space:nowrap; }
+        .section-heading { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin:6px 0 12px; }
+        .section-heading h3 { margin:0; }
+        .section-heading button { margin:0; min-height:44px; }
+        .product-toolbar { padding:12px; border:1px solid var(--vidro-borda); border-radius:16px; background:rgba(255,255,255,.03); }
+        .product-toolbar-grid { display:grid; grid-template-columns:minmax(220px,2fr) 1fr 1fr; gap:8px; }
+        .product-toolbar input, .product-toolbar select { margin:0; }
+        .results-count { font-size:.76rem; opacity:.6; margin:9px 2px 0; }
+        #listaProdutos { max-height:none; overflow:visible; margin-top:10px; }
+        #listaProdutos .item { padding:12px; margin-bottom:8px; border:1px solid rgba(255,255,255,.07); border-radius:14px; background:rgba(255,255,255,.025); }
+        .produto-list-info { min-width:0; flex:1; display:flex; gap:10px; align-items:center; }
+        .produto-list-thumb { width:54px; height:54px; flex:0 0 54px; border-radius:11px; object-fit:cover; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.08); }
+        .produto-list-text { min-width:0; }
+        .produto-list-text strong { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+        .produto-list-text small { display:block; margin-top:3px; opacity:.55; }
+        .editor-panel { margin-top:16px; padding:18px; border:1px solid var(--vidro-borda); border-radius:18px; background:rgba(255,255,255,.025); }
+        .editing-heading { position:sticky; top:58px; z-index:90; display:flex; align-items:center; justify-content:space-between; gap:10px; margin:-18px -18px 16px; padding:12px 18px; background:rgba(20,8,42,.97); border-bottom:1px solid var(--vidro-borda); border-radius:18px 18px 0 0; }
+        .editing-heading strong { font-size:.95rem; }
+        .editing-heading small { display:block; opacity:.55; margin-top:2px; }
+        .editing-heading button { margin:0; padding:8px 12px; background:rgba(255,255,255,.1); }
+        .save-bar { position:sticky; bottom:0; z-index:95; display:flex; gap:8px; margin:18px -18px -18px; padding:12px 18px calc(12px + env(safe-area-inset-bottom)); background:rgba(11,4,28,.97); border-top:1px solid var(--vidro-borda); border-radius:0 0 18px 18px; }
+        .save-bar button { flex:1; min-height:46px; margin:0; }
+        .save-bar .btn-secondary { flex:.55; }
+        #image-preview-list > div { width:104px; padding:7px; border:1px solid rgba(255,255,255,.08); border-radius:12px; background:rgba(255,255,255,.03); }
+        #image-preview-list img { width:88px!important; height:88px!important; }
+        .image-order-actions { display:grid; grid-template-columns:1fr 1fr; gap:4px; margin-top:5px; }
+        .image-order-actions button { min-height:30px; padding:3px!important; margin:0!important; border-radius:8px!important; font-size:.72rem!important; }
+        .image-primary { display:block; font-size:.62rem; color:var(--ciano-brilhante); text-align:center; margin-top:4px; }
+        #adminToast { position:fixed; top:16px; left:50%; transform:translate(-50%,-20px); z-index:20000; max-width:min(92vw,430px); padding:12px 18px; border-radius:14px; background:#10291d; border:1px solid #00e676; color:#fff; box-shadow:0 14px 40px rgba(0,0,0,.45); opacity:0; pointer-events:none; transition:.22s ease; text-align:center; font-size:.88rem; }
+        #adminToast.active { opacity:1; transform:translate(-50%,0); }
+        #adminToast.error { background:#351018; border-color:#ff4455; }
+
+        @media (max-width:700px) {
+            body { padding:0; align-items:stretch; }
+            .admin-container { max-width:none; min-height:100vh; border:0; border-radius:0; padding:14px 12px calc(24px + env(safe-area-inset-bottom)); }
+            .admin-header { align-items:flex-start; }
+            .admin-header p { display:none; }
+            .admin-header-actions a span, .admin-header-actions button span { display:none; }
+            .admin-header-actions a, .admin-header-actions button { width:42px; padding:0; }
+            .admin-summary { gap:7px; }
+            .summary-card { min-height:66px; padding:9px; }
+            .summary-card strong { font-size:1.15rem; }
+            .summary-card span { font-size:.64rem; }
+            .tabs { margin:0 -12px 14px; padding:8px 12px; }
+            input, select, textarea { font-size:16px; min-height:44px; }
+            button { min-height:44px; }
+            .product-toolbar-grid { grid-template-columns:1fr 1fr; }
+            .product-toolbar-grid input { grid-column:1/-1; }
+            #listaProdutos .item { align-items:flex-start; }
+            .produto-quick-actions { width:100%; display:grid; grid-template-columns:1fr 1fr 44px; }
+            .produto-quick-actions button { min-height:40px; margin:0!important; }
+            .produto-list-info { width:100%; }
+            .editor-panel { padding:14px 12px; margin-left:-4px; margin-right:-4px; }
+            .editing-heading { top:58px; margin:-14px -12px 14px; padding:11px 12px; }
+            .save-bar { margin:16px -12px -14px; padding:10px 12px calc(10px + env(safe-area-inset-bottom)); }
+            #emoji-picker-container { position:fixed; top:auto; bottom:calc(10px + env(safe-area-inset-bottom)); left:10px; right:10px; width:auto; max-height:68vh; }
+            .linha-desconto, .linha-componente, .linha-cupom, .linha-servico, .linha-opcao-produto { display:grid!important; grid-template-columns:1fr 1fr 44px; width:100%; gap:7px; padding:9px; margin-bottom:8px; border:1px solid rgba(255,255,255,.07); border-radius:12px; }
+            .linha-desconto input, .linha-componente input, .linha-componente select, .linha-cupom input, .linha-cupom select, .linha-servico input, .linha-opcao-produto input { width:100%!important; min-width:0; margin:0; }
+            .linha-desconto .input-qtd-min, .linha-desconto .input-qtd-max { grid-column:auto; }
+            .linha-desconto span { display:none; }
+            .linha-desconto .input-desc { grid-column:1/3; }
+            .linha-componente select, .linha-servico input:first-child, .linha-opcao-produto input:first-child { grid-column:1/3; }
+            .linha-cupom .cupom-desc { grid-column:1/3; }
+            .linha-desconto button, .linha-componente button, .linha-cupom button, .linha-servico button, .linha-opcao-produto button { grid-column:3; grid-row:1; min-width:44px; min-height:44px; padding:0!important; margin:0!important; }
+        }
     </style>
 </head>
 <body>
+    <div id="adminToast" role="status" aria-live="polite"></div>
     <div id="passwordOverlay">
-        <h2 style="color:#fff;">🔒 Acesso Restrito</h2>
-        <input type="password" id="adminPassInput" placeholder="Digite a senha">
-        <button onclick="checkPassword()">Entrar</button>
-        <p id="passError">Senha incorreta!</p>
+        <div class="login-card">
+            <h2>🔒 Painel Gudyx</h2>
+            <p>Use o login padrão do painel para continuar.</p>
+            <label for="adminEmailInput">E-mail</label>
+            <input type="email" id="adminEmailInput" autocomplete="username" placeholder="seu@email.com">
+            <label for="adminPassInput">Senha</label>
+            <input type="password" id="adminPassInput" autocomplete="current-password" placeholder="Sua senha">
+            <button id="adminLoginButton" onclick="checkPassword()"><i class="fas fa-right-to-bracket"></i> Entrar</button>
+            <p id="passError" role="alert">Não foi possível entrar.</p>
+        </div>
     </div>
 
     <div id="adminContent" class="admin-container" style="display:none;">
-        <h1>⚙️ Painel Admin Gudyx</h1>
+        <header class="admin-header">
+            <div><h1>⚙️ Painel Gudyx</h1><p>Cadastre e edite sua vitrine com rapidez.</p></div>
+            <div class="admin-header-actions">
+                <a href="index.html" target="_blank" rel="noopener" title="Abrir catálogo"><i class="fas fa-store"></i><span> Ver catálogo</span></a>
+                <button type="button" class="btn-secondary" onclick="sairAdmin()" title="Sair"><i class="fas fa-right-from-bracket"></i><span> Sair</span></button>
+            </div>
+        </header>
+        <div class="admin-summary" aria-label="Resumo">
+            <button type="button" class="summary-card" onclick="abrirAba('produtos')"><strong id="resumoProdutos">0</strong><span>Itens cadastrados</span></button>
+            <button type="button" class="summary-card" onclick="abrirAba('categorias')"><strong id="resumoCategorias">0</strong><span>Categorias</span></button>
+            <button type="button" class="summary-card" onclick="iniciarNovoProduto()"><strong><i class="fas fa-plus"></i></strong><span>Novo item</span></button>
+        </div>
         <div class="tabs">
             <button onclick="abrirAba('categorias')" id="tabCategorias" class="active">Categorias</button>
             <button onclick="abrirAba('produtos')" id="tabProdutos">Itens</button>
@@ -136,7 +242,25 @@
 
         <!-- PRODUTOS -->
         <div id="abaProdutos" style="display:none;">
-            <h3>Adicionar / Editar Item</h3>
+            <div class="section-heading">
+                <div><h3>🛍️ Itens do catálogo</h3><small style="opacity:.55;">Busque um item para editar ou crie um novo.</small></div>
+                <button type="button" onclick="iniciarNovoProduto()"><i class="fas fa-plus"></i> Novo item</button>
+            </div>
+            <div class="product-toolbar">
+                <div class="product-toolbar-grid">
+                    <input type="search" id="prodBuscaAdmin" placeholder="Buscar por nome..." oninput="atualizarListaProdutos()">
+                    <select id="prodFiltroCategoriaAdmin" onchange="atualizarListaProdutos()"><option value="">Todas as categorias</option></select>
+                    <select id="prodOrdenacaoAdmin" onchange="atualizarListaProdutos()"><option value="az">Nome A–Z</option><option value="recentes">Mais recentes</option><option value="categoria">Por categoria</option></select>
+                </div>
+                <div class="results-count" id="prodResultadosAdmin">0 itens</div>
+            </div>
+            <div class="admin-item-list" id="listaProdutos"></div>
+
+            <div id="produtoForm" class="editor-panel hidden">
+            <div class="editing-heading">
+                <div><strong id="produtoFormTitulo">Novo item</strong><small id="produtoFormStatus">Preencha os dados principais.</small></div>
+                <button type="button" onclick="fecharFormularioProduto()" aria-label="Fechar formulário"><i class="fas fa-xmark"></i></button>
+            </div>
             <input type="hidden" id="editProdId">
             
             <label>Tipo do Item</label>
@@ -273,8 +397,11 @@
                 </div>
             </div>
 
-            <button onclick="salvarProduto()" style="margin-top:15px;">Salvar Item</button>
-            <div class="admin-item-list" id="listaProdutos"></div>
+            <div class="save-bar">
+                <button type="button" class="btn-secondary" onclick="fecharFormularioProduto()">Cancelar</button>
+                <button type="button" id="btnSalvarProduto" onclick="salvarProduto()"><i class="fas fa-floppy-disk"></i> Salvar item</button>
+            </div>
+            </div>
         </div>
 
         <!-- PEDIDOS -->
@@ -462,7 +589,10 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        firebase.auth().signInAnonymously().catch(e => console.error("Auth error:", e));
+        const auth = firebase.auth();
+        const ADMIN_LOGIN = 'admin@gudyx.com.br';
+        const ADMIN_PASSWORD = 'Gudyx#26!Papelaria_7Q';
+        auth.signInAnonymously().catch(e => console.error('Falha na autenticação anônima:', e));
 
         var dados = { categorias: [], produtos: [], frases: [], faq: [] };
         var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false, pedidoEmFocoId: '', prazoFoco: 0, contato: { whatsApp: '', email: '', endereco: '', horario: '' } };
@@ -553,6 +683,9 @@
                     } else { adicionarLinhaServicoGlobal(); }
                 } else { adicionarLinhaServicoGlobal(); }
 
+                atualizarResumoAdmin();
+                atualizarFiltroCategoriasAdmin();
+
             } catch(e) { console.error(e); }
         }
 
@@ -590,6 +723,54 @@
             else if (aba === 'backup') { document.getElementById('abaBackup').style.display = 'block'; document.getElementById('tabBackup').classList.add('active'); }
         }
 
+        function atualizarResumoAdmin() {
+            document.getElementById('resumoProdutos').textContent = (dados.produtos || []).length;
+            document.getElementById('resumoCategorias').textContent = (dados.categorias || []).length;
+        }
+
+        function atualizarFiltroCategoriasAdmin() {
+            const select = document.getElementById('prodFiltroCategoriaAdmin');
+            if (!select) return;
+            const atual = select.value;
+            select.innerHTML = '<option value="">Todas as categorias</option>';
+            [...(dados.categorias || [])].sort((a,b) => (a.nome || '').localeCompare(b.nome || '', 'pt-BR')).forEach(cat => {
+                const opt = document.createElement('option');
+                opt.value = cat.id;
+                opt.textContent = cat.nome;
+                select.appendChild(opt);
+            });
+            if ([...select.options].some(o => o.value === atual)) select.value = atual;
+        }
+
+        function abrirFormularioProduto(titulo = 'Novo item') {
+            const form = document.getElementById('produtoForm');
+            form.classList.remove('hidden');
+            document.getElementById('produtoFormTitulo').textContent = titulo;
+            requestAnimationFrame(() => form.scrollIntoView({ behavior:'smooth', block:'start' }));
+        }
+
+        function fecharFormularioProduto() {
+            document.getElementById('produtoForm').classList.add('hidden');
+            document.getElementById('prodBuscaAdmin')?.focus({ preventScroll:true });
+        }
+
+        function iniciarNovoProduto() {
+            abrirAba('produtos');
+            limparFormularioProduto();
+            document.getElementById('produtoFormStatus').textContent = 'Preencha os dados principais e salve.';
+            abrirFormularioProduto('Novo item');
+        }
+
+        let adminToastTimer;
+        function mostrarToastAdmin(mensagem, erro = false) {
+            const toast = document.getElementById('adminToast');
+            toast.textContent = mensagem;
+            toast.classList.toggle('error', erro);
+            toast.classList.add('active');
+            clearTimeout(adminToastTimer);
+            adminToastTimer = setTimeout(() => toast.classList.remove('active'), 3200);
+        }
+
         function toggleManualPriceFields() {
             const checkbox = document.getElementById('prodPrecoManualToggle');
             const manualFields = document.getElementById('manualPriceFields');
@@ -599,38 +780,40 @@
         }
 
         function redimensionarImagem(file, maxWidth, qualidade) {
-            return new Promise(resolve => {
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = e => {
                     const img = new Image();
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const ratio = maxWidth / img.width;
-                        canvas.width = maxWidth;
-                        canvas.height = img.height * ratio;
+                        const ratio = Math.min(1, maxWidth / img.width);
+                        canvas.width = Math.max(1, Math.round(img.width * ratio));
+                        canvas.height = Math.max(1, Math.round(img.height * ratio));
                         canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', qualidade));
+                        resolve(canvas.toDataURL('image/webp', Math.max(qualidade, .72)));
                     };
+                    img.onerror = () => reject(new Error('Imagem inválida'));
                     img.src = e.target.result;
                 };
+                reader.onerror = () => reject(new Error('Não foi possível ler a imagem'));
                 reader.readAsDataURL(file);
             });
         }
 
-        function handleImageUpload(event) {
-            const files = event.target.files;
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                if (imagensProdutoAtual.length >= 5) {
-                    alert("Máximo de 5 imagens por produto.");
-                    break;
-                }
-                redimensionarImagem(file, 600, 0.5).then(base64 => {
-                    imagensProdutoAtual.push(base64);
-                    renderizarPreviews();
-                });
-            }
+        async function handleImageUpload(event) {
+            const espacos = Math.max(0, 5 - imagensProdutoAtual.length);
+            const totalSelecionadas = event.target.files.length;
+            const files = [...event.target.files].slice(0, espacos);
             event.target.value = '';
+            if (!files.length) return mostrarToastAdmin('O limite é de 5 imagens por item.', true);
+            try {
+                const imagens = await Promise.all(files.map(file => redimensionarImagem(file, 900, .78)));
+                imagensProdutoAtual.push(...imagens);
+                renderizarPreviews();
+                if (files.length < totalSelecionadas) mostrarToastAdmin('Algumas imagens não entraram porque o limite é 5.');
+            } catch (e) {
+                mostrarToastAdmin('Não foi possível processar uma das imagens.', true);
+            }
         }
 
         function removerImagem(index) {
@@ -648,9 +831,21 @@
                 div.innerHTML = `
                     <img src="${imgBase64}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid var(--vidro-borda);">
                     <button type="button" onclick="removerImagem(${index})" style="position: absolute; top: -8px; right: -8px; background: #ff4455; border: none; border-radius: 50%; width: 20px; height: 20px; color: #fff; cursor: pointer; font-size: 12px; line-height: 1; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.5);">×</button>
+                    <span class="image-primary">${index === 0 ? 'Imagem principal' : `Imagem ${index + 1}`}</span>
+                    <div class="image-order-actions">
+                        <button type="button" class="btn-secondary" onclick="moverImagem(${index},-1)" ${index === 0 ? 'disabled' : ''} aria-label="Mover imagem para esquerda">←</button>
+                        <button type="button" class="btn-secondary" onclick="moverImagem(${index},1)" ${index === imagensProdutoAtual.length - 1 ? 'disabled' : ''} aria-label="Mover imagem para direita">→</button>
+                    </div>
                 `;
                 container.appendChild(div);
             });
+        }
+
+        function moverImagem(index, direcao) {
+            const destino = index + direcao;
+            if (destino < 0 || destino >= imagensProdutoAtual.length) return;
+            [imagensProdutoAtual[index], imagensProdutoAtual[destino]] = [imagensProdutoAtual[destino], imagensProdutoAtual[index]];
+            renderizarPreviews();
         }
 
         async function salvarCategoria() {
@@ -979,6 +1174,9 @@
             });
 
             async function processarProd(imagens) {
+                const botaoSalvar = document.getElementById('btnSalvarProduto');
+                botaoSalvar.disabled = true;
+                botaoSalvar.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
                 const produto = { 
                     tipoItem, componentes,
                     usarPrecoManual: usarPrecoManual,
@@ -994,31 +1192,37 @@
                 };
 
                 try {
+                    const mensagemSucesso = id ? 'Produto atualizado com sucesso!' : 'Produto criado com sucesso!';
                     if (id) { 
                         await db.collection('produtos').doc(id).update(produto); 
-                        alert('✅ Produto atualizado com sucesso!');
                     } else { 
                         const docRef = await db.collection('produtos').add(produto); 
                         await db.collection('produtos').doc(docRef.id).update({ id: docRef.id });
-                        alert('✅ Produto criado com sucesso!');
                     }
                     
                     limparFormularioProduto(); 
                     await carregarDados(); 
                     atualizarListaProdutos(); 
-                    atualizarSelectCategorias(); 
+                    atualizarSelectCategorias();
+                    fecharFormularioProduto();
+                    mostrarToastAdmin(`✅ ${mensagemSucesso}`);
                 } catch (erro) {
                     console.error("Erro detalhado:", erro);
-                    alert('❌ Erro ao salvar o item! Verifique o console do navegador (F12).\nMensagem: ' + erro.message);
+                    mostrarToastAdmin('❌ Não foi possível salvar. Verifique sua conexão e tente novamente.', true);
+                } finally {
+                    botaoSalvar.disabled = false;
+                    botaoSalvar.innerHTML = '<i class="fas fa-floppy-disk"></i> Salvar item';
                 }
             }
 
-            processarProd(imagensProdutoAtual);
+            await processarProd(imagensProdutoAtual);
         }
 
         function editarProduto(id) {
             const p = dados.produtos.find(p => p.id === id);
             if (!p) return;
+            abrirFormularioProduto(`Editando: ${p.nome}`);
+            document.getElementById('produtoFormStatus').textContent = 'Faça as alterações e toque em Salvar item.';
             document.getElementById('editProdId').value = p.id;
             document.getElementById('prodTipoItem').value = p.tipoItem || 'simples';
             document.getElementById('prodTipo').value = dados.categorias.find(c => c.id === p.categoriaId)?.tipo || 'produtos';
@@ -1247,14 +1451,25 @@
 
         async function removerProduto(id) { if (confirm('Remover?')) { await db.collection('produtos').doc(id).delete(); await carregarDados(); atualizarListaProdutos(); } }
         function limparFormularioProduto() { 
-            document.getElementById('editProdId').value = ''; document.getElementById('prodNome').value = ''; 
+            document.getElementById('editProdId').value = '';
+            document.getElementById('prodTipoItem').value = 'simples';
+            document.getElementById('prodTipo').value = 'produtos';
+            atualizarSelectCategorias();
+            document.getElementById('prodCategoria').value = '';
+            document.getElementById('prodNome').value = ''; 
             quillEditor.root.innerHTML = ''; 
+            document.getElementById('prodMaterial').value = 'offset';
+            document.getElementById('prodQtdFolhas').value = 1;
             document.getElementById('prodPrecoMaoObra').value = ''; 
             
             imagensProdutoAtual = [];
             renderizarPreviews();
 
             document.getElementById('prodPromocao').checked = false; document.getElementById('prodDestaque').checked = false; document.getElementById('prodSlider').checked = false; 
+            document.getElementById('prodDesconto').value = '';
+            document.getElementById('prodPromoStart').value = '';
+            document.getElementById('prodPromoEnd').value = '';
+            document.getElementById('prodDescPromo').value = '';
             document.getElementById('promoFields').classList.add('hidden');
             const containerDesconto = document.getElementById('containerDescontoProgressivo');
             if(containerDesconto) { containerDesconto.innerHTML = ''; adicionarLinhaDesconto(); }
@@ -1269,7 +1484,9 @@
             document.getElementById('divDimensoes').classList.add('hidden');
             document.getElementById('descricaoSugestoes').innerHTML = '';
             document.getElementById('geradorStatus').textContent = '';
+            document.getElementById('produtoFormTitulo').textContent = 'Novo item';
             window._gudyxSugestoesDescricao = [];
+            toggleCamposKit();
         }
         function atualizarSelectCategorias() {
             const tipo = document.getElementById('prodTipo').value;
@@ -1289,13 +1506,42 @@
             lista.innerHTML = '';
             if (!dados.produtos || dados.produtos.length === 0) {
                 lista.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhum item cadastrado.</p>';
+                document.getElementById('prodResultadosAdmin').textContent = '0 itens';
                 return;
             }
-            dados.produtos.forEach(p => {
+            const termo = (document.getElementById('prodBuscaAdmin')?.value || '').trim().toLowerCase();
+            const categoriaId = document.getElementById('prodFiltroCategoriaAdmin')?.value || '';
+            const ordem = document.getElementById('prodOrdenacaoAdmin')?.value || 'az';
+            let produtos = dados.produtos.filter(p => {
                 const cat = dados.categorias.find(c => c.id === p.categoriaId);
-                const tipo = p.tipoItem === 'kit' ? '[KIT] ' : '';
-                const temDim = p.mostrarDimensoes ? '📐 ' : '';
-                lista.innerHTML += `<div class="item"><span>${tipo}${temDim}${cat?.nome || '?'} → ${p.nome}</span><div class="produto-quick-actions"><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️ Editar</button><button class="btn-secondary" onclick="duplicarProduto('${p.id}')">📋 Duplicar</button><button onclick="removerProduto('${p.id}')">🗑️ Remover</button></div></div>`;
+                const texto = `${p.nome || ''} ${cat?.nome || ''}`.toLowerCase();
+                return (!termo || texto.includes(termo)) && (!categoriaId || p.categoriaId === categoriaId);
+            });
+            produtos.sort((a,b) => {
+                if (ordem === 'recentes') return new Date(b.dataCriacao || 0) - new Date(a.dataCriacao || 0);
+                if (ordem === 'categoria') {
+                    const ca = dados.categorias.find(c => c.id === a.categoriaId)?.nome || '';
+                    const cb = dados.categorias.find(c => c.id === b.categoriaId)?.nome || '';
+                    return ca.localeCompare(cb, 'pt-BR') || (a.nome || '').localeCompare(b.nome || '', 'pt-BR');
+                }
+                return (a.nome || '').localeCompare(b.nome || '', 'pt-BR');
+            });
+            document.getElementById('prodResultadosAdmin').textContent = `${produtos.length} ${produtos.length === 1 ? 'item' : 'itens'}`;
+            if (!produtos.length) {
+                lista.innerHTML = '<p style="text-align:center; opacity:0.6; padding:20px;">Nenhum item corresponde à busca.</p>';
+                return;
+            }
+            produtos.forEach(p => {
+                const cat = dados.categorias.find(c => c.id === p.categoriaId);
+                const imagem = p.imagens?.[0] || p.imagem || '';
+                const tipo = p.tipoItem === 'kit' ? 'Kit' : 'Item';
+                lista.innerHTML += `<div class="item">
+                    <div class="produto-list-info">
+                        ${imagem ? `<img class="produto-list-thumb" src="${imagem}" alt="">` : '<span class="produto-list-thumb" style="display:flex;align-items:center;justify-content:center;"><i class="fas fa-image" style="opacity:.35;"></i></span>'}
+                        <div class="produto-list-text"><strong>${escaparHtml(p.nome || 'Sem nome')}</strong><small>${escaparHtml(cat?.nome || 'Sem categoria')} · ${tipo}${p.mostrarDimensoes ? ' · Dimensões' : ''}</small></div>
+                    </div>
+                    <div class="produto-quick-actions"><button class="btn-edit" onclick="editarProduto('${p.id}')">✏️ Editar</button><button class="btn-secondary" onclick="duplicarProduto('${p.id}')">📋 Duplicar</button><button title="Remover" aria-label="Remover ${escaparHtml(p.nome || 'item')}" onclick="removerProduto('${p.id}')">🗑️</button></div>
+                </div>`;
             });
         }
 
@@ -1661,21 +1907,62 @@
             reader.readAsText(file);
         }
 
-        async function checkPassword() {
-            const pass = document.getElementById('adminPassInput').value;
-            if (pass === 'gudyx2026') {
-                document.getElementById('passwordOverlay').classList.add('hidden');
-                document.getElementById('adminContent').style.display = 'block';
-                await carregarDados(); 
-                atualizarListaCategorias();
-                atualizarSelectCategorias();
-                atualizarListaProdutos();
-                document.getElementById('frasesInput').value = dados.frases.join('\n');
-                carregarFAQ();
-                carregarRelatorios();
-            } else { document.getElementById('passError').style.display = 'block'; }
+        let adminInicializado = false;
+        async function abrirAdmin() {
+            document.getElementById('passwordOverlay').classList.add('hidden');
+            document.getElementById('adminContent').style.display = 'block';
+            if (adminInicializado) return;
+            adminInicializado = true;
+            await carregarDados(); 
+            atualizarListaCategorias();
+            atualizarSelectCategorias();
+            atualizarFiltroCategoriasAdmin();
+            atualizarListaProdutos();
+            document.getElementById('frasesInput').value = dados.frases.join('\n');
+            carregarFAQ();
+            carregarRelatorios();
         }
+
+        async function checkPassword() {
+            const email = document.getElementById('adminEmailInput').value.trim();
+            const pass = document.getElementById('adminPassInput').value;
+            const erro = document.getElementById('passError');
+            const botao = document.getElementById('adminLoginButton');
+            erro.style.display = 'none';
+            if (!email || !pass) {
+                erro.textContent = 'Preencha o e-mail e a senha.';
+                erro.style.display = 'block';
+                return;
+            }
+            botao.disabled = true;
+            botao.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
+            try {
+                if (email.toLowerCase() !== ADMIN_LOGIN.toLowerCase() || pass !== ADMIN_PASSWORD) {
+                    throw new Error('invalid-admin-credentials');
+                }
+                sessionStorage.setItem('gudyx_admin_session', 'ativa');
+                await abrirAdmin();
+            } catch (e) {
+                erro.textContent = 'E-mail ou senha inválidos.';
+                erro.style.display = 'block';
+            } finally {
+                botao.disabled = false;
+                botao.innerHTML = '<i class="fas fa-right-to-bracket"></i> Entrar';
+            }
+        }
+
+        async function sairAdmin() {
+            sessionStorage.removeItem('gudyx_admin_session');
+            adminInicializado = false;
+            document.getElementById('adminContent').style.display = 'none';
+            document.getElementById('passwordOverlay').classList.remove('hidden');
+            document.getElementById('adminPassInput').value = '';
+        }
+
+        document.getElementById('adminEmailInput').value = ADMIN_LOGIN;
         document.getElementById('adminPassInput').addEventListener('keypress', e => { if (e.key === 'Enter') checkPassword(); });
+        document.getElementById('adminEmailInput').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('adminPassInput').focus(); });
+        if (sessionStorage.getItem('gudyx_admin_session') === 'ativa') abrirAdmin();
     </script>
 </body>
 </html>
