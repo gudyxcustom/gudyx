@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Gudyx Custom - Catálogo</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -293,6 +293,75 @@
 @media (min-width:769px){
   .mobile-vitrine-extra{display:none!important;}
 }
+
+/* ==============================
+   GUDYX MOBILE — EXPERIENCIA V4
+   Navegacao limpa, compra rapida e acessivel.
+   ============================== */
+button,a,input,select,textarea{-webkit-tap-highlight-color:transparent;}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{
+  outline:3px solid var(--ciano-brilhante);
+  outline-offset:2px;
+}
+@media (max-width:768px){
+  body{padding-bottom:calc(76px + env(safe-area-inset-bottom));}
+  .home-screen{display:flex;padding-bottom:calc(86px + env(safe-area-inset-bottom));}
+  .header-top{order:1;}
+  .search-global{order:2;position:sticky;top:6px;z-index:500;background:rgba(11,4,28,.94);box-shadow:0 8px 24px rgba(0,0,0,.25);}
+  .mobile-vitrine-extra{order:3;}
+  .main-area{order:4;}
+  .atalhos-container,#btnSorteHome{order:5;}
+  .mais-vendidos-section{order:6;}
+  .depoimentos-section{order:7;}
+  .instagram-section{order:8;}
+
+  /* A barra inferior ja oferece estas acoes; removemos a coluna flutuante duplicada. */
+  .float-cart,.float-fav,.float-wa,.btn-top{display:none!important;}
+  .mobile-nav{
+    min-height:68px;
+    height:auto;
+    padding:7px 6px calc(7px + env(safe-area-inset-bottom));
+  }
+  .mobile-nav button,.mobile-nav a{min-height:48px;position:relative;border-radius:13px;transition:background .18s ease,color .18s ease;}
+  .mobile-nav button.active,.mobile-nav a.active{background:rgba(0,242,254,.1);color:var(--ciano-brilhante)!important;}
+  .mobile-nav .mobile-cart-badge{
+    position:absolute;top:2px;left:calc(50% + 7px);min-width:18px;height:18px;padding:0 5px;
+    display:none;align-items:center;justify-content:center;border-radius:12px;background:#ff4455;color:#fff;
+    font-size:.58rem;font-weight:800;line-height:1;border:2px solid #080312;
+  }
+  #socialProofContainer,#miniGluudyx,#peekingHead{display:none!important;}
+
+  .listagem-header .view-toggle{display:none;}
+  .listagem-header .btn-voltar{min-width:44px;min-height:44px;padding:0 12px;font-size:0;display:flex;align-items:center;justify-content:center;}
+  .listagem-header .btn-voltar i{font-size:1rem;margin:0!important;}
+  .search-box{position:sticky;top:61px;z-index:115;background:rgba(11,4,28,.95);box-shadow:0 8px 18px rgba(0,0,0,.2);}
+  #stickyCategories{top:116px;}
+
+  #productModal{align-items:flex-end;padding:0;background:rgba(0,0,0,.72);}
+  #productModal .modal-box{
+    width:100%;max-width:none;max-height:94dvh;border-radius:24px 24px 0 0;padding:22px 16px calc(18px + env(safe-area-inset-bottom));
+    overscroll-behavior:contain;
+  }
+  #productModal .modal-box::before{content:"";display:block;width:46px;height:5px;border-radius:6px;background:rgba(255,255,255,.25);margin:-10px auto 12px;}
+  #productModal .close-modal{position:sticky;top:0;float:right;z-index:20;display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border-radius:50%;background:rgba(11,4,28,.9);}
+  #productModal #modalButtonsContainer{position:sticky;bottom:calc(-18px - env(safe-area-inset-bottom));z-index:30;margin:16px -16px -18px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(11,4,28,.96);border-top:1px solid var(--vidro-borda);}
+  #productModal .btn-add-cart-modal{width:100%;min-height:48px;margin:0!important;}
+  .modal-gallery img{height:190px;max-width:88vw;}
+
+  #cartDrawer,#favDrawer{height:100dvh;}
+  .cart-drawer-header{padding:14px 16px;}
+  .cart-drawer-footer{padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgba(11,4,28,.98);}
+  .cart-drawer-footer .cart-actions{display:grid;grid-template-columns:1fr 1fr;}
+  .cart-drawer-footer .btn-agendar-finalizar{grid-column:1/-1;min-height:48px;}
+
+  .footer{padding-bottom:calc(86px + env(safe-area-inset-bottom))!important;}
+}
+@media (max-width:360px){
+  .produtos-grid{grid-template-columns:1fr;}
+  .produto-card{min-height:0;}
+  .produto-card img{height:170px;}
+  .mobile-occasion-grid{grid-template-columns:1fr;}
+}
 </style>
 </head>
 <body>
@@ -533,12 +602,12 @@
         </div>
     </div>
 
-    <nav class="mobile-nav">
-        <button onclick="navegarPara('homeScreen')" class="active"><i class="fas fa-home"></i><span>Home</span></button>
-        <button onclick="navegarPara('escolhaScreen')"><i class="fas fa-search"></i><span>Buscar</span></button>
-        <button onclick="abrirDrawer()"><i class="fas fa-shopping-cart"></i><span>Carrinho</span></button>
-        <button onclick="abrirFavDrawer()"><i class="fas fa-heart"></i><span>Favoritos</span></button>
-        <a href="https://wa.me/5521976121076" target="_blank" style="text-decoration:none;color:var(--cor-texto);display:flex;flex-direction:column;align-items:center;gap:2px;"><i class="fab fa-whatsapp" style="color:#25D366;"></i><span>WhatsApp</span></a>
+    <nav class="mobile-nav" aria-label="Navegação principal">
+        <button type="button" data-screen="homeScreen" aria-label="Ir para o início" onclick="navegarPara('homeScreen')" class="active"><i class="fas fa-home" aria-hidden="true"></i><span>Início</span></button>
+        <button type="button" data-screen="escolhaScreen" aria-label="Buscar produtos e serviços" onclick="navegarPara('escolhaScreen')"><i class="fas fa-search" aria-hidden="true"></i><span>Buscar</span></button>
+        <button type="button" aria-label="Abrir carrinho" onclick="abrirDrawer()"><i class="fas fa-shopping-cart" aria-hidden="true"></i><span>Carrinho</span><span class="mobile-cart-badge" id="mobileCartBadge" aria-live="polite">0</span></button>
+        <button type="button" aria-label="Abrir favoritos" onclick="abrirFavDrawer()"><i class="fas fa-heart" aria-hidden="true"></i><span>Favoritos</span></button>
+        <a href="https://wa.me/5521976121076" target="_blank" rel="noopener" aria-label="Falar pelo WhatsApp" style="text-decoration:none;color:var(--cor-texto);display:flex;flex-direction:column;align-items:center;gap:2px;"><i class="fab fa-whatsapp" style="color:#25D366;" aria-hidden="true"></i><span>WhatsApp</span></a>
     </nav>
 
     <footer class="footer">
@@ -714,7 +783,12 @@
             }, 180);
         }
 
-        function mostrarTela(id) { document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById(id).classList.add('active'); }
+        function mostrarTela(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const tela = document.getElementById(id);
+            if (tela) tela.classList.add('active');
+            atualizarNavegacaoMobile(id);
+        }
 
         // 🔥 SISTEMA DE NAVEGAÇÃO COM HISTÓRICO (BOTÃO VOLTAR DO CELULAR) E SCROLL TOPO
         function navegarPara(id) {
@@ -732,6 +806,15 @@
             } else if (id === 'produtosScreen') {
                 carregarCategorias('produtos');
             }
+        }
+
+        function atualizarNavegacaoMobile(id) {
+            document.querySelectorAll('.mobile-nav [data-screen]').forEach(item => {
+                const ativo = item.dataset.screen === id || (item.dataset.screen === 'escolhaScreen' && (id === 'produtosScreen' || id === 'servicosScreen'));
+                item.classList.toggle('active', ativo);
+                if (ativo) item.setAttribute('aria-current', 'page');
+                else item.removeAttribute('aria-current');
+            });
         }
 
         // 🔥 FUNÇÃO PARA DETECTAR SE ALGUM MODAL / CARRINHO ESTÁ ABERTO
@@ -961,7 +1044,16 @@
 
         function addToCartFromModal() { if(produtoModalAtual) { addToCart(produtoModalAtual.id, quantidadeModal); fecharModal(); } }
         function alterarQtdCarrinho(id, delta) { const item = carrinho.find(c=>c.id===id); if(!item) return; const n = item.quantidade+delta; if(n<1) { carrinho = carrinho.filter(c=>c.id!==id); } else item.quantidade=n; salvarCarrinho(); }
-        function atualizarBadgeCarrinho() { const t = carrinho.reduce((a,c)=>a+c.quantidade,0); const b = document.getElementById('cartBadge'); b.textContent=t; b.style.display=t?'flex':'none'; }
+        function atualizarBadgeCarrinho() {
+            const t = carrinho.reduce((a,c)=>a+c.quantidade,0);
+            ['cartBadge','mobileCartBadge'].forEach(id => {
+                const b = document.getElementById(id);
+                if (!b) return;
+                b.textContent = t;
+                b.style.display = t ? 'flex' : 'none';
+                b.setAttribute('aria-label', `${t} ${t === 1 ? 'item' : 'itens'} no carrinho`);
+            });
+        }
         function abrirDrawer() { renderizarDrawer(); document.getElementById('cartDrawerOverlay').classList.add('active'); document.getElementById('cartDrawer').classList.add('open'); mostrarMiniGluudyx(); }
         function fecharDrawer() { document.getElementById('cartDrawerOverlay').classList.remove('active'); document.getElementById('cartDrawer').classList.remove('open'); esconderMiniGluudyx(); }
         function limparCarrinho() { carrinho=[]; cupomAtual=null; salvarCarrinho(); }
@@ -1677,7 +1769,16 @@
 
         document.addEventListener('mousemove', resetInactivityTimer); document.addEventListener('scroll', resetInactivityTimer); document.addEventListener('click', resetInactivityTimer); document.addEventListener('touchstart', resetInactivityTimer);
 
-        carregarDadosFirebase().then(()=>{
+        async function iniciarCatalogo() {
+            try {
+                await firebase.auth().signInAnonymously();
+            } catch (e) {
+                console.warn('Autenticação anônima indisponível; tentando acesso público.', e.code || e.message);
+            }
+            return carregarDadosFirebase();
+        }
+
+        iniciarCatalogo().then(()=>{
             setTimeout(() => { localStorage.removeItem('gudyx_mascote_state'); const wrapper = document.getElementById('mascoteWrapper'); if (wrapper) { wrapper.classList.remove('somiu', 'fugindo', 'voltando'); wrapper.style.display = 'block'; } if (!dados.frases || dados.frases.length === 0) { dados.frases = ['Olá, sou o Gluudyx! ✦', 'Que bom te ver! 🎉', 'Vamos explorar juntos!', 'Curta a Gudyx! 😍']; } setTimeout(() => falarMascote('Oi! Estou de volta! 🚀'), 500); }, 2000);
             contarVisita(); resetarSlider(); carregarMaisVendidos(); carregarAtalhos(); carregarDepoimentos(); carregarInstagram(); verificarRetorno(); verificarAbandono(); iniciarListenerFirebase();
             setTimeout(() => { atualizarMensagensMascote(); falarMascote(); }, 3000);
