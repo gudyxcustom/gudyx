@@ -362,6 +362,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .produto-card img{height:170px;}
   .mobile-occasion-grid{grid-template-columns:1fr;}
 }
+
+        /* GUDYX V3 — mídia em vídeo */
+        .badge-video-gudyx { position:absolute; right:8px; bottom:8px; z-index:5; padding:4px 9px; border-radius:16px; background:rgba(0,0,0,.78); border:1px solid rgba(0,242,254,.6); color:#fff; font-size:.66rem; box-shadow:0 0 16px rgba(0,242,254,.22); }
+        .modal-video-gudyx { margin:14px 0; border:1px solid var(--vidro-borda); border-radius:16px; overflow:hidden; background:rgba(0,0,0,.28); }
+        .modal-video-gudyx .video-title { padding:10px 13px; font-size:.82rem; opacity:.78; border-bottom:1px solid rgba(255,255,255,.07); }
+        .modal-video-gudyx iframe, .modal-video-gudyx video { width:100%; aspect-ratio:16/9; display:block; border:0; background:#000; }
+        .modal-video-link { display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; color:#fff; text-decoration:none; }
+
 </style>
 </head>
 <body>
@@ -386,6 +394,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         <div class="modal-box">
             <button class="close-modal" onclick="fecharModal()">×</button>
             <div id="modalGallery" class="modal-gallery"></div>
+            <div id="modalVideoGudyx" class="modal-video-gudyx" style="display:none;"></div>
             <h2 id="modalTitle">Título</h2>
             
             <!-- 🔥 BOTÃO E ÁREA DE DETALHES (Colapsável) -->
@@ -1269,10 +1278,61 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         }
 
         // 🔥 FUNÇÃO DE ABRIR O MODAL (Sem o Preço Unitário)
+
+        function normalizarVideoCatalogoGudyx(url) {
+            const raw = String(url || '').trim();
+            if (!raw) return { tipo:'', url:'' };
+            try {
+                const u = new URL(raw);
+                const host = u.hostname.replace(/^www\./,'').toLowerCase();
+
+                if (host === 'youtu.be') {
+                    const id = u.pathname.split('/').filter(Boolean)[0];
+                    return id ? {tipo:'iframe',url:`https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}`} : {tipo:'',url:''};
+                }
+                if (host.includes('youtube.com')) {
+                    let id = u.searchParams.get('v');
+                    if (!id && u.pathname.includes('/shorts/')) id = u.pathname.split('/shorts/')[1]?.split('/')[0];
+                    if (!id && u.pathname.includes('/embed/')) id = u.pathname.split('/embed/')[1]?.split('/')[0];
+                    return id ? {tipo:'iframe',url:`https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}`} : {tipo:'',url:''};
+                }
+                if (host.includes('vimeo.com')) {
+                    const id = u.pathname.split('/').filter(Boolean).find(x=>/^\d+$/.test(x));
+                    return id ? {tipo:'iframe',url:`https://player.vimeo.com/video/${id}`} : {tipo:'',url:''};
+                }
+                if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(raw)) return {tipo:'video',url:raw};
+                return {tipo:'link',url:raw};
+            } catch(e) {
+                return {tipo:'',url:''};
+            }
+        }
+
+        function renderizarVideoProdutoGudyx(prod) {
+            const box = document.getElementById('modalVideoGudyx');
+            if (!box) return;
+            box.innerHTML = '';
+            box.style.display = 'none';
+
+            if (!prod?.videoUrl) return;
+            const info = normalizarVideoCatalogoGudyx(prod.videoUrl);
+            if (!info.url) return;
+
+            box.style.display = 'block';
+            if (info.tipo === 'iframe') {
+                const titulo = String(prod.nome || 'item').replace(/"/g,'&quot;');
+                box.innerHTML = `<div class="video-title">🎬 Veja este item/serviço em funcionamento</div><iframe src="${info.url}" title="Vídeo demonstrativo de ${titulo}" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+            } else if (info.tipo === 'video') {
+                box.innerHTML = `<div class="video-title">🎬 Veja este item/serviço em funcionamento</div><video src="${info.url}" controls preload="metadata" playsinline></video>`;
+            } else {
+                box.innerHTML = `<a class="modal-video-link" href="${info.url}" target="_blank" rel="noopener"><i class="fas fa-circle-play"></i> Assistir demonstração</a>`;
+            }
+        }
+
         function abrirModal(prodId) { 
             const prod = dados.produtos.find(p=>p.id===prodId); 
             if(!prod) return; 
-            produtoModalAtual=prod; 
+            produtoModalAtual=prod;
+            renderizarVideoProdutoGudyx(prod); 
             quantidadeModal=1; 
             document.getElementById('qtdModal').textContent='1'; 
             prod.cliques=(prod.cliques||0)+1; salvarDados(); carregarMaisVendidos(); 
@@ -1464,7 +1524,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             resultado.innerHTML = `🛒 <strong>${qtd}</strong> unidades = <strong style="color: var(--amarelo-neon); font-size: 1.1rem;">R$ ${total.toFixed(2).replace('.', ',')}</strong>`;
         }
 
-        function fecharModal() { document.getElementById('productModal').classList.remove('active'); esconderMiniGluudyx(); }
+        function fecharModal() {
+            document.getElementById('productModal').classList.remove('active');
+            const videoBox = document.getElementById('modalVideoGudyx');
+            if (videoBox) { videoBox.innerHTML = ''; videoBox.style.display = 'none'; }
+            esconderMiniGluudyx();
+        }
         document.getElementById('productModal').addEventListener('click', function(e) { if(e.target===this) fecharModal(); });
 
         function abrirLightbox(src) { document.getElementById('lightboxImg').src = src; document.getElementById('lightboxOverlay').classList.add('active'); }
@@ -1676,6 +1741,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             const promo = isPromoActive(prod), estoque = isEmEstoque(prod); const diasDesdeCriacao = prod.dataCriacao ? Math.floor((Date.now() - new Date(prod.dataCriacao).getTime()) / 86400000) : 999;
             let badges = '';
             if (prod.tipoItem === 'kit') badges += '<div class="badge-destaque" style="background:#ff8800;">KIT</div>';
+            if (prod.videoUrl) badges += '<div class="badge-video-gudyx"><i class="fas fa-play"></i> VÍDEO</div>';
             if (promo) badges += '<div class="badge-promo">PROMO</div>'; if (prod.destaque) badges += '<div class="badge-destaque">DESTAQUE</div>';
             if (!estoque) badges += '<div class="badge-esgotado">ESGOTADO</div>'; if (diasDesdeCriacao < 7) badges += '<div class="badge-novo">NOVO</div>'; if (estoque && getEstoque(prod) <= 5) badges += '<div class="badge-estoque-baixo">Últimas!</div>';
             
