@@ -370,6 +370,55 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         .modal-video-gudyx iframe, .modal-video-gudyx video { width:100%; aspect-ratio:16/9; display:block; border:0; background:#000; }
         .modal-video-link { display:flex; align-items:center; justify-content:center; gap:8px; padding:14px; color:#fff; text-decoration:none; }
 
+
+        /* GUDYX — fluxo real de atendimento */
+        .gudyx-fulfillment-strip{
+            width:min(100%,900px);
+            margin:10px auto 2px;
+            padding:10px 16px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            flex-wrap:wrap;
+            border:1px solid rgba(0,242,254,.30);
+            border-radius:18px;
+            background:linear-gradient(135deg,rgba(160,40,255,.12),rgba(0,242,254,.07));
+            box-shadow:0 0 22px rgba(0,242,254,.08);
+            font-size:.82rem;
+            line-height:1.35;
+            text-align:center;
+        }
+        .gudyx-fulfillment-strip strong{color:var(--ciano-brilhante);}
+        .gudyx-fulfillment-strip .sep{opacity:.35;}
+        .como-subtitulo{
+            margin:3px 0 14px;
+            opacity:.68;
+            line-height:1.5;
+            font-size:.9rem;
+        }
+        .como-tipo{
+            margin-top:14px;
+            padding:12px 14px;
+            border-radius:14px;
+            border:1px solid rgba(255,255,255,.08);
+            background:rgba(255,255,255,.035);
+        }
+        .como-tipo strong{color:var(--ciano-brilhante);}
+        .como-aviso{
+            margin-top:16px;
+            padding:11px 13px;
+            border-radius:12px;
+            background:rgba(255,102,178,.08);
+            border:1px solid rgba(255,102,178,.24);
+            font-size:.84rem;
+            line-height:1.45;
+        }
+        @media(max-width:700px){
+            .gudyx-fulfillment-strip{font-size:.75rem;padding:9px 11px;}
+            .gudyx-fulfillment-strip .sep{display:none;}
+        }
+
 </style>
 </head>
 <body>
@@ -451,7 +500,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         <div class="cupom-container"><input type="text" id="cupomInput" placeholder="Cupom de desconto"><button onclick="aplicarCupom()">Aplicar</button></div>
         <div class="cupom-msg" id="cupomMsg"></div>
         <button class="btn-sorte" onclick="itemSurpresa()" id="btnSorte" style="margin:10px 20px;display:none;">🎁 Estou com sorte!</button>
-        <div class="cart-drawer-footer"><div class="cart-total" id="cartDrawerTotal">Total: R$ 0,00</div><div class="cart-actions"><button class="btn-agendar-finalizar" onclick="abrirModalAgendamento()"><i class="fas fa-calendar-check"></i> Agendar Retirada</button><button class="btn-continuar-comprando" onclick="fecharDrawer()"><i class="fas fa-arrow-left"></i> Continuar Comprando</button><button class="btn-clear-cart" onclick="limparCarrinho()">Limpar</button></div></div>
+        <div class="cart-drawer-footer"><div class="cart-total" id="cartDrawerTotal">Total: R$ 0,00</div><div class="cart-actions"><button class="btn-agendar-finalizar" onclick="finalizarPedidoGudyx()"><i class="fab fa-whatsapp"></i> Finalizar pelo WhatsApp</button><button class="btn-continuar-comprando" onclick="fecharDrawer()"><i class="fas fa-arrow-left"></i> Continuar Comprando</button><button class="btn-clear-cart" onclick="limparCarrinho()">Limpar</button></div></div>
     </div>
 
     <div id="favDrawerOverlay" onclick="fecharFavDrawer()"></div>
@@ -468,7 +517,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             <div style="font-size:3.5rem; margin-bottom:10px;">👋</div>
             <img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx Mascote">
             <h2>Bem-vindo ao Catálogo Gudyx!</h2>
-            <p>Aqui você encontra papelaria personalizada e gráfica rápida. Adicione os itens no carrinho e finalize pelo WhatsApp com a gente!</p>
+            <p>Aqui você encontra papelaria personalizada, gráfica rápida e serviços digitais. Produtos físicos são retirados em local combinado; serviços digitais são tratados online. Escolha o que precisa e finalize pelo WhatsApp com a gente!</p>
             <button class="btn-welcome" onclick="fecharWelcomeModal()">Entrar</button>
         </div>
     </div>
@@ -478,22 +527,50 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
                 <span id="modalContatoHorario">Atendimento de Segunda a Sábado</span>
             </p></div></div>
 
-    <div id="comoFuncionaModal"><div class="como-funciona-box"><button class="close-modal" onclick="fecharComoFunciona()">×</button><h2>📦 Como comprar e retirar</h2><div class="passos"><div class="passo"><div class="numero">1</div><div class="texto">Escolha seus produtos e adicione ao <strong>carrinho</strong>.</div></div><div class="passo"><div class="numero">2</div><div class="texto">Vá até o carrinho e clique em <strong>"Agendar Retirada"</strong>.</div></div><div class="passo"><div class="numero">3</div><div class="texto">Selecione a <strong>data e horário</strong> disponíveis para retirar no balcão.</div></div><div class="passo"><div class="numero">4</div><div class="texto">Finalize enviando o pedido pelo <strong>WhatsApp</strong> e venha buscar!</div></div></div><p style="margin-top:20px; font-size:0.9rem; opacity:0.6;">📍 Retirada em Duque de Caxias - RJ</p></div></div>
+    <div id="comoFuncionaModal">
+        <div class="como-funciona-box">
+            <button class="close-modal" onclick="fecharComoFunciona()">×</button>
+            <h2>✨ Como funciona</h2>
+            <p class="como-subtitulo">A Gudyx trabalha com produtos físicos sob encomenda e também com serviços digitais. O atendimento e a confirmação são feitos pelo WhatsApp.</p>
+
+            <div class="como-tipo">
+                <strong>📦 Produtos físicos</strong>
+                <div class="passos">
+                    <div class="passo"><div class="numero">1</div><div class="texto">Escolha o produto e adicione ao <strong>carrinho</strong>.</div></div>
+                    <div class="passo"><div class="numero">2</div><div class="texto">Finalize pelo <strong>WhatsApp</strong> e confirme os detalhes da personalização.</div></div>
+                    <div class="passo"><div class="numero">3</div><div class="texto">Escolha uma <strong>data e horário disponíveis</strong> para retirada.</div></div>
+                    <div class="passo"><div class="numero">4</div><div class="texto">Retire seu pedido no local combinado com a Gudyx.</div></div>
+                </div>
+            </div>
+
+            <div class="como-tipo">
+                <strong>💻 Serviços digitais</strong>
+                <div class="passos">
+                    <div class="passo"><div class="numero">1</div><div class="texto">Escolha o serviço que deseja.</div></div>
+                    <div class="passo"><div class="numero">2</div><div class="texto">Envie a solicitação pelo <strong>WhatsApp</strong>.</div></div>
+                    <div class="passo"><div class="numero">3</div><div class="texto">A Gudyx confirma briefing, prazo, formato e demais detalhes diretamente com você.</div></div>
+                </div>
+            </div>
+
+            <div class="como-aviso">🚫 <strong>Importante:</strong> a Gudyx não realiza entregas físicas. Produtos físicos funcionam por retirada combinada. Serviços digitais são atendidos online.</div>
+            <p style="margin-top:14px; font-size:0.84rem; opacity:0.62;">📍 Retirada em Duque de Caxias - RJ</p>
+        </div>
+    </div>
 
     <div id="agendamentoModal">
         <div class="agendamento-box">
             <button class="close-modal" onclick="fecharModalAgendamento()">×</button>
-            <h2>📅 Agendar Retirada</h2>
+            <h2>📅 Finalizar pedido físico</h2>
             <div id="infoPrazoAgendamento" class="info-prazo">Carregando prazos...</div>
             <label>Seu Nome (Obrigatório)</label>
             <input type="text" id="clienteNome" placeholder="Ex: João Silva">
             <label>Seu WhatsApp (com DDD)</label>
             <input type="text" id="clienteWhatsApp" placeholder="Ex: 21976121076">
-            <label>Data da Retirada</label>
+            <label>Data da Retirada dos itens físicos</label>
             <select id="dataRetirada"></select>
             <label>Horário da Retirada</label>
             <select id="horaRetirada"></select>
-            <button class="btn-confirmar-agendamento" onclick="enviarPedidoComAgendamento()"><i class="fab fa-whatsapp"></i> Enviar Pedido e Agendar</button>
+            <button class="btn-confirmar-agendamento" onclick="enviarPedidoComAgendamento()"><i class="fab fa-whatsapp"></i> Enviar pedido pelo WhatsApp</button>
         </div>
     </div>
 
@@ -532,7 +609,14 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
                 <div class="subtitle">PAPELARIA PERSONALIZADA · GRÁFICA RÁPIDA <span class="badge-vip" id="badgeVip" style="display:none;">⭐ VIP</span></div>
                 <div class="slogan">"Onde cada detalhe é um grude de personalidade"</div>
                 <div style="margin-top: 10px; display:flex; gap:15px; align-items:center; justify-content:center; flex-wrap:wrap;">
-                    <button onclick="abrirComoFunciona()" style="background:rgba(172,40,255,0.2); border:1px solid var(--vidro-borda); border-radius:20px; padding:8px 16px; color:var(--cor-texto); cursor:pointer; transition:0.3s;">📦 Como retirar</button>
+                    <button onclick="abrirComoFunciona()" style="background:rgba(172,40,255,0.2); border:1px solid var(--vidro-borda); border-radius:20px; padding:8px 16px; color:var(--cor-texto); cursor:pointer; transition:0.3s;">✨ Como funciona</button>
+                </div>
+                <div class="gudyx-fulfillment-strip" aria-label="Como a Gudyx atende">
+                    <span>📦 <strong>Produtos físicos:</strong> retirada combinada</span>
+                    <span class="sep">•</span>
+                    <span>💻 <strong>Serviços digitais:</strong> atendimento online</span>
+                    <span class="sep">•</span>
+                    <span>🚫 Não realizamos entrega física</span>
                 </div>
             </div>
             <div class="search-global"><i class="fas fa-search"></i><input type="text" id="searchGlobal" placeholder="O que você procura?" oninput="debounceBuscaGlobal()"><button onclick="buscaGlobal()"><i class="fas fa-search"></i></button></div>
@@ -552,7 +636,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
                 <button class="mobile-service-card" type="button" onclick="navegarPara('servicosScreen')">
                     <span class="service-icon"><i class="fas fa-screwdriver-wrench"></i></span>
-                    <span><b>Precisa de um serviço?</b><small>Veja a área de SERVIÇOS da Gudyx</small></span>
+                    <span><b>Precisa de um serviço?</b><small>Serviços digitais e personalizados da Gudyx</small></span>
                     <i class="fas fa-chevron-right"></i>
                 </button>
 
@@ -579,7 +663,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         <div class="listagem-screen" style="padding:30px;text-align:center;">
             <h2 style="text-shadow:0 0 30px rgba(172,40,255,0.5); letter-spacing:4px; font-weight:300; font-size:clamp(1.5rem,3vw,2.2rem);">✨ O que você procura?</h2>
             <div style="display:flex; gap:30px; flex-wrap:wrap; justify-content:center; align-items:stretch; margin-top:30px; max-width:700px; width:100%;">
-                <div class="categoria-card" style="flex:1 1 280px; padding:50px 30px; border-radius:24px;" onclick="navegarPara('servicosScreen')"><div style="font-size:5rem; color:var(--ciano-brilhante); filter:drop-shadow(0 0 20px rgba(0,242,254,0.5));"><i class="fas fa-tools"></i></div><h3 style="font-size:1.6rem; letter-spacing:2px; margin-top:15px; font-weight:600; background:linear-gradient(135deg, var(--ciano-brilhante), #a028ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">SERVIÇOS</h3><p style="opacity:0.6; font-size:0.9rem; margin-top:5px; -webkit-text-fill-color:#f0eaff;">Personalização e criação</p></div>
+                <div class="categoria-card" style="flex:1 1 280px; padding:50px 30px; border-radius:24px;" onclick="navegarPara('servicosScreen')"><div style="font-size:5rem; color:var(--ciano-brilhante); filter:drop-shadow(0 0 20px rgba(0,242,254,0.5));"><i class="fas fa-tools"></i></div><h3 style="font-size:1.6rem; letter-spacing:2px; margin-top:15px; font-weight:600; background:linear-gradient(135deg, var(--ciano-brilhante), #a028ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">SERVIÇOS</h3><p style="opacity:0.6; font-size:0.9rem; margin-top:5px; -webkit-text-fill-color:#f0eaff;">Criação, personalização e serviços digitais</p></div>
                 <div class="categoria-card" style="flex:1 1 280px; padding:50px 30px; border-radius:24px;" onclick="navegarPara('produtosScreen')"><div style="font-size:5rem; color:var(--rosa-neon); filter:drop-shadow(0 0 20px rgba(255,102,178,0.5));"><i class="fas fa-store"></i></div><h3 style="font-size:1.6rem; letter-spacing:2px; margin-top:15px; font-weight:600; background:linear-gradient(135deg, var(--rosa-neon), #a028ff); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">PRODUTOS</h3><p style="opacity:0.6; font-size:0.9rem; margin-top:5px; -webkit-text-fill-color:#f0eaff;">Papelaria e itens exclusivos</p></div>
             </div>
             <button class="btn-voltar" onclick="navegarPara('homeScreen')" style="margin-top:40px;"><i class="fas fa-arrow-left" style="margin-right:8px;"></i> Voltar</button>
@@ -935,7 +1019,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         function trazerMascoteDeVolta() { document.getElementById('peekingHead').classList.remove('active'); document.getElementById('mascoteWrapper').classList.remove('somiu'); estaSumido=false; falarMascote('Voltei! 🎉'); }
         setInterval(() => { if (!estaFalando && !estaFugindo && !estaSumido && !estaContando) { atualizarMensagensMascote(); if (dados.frases?.length && Math.random()<0.5) falarMascote(dados.frases[Math.floor(Math.random()*dados.frases.length)]); else falarMascote(); } }, 15000);
 
-        const frasesInfluenciador = ["Finaliza essa compra! 🛒","Tem certeza que não quer mais um?","Aproveita o cupom BEMVINDO10!","Esses produtos tão com saudade!","Não deixa pra depois, hein!","Leva mais um que o frete some! 😜","O Gluudyx aprova esse carrinho!","Tá esperando o quê? Fecha logo!"];
+        const frasesInfluenciador = ["Finaliza essa compra! 🛒","Tem certeza que não quer mais um?","Aproveita o cupom BEMVINDO10!","Esses produtos tão com saudade!","Não deixa pra depois, hein!","Se gostou, chama a Gudyx no WhatsApp! 👾💜","O Gluudyx aprova esse carrinho!","Tá esperando o quê? Fecha logo!"];
         function mostrarMiniGluudyx() { const mini = document.getElementById('miniGluudyx'); if(!mini) return; mini.querySelector('.mini-fala').textContent = frasesInfluenciador[Math.floor(Math.random()*frasesInfluenciador.length)]; mini.style.display = 'flex'; }
         function esconderMiniGluudyx() { if (!document.getElementById('cartDrawer').classList.contains('open') && !document.getElementById('productModal').classList.contains('active')) { document.getElementById('miniGluudyx').style.display = 'none'; } }
 
@@ -1153,7 +1237,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
         function verificarAbandono() { if (carrinho.length === 0) return; const ultimoAbandono = localStorage.getItem('gudyx_abandono_aviso'); const agora = Date.now(); if (!ultimoAbandono || (agora - parseInt(ultimoAbandono)) > 86400000) { setTimeout(() => { falarMascote('Ei, você deixou itens no carrinho! 😉 Finaliza sua compra!'); localStorage.setItem('gudyx_abandono_aviso', agora.toString()); }, 5000); } }
 
-        const tourSteps = [{ titulo: 'Bem-vindo à Gudyx!', texto: 'Eu sou o Gluudyx, seu assistente! Clique em mim para interagir.', alvo: '#mascoteWrapper' },{ titulo: 'Busca Rápida', texto: 'Aqui você pode buscar qualquer produto instantaneamente.', alvo: '#searchGlobal' },{ titulo: 'Promoções', texto: 'Aqui ficam as ofertas especiais! Arraste para ver mais.', alvo: '#sliderBox' },{ titulo: 'Seu Carrinho', texto: 'Adicione itens e finalize pelo WhatsApp. É rápido!', alvo: '.float-cart' },{ titulo: 'Pronto!', texto: 'Agora é só explorar e se divertir! 🎉', alvo: null }];
+        const tourSteps = [{ titulo: 'Bem-vindo à Gudyx!', texto: 'Eu sou o Gluudyx, seu assistente! Clique em mim para interagir.', alvo: '#mascoteWrapper' },{ titulo: 'Busca Rápida', texto: 'Aqui você pode buscar qualquer produto instantaneamente.', alvo: '#searchGlobal' },{ titulo: 'Promoções', texto: 'Aqui ficam as ofertas especiais! Arraste para ver mais.', alvo: '#sliderBox' },{ titulo: 'Seu Carrinho', texto: 'Adicione itens e finalize pelo WhatsApp. Produtos físicos são retirados; serviços digitais são tratados online.', alvo: '.float-cart' },{ titulo: 'Pronto!', texto: 'Agora é só explorar e se divertir! 🎉', alvo: null }];
         let tourAtual = 0;
         function iniciarTour() { tourAtual = 0; document.getElementById('tourOverlay').classList.add('active'); mostrarTourStep(); }
         function mostrarTourStep() { const step = tourSteps[tourAtual]; document.getElementById('tourTitulo').textContent = step.titulo; document.getElementById('tourTexto').textContent = step.texto; document.getElementById('tourBtn').textContent = tourAtual < tourSteps.length - 1 ? 'Próximo' : 'Começar!'; document.querySelectorAll('.tour-highlight').forEach(el => el.remove()); if (step.alvo) { const alvo = document.querySelector(step.alvo); if (alvo) { const rect = alvo.getBoundingClientRect(); const highlight = document.createElement('div'); highlight.className = 'tour-highlight'; highlight.style.left = rect.left - 5 + 'px'; highlight.style.top = rect.top - 5 + 'px'; highlight.style.width = rect.width + 10 + 'px'; highlight.style.height = rect.height + 10 + 'px'; document.body.appendChild(highlight); } } }
@@ -1537,9 +1621,59 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
         function renderizarSugestoes(prodId) { const container=document.getElementById('sugestoesGrid'); const prod=dados.produtos.find(p=>p.id===prodId); if(!prod){container.innerHTML='';return;} let sugestoes = dados.produtos.filter(p=>p.id!==prodId&&p.categoriaId===prod.categoriaId&&isEmEstoque(p)).slice(0,3); if (sugestoes.length < 2) { sugestoes = dados.produtos.filter(p=>p.id!==prodId&&isEmEstoque(p)).sort(()=>Math.random()-0.5).slice(0,3); } container.innerHTML=sugestoes.length?sugestoes.map(s=>{const preco=calcularPrecoTotal(s, []) || '0,00'; return`<div class="sugestao-card" onclick="abrirModal('${s.id}')"><img src="${getImagemPrincipal(s)}" loading="lazy"><h5>${s.nome}</h5><div class="preco">R$ ${preco}</div></div>`;}).join(''):'<p style="opacity:0.6;">Nenhum relacionado.</p>'; }
         
+        function tipoItemCarrinhoGudyx(item) {
+            const prod = dados.produtos.find(p => p.id === item.id);
+            if (!prod) return 'produtos';
+            const cat = dados.categorias.find(c => c.id === prod.categoriaId);
+            return cat?.tipo === 'servicos' ? 'servicos' : 'produtos';
+        }
+
+        function carrinhoTemFisicosGudyx() {
+            return carrinho.some(item => tipoItemCarrinhoGudyx(item) === 'produtos');
+        }
+
+        function carrinhoSomenteDigitalGudyx() {
+            return carrinho.length > 0 && carrinho.every(item => tipoItemCarrinhoGudyx(item) === 'servicos');
+        }
+
+        function finalizarPedidoGudyx() {
+            if (!carrinho.length) return alert('Seu carrinho está vazio!');
+            if (carrinhoSomenteDigitalGudyx()) {
+                finalizarServicosDigitaisGudyx();
+                return;
+            }
+            abrirModalAgendamento();
+        }
+
+        function finalizarServicosDigitaisGudyx() {
+            if (!carrinho.length) return;
+            let total = 0;
+            let msg = '*Gudyx Custom - Solicitação de serviço digital*\\n\\n';
+            carrinho.forEach(item => {
+                let val = parseFloat(String(item.preco || '0').replace(',', '.'));
+                if (isNaN(val)) val = 0;
+                total += val * item.quantidade;
+                msg += `💻 *${item.nome}* - ${item.quantidade}x - R$ ${item.preco || '0,00'}\\n`;
+            });
+            if (cupomAtual) {
+                if (cupomAtual.tipo === 'percentual') total *= (1 - cupomAtual.valor / 100);
+                else total = Math.max(0, total - cupomAtual.valor);
+                msg += `💳 Cupom ${cupomAtual.codigo}\\n`;
+            }
+            msg += `\\n💰 *Total estimado: R$ ${total.toFixed(2)}*\\n`;
+            msg += '📲 *Atendimento:* online pelo WhatsApp\\n';
+            msg += '\\nOlá! Quero solicitar estes serviços e combinar briefing, prazo e formato final.';
+            window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
+            fecharDrawer();
+        }
+
         function abrirModalAgendamento() {
             if(carrinho.length === 0) return alert('Seu carrinho está vazio!');
             document.getElementById('agendamentoModal').classList.add('active');
+            const info = document.getElementById('infoPrazoAgendamento');
+            if (info && carrinho.some(i => tipoItemCarrinhoGudyx(i) === 'servicos')) {
+                info.textContent = '📦 A data abaixo é somente para retirada dos itens físicos. Os serviços digitais serão combinados pelo WhatsApp.';
+            }
             gerarOpcoesAgendamento();
         }
         function fecharModalAgendamento() { document.getElementById('agendamentoModal').classList.remove('active'); }
@@ -1586,7 +1720,17 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         function fecharComoFunciona() { document.getElementById('comoFuncionaModal').classList.remove('active'); }
         document.getElementById('comoFuncionaModal').addEventListener('click', function(e) { if(e.target === this) fecharComoFunciona(); });
 
-        function comprarWhatsAppModal() { if(!produtoModalAtual||!isEmEstoque(produtoModalAtual)) return; const q=parseInt(document.getElementById('qtdModal').textContent), p=isPromoActive(produtoModalAtual)?produtoModalAtual.precoPromo:produtoModalAtual.preco; window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`*Gudyx*\n🛒 ${produtoModalAtual.nome}\n💰 ${p} x ${q}\nQuero comprar!`)}`,'_blank'); fecharModal(); }
+        function comprarWhatsAppModal() {
+            if(!produtoModalAtual || !isEmEstoque(produtoModalAtual)) return;
+            const q = parseInt(document.getElementById('qtdModal').textContent);
+            const p = isPromoActive(produtoModalAtual) ? produtoModalAtual.precoPromo : produtoModalAtual.preco;
+            const cat = dados.categorias.find(c => c.id === produtoModalAtual.categoriaId);
+            const ehServico = cat?.tipo === 'servicos';
+            const acao = ehServico ? 'Quero solicitar este serviço e combinar os detalhes.' : 'Quero encomendar este produto e combinar a retirada.';
+            const icone = ehServico ? '💻' : '🛍️';
+            window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(`*Gudyx Custom*\n${icone} ${produtoModalAtual.nome}\n💰 ${p} x ${q}\n${acao}`)}`,'_blank');
+            fecharModal();
+        }
 
         function carregarAvaliacoes() { avaliacoes = JSON.parse(localStorage.getItem('gudyx_avaliacoes')||'{}'); }
         function salvarAvaliacoes() { localStorage.setItem('gudyx_avaliacoes', JSON.stringify(avaliacoes)); }
