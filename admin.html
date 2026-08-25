@@ -184,6 +184,23 @@
             .linha-cupom .cupom-desc { grid-column:1/3; }
             .linha-desconto button, .linha-componente button, .linha-cupom button, .linha-servico button, .linha-opcao-produto button { grid-column:3; grid-row:1; min-width:44px; min-height:44px; padding:0!important; margin:0!important; }
         }
+    
+        /* GUDYX V3 — vídeo demonstrativo */
+        .video-admin-box { margin-top:15px; padding:15px; border:1px solid var(--vidro-borda); border-radius:14px; background:rgba(255,255,255,.025); }
+        .video-admin-row { display:grid; grid-template-columns:1fr auto; gap:8px; align-items:end; }
+        .video-admin-row input { margin:0; }
+        .video-admin-row button { margin:0; min-height:42px; }
+        #prodVideoPreview { margin-top:12px; display:none; }
+        #prodVideoPreview iframe, #prodVideoPreview video { width:100%; aspect-ratio:16/9; border:0; border-radius:14px; background:#000; }
+        .video-helper { font-size:.76rem; opacity:.62; line-height:1.45; margin-top:7px; }
+        .gudyx-price-ai { margin:15px 0; padding:16px; border:1px solid rgba(0,242,254,.28); border-radius:16px; background:linear-gradient(135deg,rgba(160,40,255,.10),rgba(0,242,254,.05)); }
+        .gudyx-price-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:8px; margin-top:10px; }
+        .gudyx-price-card { padding:11px; border:1px solid rgba(255,255,255,.08); border-radius:12px; background:rgba(0,0,0,.18); }
+        .gudyx-price-card small { display:block; opacity:.58; font-size:.67rem; }
+        .gudyx-price-card strong { display:block; margin-top:3px; font-size:1.05rem; color:var(--ciano-brilhante); }
+        #gudyxPriceExplain { margin-top:10px; font-size:.78rem; line-height:1.55; opacity:.78; }
+        @media(max-width:700px){ .video-admin-row{grid-template-columns:1fr;} .gudyx-price-grid{grid-template-columns:1fr;} }
+
     </style>
 </head>
 <body>
@@ -348,6 +365,33 @@
                 </div>
             </div>
 
+
+            <div class="gudyx-price-ai">
+                <label>🧠 Assistente de Precificação Gudyx</label>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+                    <div>
+                        <label>Margem desejada (%)</label>
+                        <input type="number" id="prodMargemDesejada" value="45" min="1" max="95" oninput="sugerirPrecoGudyx()">
+                    </div>
+                    <div>
+                        <label>Perdas / reserva (%)</label>
+                        <input type="number" id="prodPerdasPercentual" value="10" min="0" max="100" oninput="sugerirPrecoGudyx()">
+                    </div>
+                </div>
+                <label style="display:flex;align-items:center;gap:9px;">
+                    <input type="checkbox" id="prodUsarCatalogoReferencia" checked style="width:auto;transform:scale(1.25);" onchange="sugerirPrecoGudyx()">
+                    Usar preços já existentes no catálogo como referência
+                </label>
+                <div class="gudyx-price-grid">
+                    <div class="gudyx-price-card"><small>Custo estimado</small><strong id="gudyxCustoEstimado">R$ 0,00</strong></div>
+                    <div class="gudyx-price-card"><small>Referência do catálogo</small><strong id="gudyxReferenciaCatalogo">—</strong></div>
+                    <div class="gudyx-price-card"><small>Sugestão</small><strong id="gudyxPrecoSugerido">R$ 0,00</strong></div>
+                </div>
+                <div id="gudyxPriceExplain">A sugestão não altera o catálogo automaticamente. Você decide se aplica.</div>
+                <button type="button" class="btn-secondary" onclick="sugerirPrecoGudyx(true)">🔄 Recalcular</button>
+                <button type="button" onclick="aplicarSugestaoGudyx()">✅ Aplicar como preço manual</button>
+            </div>
+
             <!-- 🔥 NOVO: DIMENSÕES DO ITEM -->
             <div style="border-top:1px solid var(--vidro-borda); margin-top:15px; padding-top:15px;">
                 <label style="display:flex; align-items:center; gap:10px;">
@@ -395,6 +439,20 @@
                     <input type="file" id="fileInput" accept="image/*" multiple style="display:none;" onchange="handleImageUpload(event)">
                     <div id="image-preview-list" style="display:flex; flex-wrap:wrap; gap:10px; margin-top:10px; min-height: 20px;"></div>
                 </div>
+            </div>
+
+
+            <!-- 🎬 VÍDEO DEMONSTRATIVO -->
+            <div class="video-admin-box">
+                <label>🎬 Vídeo demonstrativo <span style="opacity:.6;font-size:.8rem;">(opcional)</span></label>
+                <div class="video-admin-row">
+                    <input type="url" id="prodVideoUrl" placeholder="YouTube, Vimeo ou link direto .mp4/.webm" oninput="atualizarPreviewVideoAdmin()">
+                    <button type="button" class="btn-secondary" onclick="atualizarPreviewVideoAdmin(true)"><i class="fas fa-play"></i> Testar vídeo</button>
+                </div>
+                <div class="video-helper">
+                    Ideal para serviços online, convites digitais, artes, animações e itens em que o movimento ajuda o cliente a entender o resultado.
+                </div>
+                <div id="prodVideoPreview"></div>
             </div>
 
             <div class="save-bar">
@@ -1098,12 +1156,176 @@
             }
         });
 
+
+        function numGudyx(v) {
+            let s = String(v ?? '').trim();
+            if (!s) return 0;
+            if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',','.');
+            else s = s.replace(',','.');
+            const n = parseFloat(s);
+            return Number.isFinite(n) ? n : 0;
+        }
+
+        function arredondarPrecoGudyx(valor) {
+            if (!Number.isFinite(valor) || valor <= 0) return 0;
+            const inteiro = Math.ceil(valor);
+            return Math.max(0.90, inteiro - 0.10);
+        }
+
+        function precoReferenciaProdutoGudyx(p) {
+            if (!p) return 0;
+            if (p.precoManual) return numGudyx(p.precoManual);
+            if (p.preco) return numGudyx(p.preco);
+            const material = p.material || 'offset';
+            const mat = material === 'matte' ? numGudyx(configPrecificacao.matte)
+                      : material === 'glossy' ? numGudyx(configPrecificacao.glossy)
+                      : numGudyx(configPrecificacao.offset);
+            return (mat * (parseInt(p.qtdFolhas) || 1)) + numGudyx(p.precoMaoObra);
+        }
+
+        function medianaGudyx(lista) {
+            const a = lista.filter(v => Number.isFinite(v) && v > 0).sort((x,y)=>x-y);
+            if (!a.length) return 0;
+            const m = Math.floor(a.length/2);
+            return a.length % 2 ? a[m] : (a[m-1]+a[m])/2;
+        }
+
+        function obterReferenciasPrecoGudyx() {
+            const atualId = document.getElementById('editProdId')?.value || '';
+            const catId = document.getElementById('prodCategoria')?.value || '';
+            const tipo = document.getElementById('prodTipo')?.value || 'produtos';
+            const nome = (document.getElementById('prodNome')?.value || '').toLowerCase();
+            const termos = nome.split(/\s+/).filter(t=>t.length>2);
+
+            let refs = (dados.produtos || []).filter(p => p.id !== atualId).map(p => {
+                const cat = dados.categorias.find(c=>c.id===p.categoriaId);
+                const mesmoTipo = (cat?.tipo || 'produtos') === tipo;
+                const mesmaCat = p.categoriaId === catId;
+                const nomeP = (p.nome || '').toLowerCase();
+                const similar = termos.reduce((s,t)=>s+(nomeP.includes(t)?1:0),0);
+                return {
+                    p,
+                    preco: precoReferenciaProdutoGudyx(p),
+                    score: (mesmaCat?12:0) + (mesmoTipo?4:0) + (similar*3)
+                };
+            }).filter(x=>x.preco>0).sort((a,b)=>b.score-a.score);
+
+            const fortes = refs.filter(x=>x.score>=4).slice(0,8);
+            return fortes.length ? fortes : refs.slice(0,5);
+        }
+
+        function sugerirPrecoGudyx() {
+            const out = document.getElementById('gudyxPrecoSugerido');
+            if (!out) return;
+
+            const material = document.getElementById('prodMaterial')?.value || 'offset';
+            const qtdFolhas = parseInt(document.getElementById('prodQtdFolhas')?.value) || 1;
+            const matUnit = material === 'matte' ? numGudyx(configPrecificacao.matte)
+                          : material === 'glossy' ? numGudyx(configPrecificacao.glossy)
+                          : numGudyx(configPrecificacao.offset);
+            const maoObra = numGudyx(document.getElementById('prodPrecoMaoObra')?.value);
+            const perdas = Math.max(0, numGudyx(document.getElementById('prodPerdasPercentual')?.value));
+            const margem = Math.min(95, Math.max(1, numGudyx(document.getElementById('prodMargemDesejada')?.value) || 45));
+
+            let custo = (matUnit * qtdFolhas) + maoObra;
+            custo *= (1 + perdas/100);
+            const precoPorMargem = custo / (1 - margem/100);
+
+            let refs = [];
+            let refMediana = 0;
+            if (document.getElementById('prodUsarCatalogoReferencia')?.checked) {
+                refs = obterReferenciasPrecoGudyx();
+                refMediana = medianaGudyx(refs.map(x=>x.preco));
+            }
+
+            let alvo = precoPorMargem;
+            if (refMediana > 0) {
+                alvo = Math.max(precoPorMargem, (precoPorMargem * 0.55) + (refMediana * 0.45));
+            }
+
+            const sugerido = arredondarPrecoGudyx(alvo);
+
+            document.getElementById('gudyxCustoEstimado').textContent = `R$ ${custo.toFixed(2).replace('.',',')}`;
+            document.getElementById('gudyxReferenciaCatalogo').textContent = refMediana > 0 ? `R$ ${refMediana.toFixed(2).replace('.',',')}` : 'Sem referência';
+            out.textContent = `R$ ${sugerido.toFixed(2).replace('.',',')}`;
+            out.dataset.valor = sugerido.toFixed(2).replace('.',',');
+
+            const nomes = refs.slice(0,3).map(x=>x.p.nome).join(', ');
+            document.getElementById('gudyxPriceExplain').innerHTML =
+                `Custo com ${perdas.toFixed(0)}% de reserva: <strong>R$ ${custo.toFixed(2).replace('.',',')}</strong>. ` +
+                `Preço mínimo para ${margem.toFixed(0)}% de margem: <strong>R$ ${precoPorMargem.toFixed(2).replace('.',',')}</strong>. ` +
+                (refMediana > 0 ? `Referências internas: ${nomes || 'itens semelhantes'}.` : 'Sem referências internas suficientes ainda.');
+        }
+
+        function aplicarSugestaoGudyx() {
+            sugerirPrecoGudyx();
+            const valor = document.getElementById('gudyxPrecoSugerido')?.dataset.valor;
+            if (!valor || numGudyx(valor) <= 0) return alert('Não há sugestão válida ainda.');
+            document.getElementById('prodPrecoManualToggle').checked = true;
+            document.getElementById('prodPrecoManual').value = valor;
+            toggleManualPriceFields();
+            mostrarToastAdmin(`✅ Sugestão R$ ${valor} aplicada como preço manual. Salve o item para confirmar.`);
+        }
+
+        function normalizarVideoGudyx(url) {
+            const raw = String(url || '').trim();
+            if (!raw) return { tipo:'', url:'' };
+            try {
+                const u = new URL(raw);
+                const host = u.hostname.replace(/^www\./,'').toLowerCase();
+
+                if (host === 'youtu.be') {
+                    const id = u.pathname.split('/').filter(Boolean)[0];
+                    return id ? { tipo:'iframe', url:`https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}` } : {tipo:'',url:''};
+                }
+                if (host.includes('youtube.com')) {
+                    let id = u.searchParams.get('v');
+                    if (!id && u.pathname.includes('/shorts/')) id = u.pathname.split('/shorts/')[1]?.split('/')[0];
+                    if (!id && u.pathname.includes('/embed/')) id = u.pathname.split('/embed/')[1]?.split('/')[0];
+                    return id ? { tipo:'iframe', url:`https://www.youtube-nocookie.com/embed/${encodeURIComponent(id)}` } : {tipo:'',url:''};
+                }
+                if (host.includes('vimeo.com')) {
+                    const id = u.pathname.split('/').filter(Boolean).find(x => /^\d+$/.test(x));
+                    return id ? { tipo:'iframe', url:`https://player.vimeo.com/video/${id}` } : {tipo:'',url:''};
+                }
+                if (/\.(mp4|webm|ogg)(\?.*)?$/i.test(raw)) return { tipo:'video', url:raw };
+                return { tipo:'link', url:raw };
+            } catch(e) {
+                return { tipo:'', url:'' };
+            }
+        }
+
+        function atualizarPreviewVideoAdmin(forcarAlerta = false) {
+            const input = document.getElementById('prodVideoUrl');
+            const box = document.getElementById('prodVideoPreview');
+            if (!input || !box) return;
+            const info = normalizarVideoGudyx(input.value);
+            box.innerHTML = '';
+            box.style.display = 'none';
+
+            if (!input.value.trim()) return;
+            if (!info.url) {
+                if (forcarAlerta) alert('Link de vídeo inválido.');
+                return;
+            }
+
+            box.style.display = 'block';
+            if (info.tipo === 'iframe') {
+                box.innerHTML = `<iframe src="${info.url}" title="Prévia do vídeo" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+            } else if (info.tipo === 'video') {
+                box.innerHTML = `<video src="${info.url}" controls preload="metadata" playsinline></video>`;
+            } else {
+                box.innerHTML = `<div style="padding:12px;border:1px solid var(--vidro-borda);border-radius:12px;">🔗 Link válido, mas sem player incorporável. No catálogo ele aparecerá como botão para assistir.</div>`;
+            }
+        }
+
         async function salvarProduto() {
             vibrar(15); // 🔥 VIBRAÇÃO NO CLIQUE PARA SALVAR
             const id = document.getElementById('editProdId').value;
             const tipoItem = document.getElementById('prodTipoItem').value;
             const catId = document.getElementById('prodCategoria').value;
             const nome = document.getElementById('prodNome').value.trim();
+            const videoUrl = document.getElementById('prodVideoUrl') ? document.getElementById('prodVideoUrl').value.trim() : '';
             const descricao = quillEditor.root.innerHTML;
             const usarPrecoManual = document.getElementById('prodPrecoManualToggle').checked;
             const precoManual = document.getElementById('prodPrecoManual').value.trim();
@@ -1182,7 +1404,7 @@
                     usarPrecoManual: usarPrecoManual,
                     precoManual: usarPrecoManual ? precoManual : null,
                     material, qtdFolhas, precoMaoObra, opcoesProduto,
-                    categoriaId: catId, nome, descricao, imagens: imagens || [], 
+                    categoriaId: catId, nome, descricao, imagens: imagens || [], videoUrl,
                     promocao, destaque, exibirSlider, precoPromo, desconto, promoStart, promoEnd, descPromo, 
                     cliques: id ? (dados.produtos.find(p => p.id === id)?.cliques || 0) : 0,
                     dataCriacao: id ? (dados.produtos.find(p => p.id === id)?.dataCriacao || new Date().toISOString()) : new Date().toISOString(),
@@ -1229,6 +1451,8 @@
             atualizarSelectCategorias();
             document.getElementById('prodCategoria').value = p.categoriaId;
             document.getElementById('prodNome').value = p.nome;
+            document.getElementById('prodVideoUrl').value = p.videoUrl || '';
+            atualizarPreviewVideoAdmin();
             quillEditor.root.innerHTML = p.descricao || '';
             document.getElementById('geradorStatus').textContent = '💡 Você está editando este produto. Também pode duplicá-lo para criar uma nova variação.';
             document.getElementById('prodPrecoManualToggle').checked = p.usarPrecoManual || false;
@@ -1324,6 +1548,7 @@
 
             imagensProdutoAtual = p.imagens ? [...p.imagens] : [];
             renderizarPreviews();
+            sugerirPrecoGudyx();
         }
 
         function limparTextoHtml(texto = '') {
@@ -1457,6 +1682,8 @@
             atualizarSelectCategorias();
             document.getElementById('prodCategoria').value = '';
             document.getElementById('prodNome').value = ''; 
+            document.getElementById('prodVideoUrl').value = '';
+            atualizarPreviewVideoAdmin();
             quillEditor.root.innerHTML = ''; 
             document.getElementById('prodMaterial').value = 'offset';
             document.getElementById('prodQtdFolhas').value = 1;
