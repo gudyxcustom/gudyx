@@ -1954,6 +1954,165 @@ body::before{
   }
 }
 
+
+/* ==========================================================
+   GUDYX ADMIN — ALERTAS DE PEDIDO
+   Popup interno + sino + mobile
+   ========================================================== */
+.gx-notify-button{
+  background:linear-gradient(120deg,rgba(168,61,255,.20),rgba(19,232,255,.08))!important;
+  border:1px solid rgba(168,61,255,.28)!important;
+}
+.gx-notify-button i{color:#ffe65c}
+.gx-notify-button.enabled{
+  border-color:rgba(92,242,162,.26)!important;
+  background:rgba(92,242,162,.075)!important;
+}
+.gx-notify-button.enabled i{
+  color:#66f0a4;
+  text-shadow:0 0 13px rgba(92,242,162,.28);
+}
+.gx-notify-button.denied{
+  opacity:.72;
+}
+.gx-admin-alert-host{
+  position:fixed;
+  top:18px;
+  right:18px;
+  z-index:40000;
+  width:min(390px,calc(100vw - 36px));
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  pointer-events:none;
+}
+.gx-admin-alert{
+  width:100%!important;
+  min-height:84px!important;
+  margin:0!important;
+  padding:12px 42px 12px 12px!important;
+  display:grid!important;
+  grid-template-columns:52px minmax(0,1fr)!important;
+  gap:11px!important;
+  align-items:center!important;
+  position:relative;
+  text-align:left!important;
+  color:#fff!important;
+  border-radius:19px!important;
+  border:1px solid rgba(19,232,255,.25)!important;
+  background:
+    radial-gradient(circle at 0% 20%,rgba(168,61,255,.23),transparent 34%),
+    linear-gradient(130deg,rgba(22,8,49,.98),rgba(7,17,35,.98))!important;
+  box-shadow:0 20px 60px rgba(0,0,0,.45),0 0 34px rgba(19,232,255,.10)!important;
+  backdrop-filter:blur(18px);
+  pointer-events:auto;
+  overflow:hidden;
+  animation:gxAlertIn .35s cubic-bezier(.2,.8,.2,1) both;
+}
+.gx-admin-alert.new{
+  border-color:rgba(19,232,255,.34)!important;
+}
+.gx-admin-alert.urgent{
+  border-color:rgba(255,85,200,.42)!important;
+  background:
+    radial-gradient(circle at 0% 20%,rgba(255,85,200,.20),transparent 34%),
+    linear-gradient(130deg,rgba(53,8,52,.99),rgba(18,6,34,.99))!important;
+  box-shadow:0 20px 60px rgba(0,0,0,.46),0 0 36px rgba(255,85,200,.11)!important;
+}
+.gx-admin-alert.success{
+  border-color:rgba(92,242,162,.30)!important;
+}
+.gx-admin-alert.warning{
+  border-color:rgba(255,188,77,.34)!important;
+}
+.gx-admin-alert.leaving{
+  animation:gxAlertOut .28s ease forwards;
+}
+.gx-alert-blob{
+  width:52px;height:52px;
+  display:grid;place-items:center;
+  border-radius:19px 23px 18px 25px;
+  color:#07111b;
+  font-size:1.05rem;
+  background:linear-gradient(135deg,#b347ff,#16ebff);
+  box-shadow:0 0 20px rgba(19,232,255,.14);
+  transform:rotate(-3deg);
+}
+.gx-admin-alert.urgent .gx-alert-blob{
+  color:#25051a;
+  background:linear-gradient(135deg,#ff5bc9,#ffb34d);
+}
+.gx-admin-alert.success .gx-alert-blob{
+  background:linear-gradient(135deg,#62efa4,#55efff);
+}
+.gx-alert-copy{
+  min-width:0;
+  display:block;
+}
+.gx-alert-copy strong{
+  display:block;
+  font-size:.80rem;
+  letter-spacing:.015em;
+  color:#fff;
+}
+.gx-alert-copy small{
+  display:block;
+  margin-top:4px;
+  color:#b9aec5;
+  font-size:.68rem;
+  line-height:1.4;
+}
+.gx-alert-close{
+  position:absolute;
+  top:8px;right:10px;
+  width:28px;height:28px;
+  display:grid;place-items:center;
+  border-radius:50%;
+  color:#9f93ad;
+  background:rgba(255,255,255,.045);
+  font-size:1rem;
+}
+@keyframes gxAlertIn{
+  from{opacity:0;transform:translateY(-14px) scale(.97)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes gxAlertOut{
+  to{opacity:0;transform:translateX(32px) scale(.97)}
+}
+@media(max-width:640px){
+  .admin-header-actions{
+    width:100%;
+    justify-content:flex-start!important;
+  }
+  .gx-notify-button{
+    flex:1 1 100%;
+    min-height:46px!important;
+  }
+  .gx-admin-alert-host{
+    top:10px;
+    left:10px;
+    right:10px;
+    width:auto;
+  }
+  .gx-admin-alert{
+    min-height:94px!important;
+    grid-template-columns:48px minmax(0,1fr)!important;
+    padding:12px 38px 12px 10px!important;
+    border-radius:17px!important;
+  }
+  .gx-alert-blob{
+    width:48px;height:48px;
+  }
+  .gx-alert-copy strong{font-size:.77rem}
+  .gx-alert-copy small{font-size:.66rem}
+}
+@media(prefers-reduced-motion:reduce){
+  .gx-admin-alert,
+  .gx-admin-alert.leaving{
+    animation:none!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1975,6 +2134,9 @@ body::before{
         <header class="admin-header">
             <div><h1>⚙️ Painel Gudyx</h1><p>Cadastre e edite sua vitrine com rapidez.</p></div>
             <div class="admin-header-actions">
+                <button type="button" id="gxNotifyButton" class="gx-notify-button" onclick="gxEnableNotifications()" title="Ativar avisos de pedidos">
+                    <i class="fas fa-bell"></i><span> Ativar avisos</span>
+                </button>
                 <a href="index.html" target="_blank" rel="noopener" title="Abrir catálogo"><i class="fas fa-store"></i><span> Ver catálogo</span></a>
                 <button type="button" class="btn-secondary" onclick="sairAdmin()" title="Sair"><i class="fas fa-right-from-bracket"></i><span> Sair</span></button>
             </div>
@@ -4415,15 +4577,34 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
     window.open(`https://wa.me/${br}?text=${encodeURIComponent(msg)}`,'_blank');
   };
 
+  let gxOrdersSnapshotReady = false;
+
   window.carregarPedidos = function(){
     const c=$('listaPedidosAdmin');
     if(c) c.innerHTML='<div class="gx-empty">Carregando pedidos...</div>';
     if(gxPedidosUnsub) gxPedidosUnsub();
+
     gxPedidosUnsub = db.collection('pedidos').orderBy('timestamp','desc').onSnapshot(snap=>{
+      const firstLoad = !gxOrdersSnapshotReady;
+
       gxPedidos = snap.docs.map(d=>({id:d.id,data:d.data()}));
       gxRenderOrders();
       gxRefreshMetrics();
       gxRenderDash();
+
+      // Na primeira carga apenas registra o estado; não dispara alertas antigos.
+      if(firstLoad){
+        gxOrdersSnapshotReady = true;
+        gxCheckDeadlineReminders();
+      }else{
+        snap.docChanges().forEach(change=>{
+          if(change.type !== 'added') return;
+          const id = change.doc.id;
+          const pedido = change.doc.data();
+          gxNotifyNewOrder(id,pedido);
+        });
+        gxCheckDeadlineReminders();
+      }
     },err=>{
       if(c) c.innerHTML=`<div class="gx-empty">Não foi possível carregar os pedidos.<br><small>${esc(err.message)}</small></div>`;
     });
@@ -5133,6 +5314,304 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
     }
   };
 
+
+  // ============================================================
+  // GUDYX ALERTAS — pedido novo + prazo próximo
+  // ============================================================
+  let gxAudioContext = null;
+  let gxReminderInterval = null;
+
+  function gxNotificationPermission(){
+    return ('Notification' in window) ? Notification.permission : 'unsupported';
+  }
+
+  function gxUpdateNotifyButton(){
+    const btn = $('gxNotifyButton');
+    if(!btn) return;
+
+    const permission = gxNotificationPermission();
+    if(permission === 'granted'){
+      btn.classList.add('enabled');
+      btn.innerHTML = '<i class="fas fa-bell"></i><span> Avisos ativos</span>';
+      btn.title = 'Notificações do navegador ativas';
+    }else if(permission === 'denied'){
+      btn.classList.remove('enabled');
+      btn.classList.add('denied');
+      btn.innerHTML = '<i class="fas fa-bell-slash"></i><span> Avisos bloqueados</span>';
+      btn.title = 'As notificações foram bloqueadas no navegador';
+    }else{
+      btn.classList.remove('enabled','denied');
+      btn.innerHTML = '<i class="fas fa-bell"></i><span> Ativar avisos</span>';
+      btn.title = 'Receber avisos de pedidos no celular';
+    }
+  }
+
+  window.gxEnableNotifications = async function(){
+    if(!('Notification' in window)){
+      gxShowAdminAlert({
+        type:'info',
+        title:'Avisos no navegador não disponíveis',
+        message:'Este navegador não oferece notificações do sistema. Os alertas dentro do ADMIN continuarão funcionando.',
+        sticky:true
+      });
+      return;
+    }
+
+    try{
+      const permission = await Notification.requestPermission();
+      gxUpdateNotifyButton();
+
+      if(permission === 'granted'){
+        localStorage.setItem('gudyx_admin_notifications','1');
+        gxPlaySlimeSound('success');
+        gxShowAdminAlert({
+          type:'success',
+          title:'Avisos ativados ✨',
+          message:'A Gudyx vai avisar quando chegar pedido novo ou quando uma retirada estiver próxima.'
+        });
+        gxSendSystemNotification(
+          'Gudyx Admin ✦ Avisos ativados',
+          'Você receberá alertas de pedidos enquanto o ADMIN estiver ativo.'
+        );
+      }else if(permission === 'denied'){
+        gxShowAdminAlert({
+          type:'warning',
+          title:'Notificações bloqueadas',
+          message:'Você bloqueou os avisos deste site. Pode liberar novamente nas permissões do navegador.',
+          sticky:true
+        });
+      }
+    }catch(e){
+      console.error('Erro ao solicitar notificações:',e);
+    }
+  };
+
+  function gxGetAudioContext(){
+    if(!gxAudioContext){
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if(!Ctx) return null;
+      gxAudioContext = new Ctx();
+    }
+    if(gxAudioContext.state === 'suspended'){
+      gxAudioContext.resume().catch(()=>{});
+    }
+    return gxAudioContext;
+  }
+
+  // Som sintetizado de "gosma": bolhas + deslize elástico.
+  function gxPlaySlimeSound(kind='new'){
+    try{
+      const ctx = gxGetAudioContext();
+      if(!ctx) return;
+
+      const now = ctx.currentTime;
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(0.16, now + 0.015);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + 0.72);
+      master.connect(ctx.destination);
+
+      const bubble = (start, f1, f2, duration, type='sine', volume=.22)=>{
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(f1,start);
+        osc.frequency.exponentialRampToValueAtTime(f2,start+duration);
+        gain.gain.setValueAtTime(0.0001,start);
+        gain.gain.exponentialRampToValueAtTime(volume,start+.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001,start+duration);
+        osc.connect(gain);
+        gain.connect(master);
+        osc.start(start);
+        osc.stop(start+duration+.03);
+      };
+
+      if(kind==='urgent'){
+        bubble(now,520,180,.33,'sine',.28);
+        bubble(now+.18,430,150,.38,'triangle',.23);
+        bubble(now+.40,620,230,.27,'sine',.18);
+      }else if(kind==='success'){
+        bubble(now,240,560,.30,'sine',.18);
+        bubble(now+.18,330,710,.38,'triangle',.15);
+      }else{
+        bubble(now,180,430,.30,'sine',.24);
+        bubble(now+.12,250,650,.38,'triangle',.19);
+        bubble(now+.34,160,340,.31,'sine',.16);
+      }
+    }catch(e){
+      console.warn('Som de alerta indisponível:',e);
+    }
+  }
+
+  function gxSendSystemNotification(title,body,tag='gudyx-admin'){
+    if(gxNotificationPermission() !== 'granted') return;
+    try{
+      const n = new Notification(title,{
+        body,
+        icon:'https://i.imgur.com/Y5H9zqr.png',
+        badge:'https://i.imgur.com/Y5H9zqr.png',
+        tag,
+        renotify:true,
+        requireInteraction:false
+      });
+      n.onclick = ()=>{
+        window.focus();
+        abrirAba('pedidos');
+        try{n.close();}catch(e){}
+      };
+    }catch(e){
+      console.warn('Notificação do sistema não enviada:',e);
+    }
+  }
+
+  function gxShowAdminAlert({type='new',title,message,sticky=false,onClick=null}){
+    let host = $('gxAdminAlertHost');
+    if(!host){
+      host = document.createElement('div');
+      host.id='gxAdminAlertHost';
+      host.className='gx-admin-alert-host';
+      host.setAttribute('aria-live','polite');
+      document.body.appendChild(host);
+    }
+
+    const card = document.createElement('button');
+    card.type='button';
+    card.className=`gx-admin-alert ${type}`;
+    card.innerHTML=`
+      <span class="gx-alert-blob"><i class="fas ${type==='urgent'?'fa-bell':type==='success'?'fa-check':'fa-basket-shopping'}"></i></span>
+      <span class="gx-alert-copy">
+        <strong>${esc(title)}</strong>
+        <small>${esc(message)}</small>
+      </span>
+      <span class="gx-alert-close" aria-label="Fechar">×</span>
+    `;
+
+    const close = ()=>card.classList.add('leaving');
+    card.querySelector('.gx-alert-close').onclick = e=>{
+      e.stopPropagation();
+      close();
+    };
+    card.onclick = ()=>{
+      if(typeof onClick==='function') onClick();
+      else abrirAba('pedidos');
+      close();
+    };
+    card.addEventListener('animationend',e=>{
+      if(e.animationName==='gxAlertOut') card.remove();
+    });
+
+    host.prepend(card);
+
+    if(!sticky){
+      setTimeout(close,8500);
+    }
+  }
+
+  function gxNotifyNewOrder(id,p){
+    const key=`gx_new_order_${id}`;
+    if(localStorage.getItem(key)) return;
+    localStorage.setItem(key,String(Date.now()));
+
+    const itens=(p.itens||[]).map(i=>i.nome).filter(Boolean);
+    const resumo=itens.slice(0,2).join(', ') || 'Novo pedido';
+    const total=money(p.total);
+
+    gxPlaySlimeSound('new');
+
+    gxShowAdminAlert({
+      type:'new',
+      title:'🛸 PEDIDO NOVO!',
+      message:`${p.clienteNome||'Cliente'} · ${resumo} · ${total}`,
+      sticky:true,
+      onClick:()=>{
+        abrirAba('pedidos');
+        gxSetFilter('new');
+      }
+    });
+
+    gxSendSystemNotification(
+      '🛸 Gudyx: pedido novo!',
+      `${p.clienteNome||'Cliente'} · ${resumo} · ${total}`,
+      `gudyx-new-${id}`
+    );
+
+    if(navigator.vibrate){
+      navigator.vibrate([180,90,180,90,260]);
+    }
+  }
+
+  function gxReminderKey(id,u){
+    const day = new Date().toISOString().slice(0,10);
+    return `gx_deadline_${id}_${u.level}_${day}`;
+  }
+
+  function gxCheckDeadlineReminders(){
+    if(!Array.isArray(gxPedidos) || !gxPedidos.length) return;
+
+    gxPedidos.forEach(({id,data:p})=>{
+      const status=normalizeOrderStatus(p.statusPedido||p.status);
+      if(status==='Finalizado' || status==='Cancelado') return;
+
+      const u=gxPickupUrgency(p);
+      if(!u.hasDate) return;
+
+      // Lembrete diário quando faltam 3 dias ou menos / atrasado.
+      if(!['urgent','today','overdue'].includes(u.level)) return;
+
+      const key=gxReminderKey(id,u);
+      if(localStorage.getItem(key)) return;
+      localStorage.setItem(key,String(Date.now()));
+
+      const title=u.level==='overdue'
+        ? '🚨 Pedido com retirada atrasada'
+        : u.level==='today'
+          ? '⏰ Retirada é HOJE'
+          : '⚠️ Pedido chegando perto da retirada';
+
+      const body=`${p.clienteNome||'Cliente'} · ${gxUrgencyText(u)} · ${money(p.total)}`;
+
+      gxPlaySlimeSound('urgent');
+
+      gxShowAdminAlert({
+        type:'urgent',
+        title,
+        message:body,
+        sticky:true,
+        onClick:()=>{
+          abrirAba('pedidos');
+          gxSetFilter('all');
+        }
+      });
+
+      gxSendSystemNotification(
+        `Gudyx Admin · ${title}`,
+        body,
+        `gudyx-deadline-${id}-${new Date().toISOString().slice(0,10)}`
+      );
+
+      if(navigator.vibrate){
+        navigator.vibrate([300,100,120,100,300]);
+      }
+    });
+  }
+
+  function gxInstallNotificationChecks(){
+    gxUpdateNotifyButton();
+
+    // Checa prazos periodicamente enquanto o ADMIN está aberto.
+    if(gxReminderInterval) clearInterval(gxReminderInterval);
+    gxReminderInterval=setInterval(gxCheckDeadlineReminders,15*60*1000);
+
+    // Primeiro toque/clique libera o AudioContext em celulares.
+    const unlock=()=>{
+      gxGetAudioContext();
+      document.removeEventListener('pointerdown',unlock);
+      document.removeEventListener('keydown',unlock);
+    };
+    document.addEventListener('pointerdown',unlock,{once:true});
+    document.addEventListener('keydown',unlock,{once:true});
+  }
+
   function gxInstallAuth(){
     // Substitui o login com senha escrita no HTML por Firebase Email/Password.
     window.checkPassword = async function(){
@@ -5211,6 +5690,7 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
 
     // Evita que uma sessão antiga baseada em sessionStorage burle o Firebase.
     sessionStorage.removeItem('gudyx_admin_session');
+    gxInstallNotificationChecks();
     const user=firebase.auth().currentUser;
     if(!user || user.isAnonymous){
       if($('adminContent')) $('adminContent').style.display='none';
