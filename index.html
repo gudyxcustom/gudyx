@@ -421,24 +421,36 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 
 
 
-/* ===== GUDYX — ACESSAR CATÁLOGO MAIS ALTO =====
-   Integrado diretamente ao index.html */
-.home-screen .main-area .mascote-block .btn-acessar{
-    position: relative !important;
-    transform: translateY(-42px) !important;
-    margin-bottom: -34px !important;
-    z-index: 20 !important;
+
+
+
+/* ===== GUDYX — BOTÃO ACESSAR CATÁLOGO LOGO ABAIXO DA LOGO ===== */
+.catalog-access-below-logo{
+    width:100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:8px auto 12px;
 }
-.home-screen .main-area .mascote-block .btn-acessar:hover{
-    transform: translateY(-46px) !important;
+.catalog-access-below-logo .btn-acessar{
+    margin:0 auto !important;
+    transform:none !important;
+    z-index:5;
+}
+.catalog-access-below-logo .btn-acessar:hover{
+    transform:translateY(-3px) !important;
 }
 @media (max-width:700px){
-    .home-screen .main-area .mascote-block .btn-acessar{
-        transform: translateY(-58px) !important;
-        margin-bottom: -48px !important;
+    .catalog-access-below-logo{
+        margin:6px auto 10px;
+        padding:0 4px;
     }
-    .home-screen .main-area .mascote-block .btn-acessar:hover{
-        transform: translateY(-61px) !important;
+    .catalog-access-below-logo .btn-acessar{
+        width:100% !important;
+        max-width:350px !important;
+        padding:17px 28px !important;
+        font-size:1.05rem !important;
+        letter-spacing:2.5px !important;
     }
 }
 
@@ -629,6 +641,11 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             <div class="header-top">
                 <button class="modo-toggle" onclick="alternarModo()" id="modoToggle"><i class="fas fa-sun"></i></button>
                 <div class="logo-wrapper"><img src="https://i.imgur.com/uvur0Sy.png" alt="Gudyx" class="logo-img" loading="lazy"></div>
+                <div class="catalog-access-below-logo">
+                    <button class="btn-acessar" onclick="navegarPara('escolhaScreen')">
+                        <span>Acessar Catálogo</span>
+                    </button>
+                </div>
                 <div class="subtitle">PAPELARIA PERSONALIZADA · GRÁFICA RÁPIDA <span class="badge-vip" id="badgeVip" style="display:none;">⭐ VIP</span></div>
                 <div class="slogan">"Onde cada detalhe é um grude de personalidade"</div>
                 <div style="margin-top: 10px; display:flex; gap:15px; align-items:center; justify-content:center; flex-wrap:wrap;">
@@ -646,7 +663,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             <div class="main-area">
                 <div class="mascote-block">
                     <div class="mascote-wrapper" id="mascoteWrapper"><div class="mascote-glow"></div><img src="https://i.imgur.com/Y5H9zqr.png" alt="Gluudyx" id="mascoteImg" loading="lazy"><div class="fala-container" id="falaContainer"><span class="fala-cursor">|</span></div></div>
-                    <button class="btn-acessar" onclick="navegarPara('escolhaScreen')"><span>Acessar Catálogo</span></button>
                 </div>
                 <div class="promo-slider-container"><div class="slider-box" id="sliderBox"><div class="fire-badge">PROMO</div><div id="dynamicSliderContainer"></div><div id="sliderDots"></div></div></div>
             </div>
