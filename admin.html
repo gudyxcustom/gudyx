@@ -1632,6 +1632,328 @@ body::before{
   }
 }
 
+
+/* ==========================================================
+   GUDYX ADMIN — PEDIDOS QUE PEDEM ATENÇÃO
+   Destaque por proximidade da data + responsivo
+   ========================================================== */
+.gx-dash-card-orders{
+  position:relative;
+  overflow:hidden;
+  border-color:rgba(137,70,255,.32)!important;
+  background:
+    radial-gradient(circle at 0% 0%,rgba(163,58,255,.10),transparent 34%),
+    linear-gradient(145deg,rgba(25,9,51,.90),rgba(9,4,24,.90))!important;
+}
+.gx-dash-card-orders::before{
+  content:"";
+  position:absolute;
+  width:170px;height:170px;
+  left:-85px;top:-95px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(19,232,255,.12),transparent 68%);
+  pointer-events:none;
+}
+#gxDashOrders{
+  display:grid;
+  gap:9px;
+  position:relative;
+  z-index:2;
+}
+.gx-attention-order{
+  width:100%!important;
+  min-height:0!important;
+  margin:0!important;
+  padding:12px 13px!important;
+  display:block!important;
+  text-align:left!important;
+  border-radius:15px!important;
+  border:1px solid rgba(255,255,255,.065)!important;
+  background:
+    linear-gradient(120deg,rgba(255,255,255,.042),rgba(255,255,255,.018))!important;
+  color:#f8f3ff!important;
+  box-shadow:none!important;
+  transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,background .18s ease!important;
+}
+.gx-attention-order:hover{
+  transform:translateY(-2px)!important;
+  border-color:rgba(19,232,255,.26)!important;
+  background:
+    linear-gradient(120deg,rgba(19,232,255,.055),rgba(164,59,255,.055))!important;
+  box-shadow:0 10px 28px rgba(0,0,0,.16),0 0 22px rgba(19,232,255,.055)!important;
+}
+.gx-attention-order.requires-attention{
+  border-color:rgba(255,92,198,.37)!important;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(255,72,170,.11),transparent 31%),
+    linear-gradient(120deg,rgba(84,20,128,.30),rgba(28,8,55,.46))!important;
+  box-shadow:
+    inset 3px 0 0 #ff55c8,
+    0 0 26px rgba(255,85,200,.09)!important;
+}
+.gx-attention-order.urgency-overdue{
+  border-color:rgba(255,88,105,.46)!important;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(255,65,91,.14),transparent 32%),
+    linear-gradient(120deg,rgba(88,17,48,.36),rgba(36,7,29,.49))!important;
+  box-shadow:inset 3px 0 0 #ff596d,0 0 28px rgba(255,73,93,.09)!important;
+}
+.gx-attention-order.urgency-today{
+  border-color:rgba(255,180,64,.44)!important;
+  box-shadow:inset 3px 0 0 #ffb84d,0 0 28px rgba(255,184,77,.08)!important;
+}
+.gx-attention-top,
+.gx-attention-middle,
+.gx-attention-bottom{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+.gx-attention-top{margin-bottom:8px}
+.gx-attention-middle{
+  padding:8px 0;
+  border-top:1px solid rgba(255,255,255,.045);
+  border-bottom:1px solid rgba(255,255,255,.045);
+}
+.gx-attention-bottom{padding-top:8px}
+.gx-attention-client{
+  min-width:0;
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+}
+.gx-attention-client strong{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:.80rem;
+  color:#fff;
+}
+.gx-attention-client span{
+  flex:none;
+  color:#766986;
+  font-size:.56rem;
+}
+.gx-attention-seal{
+  flex:none;
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  min-height:25px;
+  padding:5px 9px;
+  border-radius:999px;
+  font-size:.56rem;
+  line-height:1;
+  font-weight:900;
+  letter-spacing:.055em;
+  white-space:nowrap;
+  color:#d5c9df;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.045);
+}
+.gx-attention-seal.urgent{
+  color:#ffd6ef;
+  border-color:rgba(255,85,200,.31);
+  background:rgba(255,85,200,.12);
+  box-shadow:0 0 18px rgba(255,85,200,.10);
+}
+.gx-attention-seal.today{
+  color:#ffe5b3;
+  border-color:rgba(255,184,77,.34);
+  background:rgba(255,184,77,.12);
+  box-shadow:0 0 18px rgba(255,184,77,.08);
+}
+.gx-attention-seal.overdue{
+  color:#ffd0d6;
+  border-color:rgba(255,89,109,.38);
+  background:rgba(255,89,109,.13);
+  box-shadow:0 0 18px rgba(255,89,109,.09);
+}
+.gx-attention-seal.soon{
+  color:#d8f9ff;
+  border-color:rgba(19,232,255,.24);
+  background:rgba(19,232,255,.07);
+}
+.gx-attention-items{
+  min-width:0;
+  color:#c4b9d0;
+  font-size:.70rem;
+}
+.gx-attention-items span{
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.gx-attention-total{
+  flex:none;
+  color:#5df1ff;
+  font-size:.82rem;
+  text-shadow:0 0 14px rgba(19,232,255,.20);
+}
+.gx-attention-date{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  color:#93869f;
+  font-size:.61rem;
+}
+.gx-attention-date b{
+  color:#c3b8ce;
+  font-weight:800;
+}
+.gx-attention-date.urgent b{color:#ff9ed8}
+.gx-attention-date.today b{color:#ffcd7b}
+.gx-attention-date.overdue b{color:#ff8f9d}
+.gx-attention-date.soon b{color:#7defff}
+.gx-attention-payment{
+  flex:none;
+  font-size:.57rem;
+  font-weight:850;
+  padding:4px 7px;
+  border-radius:999px;
+}
+.gx-attention-payment.pending{
+  color:#ffd089;
+  background:rgba(255,171,69,.08);
+}
+.gx-attention-payment.partial{
+  color:#ffe999;
+  background:rgba(255,229,92,.08);
+}
+.gx-attention-payment.paid{
+  color:#7bf0ac;
+  background:rgba(92,242,162,.07);
+}
+.gx-attention-empty{
+  min-height:150px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  color:#8c7e99;
+  border:1px dashed rgba(181,92,255,.17);
+  border-radius:16px;
+}
+.gx-attention-empty span{font-size:1.5rem}
+.gx-attention-empty strong{color:#d8cfe2;font-size:.78rem}
+.gx-attention-empty small{font-size:.63rem}
+
+/* Tablet */
+@media(max-width:900px){
+  .gx-dashboard{
+    grid-template-columns:1fr!important;
+  }
+  .gx-dash-card-orders{
+    order:1;
+  }
+  .gx-dash-card-shortcuts{
+    order:2;
+  }
+}
+
+/* Mobile: informação essencial em camadas, sem apertar texto */
+@media(max-width:640px){
+  .gx-dash-card{
+    padding:13px!important;
+    border-radius:17px!important;
+  }
+  .gx-card-title{
+    align-items:flex-start!important;
+  }
+  .gx-card-title h3{
+    font-size:.90rem!important;
+  }
+  .gx-card-title small{
+    font-size:.60rem!important;
+    line-height:1.35;
+  }
+  #gxDashOrders{
+    gap:8px;
+  }
+  .gx-attention-order{
+    padding:11px!important;
+    border-radius:14px!important;
+  }
+  .gx-attention-top{
+    align-items:flex-start;
+  }
+  .gx-attention-client{
+    flex-direction:column;
+    gap:2px;
+  }
+  .gx-attention-client strong{
+    max-width:52vw;
+    font-size:.76rem;
+  }
+  .gx-attention-client span{
+    font-size:.52rem;
+  }
+  .gx-attention-seal{
+    max-width:44vw;
+    white-space:normal;
+    text-align:center;
+    justify-content:center;
+    line-height:1.15;
+    padding:5px 7px;
+    font-size:.50rem;
+  }
+  .gx-attention-middle{
+    align-items:flex-start;
+  }
+  .gx-attention-items{
+    max-width:64%;
+    font-size:.66rem;
+  }
+  .gx-attention-items span{
+    white-space:normal;
+    display:-webkit-box;
+    -webkit-line-clamp:2;
+    -webkit-box-orient:vertical;
+  }
+  .gx-attention-total{
+    font-size:.76rem;
+  }
+  .gx-attention-bottom{
+    align-items:flex-start;
+  }
+  .gx-attention-date{
+    flex-wrap:wrap;
+    max-width:72%;
+    gap:4px;
+    font-size:.57rem;
+  }
+  .gx-attention-date b{
+    width:100%;
+    margin-left:17px;
+  }
+  .gx-attention-payment{
+    font-size:.52rem;
+  }
+}
+
+/* Celular muito estreito */
+@media(max-width:390px){
+  .gx-attention-top,
+  .gx-attention-middle,
+  .gx-attention-bottom{
+    gap:7px;
+  }
+  .gx-attention-client strong{
+    max-width:46vw;
+  }
+  .gx-attention-seal{
+    max-width:46vw;
+  }
+  .gx-attention-items{
+    max-width:60%;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -3874,7 +4196,7 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
         <div class="gx-dash-card gx-dash-card-orders">
           <div class="gx-card-title">
             <span class="gx-card-icon">📦</span>
-            <div><h3>Pedidos que pedem atenção</h3><small>O que precisa de você agora.</small></div>
+            <div><h3>Pedidos que pedem atenção</h3><small>Prioridade automática pela data de retirada.</small></div>
           </div>
           <div id="gxDashOrders"></div>
         </div>
@@ -4116,18 +4438,151 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
     set('gxCountReady',count(p=>normalizeOrderStatus(p.statusPedido||p.status)==='Pronto'));
   }
 
+  function gxParsePickupDate(value){
+    if(!value) return null;
+
+    // Firestore Timestamp
+    if(value && typeof value.toDate === 'function'){
+      const d = value.toDate();
+      d.setHours(12,0,0,0);
+      return d;
+    }
+
+    const s = String(value).trim();
+
+    // YYYY-MM-DD (input type=date)
+    let m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if(m){
+      const d = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]), 12, 0, 0, 0);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    // DD/MM/YYYY
+    m = s.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if(m){
+      const d = new Date(Number(m[3]), Number(m[2])-1, Number(m[1]), 12, 0, 0, 0);
+      return Number.isNaN(d.getTime()) ? null : d;
+    }
+
+    const d = new Date(s);
+    if(Number.isNaN(d.getTime())) return null;
+    d.setHours(12,0,0,0);
+    return d;
+  }
+
+  function gxPickupUrgency(p){
+    const pickup = gxParsePickupDate(p.dataRetirada);
+    if(!pickup){
+      return {
+        hasDate:false,
+        level:'none',
+        days:null,
+        label:'',
+        dateText:'Sem data definida',
+        sort:99999
+      };
+    }
+
+    const today = new Date();
+    today.setHours(12,0,0,0);
+    const days = Math.round((pickup - today) / 86400000);
+
+    let level='normal';
+    let label='';
+
+    if(days < 0){
+      level='overdue';
+      label='ATRASADO';
+    }else if(days === 0){
+      level='today';
+      label='REQUER ATENÇÃO · HOJE';
+    }else if(days <= 3){
+      level='urgent';
+      label='REQUER ATENÇÃO';
+    }else if(days <= 7){
+      level='soon';
+      label='PRÓXIMO';
+    }
+
+    return {
+      hasDate:true,
+      level,
+      days,
+      label,
+      dateText:pickup.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'}),
+      sort:days
+    };
+  }
+
+  function gxUrgencyText(u){
+    if(!u.hasDate) return 'Sem retirada definida';
+    if(u.days < 0) return `${Math.abs(u.days)} ${Math.abs(u.days)===1?'dia':'dias'} em atraso`;
+    if(u.days === 0) return 'Retirada hoje';
+    if(u.days === 1) return 'Retirada amanhã';
+    return `Faltam ${u.days} dias`;
+  }
+
   function gxRenderDash(){
     const box=$('gxDashOrders');
     if(!box) return;
-    const attention=gxPedidos.filter(x=>{
-      const s=normalizeOrderStatus(x.data.statusPedido||x.data.status);
-      return s!=='Finalizado' && s!=='Cancelado';
-    }).slice(0,5);
-    box.innerHTML = attention.length ? attention.map(({id,data:p})=>`
-      <div class="gx-item" style="margin-bottom:7px">
-        <span class="gx-item-name"><strong>${esc(p.clienteNome||'Cliente')}</strong> · ${(p.itens||[]).map(i=>esc(i.nome)).slice(0,2).join(', ')||'Pedido'}</span>
-        <span class="gx-qty">${money(p.total)}</span>
-      </div>`).join('') : '<div style="color:var(--gx-muted);font-size:.8rem">Nenhum pedido pendente 🎉</div>';
+
+    const attention=gxPedidos
+      .filter(x=>{
+        const s=normalizeOrderStatus(x.data.statusPedido||x.data.status);
+        return s!=='Finalizado' && s!=='Cancelado';
+      })
+      .map(x=>({...x, urgency:gxPickupUrgency(x.data)}))
+      .sort((a,b)=>{
+        // Pedidos com data e mais próximos primeiro.
+        if(a.urgency.hasDate && !b.urgency.hasDate) return -1;
+        if(!a.urgency.hasDate && b.urgency.hasDate) return 1;
+        return a.urgency.sort - b.urgency.sort;
+      })
+      .slice(0,6);
+
+    box.innerHTML = attention.length ? attention.map(({id,data:p,urgency:u})=>{
+      const itemNames=(p.itens||[]).map(i=>esc(i.nome)).slice(0,2).join(', ')||'Pedido';
+      const extra=(p.itens||[]).length>2 ? ` +${(p.itens||[]).length-2}` : '';
+      const payment=normalizePayment(p.statusPagamento||p.pagamentoStatus);
+      const requiresAttention=['overdue','today','urgent'].includes(u.level);
+
+      return `
+        <button type="button"
+                class="gx-attention-order ${requiresAttention?'requires-attention':''} urgency-${u.level}"
+                onclick="abrirAba('pedidos'); gxSetFilter('all')"
+                aria-label="Abrir pedido de ${esc(p.clienteNome||'Cliente')}">
+          <div class="gx-attention-top">
+            <div class="gx-attention-client">
+              <strong>${esc(p.clienteNome||'Cliente')}</strong>
+              <span>#${esc(id.slice(0,7).toUpperCase())}</span>
+            </div>
+            ${u.label ? `<span class="gx-attention-seal ${u.level}"><i class="fas fa-bell"></i> ${esc(u.label)}</span>` : ''}
+          </div>
+
+          <div class="gx-attention-middle">
+            <div class="gx-attention-items">
+              <span>${itemNames}${extra}</span>
+            </div>
+            <strong class="gx-attention-total">${money(p.total)}</strong>
+          </div>
+
+          <div class="gx-attention-bottom">
+            <span class="gx-attention-date ${u.level}">
+              <i class="fas fa-calendar-day"></i>
+              ${esc(u.dateText)}
+              <b>${esc(gxUrgencyText(u))}</b>
+            </span>
+            <span class="gx-attention-payment ${payment==='Pago'?'paid':payment==='Parcial'?'partial':'pending'}">
+              ${payment==='Pago'?'✓':payment==='Parcial'?'◐':'●'} ${esc(payment)}
+            </span>
+          </div>
+        </button>`;
+    }).join('') : `
+      <div class="gx-attention-empty">
+        <span>✨</span>
+        <strong>Nenhum pedido pedindo atenção</strong>
+        <small>Tudo sob controle por aqui.</small>
+      </div>`;
   }
 
   function gxInjectSecurityModal(){
