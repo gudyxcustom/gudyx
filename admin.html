@@ -201,14 +201,413 @@
         #gudyxPriceExplain { margin-top:10px; font-size:.78rem; line-height:1.55; opacity:.78; }
         @media(max-width:700px){ .video-admin-row{grid-template-columns:1fr;} .gudyx-price-grid{grid-template-columns:1fr;} }
 
-    </style>
+    
+/* ===== GUDYX ADMIN NOVO — INTEGRADO ===== */
+
+/* ==========================================================
+   GUDYX ADMIN — VISUAL UPGRADE
+   Carregue este CSS DEPOIS do CSS atual do admin.html.
+   ========================================================== */
+:root{
+  --gx-bg:#090313;
+  --gx-panel:rgba(18,8,38,.82);
+  --gx-panel-2:rgba(255,255,255,.045);
+  --gx-line:rgba(187,103,255,.18);
+  --gx-purple:#a028ff;
+  --gx-cyan:#00f2fe;
+  --gx-pink:#ff66b2;
+  --gx-yellow:#ffe55c;
+  --gx-green:#49e48c;
+  --gx-orange:#ffad42;
+  --gx-red:#ff5d74;
+  --gx-muted:#aa9fbd;
+}
+*{box-sizing:border-box}
+body{
+  background:
+    radial-gradient(circle at 10% -10%,rgba(160,40,255,.20),transparent 36%),
+    radial-gradient(circle at 95% 15%,rgba(0,242,254,.09),transparent 28%),
+    var(--gx-bg)!important;
+}
+#adminContent.admin-container{
+  max-width:1500px!important;
+  min-height:calc(100vh - 32px);
+  margin:16px auto!important;
+  padding:24px 24px 34px 292px!important;
+  border-radius:30px!important;
+  border:1px solid var(--gx-line)!important;
+  background:rgba(8,3,20,.68)!important;
+  box-shadow:0 28px 90px rgba(0,0,0,.32)!important;
+}
+.gx-sidebar{
+  position:fixed;
+  top:30px;
+  left:max(18px,calc((100vw - 1500px)/2 + 18px));
+  width:244px;
+  height:calc(100vh - 60px);
+  padding:18px 14px;
+  border:1px solid var(--gx-line);
+  border-radius:24px;
+  background:rgba(13,5,29,.94);
+  backdrop-filter:blur(18px);
+  overflow:auto;
+  z-index:1000;
+  box-shadow:0 18px 55px rgba(0,0,0,.30);
+}
+.gx-side-brand{
+  padding:10px 12px 18px;
+  border-bottom:1px solid var(--gx-line);
+  margin-bottom:12px;
+}
+.gx-side-brand strong{
+  display:block;
+  font-size:1.15rem;
+  letter-spacing:.02em;
+}
+.gx-side-brand small{
+  display:block;
+  color:var(--gx-muted);
+  margin-top:4px;
+  font-size:.72rem;
+}
+.gx-nav-label{
+  padding:13px 12px 6px;
+  color:#817590;
+  font-size:.64rem;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  font-weight:800;
+}
+#adminContent .tabs{
+  position:static!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:5px!important;
+  padding:0!important;
+  margin:0!important;
+  overflow:visible!important;
+  background:transparent!important;
+}
+#adminContent .tabs button{
+  width:100%!important;
+  flex:none!important;
+  min-height:43px!important;
+  margin:0!important;
+  padding:10px 12px!important;
+  border-radius:13px!important;
+  display:flex;
+  justify-content:flex-start;
+  align-items:center;
+  gap:9px;
+  background:transparent!important;
+  color:#cfc5dc!important;
+  border:1px solid transparent!important;
+  font-size:.80rem!important;
+  box-shadow:none!important;
+  transform:none!important;
+}
+#adminContent .tabs button:hover{
+  background:rgba(255,255,255,.055)!important;
+  border-color:rgba(255,255,255,.055)!important;
+}
+#adminContent .tabs button.active{
+  color:white!important;
+  background:linear-gradient(110deg,rgba(160,40,255,.24),rgba(0,242,254,.07))!important;
+  border-color:rgba(160,40,255,.34)!important;
+  box-shadow:inset 3px 0 0 var(--gx-purple)!important;
+}
+.admin-header{
+  min-height:72px;
+  padding:4px 2px 14px;
+  margin-bottom:14px!important;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.admin-header h1{
+  font-size:clamp(1.55rem,3vw,2.25rem)!important;
+  letter-spacing:-.035em;
+}
+.admin-header p{color:var(--gx-muted)!important}
+.admin-summary{
+  grid-template-columns:repeat(6,minmax(0,1fr))!important;
+  gap:10px!important;
+  margin-bottom:22px!important;
+}
+.summary-card{
+  min-height:100px!important;
+  border:1px solid var(--gx-line)!important;
+  background:var(--gx-panel-2)!important;
+  border-radius:18px!important;
+  padding:15px!important;
+  align-items:flex-start!important;
+}
+.summary-card:hover{
+  transform:translateY(-2px)!important;
+  border-color:rgba(0,242,254,.30)!important;
+}
+.summary-card strong{
+  font-size:1.65rem!important;
+  line-height:1;
+}
+.summary-card span{font-size:.68rem!important}
+.gx-page-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:14px;
+  margin:2px 0 18px;
+}
+.gx-page-head h2{
+  margin:0;
+  font-size:clamp(1.45rem,3vw,2rem);
+}
+.gx-page-head p{
+  margin:5px 0 0;
+  color:var(--gx-muted);
+  font-size:.82rem;
+}
+.gx-filterbar{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  padding:10px;
+  margin-bottom:15px;
+  border:1px solid var(--gx-line);
+  border-radius:16px;
+  background:rgba(255,255,255,.025);
+}
+.gx-filter{
+  min-height:38px!important;
+  padding:8px 13px!important;
+  margin:0!important;
+  border-radius:12px!important;
+  background:rgba(255,255,255,.045)!important;
+  color:#d8d0e3!important;
+  border:1px solid rgba(255,255,255,.06)!important;
+  font-size:.74rem!important;
+}
+.gx-filter.active{
+  background:linear-gradient(135deg,rgba(160,40,255,.30),rgba(0,242,254,.10))!important;
+  border-color:rgba(160,40,255,.48)!important;
+  color:white!important;
+}
+.gx-orders{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+.gx-order{
+  border:1px solid var(--gx-line);
+  border-radius:20px;
+  padding:17px;
+  background:rgba(255,255,255,.032);
+  transition:.18s ease;
+}
+.gx-order:hover{
+  border-color:rgba(160,40,255,.36);
+  background:rgba(160,40,255,.045);
+}
+.gx-order-top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-start;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.gx-client{
+  font-size:1.05rem;
+  font-weight:850;
+  letter-spacing:-.02em;
+}
+.gx-id{
+  display:block;
+  margin-top:3px;
+  color:#81778d;
+  font-size:.65rem;
+}
+.gx-badges{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.gx-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 9px;
+  border-radius:999px;
+  border:1px solid transparent;
+  font-size:.64rem;
+  font-weight:800;
+  white-space:nowrap;
+}
+.gx-badge.pending{color:#ffd89b;background:rgba(255,173,66,.10);border-color:rgba(255,173,66,.22)}
+.gx-badge.paid{color:#8ff3b9;background:rgba(73,228,140,.09);border-color:rgba(73,228,140,.23)}
+.gx-badge.partial{color:#ffe492;background:rgba(255,229,92,.09);border-color:rgba(255,229,92,.22)}
+.gx-badge.production{color:#e7b8ff;background:rgba(160,40,255,.12);border-color:rgba(160,40,255,.24)}
+.gx-badge.ready{color:#88f7ff;background:rgba(0,242,254,.09);border-color:rgba(0,242,254,.22)}
+.gx-badge.done{color:#b8afc5;background:rgba(255,255,255,.045);border-color:rgba(255,255,255,.08)}
+.gx-items{
+  margin:12px 0;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+.gx-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:9px 10px;
+  border-radius:11px;
+  background:rgba(255,255,255,.028);
+}
+.gx-item-name{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:.82rem;
+}
+.gx-qty{
+  flex:none;
+  color:var(--gx-cyan);
+  font-weight:850;
+  font-size:.78rem;
+}
+.gx-order-bottom{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:flex-end;
+  margin-top:12px;
+}
+.gx-total small,.gx-meta small{
+  display:block;color:#80758c;font-size:.61rem;text-transform:uppercase;letter-spacing:.08em
+}
+.gx-total strong{
+  display:block;
+  margin-top:2px;
+  color:var(--gx-yellow);
+  font-size:1.25rem;
+}
+.gx-meta{text-align:right;font-size:.75rem;color:#b9b0c4}
+.gx-order-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:13px;
+}
+.gx-order-actions button,
+.gx-order-actions select{
+  width:100%!important;
+  min-height:39px!important;
+  margin:0!important;
+  border-radius:11px!important;
+  font-size:.70rem!important;
+}
+.gx-order-actions select{
+  padding:7px 9px;
+  color:#fff;
+  background:#160b2a;
+  border:1px solid var(--gx-line);
+}
+.gx-details{
+  display:none;
+  margin-top:12px;
+  padding:12px;
+  border-radius:13px;
+  border:1px solid rgba(255,255,255,.06);
+  background:rgba(0,0,0,.13);
+  font-size:.76rem;
+  line-height:1.65;
+}
+.gx-details.open{display:block}
+.gx-empty{
+  grid-column:1/-1;
+  text-align:center;
+  padding:55px 20px;
+  border:1px dashed var(--gx-line);
+  border-radius:20px;
+  color:var(--gx-muted);
+}
+.gx-dashboard{
+  display:grid;
+  grid-template-columns:1.35fr .65fr;
+  gap:14px;
+}
+.gx-dash-card{
+  padding:18px;
+  border:1px solid var(--gx-line);
+  border-radius:20px;
+  background:rgba(255,255,255,.028);
+}
+.gx-dash-card h3{margin:0 0 13px}
+.gx-security-modal{
+  position:fixed;
+  inset:0;
+  z-index:25000;
+  display:none;
+  place-items:center;
+  padding:20px;
+  background:rgba(4,0,11,.80);
+  backdrop-filter:blur(12px);
+}
+.gx-security-modal.active{display:grid}
+.gx-security-box{
+  width:min(480px,100%);
+  padding:23px;
+  border:1px solid var(--gx-line);
+  border-radius:23px;
+  background:#110720;
+  box-shadow:0 25px 80px rgba(0,0,0,.55);
+}
+.gx-security-box h2{margin:0 0 5px}
+.gx-security-box p{margin:0 0 16px;color:var(--gx-muted);font-size:.78rem}
+.gx-security-box .gx-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.gx-security-box button{margin-top:8px}
+@media(max-width:1100px){
+  #adminContent.admin-container{padding-left:24px!important}
+  .gx-sidebar{
+    position:static;
+    width:100%;
+    height:auto;
+    margin-bottom:14px;
+    padding:8px;
+  }
+  .gx-side-brand,.gx-nav-label{display:none}
+  #adminContent .tabs{
+    flex-direction:row!important;
+    overflow-x:auto!important;
+    white-space:nowrap;
+  }
+  #adminContent .tabs button{
+    width:auto!important;
+    min-width:max-content!important;
+  }
+  .admin-summary{grid-template-columns:repeat(3,1fr)!important}
+}
+@media(max-width:720px){
+  #adminContent.admin-container{
+    margin:0!important;
+    min-height:100vh;
+    border-radius:0!important;
+    padding:13px!important;
+  }
+  .admin-summary{grid-template-columns:repeat(2,1fr)!important}
+  .summary-card{min-height:82px!important}
+  .gx-orders,.gx-dashboard{grid-template-columns:1fr}
+  .gx-order-top,.gx-order-bottom{align-items:flex-start}
+  .gx-badges{justify-content:flex-start}
+  .gx-order-top{flex-direction:column}
+  .gx-order-actions{grid-template-columns:1fr}
+  .gx-security-box .gx-row{grid-template-columns:1fr}
+}
+
+</style>
 </head>
 <body>
     <div id="adminToast" role="status" aria-live="polite"></div>
     <div id="passwordOverlay">
         <div class="login-card">
             <h2>🔒 Painel Gudyx</h2>
-            <p>Use o login padrão do painel para continuar.</p>
+            <p>Entre com seu e-mail e senha cadastrados no Firebase Authentication.</p>
             <label for="adminEmailInput">E-mail</label>
             <input type="email" id="adminEmailInput" autocomplete="username" placeholder="seu@email.com">
             <label for="adminPassInput">Senha</label>
@@ -648,11 +1047,8 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const auth = firebase.auth();
-        const ADMIN_LOGIN = 'admin@gudyx.com.br';
-        const ADMIN_PASSWORD = 'Gudyx#26!Papelaria_7Q';
-        auth.signInAnonymously().catch(e => console.error('Falha na autenticação anônima:', e));
-
-        var dados = { categorias: [], produtos: [], frases: [], faq: [] };
+        // Login do administrador é feito com Firebase Authentication (Email/Password).
+var dados = { categorias: [], produtos: [], frases: [], faq: [] };
         var configLoja = { prazoMinimo: 3, prazoMaximo: 5, pedidosEmAndamento: false, pedidoEmFocoId: '', prazoFoco: 0, contato: { whatsApp: '', email: '', endereco: '', horario: '' } };
         var configJogos = { sorte: { ativo: false, inicio: '', fim: '' }, raspa: { ativo: false, inicio: '', fim: '', cupons: [] } };
         var configPrecificacao = { offset: '0,30', matte: '0,40', glossy: '0,50', servicos: [] };
@@ -2150,46 +2546,476 @@
             carregarRelatorios();
         }
 
-        async function checkPassword() {
-            const email = document.getElementById('adminEmailInput').value.trim();
-            const pass = document.getElementById('adminPassInput').value;
-            const erro = document.getElementById('passError');
-            const botao = document.getElementById('adminLoginButton');
-            erro.style.display = 'none';
-            if (!email || !pass) {
-                erro.textContent = 'Preencha o e-mail e a senha.';
-                erro.style.display = 'block';
-                return;
-            }
-            botao.disabled = true;
-            botao.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Entrando...';
-            try {
-                if (email.toLowerCase() !== ADMIN_LOGIN.toLowerCase() || pass !== ADMIN_PASSWORD) {
-                    throw new Error('invalid-admin-credentials');
-                }
-                sessionStorage.setItem('gudyx_admin_session', 'ativa');
-                await abrirAdmin();
-            } catch (e) {
-                erro.textContent = 'E-mail ou senha inválidos.';
-                erro.style.display = 'block';
-            } finally {
-                botao.disabled = false;
-                botao.innerHTML = '<i class="fas fa-right-to-bracket"></i> Entrar';
-            }
-        }
+        /* ===== GUDYX ADMIN NOVO — FUNCIONALIDADES INTEGRADAS ===== */
 
-        async function sairAdmin() {
-            sessionStorage.removeItem('gudyx_admin_session');
-            adminInicializado = false;
-            document.getElementById('adminContent').style.display = 'none';
-            document.getElementById('passwordOverlay').classList.remove('hidden');
-            document.getElementById('adminPassInput').value = '';
-        }
+/* ==========================================================
+   GUDYX ADMIN — UX + PEDIDOS + FIREBASE AUTH
+   Carregue este JS NO FINAL do body, depois do script atual.
+   ========================================================== */
+(() => {
+  'use strict';
 
-        document.getElementById('adminEmailInput').value = ADMIN_LOGIN;
-        document.getElementById('adminPassInput').addEventListener('keypress', e => { if (e.key === 'Enter') checkPassword(); });
-        document.getElementById('adminEmailInput').addEventListener('keypress', e => { if (e.key === 'Enter') document.getElementById('adminPassInput').focus(); });
-        if (sessionStorage.getItem('gudyx_admin_session') === 'ativa') abrirAdmin();
+  let gxOrderFilter = 'all';
+  let gxPedidos = [];
+  let gxPedidosUnsub = null;
+  let gxOriginalAbrirAba = null;
+
+  const $ = (id) => document.getElementById(id);
+  const money = (v) => {
+    if (typeof v === 'number' && Number.isFinite(v)) {
+      return v.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    }
+    let s = String(v ?? '0').trim().replace(/R\$/gi,'').replace(/\s/g,'');
+    if (s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',','.');
+    else if (s.includes(',')) s = s.replace(',','.');
+    const n = Number(s);
+    return Number.isFinite(n) ? n.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}) : 'R$ 0,00';
+  };
+  const esc = (v='') => String(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
+  const normalizeOrderStatus = (v='') => {
+    const s = String(v).toLowerCase();
+    if (s.includes('retir') || s.includes('finaliz')) return 'Finalizado';
+    if (s.includes('pronto')) return 'Pronto';
+    if (s.includes('produção') || s.includes('producao')) return 'Em produção';
+    if (s.includes('cancel')) return 'Cancelado';
+    return 'Novo';
+  };
+  const normalizePayment = (v='') => {
+    const s = String(v).toLowerCase();
+    if (s.includes('parcial')) return 'Parcial';
+    if (s.includes('pago') || s.includes('aprov')) return 'Pago';
+    return 'Pendente';
+  };
+
+  function gxPrepareLayout(){
+    const admin = $('adminContent');
+    const tabs = admin?.querySelector('.tabs');
+    if(!admin || !tabs || admin.dataset.gxUpgraded) return;
+    admin.dataset.gxUpgraded = '1';
+
+    const side = document.createElement('aside');
+    side.className = 'gx-sidebar';
+    side.innerHTML = `
+      <div class="gx-side-brand">
+        <strong>👾 Gudyx Admin</strong>
+        <small>Central de operação</small>
+      </div>
+      <div class="gx-nav-label">Navegação</div>
+    `;
+    admin.insertBefore(side, admin.firstChild);
+    side.appendChild(tabs);
+
+    const dashBtn = document.createElement('button');
+    dashBtn.type = 'button';
+    dashBtn.id = 'tabDashboard';
+    dashBtn.innerHTML = '<i class="fas fa-chart-pie"></i> Visão geral';
+    dashBtn.onclick = () => abrirAba('dashboard');
+    tabs.insertBefore(dashBtn, tabs.firstChild);
+
+    const securityBtn = document.createElement('button');
+    securityBtn.type = 'button';
+    securityBtn.id = 'tabSeguranca';
+    securityBtn.innerHTML = '<i class="fas fa-shield-halved"></i> Segurança';
+    securityBtn.onclick = gxOpenSecurity;
+    tabs.appendChild(securityBtn);
+
+    [...tabs.querySelectorAll('button')].forEach(btn => {
+      const t = btn.textContent.trim().toLowerCase();
+      const icons = {
+        categorias:'fa-folder-tree', itens:'fa-box-open', pedidos:'fa-receipt',
+        'avaliações':'fa-star', 'jogos e promos':'fa-bullhorn', 'precificação':'fa-calculator',
+        design:'fa-palette', frases:'fa-comment-dots', faq:'fa-circle-question',
+        'config. loja':'fa-sliders', 'relatórios':'fa-chart-line', backup:'fa-database'
+      };
+      const key = Object.keys(icons).find(k=>t.includes(k));
+      if(key && !btn.querySelector('i')) btn.insertAdjacentHTML('afterbegin', `<i class="fas ${icons[key]}"></i>`);
+    });
+
+    const dash = document.createElement('section');
+    dash.id = 'abaDashboard';
+    dash.style.display = 'none';
+    dash.innerHTML = `
+      <div class="gx-page-head">
+        <div><h2>Visão geral</h2><p>O que está acontecendo na Gudyx agora.</p></div>
+      </div>
+      <div class="gx-dashboard">
+        <div class="gx-dash-card">
+          <h3>📦 Pedidos que pedem atenção</h3>
+          <div id="gxDashOrders"></div>
+        </div>
+        <div class="gx-dash-card">
+          <h3>⚡ Atalhos</h3>
+          <button type="button" onclick="abrirAba('pedidos')">Ver todos os pedidos</button>
+          <button type="button" class="btn-secondary" onclick="iniciarNovoProduto()">Cadastrar novo item</button>
+          <button type="button" class="btn-secondary" onclick="gxOpenSecurity()">Alterar senha</button>
+        </div>
+      </div>
+    `;
+    const firstSection = [...admin.children].find(el => /^aba/.test(el.id || ''));
+    admin.insertBefore(dash, firstSection || null);
+
+    gxUpgradeSummary();
+    gxUpgradeOrdersSection();
+    gxInjectSecurityModal();
+  }
+
+  function gxUpgradeSummary(){
+    const s = document.querySelector('.admin-summary');
+    if(!s) return;
+    s.innerHTML = `
+      <button class="summary-card" type="button" onclick="abrirAba('pedidos'); gxSetFilter('new')"><strong id="gxCountNew">0</strong><span>Novos</span></button>
+      <button class="summary-card" type="button" onclick="abrirAba('pedidos'); gxSetFilter('pending')"><strong id="gxCountPending">0</strong><span>Pagamento pendente</span></button>
+      <button class="summary-card" type="button" onclick="abrirAba('pedidos'); gxSetFilter('production')"><strong id="gxCountProduction">0</strong><span>Em produção</span></button>
+      <button class="summary-card" type="button" onclick="abrirAba('pedidos'); gxSetFilter('ready')"><strong id="gxCountReady">0</strong><span>Prontos</span></button>
+      <button class="summary-card" type="button" onclick="abrirAba('produtos')"><strong id="resumoProdutos">0</strong><span>Itens</span></button>
+      <button class="summary-card" type="button" onclick="abrirAba('categorias')"><strong id="resumoCategorias">0</strong><span>Categorias</span></button>
+    `;
+  }
+
+  function gxUpgradeOrdersSection(){
+    const aba = $('abaPedidos');
+    if(!aba || aba.dataset.gxOrders) return;
+    aba.dataset.gxOrders = '1';
+    aba.innerHTML = `
+      <div class="gx-page-head">
+        <div>
+          <h2>Pedidos</h2>
+          <p>Pagamento e produção separados para você nunca perder o controle.</p>
+        </div>
+      </div>
+      <div class="gx-filterbar">
+        <button class="gx-filter active" data-filter="all" onclick="gxSetFilter('all')">Todos</button>
+        <button class="gx-filter" data-filter="new" onclick="gxSetFilter('new')">Novos</button>
+        <button class="gx-filter" data-filter="pending" onclick="gxSetFilter('pending')">Pagamento pendente</button>
+        <button class="gx-filter" data-filter="paid" onclick="gxSetFilter('paid')">Pagos</button>
+        <button class="gx-filter" data-filter="production" onclick="gxSetFilter('production')">Em produção</button>
+        <button class="gx-filter" data-filter="ready" onclick="gxSetFilter('ready')">Prontos</button>
+        <button class="gx-filter" data-filter="done" onclick="gxSetFilter('done')">Finalizados</button>
+      </div>
+      <div id="listaPedidosAdmin" class="gx-orders"></div>
+    `;
+  }
+
+  window.gxSetFilter = function(filter){
+    gxOrderFilter = filter;
+    document.querySelectorAll('.gx-filter').forEach(b=>b.classList.toggle('active',b.dataset.filter===filter));
+    gxRenderOrders();
+  };
+
+  function gxMatchesFilter(p){
+    const os = normalizeOrderStatus(p.statusPedido || p.status);
+    const ps = normalizePayment(p.statusPagamento || p.pagamentoStatus);
+    if(gxOrderFilter==='all') return true;
+    if(gxOrderFilter==='new') return os==='Novo';
+    if(gxOrderFilter==='pending') return ps==='Pendente';
+    if(gxOrderFilter==='paid') return ps==='Pago';
+    if(gxOrderFilter==='production') return os==='Em produção';
+    if(gxOrderFilter==='ready') return os==='Pronto';
+    if(gxOrderFilter==='done') return os==='Finalizado';
+    return true;
+  }
+
+  function gxPaymentBadge(status){
+    const n = normalizePayment(status);
+    const cls = n==='Pago'?'paid':n==='Parcial'?'partial':'pending';
+    return `<span class="gx-badge ${cls}">💳 ${esc(n)}</span>`;
+  }
+  function gxOrderBadge(status){
+    const n = normalizeOrderStatus(status);
+    const cls = n==='Em produção'?'production':n==='Pronto'?'ready':n==='Finalizado'?'done':'pending';
+    const icon = n==='Em produção'?'🟣':n==='Pronto'?'🔵':n==='Finalizado'?'✓':'🟡';
+    return `<span class="gx-badge ${cls}">${icon} ${esc(n)}</span>`;
+  }
+
+  function gxRenderOrders(){
+    const c = $('listaPedidosAdmin');
+    if(!c) return;
+    const arr = gxPedidos.filter(x=>gxMatchesFilter(x.data));
+    if(!arr.length){
+      c.innerHTML = `<div class="gx-empty">Nenhum pedido nesta visualização.</div>`;
+      return;
+    }
+
+    c.innerHTML = arr.map(({id,data:p})=>{
+      const items = Array.isArray(p.itens) ? p.itens : [];
+      const itemsHtml = items.length ? items.map(i=>`
+        <div class="gx-item">
+          <span class="gx-item-name">${esc(i.nome || 'Item')}</span>
+          <span class="gx-qty">${Number(i.quantidade)||1} un.</span>
+        </div>`).join('') : `<div class="gx-item"><span class="gx-item-name">Itens não listados</span></div>`;
+
+      const pay = normalizePayment(p.statusPagamento || p.pagamentoStatus);
+      const stat = normalizeOrderStatus(p.statusPedido || p.status);
+      const retirada = [p.dataRetirada,p.horaRetirada].filter(Boolean).join(' • ') || 'A combinar';
+      const tel = p.clienteTelefone || p.telefone || '';
+      const obs = p.observacoes || p.observacao || 'Sem observações.';
+      return `
+      <article class="gx-order">
+        <div class="gx-order-top">
+          <div>
+            <div class="gx-client">${esc(p.clienteNome || 'Cliente')}</div>
+            <span class="gx-id">Pedido #${esc(id.slice(0,7).toUpperCase())}</span>
+          </div>
+          <div class="gx-badges">
+            ${gxPaymentBadge(pay)}
+            ${gxOrderBadge(stat)}
+          </div>
+        </div>
+
+        <div class="gx-items">${itemsHtml}</div>
+
+        <div class="gx-order-bottom">
+          <div class="gx-total"><small>Valor</small><strong>${money(p.total)}</strong></div>
+          <div class="gx-meta"><small>Retirada</small>${esc(retirada)}</div>
+        </div>
+
+        <div class="gx-order-actions">
+          <select aria-label="Pagamento" onchange="gxUpdatePayment('${id}',this.value)">
+            <option ${pay==='Pendente'?'selected':''}>Pendente</option>
+            <option ${pay==='Parcial'?'selected':''}>Parcial</option>
+            <option ${pay==='Pago'?'selected':''}>Pago</option>
+          </select>
+          <select aria-label="Status do pedido" onchange="gxUpdateOrderStatus('${id}',this.value)">
+            <option ${stat==='Novo'?'selected':''}>Novo</option>
+            <option ${stat==='Em produção'?'selected':''}>Em produção</option>
+            <option ${stat==='Pronto'?'selected':''}>Pronto</option>
+            <option ${stat==='Finalizado'?'selected':''}>Finalizado</option>
+            <option ${stat==='Cancelado'?'selected':''}>Cancelado</option>
+          </select>
+          <button type="button" class="btn-secondary" onclick="gxToggleDetails('${id}')">Ver pedido</button>
+          <button type="button" onclick="gxWhatsAppOrder('${id}')"><i class="fab fa-whatsapp"></i> WhatsApp</button>
+        </div>
+
+        <div class="gx-details" id="gxDetails-${id}">
+          <strong>Cliente:</strong> ${esc(p.clienteNome || '—')}<br>
+          <strong>Telefone:</strong> ${esc(tel || '—')}<br>
+          <strong>Retirada:</strong> ${esc(retirada)}<br>
+          <strong>Cupom:</strong> ${esc(p.cupom || '—')}<br>
+          <strong>Observações:</strong> ${esc(obs)}
+          <div style="margin-top:10px">
+            <button type="button" class="btn-danger" onclick="deletarPedido('${id}')">Excluir pedido</button>
+          </div>
+        </div>
+      </article>`;
+    }).join('');
+  }
+
+  window.gxToggleDetails = function(id){
+    $('gxDetails-'+id)?.classList.toggle('open');
+  };
+  window.gxUpdatePayment = async function(id,status){
+    try{
+      await db.collection('pedidos').doc(id).update({
+        statusPagamento:status,
+        atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }catch(e){ alert('Erro ao atualizar pagamento: '+e.message); }
+  };
+  window.gxUpdateOrderStatus = async function(id,status){
+    try{
+      const legacy = status==='Pronto'?'Pronto para retirar':status==='Finalizado'?'Retirado':status;
+      await db.collection('pedidos').doc(id).update({
+        statusPedido:status,
+        status:legacy,
+        atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()
+      });
+    }catch(e){ alert('Erro ao atualizar pedido: '+e.message); }
+  };
+  window.gxWhatsAppOrder = function(id){
+    const row = gxPedidos.find(x=>x.id===id);
+    if(!row) return;
+    const p=row.data;
+    const tel=String(p.clienteTelefone||p.telefone||'').replace(/\D/g,'');
+    if(!tel) return alert('Este pedido não tem telefone cadastrado.');
+    const msg=`Olá, ${p.clienteNome||''}! Aqui é da Gudyx 💜\n\nSobre seu pedido #${id.slice(0,7).toUpperCase()}:`;
+    const br = tel.startsWith('55')?tel:'55'+tel;
+    window.open(`https://wa.me/${br}?text=${encodeURIComponent(msg)}`,'_blank');
+  };
+
+  window.carregarPedidos = function(){
+    const c=$('listaPedidosAdmin');
+    if(c) c.innerHTML='<div class="gx-empty">Carregando pedidos...</div>';
+    if(gxPedidosUnsub) gxPedidosUnsub();
+    gxPedidosUnsub = db.collection('pedidos').orderBy('timestamp','desc').onSnapshot(snap=>{
+      gxPedidos = snap.docs.map(d=>({id:d.id,data:d.data()}));
+      gxRenderOrders();
+      gxRefreshMetrics();
+      gxRenderDash();
+    },err=>{
+      if(c) c.innerHTML=`<div class="gx-empty">Não foi possível carregar os pedidos.<br><small>${esc(err.message)}</small></div>`;
+    });
+  };
+
+  function gxRefreshMetrics(){
+    const count = (fn)=>gxPedidos.filter(x=>fn(x.data)).length;
+    const set=(id,val)=>{if($(id)) $(id).textContent=val};
+    set('gxCountNew',count(p=>normalizeOrderStatus(p.statusPedido||p.status)==='Novo'));
+    set('gxCountPending',count(p=>normalizePayment(p.statusPagamento||p.pagamentoStatus)==='Pendente'));
+    set('gxCountProduction',count(p=>normalizeOrderStatus(p.statusPedido||p.status)==='Em produção'));
+    set('gxCountReady',count(p=>normalizeOrderStatus(p.statusPedido||p.status)==='Pronto'));
+  }
+
+  function gxRenderDash(){
+    const box=$('gxDashOrders');
+    if(!box) return;
+    const attention=gxPedidos.filter(x=>{
+      const s=normalizeOrderStatus(x.data.statusPedido||x.data.status);
+      return s!=='Finalizado' && s!=='Cancelado';
+    }).slice(0,5);
+    box.innerHTML = attention.length ? attention.map(({id,data:p})=>`
+      <div class="gx-item" style="margin-bottom:7px">
+        <span class="gx-item-name"><strong>${esc(p.clienteNome||'Cliente')}</strong> · ${(p.itens||[]).map(i=>esc(i.nome)).slice(0,2).join(', ')||'Pedido'}</span>
+        <span class="gx-qty">${money(p.total)}</span>
+      </div>`).join('') : '<div style="color:var(--gx-muted);font-size:.8rem">Nenhum pedido pendente 🎉</div>';
+  }
+
+  function gxInjectSecurityModal(){
+    if($('gxSecurityModal')) return;
+    const div=document.createElement('div');
+    div.id='gxSecurityModal';
+    div.className='gx-security-modal';
+    div.innerHTML=`
+      <div class="gx-security-box">
+        <div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start">
+          <div><h2>🔐 Segurança</h2><p>Altere sua senha usando o Firebase Authentication.</p></div>
+          <button type="button" class="btn-secondary" onclick="gxCloseSecurity()" style="margin:0">×</button>
+        </div>
+        <label>E-mail autenticado</label>
+        <input type="email" id="gxAuthEmail" disabled>
+        <label>Senha atual</label>
+        <input type="password" id="gxCurrentPass" autocomplete="current-password">
+        <div class="gx-row">
+          <div><label>Nova senha</label><input type="password" id="gxNewPass" autocomplete="new-password"></div>
+          <div><label>Confirmar</label><input type="password" id="gxConfirmPass" autocomplete="new-password"></div>
+        </div>
+        <button type="button" onclick="gxChangePassword()"><i class="fas fa-key"></i> Alterar senha</button>
+        <div id="gxSecurityMsg" style="margin-top:10px;font-size:.76rem"></div>
+      </div>`;
+    document.body.appendChild(div);
+  }
+
+  window.gxOpenSecurity=function(){
+    const user=firebase.auth().currentUser;
+    $('gxAuthEmail').value=user?.email||'';
+    $('gxSecurityModal').classList.add('active');
+  };
+  window.gxCloseSecurity=function(){
+    $('gxSecurityModal').classList.remove('active');
+    ['gxCurrentPass','gxNewPass','gxConfirmPass'].forEach(id=>{if($(id))$(id).value=''});
+  };
+  window.gxChangePassword=async function(){
+    const user=firebase.auth().currentUser;
+    const msg=$('gxSecurityMsg');
+    const current=$('gxCurrentPass').value;
+    const next=$('gxNewPass').value;
+    const confirm=$('gxConfirmPass').value;
+    msg.textContent='';
+    if(!user?.email) return msg.textContent='Entre com uma conta de administrador primeiro.';
+    if(next.length<8) return msg.textContent='Use uma senha com pelo menos 8 caracteres.';
+    if(next!==confirm) return msg.textContent='As novas senhas não coincidem.';
+    try{
+      const cred=firebase.auth.EmailAuthProvider.credential(user.email,current);
+      await user.reauthenticateWithCredential(cred);
+      await user.updatePassword(next);
+      msg.style.color='#65efa0';
+      msg.textContent='Senha alterada com sucesso.';
+      $('gxCurrentPass').value=$('gxNewPass').value=$('gxConfirmPass').value='';
+    }catch(e){
+      msg.style.color='#ff7b8d';
+      msg.textContent='Não foi possível alterar a senha. Confira a senha atual.';
+    }
+  };
+
+  function gxInstallAuth(){
+    // Substitui o login com senha escrita no HTML por Firebase Email/Password.
+    window.checkPassword = async function(){
+      const email=$('adminEmailInput')?.value.trim();
+      const pass=$('adminPassInput')?.value;
+      const err=$('passError');
+      const btn=$('adminLoginButton');
+      if(err) err.style.display='none';
+      if(!email||!pass){
+        if(err){err.textContent='Preencha e-mail e senha.';err.style.display='block'}
+        return;
+      }
+      try{
+        if(btn){btn.disabled=true;btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Entrando...'}
+        await firebase.auth().signOut().catch(()=>{});
+        await firebase.auth().signInWithEmailAndPassword(email,pass);
+        sessionStorage.removeItem('gudyx_admin_session');
+        await abrirAdmin();
+        abrirAba('dashboard');
+        carregarPedidos();
+      }catch(e){
+        if(err){err.textContent='E-mail ou senha inválidos.';err.style.display='block'}
+      }finally{
+        if(btn){btn.disabled=false;btn.innerHTML='<i class="fas fa-right-to-bracket"></i> Entrar'}
+      }
+    };
+
+    window.sairAdmin = async function(){
+      if(gxPedidosUnsub){gxPedidosUnsub();gxPedidosUnsub=null}
+      await firebase.auth().signOut().catch(()=>{});
+      sessionStorage.removeItem('gudyx_admin_session');
+      window.adminInicializado=false;
+      if($('adminContent')) $('adminContent').style.display='none';
+      if($('passwordOverlay')) $('passwordOverlay').classList.remove('hidden');
+      if($('adminPassInput')) $('adminPassInput').value='';
+    };
+
+    firebase.auth().onAuthStateChanged(async user=>{
+      if(user && !user.isAnonymous){
+        try{
+          await abrirAdmin();
+          gxPrepareLayout();
+          abrirAba('dashboard');
+          carregarPedidos();
+        }catch(e){console.error(e)}
+      }
+    });
+  }
+
+  function gxInstallNavigation(){
+    gxOriginalAbrirAba=window.abrirAba;
+    window.abrirAba=function(aba){
+      if(aba==='dashboard'){
+        document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('[id^="aba"]').forEach(el=>el.style.display='none');
+        if($('abaDashboard')) $('abaDashboard').style.display='block';
+        $('tabDashboard')?.classList.add('active');
+        gxRenderDash();
+        return;
+      }
+      return gxOriginalAbrirAba?.(aba);
+    };
+  }
+
+  function init(){
+    gxPrepareLayout();
+    gxInstallNavigation();
+    gxInstallAuth();
+
+    // Mantém os contadores de itens/categorias do ADMIN original funcionando.
+    setTimeout(()=>{
+      try{
+        if(typeof atualizarResumoAdmin==='function') atualizarResumoAdmin();
+      }catch(e){}
+    },1000);
+
+    // Evita que uma sessão antiga baseada em sessionStorage burle o Firebase.
+    sessionStorage.removeItem('gudyx_admin_session');
+    const user=firebase.auth().currentUser;
+    if(!user || user.isAnonymous){
+      if($('adminContent')) $('adminContent').style.display='none';
+      if($('passwordOverlay')) $('passwordOverlay').classList.remove('hidden');
+    }
+  }
+
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
+  else init();
+})();
+
+
     </script>
 </body>
 </html>
