@@ -1548,6 +1548,90 @@ body::before{
   }
 }
 
+
+/* GUDYX — pagamento do pedido */
+.gx-payment-panel{
+  margin:12px 0 14px;
+  padding:14px;
+  border:1px solid rgba(180,88,255,.19);
+  border-radius:18px;
+  background:rgba(255,255,255,.025);
+}
+.gx-payment-quick{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin:2px 0 11px;
+}
+.gx-payment-quick button{
+  margin:0!important;
+  padding:7px 11px!important;
+  min-height:36px!important;
+  border-radius:11px!important;
+  background:rgba(255,255,255,.045)!important;
+  border:1px solid rgba(255,255,255,.065)!important;
+  font-size:.68rem!important;
+}
+.gx-payment-quick button:hover{
+  border-color:rgba(19,232,255,.24)!important;
+  background:rgba(19,232,255,.06)!important;
+}
+.gx-payment-summary{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.gx-payment-summary > div{
+  min-height:72px;
+  padding:10px 12px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:13px;
+  background:rgba(255,255,255,.025);
+}
+.gx-payment-summary > div:first-child{
+  border-color:rgba(19,232,255,.16);
+  background:rgba(19,232,255,.04);
+}
+.gx-payment-summary > div:nth-child(2){
+  border-color:rgba(92,242,162,.16);
+  background:rgba(92,242,162,.035);
+}
+.gx-payment-summary > div:nth-child(3){
+  border-color:rgba(255,170,80,.18);
+  background:rgba(255,170,80,.035);
+}
+.gx-payment-summary span{
+  display:block;
+  color:#8f829e;
+  font-size:.60rem;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.gx-payment-summary strong{
+  display:block;
+  margin-top:5px;
+  font-size:1rem;
+  color:#f8f3ff;
+}
+.gx-payment-summary > div:first-child strong{color:#5df0ff}
+.gx-payment-summary > div:nth-child(2) strong{color:#72f2a7}
+.gx-payment-summary > div:nth-child(3) strong{color:#ffcf7a}
+.gx-payment-mini{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:5px;
+  font-size:.61rem;
+  color:#91849f;
+}
+.gx-payment-mini span:first-child b{color:#70f0a3}
+.gx-payment-mini span:last-child b{color:#ffca73}
+@media(max-width:760px){
+  .gx-payment-summary{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -3935,7 +4019,14 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
         <div class="gx-items">${itemsHtml}</div>
 
         <div class="gx-order-bottom">
-          <div class="gx-total"><small>Valor</small><strong>${money(p.total)}</strong></div>
+          <div class="gx-total">
+            <small>Total</small>
+            <strong>${money(p.total)}</strong>
+            <div class="gx-payment-mini">
+              <span>Pago: <b>${money(p.valorPago || 0)}</b></span>
+              <span>Falta: <b>${money(p.valorPendente != null ? p.valorPendente : Math.max(0, (Number(p.total)||0) - (Number(p.valorPago)||0)))}</b></span>
+            </div>
+          </div>
           <div class="gx-meta"><small>Retirada</small>${esc(retirada)}</div>
         </div>
 
@@ -4172,14 +4263,14 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
                 <input type="number" id="gxCatalogQty" min="1" step="1" value="1">
               </div>
               <div>
-                <label>Valor unitário</label>
+                <label>Valor do item</label>
                 <input type="text" id="gxCatalogPrice" inputmode="decimal" placeholder="0,00">
               </div>
               <button type="button" class="gx-add-line-btn" onclick="gxAddCatalogItem()">
                 <i class="fas fa-plus"></i> Adicionar
               </button>
             </div>
-            <small class="gx-entry-help">O valor vem do catálogo quando existir, mas você pode ajustar só para este pedido.</small>
+            <small class="gx-entry-help">Informe o valor real combinado para este item no pedido. Ex.: 200 panfletos por R$ 60,00.</small>
           </div>
 
           <div id="gxManualEntry" class="gx-entry-panel hidden">
@@ -4193,40 +4284,65 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
                 <input type="number" id="gxManualQty" min="1" step="1" value="1">
               </div>
               <div>
-                <label>Valor unitário</label>
+                <label>Valor do item</label>
                 <input type="text" id="gxManualPrice" inputmode="decimal" placeholder="0,00">
               </div>
               <button type="button" class="gx-add-line-btn" onclick="gxAddManualItem()">
                 <i class="fas fa-plus"></i> Adicionar
               </button>
             </div>
-            <small class="gx-entry-help">Use para algo específico daquele cliente sem criar um item novo no catálogo.</small>
+            <small class="gx-entry-help">Use para algo específico daquele cliente sem criar um item novo no catálogo. O valor é o total daquele item, não o valor por unidade.</small>
           </div>
 
           <div id="gxNewOrderItemsList" class="gx-new-order-items-list"></div>
         </div>
 
-        <div class="gx-order-form-grid gx-order-money-grid">
-          <div>
-            <label>Pagamento</label>
-            <select id="gxOrderPayment">
-              <option value="Pendente">Pendente</option>
-              <option value="Parcial">Parcial</option>
-              <option value="Pago">Pago</option>
-            </select>
+        <div class="gx-payment-panel">
+          <div class="gx-order-form-grid gx-order-money-grid">
+            <div>
+              <label>Pagamento</label>
+              <select id="gxOrderPayment" onchange="gxPaymentStatusChanged()">
+                <option value="Pendente">Pendente</option>
+                <option value="Parcial">Parcial</option>
+                <option value="Pago">Pago</option>
+              </select>
+            </div>
+
+            <div>
+              <label>Valor já pago</label>
+              <input type="text" id="gxOrderPaidAmount" inputmode="decimal" placeholder="0,00" oninput="gxUpdatePaymentPreview()">
+            </div>
+
+            <div>
+              <label>Status do pedido</label>
+              <select id="gxOrderStatus">
+                <option value="Novo">Novo</option>
+                <option value="Em produção">Em produção</option>
+                <option value="Pronto">Pronto</option>
+                <option value="Finalizado">Finalizado</option>
+              </select>
+            </div>
           </div>
-          <div>
-            <label>Status do pedido</label>
-            <select id="gxOrderStatus">
-              <option value="Novo">Novo</option>
-              <option value="Em produção">Em produção</option>
-              <option value="Pronto">Pronto</option>
-              <option value="Finalizado">Finalizado</option>
-            </select>
+
+          <div class="gx-payment-quick">
+            <button type="button" onclick="gxSetPaidAmount('zero')">Nada pago</button>
+            <button type="button" onclick="gxSetPaidAmount('half')">Metade</button>
+            <button type="button" onclick="gxSetPaidAmount('full')">Total</button>
           </div>
-          <div class="gx-order-total-preview">
-            <span>Total</span>
-            <strong id="gxOrderTotalPreview">R$ 0,00</strong>
+
+          <div class="gx-payment-summary">
+            <div>
+              <span>Total do pedido</span>
+              <strong id="gxOrderTotalPreview">R$ 0,00</strong>
+            </div>
+            <div>
+              <span>Já pago</span>
+              <strong id="gxOrderPaidPreview">R$ 0,00</strong>
+            </div>
+            <div>
+              <span>Falta pagar</span>
+              <strong id="gxOrderRemainingPreview">R$ 0,00</strong>
+            </div>
           </div>
         </div>
 
@@ -4297,15 +4413,17 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
     if(!prod) return alert('Não encontrei este item no catálogo.');
 
     const quantidade = Math.max(1, Number($('gxCatalogQty')?.value)||1);
-    const valorUnitario = gxParseMoney($('gxCatalogPrice')?.value);
+    const valorTotal = gxParseMoney($('gxCatalogPrice')?.value);
 
     gxNewOrderItems.push({
       source:'catalog',
       produtoId:prod.id,
       nome:prod.nome || 'Item',
       quantidade,
-      valorUnitario,
-      subtotal:quantidade * valorUnitario
+      valorTotal,
+      subtotal:valorTotal,
+      // Mantido apenas por compatibilidade com dados antigos.
+      valorUnitario: quantidade > 0 ? (valorTotal / quantidade) : valorTotal
     });
 
     $('gxCatalogProduct').value='';
@@ -4319,15 +4437,17 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
     if(!nome) return alert('Digite o nome do item.');
 
     const quantidade = Math.max(1, Number($('gxManualQty')?.value)||1);
-    const valorUnitario = gxParseMoney($('gxManualPrice')?.value);
+    const valorTotal = gxParseMoney($('gxManualPrice')?.value);
 
     gxNewOrderItems.push({
       source:'manual',
       produtoId:null,
       nome,
       quantidade,
-      valorUnitario,
-      subtotal:quantidade * valorUnitario
+      valorTotal,
+      subtotal:valorTotal,
+      // Mantido apenas por compatibilidade com dados antigos.
+      valorUnitario: quantidade > 0 ? (valorTotal / quantidade) : valorTotal
     });
 
     $('gxManualName').value='';
@@ -4359,9 +4479,9 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
           </div>
           <div class="gx-order-line-name">
             <strong>${esc(item.nome)}</strong>
-            <small>${item.quantidade} × ${item.valorUnitario.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</small>
+            <small>${item.quantidade} un. · valor combinado</small>
           </div>
-          <strong class="gx-order-line-total">${item.subtotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</strong>
+          <strong class="gx-order-line-total">${(item.valorTotal ?? item.subtotal ?? 0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</strong>
           <button type="button" class="gx-order-line-remove" onclick="gxRemoveNewOrderItem(${index})" title="Remover">
             <i class="fas fa-trash"></i>
           </button>
@@ -4371,7 +4491,74 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
 
     const total = gxNewOrderItems.reduce((s,i)=>s+(Number(i.subtotal)||0),0);
     if($('gxOrderTotalPreview')) $('gxOrderTotalPreview').textContent = total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    gxUpdatePaymentPreview();
   }
+
+
+  function gxCurrentOrderTotal(){
+    return gxNewOrderItems.reduce((s,i)=>s+(Number(i.subtotal)||0),0);
+  }
+
+  window.gxSetPaidAmount = function(mode){
+    const total = gxCurrentOrderTotal();
+    let value = 0;
+    if(mode==='half') value = total / 2;
+    if(mode==='full') value = total;
+
+    if($('gxOrderPaidAmount')){
+      $('gxOrderPaidAmount').value = value.toLocaleString('pt-BR',{
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      });
+    }
+
+    if(mode==='zero' && $('gxOrderPayment')) $('gxOrderPayment').value = 'Pendente';
+    if(mode==='half' && $('gxOrderPayment')) $('gxOrderPayment').value = 'Parcial';
+    if(mode==='full' && $('gxOrderPayment')) $('gxOrderPayment').value = 'Pago';
+
+    gxUpdatePaymentPreview();
+  };
+
+  window.gxPaymentStatusChanged = function(){
+    const status = $('gxOrderPayment')?.value || 'Pendente';
+    const total = gxCurrentOrderTotal();
+
+    if(status==='Pago'){
+      $('gxOrderPaidAmount').value = total.toLocaleString('pt-BR',{
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      });
+    } else if(status==='Pendente' && gxParseMoney($('gxOrderPaidAmount')?.value) >= total && total > 0){
+      $('gxOrderPaidAmount').value = '0,00';
+    }
+
+    gxUpdatePaymentPreview();
+  };
+
+  window.gxUpdatePaymentPreview = function(){
+    const total = gxCurrentOrderTotal();
+    let paid = gxParseMoney($('gxOrderPaidAmount')?.value);
+
+    if(paid < 0) paid = 0;
+    if(paid > total && total > 0) paid = total;
+
+    const remaining = Math.max(0, total - paid);
+
+    if($('gxOrderPaidPreview')){
+      $('gxOrderPaidPreview').textContent = paid.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    }
+    if($('gxOrderRemainingPreview')){
+      $('gxOrderRemainingPreview').textContent = remaining.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+    }
+
+    // Ajusta automaticamente o status conforme o valor pago.
+    const paymentSelect = $('gxOrderPayment');
+    if(paymentSelect && total > 0){
+      if(paid <= 0) paymentSelect.value = 'Pendente';
+      else if(paid >= total) paymentSelect.value = 'Pago';
+      else paymentSelect.value = 'Parcial';
+    }
+  };
 
   window.gxOpenNewOrder = function(){
     gxInjectNewOrderModal();
@@ -4386,6 +4573,7 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
     $('gxOrderDate').value='';
     $('gxOrderTime').value='';
     $('gxOrderPayment').value='Pendente';
+    $('gxOrderPaidAmount').value='0,00';
     $('gxOrderStatus').value='Novo';
     $('gxOrderNotes').value='';
     $('gxCatalogProduct').value='';
@@ -4410,7 +4598,7 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
     const phone = $('gxOrderPhone')?.value.trim();
     const date = $('gxOrderDate')?.value || '';
     const time = $('gxOrderTime')?.value || '';
-    const payment = $('gxOrderPayment')?.value || 'Pendente';
+    let payment = $('gxOrderPayment')?.value || 'Pendente';
     const status = $('gxOrderStatus')?.value || 'Novo';
     const notes = $('gxOrderNotes')?.value.trim() || '';
     const msg = $('gxNewOrderMsg');
@@ -4428,6 +4616,14 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
     }
 
     const total = gxNewOrderItems.reduce((s,i)=>s+(Number(i.subtotal)||0),0);
+    let valorPago = gxParseMoney($('gxOrderPaidAmount')?.value);
+    valorPago = Math.max(0, Math.min(total, valorPago));
+    const valorPendente = Math.max(0, total - valorPago);
+
+    if(valorPago <= 0) payment = 'Pendente';
+    else if(valorPago >= total && total > 0) payment = 'Pago';
+    else payment = 'Parcial';
+
     const legacyStatus = status==='Pronto' ? 'Pronto para retirar' : status==='Finalizado' ? 'Retirado' : status;
 
     const pedido = {
@@ -4439,10 +4635,14 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
         produtoId:i.produtoId || null,
         nome:i.nome,
         quantidade:i.quantidade,
-        valorUnitario:i.valorUnitario,
-        subtotal:i.subtotal
+        valorTotal:i.valorTotal ?? i.subtotal ?? 0,
+        subtotal:i.subtotal,
+        // Compatibilidade com pedidos antigos:
+        valorUnitario:i.valorUnitario
       })),
       total,
+      valorPago,
+      valorPendente,
       statusPagamento:payment,
       statusPedido:status,
       status:legacyStatus,
