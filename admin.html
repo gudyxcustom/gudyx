@@ -1032,6 +1032,522 @@ body::before{
   .gx-hero-actions button{font-size:.68rem!important;padding:8px 10px!important}
 }
 
+
+/* ==========================================================
+   GUDYX ADMIN — CATEGORIAS COM PRÉVIA VISUAL
+   ========================================================== */
+.gx-category-heading{
+  margin:4px 0 14px!important;
+}
+.gx-category-editor{
+  margin-bottom:18px;
+  padding:1px;
+  border-radius:22px;
+  background:linear-gradient(120deg,rgba(168,61,255,.34),rgba(19,232,255,.17),rgba(255,85,200,.22));
+}
+.gx-category-form{
+  padding:18px;
+  border-radius:21px;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(19,232,255,.07),transparent 32%),
+    linear-gradient(145deg,rgba(24,10,48,.97),rgba(10,4,25,.98));
+}
+.gx-category-form h3{
+  margin:0 0 14px;
+  font-size:1rem;
+}
+.gx-category-upload{
+  display:grid;
+  grid-template-columns:112px minmax(0,1fr);
+  gap:14px;
+  align-items:center;
+  padding:12px;
+  margin-bottom:13px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:16px;
+  background:rgba(255,255,255,.025);
+}
+.gx-category-preview{
+  width:104px;
+  height:104px;
+  border-radius:22px;
+  overflow:hidden;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(19,232,255,.24);
+  background:
+    radial-gradient(circle at 50% 20%,rgba(168,61,255,.20),transparent 55%),
+    rgba(255,255,255,.035);
+  box-shadow:0 0 24px rgba(130,41,255,.09);
+}
+.gx-category-preview img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:none;
+}
+#catPreviewEmpty{
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  color:#8f829e;
+  font-size:.68rem;
+}
+#catPreviewEmpty i{
+  font-size:1.55rem;
+  color:#50edff;
+}
+.gx-category-upload-fields{
+  min-width:0;
+}
+.gx-category-upload-fields input{
+  width:100%;
+  margin:0 0 7px!important;
+}
+.gx-category-upload-fields small{
+  display:block;
+  color:#8f829e;
+  font-size:.67rem;
+  line-height:1.45;
+}
+.gx-category-form-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:5px;
+}
+.gx-category-form-actions button{
+  margin:0!important;
+}
+.gx-category-list-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  margin:17px 2px 10px;
+}
+.gx-category-list-head strong{
+  display:block;
+  font-size:.96rem;
+}
+.gx-category-list-head small{
+  display:block;
+  margin-top:3px;
+  color:#8f829e;
+  font-size:.68rem;
+}
+#listaCategorias.gx-category-grid{
+  max-height:none!important;
+  overflow:visible!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  display:grid!important;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:11px;
+}
+#listaCategorias.gx-category-grid .item{
+  display:none!important;
+}
+.gx-category-card{
+  position:relative;
+  min-width:0;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  padding:9px;
+  border-radius:19px;
+  border:1px solid rgba(178,87,255,.22);
+  background:
+    radial-gradient(circle at 80% 0%,rgba(19,232,255,.08),transparent 32%),
+    linear-gradient(145deg,rgba(28,11,55,.86),rgba(10,5,27,.92));
+  box-shadow:0 13px 30px rgba(0,0,0,.15),0 0 25px rgba(130,44,255,.055);
+  transition:.18s ease;
+}
+.gx-category-card:hover{
+  transform:translateY(-3px);
+  border-color:rgba(19,232,255,.34);
+  box-shadow:0 16px 34px rgba(0,0,0,.18),0 0 26px rgba(19,232,255,.08);
+}
+.gx-category-card-visual{
+  position:relative;
+  width:100%;
+  aspect-ratio:1.48/1;
+  overflow:hidden;
+  border-radius:14px;
+  background:rgba(255,255,255,.035);
+}
+.gx-category-card-visual::after{
+  content:"";
+  position:absolute;
+  inset:auto 0 0;
+  height:42%;
+  pointer-events:none;
+  background:linear-gradient(transparent,rgba(7,2,20,.52));
+}
+.gx-category-card-visual img{
+  width:100%;
+  height:100%;
+  display:block;
+  object-fit:cover;
+  transition:transform .25s ease;
+}
+.gx-category-card:hover .gx-category-card-visual img{
+  transform:scale(1.035);
+}
+.gx-category-card-fallback{
+  width:100%;
+  height:100%;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at 50% 35%,rgba(168,61,255,.20),transparent 44%),
+    linear-gradient(135deg,rgba(168,61,255,.09),rgba(19,232,255,.035));
+  color:#65567a;
+  font-size:2rem;
+}
+.gx-category-card-info{
+  min-width:0;
+  padding:10px 5px 7px;
+}
+.gx-category-card-info strong{
+  display:block;
+  margin-top:6px;
+  color:#f8f3ff;
+  font-size:.80rem;
+  line-height:1.25;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.gx-category-type{
+  display:inline-flex;
+  align-items:center;
+  min-height:22px;
+  padding:4px 8px;
+  border-radius:999px;
+  font-size:.57rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+}
+.gx-category-type.product{
+  color:#6ff4ff;
+  border:1px solid rgba(19,232,255,.19);
+  background:rgba(19,232,255,.07);
+}
+.gx-category-type.service{
+  color:#ff9ddd;
+  border:1px solid rgba(255,85,200,.20);
+  background:rgba(255,85,200,.075);
+}
+.gx-category-card-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:auto;
+}
+.gx-category-card-actions button{
+  width:100%!important;
+  min-height:36px!important;
+  margin:0!important;
+  padding:7px!important;
+  border-radius:11px!important;
+}
+.gx-category-card-actions .btn-edit{
+  background:linear-gradient(135deg,#9e27ff,#5b45ff)!important;
+}
+.gx-category-empty{
+  grid-column:1/-1;
+  min-height:180px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+  border:1px dashed rgba(178,87,255,.24);
+  border-radius:20px;
+  color:#8f829e;
+}
+.gx-category-empty i{
+  font-size:2rem;
+  color:#54edff;
+}
+.gx-category-empty strong{
+  color:#dfd7e9;
+}
+.gx-category-empty span{
+  font-size:.72rem;
+}
+@media(max-width:1180px){
+  #listaCategorias.gx-category-grid{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+  }
+}
+@media(max-width:760px){
+  #listaCategorias.gx-category-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:8px;
+  }
+  .gx-category-upload{
+    grid-template-columns:86px minmax(0,1fr);
+  }
+  .gx-category-preview{
+    width:80px;
+    height:80px;
+    border-radius:17px;
+  }
+  .gx-category-card{
+    padding:7px;
+    border-radius:16px;
+  }
+  .gx-category-card-info strong{
+    font-size:.72rem;
+  }
+}
+@media(max-width:430px){
+  #listaCategorias.gx-category-grid{
+    grid-template-columns:1fr 1fr;
+  }
+  .gx-category-upload{
+    grid-template-columns:1fr;
+  }
+  .gx-category-preview{
+    width:100%;
+    height:150px;
+  }
+}
+
+
+/* ==========================================================
+   GUDYX ADMIN — CADASTRO DE PEDIDO
+   Itens do catálogo OU item manual
+   ========================================================== */
+.gx-orders-head{align-items:center!important}
+.gx-new-order-btn{
+  flex:none;
+  margin:0!important;
+  min-height:46px!important;
+  padding:11px 18px!important;
+  border-radius:15px!important;
+  background:linear-gradient(120deg,#9f39ff,#13dff7)!important;
+  box-shadow:0 0 28px rgba(128,58,255,.16)!important;
+}
+.gx-new-order-modal{
+  position:fixed;
+  inset:0;
+  z-index:26000;
+  display:none;
+  place-items:center;
+  padding:20px;
+  background:rgba(4,0,12,.82);
+  backdrop-filter:blur(12px);
+}
+.gx-new-order-modal.active{display:grid}
+.gx-new-order-box{
+  width:min(880px,100%);
+  max-height:min(92vh,920px);
+  overflow:auto;
+  padding:24px;
+  border-radius:26px;
+  border:1px solid rgba(182,92,255,.32);
+  background:
+    radial-gradient(circle at 95% 0%,rgba(19,232,255,.08),transparent 28%),
+    linear-gradient(145deg,#16082f,#0b041c 72%);
+  box-shadow:0 30px 100px rgba(0,0,0,.58),0 0 50px rgba(126,43,255,.10);
+}
+.gx-modal-head{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  align-items:flex-start;
+  padding-bottom:16px;
+  margin-bottom:16px;
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.gx-modal-head h2{margin:3px 0 4px;font-size:1.55rem;letter-spacing:-.035em}
+.gx-modal-head p{margin:0;color:#a89bb7;font-size:.77rem}
+.gx-modal-kicker{color:#5cf0ff;font-size:.61rem;letter-spacing:.17em;font-weight:850}
+.gx-modal-close{
+  width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important;
+  padding:0!important;margin:0!important;border-radius:12px!important;
+  background:rgba(255,255,255,.06)!important;border:1px solid rgba(255,255,255,.07)!important;
+  font-size:1.25rem!important;
+}
+.gx-order-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gx-order-builder{
+  margin:10px 0 14px;
+  padding:14px;
+  border:1px solid rgba(180,88,255,.19);
+  border-radius:18px;
+  background:rgba(255,255,255,.025);
+}
+.gx-order-builder-head strong{display:block}
+.gx-order-builder-head small{display:block;margin-top:2px;color:#8f829e;font-size:.65rem}
+.gx-entry-mode{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin:12px 0 10px;
+}
+.gx-entry-mode button{
+  margin:0!important;
+  min-height:42px!important;
+  border-radius:12px!important;
+  background:rgba(255,255,255,.045)!important;
+  border:1px solid rgba(255,255,255,.06)!important;
+}
+.gx-entry-mode button.active{
+  background:linear-gradient(120deg,rgba(159,57,255,.36),rgba(19,223,247,.10))!important;
+  border-color:rgba(19,232,255,.24)!important;
+  box-shadow:0 0 22px rgba(132,47,255,.09)!important;
+}
+.gx-entry-panel{
+  padding:11px;
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:14px;
+  background:rgba(255,255,255,.02);
+}
+.gx-catalog-entry-grid{
+  display:grid;
+  grid-template-columns:minmax(220px,1fr) 90px 135px 115px;
+  gap:8px;
+  align-items:end;
+}
+.gx-manual-entry-grid{
+  display:grid;
+  grid-template-columns:minmax(220px,1fr) 90px 135px 115px;
+  gap:8px;
+  align-items:end;
+}
+.gx-entry-panel label{margin-top:0!important;font-size:.66rem!important}
+.gx-entry-panel input,.gx-entry-panel select{margin:0!important}
+.gx-add-line-btn{
+  min-height:42px!important;
+  margin:0!important;
+  padding:8px 11px!important;
+  border-radius:11px!important;
+}
+.gx-entry-help{
+  display:block;
+  margin-top:8px;
+  color:#8f829e;
+  font-size:.63rem;
+}
+.gx-new-order-items-list{
+  display:grid;
+  gap:7px;
+  margin-top:12px;
+}
+.gx-order-empty-lines{
+  min-height:82px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  color:#786a89;
+  border:1px dashed rgba(181,92,255,.17);
+  border-radius:13px;
+  font-size:.68rem;
+}
+.gx-order-empty-lines i{font-size:1.2rem;color:#4deaff}
+.gx-order-line{
+  display:grid;
+  grid-template-columns:86px minmax(0,1fr) 110px 38px;
+  align-items:center;
+  gap:9px;
+  padding:9px;
+  border:1px solid rgba(255,255,255,.055);
+  border-radius:13px;
+  background:rgba(255,255,255,.027);
+}
+.gx-order-line-source{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+  gap:5px;
+  min-height:27px;
+  padding:5px 7px;
+  border-radius:999px;
+  font-size:.57rem;
+  font-weight:800;
+}
+.gx-order-line-source.catalog{
+  color:#66f3ff;
+  background:rgba(19,232,255,.07);
+  border:1px solid rgba(19,232,255,.16);
+}
+.gx-order-line-source.manual{
+  color:#ffa6dd;
+  background:rgba(255,85,200,.07);
+  border:1px solid rgba(255,85,200,.16);
+}
+.gx-order-line-name{min-width:0}
+.gx-order-line-name strong{
+  display:block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  font-size:.77rem;
+}
+.gx-order-line-name small{display:block;margin-top:2px;color:#8f829e;font-size:.62rem}
+.gx-order-line-total{color:#5ef2ff;font-size:.75rem;text-align:right}
+.gx-order-line-remove{
+  width:38px!important;min-width:38px!important;height:38px!important;min-height:38px!important;
+  padding:0!important;margin:0!important;border-radius:10px!important;
+  background:rgba(255,68,85,.13)!important;border:1px solid rgba(255,68,85,.18)!important;
+  color:#ff8391!important;
+}
+.gx-order-money-grid{grid-template-columns:1fr 1fr 1.05fr!important;align-items:end}
+.gx-order-total-preview{
+  min-height:67px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:10px 14px;
+  margin-bottom:10px;
+  border:1px solid rgba(19,232,255,.17);
+  border-radius:14px;
+  background:rgba(19,232,255,.045);
+}
+.gx-order-total-preview span{color:#8f829e;font-size:.62rem;text-transform:uppercase;letter-spacing:.08em}
+.gx-order-total-preview strong{margin-top:3px;color:#55f0ff;font-size:1.22rem}
+.gx-new-order-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+.gx-new-order-actions button{margin:0!important;min-height:44px!important}
+.gx-new-order-msg{min-height:20px;margin-top:10px;font-size:.75rem;text-align:right}
+.gx-new-order-msg.success{color:#68f2a4}
+.gx-new-order-msg.error{color:#ff7d8d}
+@media(max-width:760px){
+  .gx-orders-head{align-items:stretch!important;flex-direction:column!important}
+  .gx-new-order-btn{width:100%!important}
+  .gx-new-order-modal{padding:8px}
+  .gx-new-order-box{max-height:96vh;padding:16px;border-radius:20px}
+  .gx-order-form-grid,.gx-order-money-grid{grid-template-columns:1fr!important}
+  .gx-catalog-entry-grid,.gx-manual-entry-grid{
+    grid-template-columns:1fr 1fr;
+  }
+  .gx-catalog-entry-grid > div:first-child,
+  .gx-manual-name{
+    grid-column:1/-1;
+  }
+  .gx-add-line-btn{grid-column:1/-1;width:100%!important}
+  .gx-order-line{
+    grid-template-columns:74px minmax(0,1fr) 38px;
+  }
+  .gx-order-line-total{
+    grid-column:2;
+    text-align:left;
+  }
+  .gx-order-line-remove{
+    grid-column:3;
+    grid-row:1/3;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1079,20 +1595,64 @@ body::before{
 
         <!-- CATEGORIAS -->
         <div id="abaCategorias">
-            <h3>Adicionar / Editar Categoria</h3>
-            <input type="hidden" id="editCatId">
-            <label>Tipo</label><select id="catTipo"><option value="produtos">Produtos</option><option value="servicos">Serviços</option></select>
-            <label>Nome</label><input type="text" id="catNome">
-            <label>Imagem</label><input type="file" id="catImg" accept="image/*">
-            <button onclick="salvarCategoria()">Salvar Categoria</button>
-            <div class="admin-item-list" id="listaCategorias"></div>
+            <div class="section-heading gx-category-heading">
+                <div>
+                    <h3>🪐 Categorias</h3>
+                    <small style="opacity:.58;">Veja os ícones exatamente como aparecem na vitrine.</small>
+                </div>
+            </div>
+
+            <div class="gx-category-editor">
+                <div class="gx-category-form">
+                    <h3>Adicionar / Editar Categoria</h3>
+                    <input type="hidden" id="editCatId">
+                    <input type="hidden" id="catImagemAtual">
+
+                    <label>Tipo</label>
+                    <select id="catTipo">
+                        <option value="produtos">Produtos</option>
+                        <option value="servicos">Serviços</option>
+                    </select>
+
+                    <label>Nome</label>
+                    <input type="text" id="catNome" placeholder="Ex.: Sacolas Personalizadas">
+
+                    <label>Imagem / ícone da categoria</label>
+                    <div class="gx-category-upload">
+                        <div class="gx-category-preview" id="catPreviewBox">
+                            <img id="catPreviewImg" alt="Prévia da categoria">
+                            <div id="catPreviewEmpty">
+                                <i class="fas fa-image"></i>
+                                <span>Prévia</span>
+                            </div>
+                        </div>
+                        <div class="gx-category-upload-fields">
+                            <input type="file" id="catImg" accept="image/*" onchange="previewCategoriaSelecionada(this)">
+                            <small>A imagem atual será mantida se você editar a categoria sem escolher outro arquivo.</small>
+                        </div>
+                    </div>
+
+                    <div class="gx-category-form-actions">
+                        <button onclick="salvarCategoria()"><i class="fas fa-floppy-disk"></i> Salvar Categoria</button>
+                        <button type="button" class="btn-secondary" onclick="limparFormularioCategoria()"><i class="fas fa-xmark"></i> Limpar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="gx-category-list-head">
+                <div>
+                    <strong>Categorias cadastradas</strong>
+                    <small id="gxCategoryCount">0 categorias</small>
+                </div>
+            </div>
+            <div class="admin-item-list gx-category-grid" id="listaCategorias"></div>
         </div>
 
         <!-- PRODUTOS -->
         <div id="abaProdutos" style="display:none;">
             <div class="section-heading">
                 <div><h3>🛍️ Itens do catálogo</h3><small style="opacity:.55;">Busque um item para editar ou crie um novo.</small></div>
-                <button type="button" onclick="iniciarNovoProduto()"><i class="fas fa-plus"></i> Novo item</button>
+                <button type="button" onclick="iniciarNovoProduto()"><i class="fas fa-plus"></i> Cadastrar novo item</button>
             </div>
             <div class="product-toolbar">
                 <div class="product-toolbar-grid">
@@ -1734,54 +2294,192 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
             renderizarPreviews();
         }
 
+        function atualizarPreviewCategoria(src) {
+            const img = document.getElementById('catPreviewImg');
+            const empty = document.getElementById('catPreviewEmpty');
+            if (!img || !empty) return;
+            if (src) {
+                img.src = src;
+                img.style.display = 'block';
+                empty.style.display = 'none';
+            } else {
+                img.removeAttribute('src');
+                img.style.display = 'none';
+                empty.style.display = 'flex';
+            }
+        }
+
+        function previewCategoriaSelecionada(input) {
+            const file = input && input.files ? input.files[0] : null;
+            if (!file) {
+                atualizarPreviewCategoria(document.getElementById('catImagemAtual')?.value || '');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = e => atualizarPreviewCategoria(e.target.result);
+            reader.readAsDataURL(file);
+        }
+
+        function limparFormularioCategoria() {
+            document.getElementById('editCatId').value = '';
+            document.getElementById('catNome').value = '';
+            document.getElementById('catImg').value = '';
+            document.getElementById('catImagemAtual').value = '';
+            document.getElementById('catTipo').value = 'produtos';
+            atualizarPreviewCategoria('');
+        }
+
         async function salvarCategoria() {
-            vibrar(15); // 🔥 VIBRAÇÃO NO CLIQUE
+            vibrar(15);
             const id = document.getElementById('editCatId').value;
             const tipo = document.getElementById('catTipo').value;
             const nome = document.getElementById('catNome').value.trim();
+            const imagemAtual = document.getElementById('catImagemAtual').value || '';
+
             if (!nome) return alert('Digite o nome.');
+
             const fileInput = document.getElementById('catImg');
-            async function processarCat(imagem) {
-                const dadosCat = { tipo, nome, imagem: imagem || '' };
+
+            async function processarCat(novaImagem) {
+                // Ao editar sem escolher outro arquivo, preserva o ícone atual.
+                const imagemFinal = novaImagem || imagemAtual || '';
+                const dadosCat = { tipo, nome, imagem: imagemFinal };
+
                 try {
-                    if (id) { await db.collection('categorias').doc(id).update(dadosCat); alert('✅ Categoria atualizada com sucesso!'); }
-                    else { const docRef = await db.collection('categorias').add(dadosCat); await db.collection('categorias').doc(docRef.id).update({ id: docRef.id }); alert('✅ Categoria criada com sucesso!'); }
-                    document.getElementById('editCatId').value = ''; document.getElementById('catNome').value = ''; document.getElementById('catImg').value = '';
-                    await carregarDados(); atualizarListaCategorias(); atualizarSelectCategorias();
-                } catch(e) { console.error(e); alert('❌ Erro ao salvar: ' + e.message); }
+                    if (id) {
+                        await db.collection('categorias').doc(id).update(dadosCat);
+                        alert('✅ Categoria atualizada com sucesso!');
+                    } else {
+                        const docRef = await db.collection('categorias').add(dadosCat);
+                        await db.collection('categorias').doc(docRef.id).update({ id: docRef.id });
+                        alert('✅ Categoria criada com sucesso!');
+                    }
+
+                    limparFormularioCategoria();
+                    await carregarDados();
+                    atualizarListaCategorias();
+                    atualizarSelectCategorias();
+                } catch(e) {
+                    console.error(e);
+                    alert('❌ Erro ao salvar: ' + e.message);
+                }
             }
-            if (fileInput.files[0]) { processarCat(await redimensionarImagem(fileInput.files[0], 400, 0.4)); }
-            else { processarCat(null); }
+
+            if (fileInput.files[0]) {
+                processarCat(await redimensionarImagem(fileInput.files[0], 400, 0.4));
+            } else {
+                processarCat('');
+            }
         }
 
         function editarCategoria(id) {
             const cat = dados.categorias.find(c => c.id === id);
             if (!cat) return;
+
             document.getElementById('editCatId').value = cat.id;
             document.getElementById('catTipo').value = cat.tipo;
             document.getElementById('catNome').value = cat.nome;
+            document.getElementById('catImg').value = '';
+            document.getElementById('catImagemAtual').value = cat.imagem || '';
+            atualizarPreviewCategoria(cat.imagem || '');
+
+            document.getElementById('abaCategorias')?.scrollIntoView({ behavior:'smooth', block:'start' });
         }
 
         async function removerCategoria(id) {
             if (!confirm('Remover categoria e itens?')) return;
             await db.collection('categorias').doc(id).delete();
-            for (const prod of dados.produtos.filter(p => p.categoriaId === id)) { await db.collection('produtos').doc(prod.id).delete(); }
-            await carregarDados(); 
-            atualizarListaCategorias(); 
-            atualizarSelectCategorias(); 
+
+            for (const prod of dados.produtos.filter(p => p.categoriaId === id)) {
+                await db.collection('produtos').doc(prod.id).delete();
+            }
+
+            await carregarDados();
+            atualizarListaCategorias();
+            atualizarSelectCategorias();
         }
 
         function atualizarListaCategorias() {
             const lista = document.getElementById('listaCategorias');
+            const contador = document.getElementById('gxCategoryCount');
             if (!lista) return;
+
             lista.innerHTML = '';
-            if (!dados.categorias || dados.categorias.length === 0) {
-                lista.innerHTML = '<p style="text-align:center; opacity:0.6;">Nenhuma categoria cadastrada.</p>';
+
+            const categorias = Array.isArray(dados.categorias) ? dados.categorias : [];
+            if (contador) contador.textContent = `${categorias.length} ${categorias.length === 1 ? 'categoria' : 'categorias'}`;
+
+            if (categorias.length === 0) {
+                lista.innerHTML = `
+                    <div class="gx-category-empty">
+                        <i class="fas fa-folder-open"></i>
+                        <strong>Nenhuma categoria cadastrada</strong>
+                        <span>As categorias aparecerão aqui com seus ícones.</span>
+                    </div>`;
                 return;
             }
-            dados.categorias.forEach(cat => {
-                lista.innerHTML += `<div class="item"><span>[${cat.tipo}] ${cat.nome}</span><div><button class="btn-edit" onclick="editarCategoria('${cat.id}')">✏️</button><button onclick="removerCategoria('${cat.id}')">Remover</button></div></div>`;
-            });
+
+            categorias
+                .slice()
+                .sort((a,b) => String(a.nome || '').localeCompare(String(b.nome || ''), 'pt-BR'))
+                .forEach(cat => {
+                    const card = document.createElement('article');
+                    card.className = 'gx-category-card';
+
+                    const visual = document.createElement('div');
+                    visual.className = 'gx-category-card-visual';
+
+                    if (cat.imagem) {
+                        const img = document.createElement('img');
+                        img.src = cat.imagem;
+                        img.alt = cat.nome || 'Categoria';
+                        img.loading = 'lazy';
+                        visual.appendChild(img);
+                    } else {
+                        const fallback = document.createElement('div');
+                        fallback.className = 'gx-category-card-fallback';
+                        fallback.innerHTML = '<i class="fas fa-image"></i>';
+                        visual.appendChild(fallback);
+                    }
+
+                    const info = document.createElement('div');
+                    info.className = 'gx-category-card-info';
+
+                    const tipo = document.createElement('span');
+                    tipo.className = `gx-category-type ${cat.tipo === 'servicos' ? 'service' : 'product'}`;
+                    tipo.textContent = cat.tipo === 'servicos' ? 'Serviço' : 'Produto';
+
+                    const nome = document.createElement('strong');
+                    nome.textContent = cat.nome || 'Sem nome';
+
+                    info.appendChild(tipo);
+                    info.appendChild(nome);
+
+                    const actions = document.createElement('div');
+                    actions.className = 'gx-category-card-actions';
+
+                    const edit = document.createElement('button');
+                    edit.type = 'button';
+                    edit.className = 'btn-edit';
+                    edit.title = 'Editar categoria';
+                    edit.innerHTML = '<i class="fas fa-pen"></i>';
+                    edit.onclick = () => editarCategoria(cat.id);
+
+                    const remove = document.createElement('button');
+                    remove.type = 'button';
+                    remove.className = 'btn-danger';
+                    remove.title = 'Remover categoria';
+                    remove.innerHTML = '<i class="fas fa-trash"></i>';
+                    remove.onclick = () => removerCategoria(cat.id);
+
+                    actions.appendChild(edit);
+                    actions.appendChild(remove);
+
+                    card.appendChild(visual);
+                    card.appendChild(info);
+                    card.appendChild(actions);
+                    lista.appendChild(card);
+                });
         }
 
         function adicionarLinhaDesconto() {
@@ -3080,7 +3778,7 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
           <p>Pedidos, produção e catálogo — tudo organizado num só lugar.</p>
           <div class="gx-hero-actions">
             <button type="button" onclick="abrirAba('pedidos')"><i class="fas fa-receipt"></i> Ver pedidos</button>
-            <button type="button" class="btn-secondary" onclick="iniciarNovoProduto()"><i class="fas fa-plus"></i> Novo item</button>
+            <button type="button" class="btn-secondary" onclick="gxOpenNewOrder()"><i class="fas fa-plus"></i> Novo pedido</button>
           </div>
         </div>
         <div class="gx-hero-mascot" aria-hidden="true">
@@ -3103,7 +3801,7 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
           </div>
           <div class="gx-shortcuts">
             <button type="button" onclick="abrirAba('pedidos')"><i class="fas fa-receipt"></i> Ver todos os pedidos</button>
-            <button type="button" onclick="iniciarNovoProduto()"><i class="fas fa-plus"></i> Cadastrar novo item</button>
+            <button type="button" onclick="gxOpenNewOrder()"><i class="fas fa-plus"></i> Adicionar novo pedido</button>
             <button type="button" onclick="gxOpenSecurity()"><i class="fas fa-key"></i> Alterar senha</button>
           </div>
         </div>
@@ -3115,6 +3813,7 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
     gxUpgradeSummary();
     gxUpgradeOrdersSection();
     gxInjectSecurityModal();
+    gxInjectNewOrderModal();
 
     // Estrutura real em duas colunas: menu e conteúdo nunca se sobrepõem.
     if (!admin.querySelector(':scope > .gx-main')) {
@@ -3145,11 +3844,14 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
     if(!aba || aba.dataset.gxOrders) return;
     aba.dataset.gxOrders = '1';
     aba.innerHTML = `
-      <div class="gx-page-head">
+      <div class="gx-page-head gx-orders-head">
         <div>
           <h2>Pedidos</h2>
           <p>Pagamento e produção separados para você nunca perder o controle.</p>
         </div>
+        <button type="button" class="gx-new-order-btn" onclick="gxOpenNewOrder()">
+          <i class="fas fa-plus"></i> Adicionar novo pedido
+        </button>
       </div>
       <div class="gx-filterbar">
         <button class="gx-filter active" data-filter="all" onclick="gxSetFilter('all')">Todos</button>
@@ -3391,6 +4093,388 @@ var dados = { categorias: [], produtos: [], frases: [], faq: [] };
     }catch(e){
       msg.style.color='#ff7b8d';
       msg.textContent='Não foi possível alterar a senha. Confira a senha atual.';
+    }
+  };
+
+
+  // ============================================================
+  // NOVO PEDIDO — itens vindos do catálogo OU inseridos manualmente
+  // ============================================================
+  let gxNewOrderItems = [];
+  let gxOrderEntryMode = 'catalog';
+
+  function gxInjectNewOrderModal(){
+    if($('gxNewOrderModal')) return;
+
+    const modal = document.createElement('div');
+    modal.id = 'gxNewOrderModal';
+    modal.className = 'gx-new-order-modal';
+    modal.innerHTML = `
+      <div class="gx-new-order-box">
+        <div class="gx-modal-head">
+          <div>
+            <span class="gx-modal-kicker">✦ PEDIDO MANUAL</span>
+            <h2>Adicionar novo pedido</h2>
+            <p>Monte o pedido com itens já cadastrados no catálogo ou adicione um item manual.</p>
+          </div>
+          <button type="button" class="gx-modal-close" onclick="gxCloseNewOrder()" aria-label="Fechar">×</button>
+        </div>
+
+        <div class="gx-order-form-grid">
+          <div>
+            <label>Cliente *</label>
+            <input type="text" id="gxOrderClient" placeholder="Ex.: Suleen">
+          </div>
+          <div>
+            <label>WhatsApp / telefone</label>
+            <input type="tel" id="gxOrderPhone" placeholder="(21) 99999-9999">
+          </div>
+        </div>
+
+        <div class="gx-order-form-grid">
+          <div>
+            <label>Data de retirada</label>
+            <input type="date" id="gxOrderDate">
+          </div>
+          <div>
+            <label>Horário</label>
+            <input type="time" id="gxOrderTime">
+          </div>
+        </div>
+
+        <div class="gx-order-builder">
+          <div class="gx-order-builder-head">
+            <div>
+              <strong>Itens do pedido</strong>
+              <small>Você não precisa cadastrar um novo produto para montar um pedido.</small>
+            </div>
+          </div>
+
+          <div class="gx-entry-mode">
+            <button type="button" id="gxModeCatalog" class="active" onclick="gxSetOrderEntryMode('catalog')">
+              <i class="fas fa-store"></i> Do catálogo
+            </button>
+            <button type="button" id="gxModeManual" onclick="gxSetOrderEntryMode('manual')">
+              <i class="fas fa-pen"></i> Item manual
+            </button>
+          </div>
+
+          <div id="gxCatalogEntry" class="gx-entry-panel">
+            <div class="gx-catalog-entry-grid">
+              <div>
+                <label>Item do catálogo</label>
+                <select id="gxCatalogProduct" onchange="gxCatalogProductChanged()">
+                  <option value="">Selecione...</option>
+                </select>
+              </div>
+              <div>
+                <label>Quantidade</label>
+                <input type="number" id="gxCatalogQty" min="1" step="1" value="1">
+              </div>
+              <div>
+                <label>Valor unitário</label>
+                <input type="text" id="gxCatalogPrice" inputmode="decimal" placeholder="0,00">
+              </div>
+              <button type="button" class="gx-add-line-btn" onclick="gxAddCatalogItem()">
+                <i class="fas fa-plus"></i> Adicionar
+              </button>
+            </div>
+            <small class="gx-entry-help">O valor vem do catálogo quando existir, mas você pode ajustar só para este pedido.</small>
+          </div>
+
+          <div id="gxManualEntry" class="gx-entry-panel hidden">
+            <div class="gx-manual-entry-grid">
+              <div class="gx-manual-name">
+                <label>Nome do item</label>
+                <input type="text" id="gxManualName" placeholder="Ex.: Ajuste de arte">
+              </div>
+              <div>
+                <label>Quantidade</label>
+                <input type="number" id="gxManualQty" min="1" step="1" value="1">
+              </div>
+              <div>
+                <label>Valor unitário</label>
+                <input type="text" id="gxManualPrice" inputmode="decimal" placeholder="0,00">
+              </div>
+              <button type="button" class="gx-add-line-btn" onclick="gxAddManualItem()">
+                <i class="fas fa-plus"></i> Adicionar
+              </button>
+            </div>
+            <small class="gx-entry-help">Use para algo específico daquele cliente sem criar um item novo no catálogo.</small>
+          </div>
+
+          <div id="gxNewOrderItemsList" class="gx-new-order-items-list"></div>
+        </div>
+
+        <div class="gx-order-form-grid gx-order-money-grid">
+          <div>
+            <label>Pagamento</label>
+            <select id="gxOrderPayment">
+              <option value="Pendente">Pendente</option>
+              <option value="Parcial">Parcial</option>
+              <option value="Pago">Pago</option>
+            </select>
+          </div>
+          <div>
+            <label>Status do pedido</label>
+            <select id="gxOrderStatus">
+              <option value="Novo">Novo</option>
+              <option value="Em produção">Em produção</option>
+              <option value="Pronto">Pronto</option>
+              <option value="Finalizado">Finalizado</option>
+            </select>
+          </div>
+          <div class="gx-order-total-preview">
+            <span>Total</span>
+            <strong id="gxOrderTotalPreview">R$ 0,00</strong>
+          </div>
+        </div>
+
+        <label>Observações</label>
+        <textarea id="gxOrderNotes" placeholder="Ex.: tema, cor, detalhes combinados, prazo..."></textarea>
+
+        <div class="gx-new-order-actions">
+          <button type="button" class="btn-secondary" onclick="gxCloseNewOrder()">Cancelar</button>
+          <button type="button" id="gxSaveOrderBtn" onclick="gxSaveNewOrder()">
+            <i class="fas fa-floppy-disk"></i> Salvar pedido
+          </button>
+        </div>
+        <div id="gxNewOrderMsg" class="gx-new-order-msg"></div>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  function gxFillCatalogProducts(){
+    const select = $('gxCatalogProduct');
+    if(!select) return;
+
+    const produtos = Array.isArray(dados?.produtos) ? dados.produtos.slice() : [];
+    produtos.sort((a,b)=>String(a.nome||'').localeCompare(String(b.nome||''),'pt-BR'));
+
+    select.innerHTML = '<option value="">Selecione...</option>' +
+      produtos.map(p=>`<option value="${esc(p.id)}">${esc(p.nome || 'Sem nome')}</option>`).join('');
+  }
+
+  window.gxSetOrderEntryMode = function(mode){
+    gxOrderEntryMode = mode === 'manual' ? 'manual' : 'catalog';
+    $('gxModeCatalog')?.classList.toggle('active', gxOrderEntryMode==='catalog');
+    $('gxModeManual')?.classList.toggle('active', gxOrderEntryMode==='manual');
+    $('gxCatalogEntry')?.classList.toggle('hidden', gxOrderEntryMode!=='catalog');
+    $('gxManualEntry')?.classList.toggle('hidden', gxOrderEntryMode!=='manual');
+  };
+
+  function gxGetCatalogPrice(prod){
+    if(!prod) return 0;
+    const candidates = [prod.preco, prod.precoAtual, prod.valor, prod.precoBase];
+    for(const value of candidates){
+      const n = gxParseMoney(value);
+      if(n > 0) return n;
+    }
+    return 0;
+  }
+
+  window.gxCatalogProductChanged = function(){
+    const id = $('gxCatalogProduct')?.value;
+    const prod = (dados?.produtos || []).find(p=>p.id===id);
+    const price = gxGetCatalogPrice(prod);
+    $('gxCatalogPrice').value = price ? price.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}) : '';
+  };
+
+  function gxParseMoney(v){
+    let s = String(v ?? '').trim().replace(/[^\d,.-]/g,'');
+    if(s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',','.');
+    else if(s.includes(',')) s = s.replace(',','.');
+    const n = Number(s);
+    return Number.isFinite(n) ? n : 0;
+  }
+
+  window.gxAddCatalogItem = function(){
+    const id = $('gxCatalogProduct')?.value;
+    if(!id) return alert('Selecione um item do catálogo.');
+
+    const prod = (dados?.produtos || []).find(p=>p.id===id);
+    if(!prod) return alert('Não encontrei este item no catálogo.');
+
+    const quantidade = Math.max(1, Number($('gxCatalogQty')?.value)||1);
+    const valorUnitario = gxParseMoney($('gxCatalogPrice')?.value);
+
+    gxNewOrderItems.push({
+      source:'catalog',
+      produtoId:prod.id,
+      nome:prod.nome || 'Item',
+      quantidade,
+      valorUnitario,
+      subtotal:quantidade * valorUnitario
+    });
+
+    $('gxCatalogProduct').value='';
+    $('gxCatalogQty').value='1';
+    $('gxCatalogPrice').value='';
+    gxRenderNewOrderItems();
+  };
+
+  window.gxAddManualItem = function(){
+    const nome = $('gxManualName')?.value.trim();
+    if(!nome) return alert('Digite o nome do item.');
+
+    const quantidade = Math.max(1, Number($('gxManualQty')?.value)||1);
+    const valorUnitario = gxParseMoney($('gxManualPrice')?.value);
+
+    gxNewOrderItems.push({
+      source:'manual',
+      produtoId:null,
+      nome,
+      quantidade,
+      valorUnitario,
+      subtotal:quantidade * valorUnitario
+    });
+
+    $('gxManualName').value='';
+    $('gxManualQty').value='1';
+    $('gxManualPrice').value='';
+    gxRenderNewOrderItems();
+  };
+
+  window.gxRemoveNewOrderItem = function(index){
+    gxNewOrderItems.splice(index,1);
+    gxRenderNewOrderItems();
+  };
+
+  function gxRenderNewOrderItems(){
+    const container = $('gxNewOrderItemsList');
+    if(!container) return;
+
+    if(!gxNewOrderItems.length){
+      container.innerHTML = `
+        <div class="gx-order-empty-lines">
+          <i class="fas fa-basket-shopping"></i>
+          <span>Nenhum item adicionado ainda.</span>
+        </div>`;
+    } else {
+      container.innerHTML = gxNewOrderItems.map((item,index)=>`
+        <div class="gx-order-line">
+          <div class="gx-order-line-source ${item.source}">
+            ${item.source==='catalog' ? '<i class="fas fa-store"></i> Catálogo' : '<i class="fas fa-pen"></i> Manual'}
+          </div>
+          <div class="gx-order-line-name">
+            <strong>${esc(item.nome)}</strong>
+            <small>${item.quantidade} × ${item.valorUnitario.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</small>
+          </div>
+          <strong class="gx-order-line-total">${item.subtotal.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</strong>
+          <button type="button" class="gx-order-line-remove" onclick="gxRemoveNewOrderItem(${index})" title="Remover">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      `).join('');
+    }
+
+    const total = gxNewOrderItems.reduce((s,i)=>s+(Number(i.subtotal)||0),0);
+    if($('gxOrderTotalPreview')) $('gxOrderTotalPreview').textContent = total.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  }
+
+  window.gxOpenNewOrder = function(){
+    gxInjectNewOrderModal();
+    abrirAba('pedidos');
+    gxFillCatalogProducts();
+
+    gxNewOrderItems = [];
+    gxSetOrderEntryMode('catalog');
+
+    $('gxOrderClient').value='';
+    $('gxOrderPhone').value='';
+    $('gxOrderDate').value='';
+    $('gxOrderTime').value='';
+    $('gxOrderPayment').value='Pendente';
+    $('gxOrderStatus').value='Novo';
+    $('gxOrderNotes').value='';
+    $('gxCatalogProduct').value='';
+    $('gxCatalogQty').value='1';
+    $('gxCatalogPrice').value='';
+    $('gxManualName').value='';
+    $('gxManualQty').value='1';
+    $('gxManualPrice').value='';
+    $('gxNewOrderMsg').textContent='';
+
+    gxRenderNewOrderItems();
+    $('gxNewOrderModal').classList.add('active');
+    setTimeout(()=>$('gxOrderClient')?.focus(),100);
+  };
+
+  window.gxCloseNewOrder = function(){
+    $('gxNewOrderModal')?.classList.remove('active');
+  };
+
+  window.gxSaveNewOrder = async function(){
+    const client = $('gxOrderClient')?.value.trim();
+    const phone = $('gxOrderPhone')?.value.trim();
+    const date = $('gxOrderDate')?.value || '';
+    const time = $('gxOrderTime')?.value || '';
+    const payment = $('gxOrderPayment')?.value || 'Pendente';
+    const status = $('gxOrderStatus')?.value || 'Novo';
+    const notes = $('gxOrderNotes')?.value.trim() || '';
+    const msg = $('gxNewOrderMsg');
+    const btn = $('gxSaveOrderBtn');
+
+    if(!client){
+      msg.className='gx-new-order-msg error';
+      msg.textContent='Informe o nome do cliente.';
+      return;
+    }
+    if(!gxNewOrderItems.length){
+      msg.className='gx-new-order-msg error';
+      msg.textContent='Adicione pelo menos um item ao pedido.';
+      return;
+    }
+
+    const total = gxNewOrderItems.reduce((s,i)=>s+(Number(i.subtotal)||0),0);
+    const legacyStatus = status==='Pronto' ? 'Pronto para retirar' : status==='Finalizado' ? 'Retirado' : status;
+
+    const pedido = {
+      clienteNome:client,
+      clienteTelefone:phone,
+      telefone:phone,
+      itens:gxNewOrderItems.map(i=>({
+        source:i.source,
+        produtoId:i.produtoId || null,
+        nome:i.nome,
+        quantidade:i.quantidade,
+        valorUnitario:i.valorUnitario,
+        subtotal:i.subtotal
+      })),
+      total,
+      statusPagamento:payment,
+      statusPedido:status,
+      status:legacyStatus,
+      dataRetirada:date,
+      horaRetirada:time,
+      observacoes:notes,
+      origem:'admin',
+      timestamp:firebase.firestore.FieldValue.serverTimestamp(),
+      criadoEm:firebase.firestore.FieldValue.serverTimestamp(),
+      atualizadoEm:firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    try{
+      btn.disabled=true;
+      btn.innerHTML='<i class="fas fa-spinner fa-spin"></i> Salvando...';
+      await db.collection('pedidos').add(pedido);
+
+      msg.className='gx-new-order-msg success';
+      msg.textContent='Pedido cadastrado com sucesso!';
+
+      setTimeout(()=>{
+        gxCloseNewOrder();
+        abrirAba('pedidos');
+        gxSetFilter('all');
+      },450);
+    }catch(e){
+      console.error(e);
+      msg.className='gx-new-order-msg error';
+      msg.textContent='Erro ao salvar pedido: '+e.message;
+    }finally{
+      btn.disabled=false;
+      btn.innerHTML='<i class="fas fa-floppy-disk"></i> Salvar pedido';
     }
   };
 
