@@ -1,3 +1,129 @@
+e o carrinho na ta funcionando corretamente
+
+✨ GPTOnline.ai
+
+Corrigi o carrinho primeiro, porque pela imagem ele estava claramente com controles espremidos e saindo do card.
+
+Agora ficou assim:
+
+o carrinho ocupa 100% da largura no mobile;
+a imagem e o nome ficam numa linha limpa;
+a parte de Quantidade fica separada;
+− quantidade + ficam grandes e fáceis de tocar;
+Remover item fica numa linha própria no celular;
+nada mais deve ficar cortado ou sobreposto;
+o rodapé com Continuar pedido / Adicionar mais itens / Esvaziar carrinho também se adapta ao mobile.
+
+Baixar index.html com o carrinho corrigido
+
+Backup antes da correção
+
+Sobre o Modo Pedido Fácil: eu estava justamente começando a implementá-lo quando você mostrou esse erro. Agora que o carrinho está corrigido, o próximo passo é integrar o fluxo guiado tipo:
+
+“É este produto?” → “Quantos você quer?” → “Quer deixar alguma observação?” → “Conferir” → “Adicionar ao pedido”
+
+Isso combina muito mais com a acessibilidade que você quer.
+
+✨ GPTOnline.ai 
+
+index.html
+HTML
+index-backup-before-cart-fix.html
+HTML
+faz isso então
+lembrando que a pessoa pode querer mais de um item
+
+✨ GPTOnline.ai
+
+Feito. Agora o catálogo tem um Modo Pedido Fácil de verdade.
+
+Quando a pessoa tocar em “Fazer pedido fácil”, o fluxo fica guiado:
+
+1. Produto → confirma se é aquele mesmo
+2. Quantidade → escolhe com − / + ou atalhos 1, 2, 5, 10
+3. Observação → pode escrever tema, cor, nome, idade etc.
+4. Confirmar → revisa tudo e adiciona ao pedido
+
+Depois aparece:
+
+“Item adicionado ao pedido!”
+
+E a pessoa escolhe:
+
+Adicionar outro item
+ou
+Ir para o carrinho
+
+Então sim: ela pode montar um pedido com vários produtos diferentes antes de finalizar.
+
+Também fiz a observação ficar vinculada ao item. Exemplo:
+
+Caixa Milk — 5 un.
+“Tema Frozen, nome Ana, 6 anos”
+
+Topo de bolo — 1 un.
+“Nome Ana, dourado”
+
+Tudo vai para o mesmo carrinho.
+
+Baixar index.html com Modo Pedido Fácil
+
+Backup antes do Modo Pedido Fácil
+
+Esse fluxo é bem mais adequado para pessoas leigas porque evita aquela sensação de “cliquei e não sei o que aconteceu” e deixa claro que adicionar um item não significa finalizar o pedido.
+
+✨ GPTOnline.ai 
+
+index.html
+HTML
+index-backup-before-easy-order-mode.html
+HTML
+hoje 1:56
+Quero manter esse modo FACIL PADRÃO!
+E QUERO CONSERTAR O CARRINHO QUE N TA CONTABILIZAANDO CORRETAMENTE
+
+✨ GPTOnline.ai
+
+Sim. Mantive o Modo Pedido Fácil como padrão e corrigi a contabilização do carrinho.
+
+O erro principal era que o carrinho estava pegando preço por uma lógica diferente da usada no catálogo. Em alguns produtos, ele usava precoMaoObra ou preco e ignorava o cálculo real do item. Isso explica casos como produto aparecendo com R$ 0,00 no carrinho mesmo tendo preço no catálogo.
+
+Agora ficou unificado:
+
+o preço do carrinho usa a mesma função de preço do catálogo;
+preço manual, promoção e desconto progressivo entram no cálculo;
+ao mudar a quantidade com + ou −, o preço é recalculado;
+subtotal de cada item é recalculado;
+cupom é aplicado sobre o subtotal correto;
+o total mostrado no carrinho é o mesmo total enviado ao Firebase e ao WhatsApp;
+observações de cada produto continuam junto daquele item.
+
+Também corrigi um problema importante para quem quer vários itens: agora o mesmo produto pode aparecer mais de uma vez quando tiver observações diferentes.
+
+Por exemplo:
+
+Caixa Milk — 5 un.
+“Tema Stitch — Maria”
+
+e também:
+
+Caixa Milk — 3 un.
+“Tema Barbie — Ana”
+
+Eles não serão mais misturados como se fossem a mesma coisa.
+
+E o Pedido Fácil continua sendo a entrada principal:
+
+Fazer pedido fácil → quantidade → observação → confirmar → Adicionar outro item ou Ir para o carrinho.
+
+Aqui está o arquivo completo corrigido:
+
+Baixar index-corrigido.html
+
+No GitHub, pode substituir o conteúdo do seu index.html pelo conteúdo desse arquivo.
+
+✨ GPTOnline.ai 
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -1171,6 +1297,19 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 .easy-done-blob{width:74px;height:74px;margin:4px auto 12px;display:grid;place-items:center;border-radius:28px;background:linear-gradient(135deg,#9a38ff,#00dff2);font-size:2rem;font-weight:900}#easyStepDone{text-align:center}.easy-done-actions{display:grid;gap:8px}.gx-item-note{margin-top:5px;padding:5px 7px;border-radius:8px;background:rgba(255,83,195,.06);border:1px solid rgba(255,83,195,.12);color:#f2c5e5;font-size:.61rem;line-height:1.35}
 @media(max-width:640px){.easy-order-modal{align-items:flex-end;padding:0}.easy-order-box{width:100%;max-height:96dvh;border-radius:24px 24px 0 0;padding:18px 14px calc(16px + env(safe-area-inset-bottom))}.easy-order-top h2{font-size:1.25rem}.easy-product-preview{grid-template-columns:78px minmax(0,1fr)}.easy-product-preview img{width:78px;height:78px}.easy-nav-buttons{grid-template-columns:1fr}.easy-summary-row{grid-template-columns:90px minmax(0,1fr)}}
 
+
+/* GUDYX — CONTABILIZAÇÃO DO CARRINHO */
+.gx-cart-accounting-helper{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:4px 0 2px;
+  color:rgba(255,255,255,.58);
+  font-size:.62rem;
+}
+.gx-cart-accounting-helper b{color:#fff;}
+
 </style>
 </head>
 <body>
@@ -1336,11 +1475,12 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         <button class="btn-sorte" onclick="itemSurpresa()" id="btnSorte" style="margin:10px 20px;display:none;">🎁 Estou com sorte!</button>
         <div class="cart-drawer-footer">
             <div class="gx-total-label">Total do pedido</div>
+            <div id="gxCartAccountingHelper" class="gx-cart-accounting-helper" style="display:none;"></div>
             <div class="cart-total" id="cartDrawerTotal">R$ 0,00</div>
-            <p class="gx-total-help">Você ainda poderá confirmar seus dados antes de enviar.</p>
+            <p class="gx-total-help">Confira o total. Você pode adicionar vários itens antes de finalizar.</p>
             <div class="cart-actions">
                 <button class="btn-agendar-finalizar" onclick="finalizarPedidoGudyx()"><i class="fas fa-arrow-right"></i> Continuar pedido</button>
-                <button class="btn-continuar-comprando" onclick="fecharDrawer()"><i class="fas fa-plus"></i> Adicionar mais itens</button>
+                <button class="btn-continuar-comprando" onclick="fecharDrawer()"><i class="fas fa-plus"></i> Adicionar outro item</button>
                 <button class="btn-clear-cart" onclick="if(confirm('Remover todos os itens do pedido?')) limparCarrinho()"><i class="fas fa-trash"></i> Esvaziar carrinho</button>
             </div>
         </div>
@@ -1905,8 +2045,118 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         function mostrarMiniGluudyx() { const mini = document.getElementById('miniGluudyx'); if(!mini) return; mini.querySelector('.mini-fala').textContent = frasesInfluenciador[Math.floor(Math.random()*frasesInfluenciador.length)]; mini.style.display = 'flex'; }
         function esconderMiniGluudyx() { if (!document.getElementById('cartDrawer').classList.contains('open') && !document.getElementById('productModal').classList.contains('active')) { document.getElementById('miniGluudyx').style.display = 'none'; } }
 
-        function carregarCarrinho() { const sc = sessionStorage.getItem('gudyxCarrinho'); if(sc) { try { const d=JSON.parse(sc); carrinho=d.items||[]; cupomAtual=d.cupom||null; } catch(e) {} } atualizarBadgeCarrinho(); renderizarDrawer(); }
-        function salvarCarrinho() { sessionStorage.setItem('gudyxCarrinho', JSON.stringify({items:carrinho,cupom:cupomAtual,timestamp:Date.now()})); atualizarBadgeCarrinho(); renderizarDrawer(); }
+
+        function gxParseCurrency(value) {
+            if (typeof value === 'number') return Number.isFinite(value) ? value : 0;
+            let s = String(value ?? '').trim().replace(/[^\d,.-]/g, '');
+            if (!s) return 0;
+            if (s.includes(',') && s.includes('.')) {
+                if (s.lastIndexOf(',') > s.lastIndexOf('.')) s = s.replace(/\./g, '').replace(',', '.');
+                else s = s.replace(/,/g, '');
+            } else if (s.includes(',')) {
+                s = s.replace(',', '.');
+            }
+            const n = Number(s);
+            return Number.isFinite(n) ? n : 0;
+        }
+
+        function gxMoney(value) {
+            return gxParseCurrency(value).toLocaleString('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            });
+        }
+
+        function gxMakeCartKey(prodId, note='') {
+            const cleanNote = String(note || '').trim().toLowerCase();
+            let hash = 0;
+            for (let i = 0; i < cleanNote.length; i++) {
+                hash = ((hash << 5) - hash) + cleanNote.charCodeAt(i);
+                hash |= 0;
+            }
+            return `${prodId}__${Math.abs(hash)}`;
+        }
+
+        function gxGetCartItemKey(item) {
+            if (!item.cartKey) item.cartKey = gxMakeCartKey(item.id, item.observacao || '');
+            return item.cartKey;
+        }
+
+        function gxResolveProductUnitPrice(prod, qtd=1) {
+            if (!prod) return 0;
+            return gxParseCurrency(calcularPrecoTotal(prod, [], Math.max(1, Number(qtd) || 1)));
+        }
+
+        function gxRefreshCartItemPrice(item) {
+            if (!item) return 0;
+            const prod = dados.produtos.find(p => p.id === item.id);
+            if (prod) {
+                const resolved = gxResolveProductUnitPrice(prod, item.quantidade);
+                item.preco = resolved.toFixed(2).replace('.', ',');
+                item.precoNumerico = resolved;
+                item.nome = item.nome || prod.nome;
+                item.imagem = item.imagem || getImagemPrincipal(prod);
+                return resolved;
+            }
+            const fallback = gxParseCurrency(item.precoNumerico ?? item.preco);
+            item.precoNumerico = fallback;
+            item.preco = fallback.toFixed(2).replace('.', ',');
+            return fallback;
+        }
+
+        function gxMigrateCartItems() {
+            carrinho = (Array.isArray(carrinho) ? carrinho : []).map(item => {
+                item.quantidade = Math.max(1, Number(item.quantidade) || 1);
+                gxGetCartItemKey(item);
+                gxRefreshCartItemPrice(item);
+                return item;
+            });
+        }
+
+        function gxCartSubtotal() {
+            let total = 0;
+            carrinho.forEach(item => {
+                total += gxRefreshCartItemPrice(item) * Math.max(1, Number(item.quantidade) || 1);
+            });
+            return Number.isFinite(total) ? total : 0;
+        }
+
+        function gxApplyCoupon(total) {
+            let finalTotal = Number(total) || 0;
+            if (!cupomAtual) return Math.max(0, finalTotal);
+            const valor = gxParseCurrency(cupomAtual.valor);
+            if ((cupomAtual.tipo || 'percentual') === 'percentual') finalTotal *= (1 - valor / 100);
+            else finalTotal -= valor;
+            return Math.max(0, Number.isFinite(finalTotal) ? finalTotal : 0);
+        }
+
+        function carregarCarrinho() {
+            const sc = sessionStorage.getItem('gudyxCarrinho');
+            if (sc) {
+                try {
+                    const d = JSON.parse(sc);
+                    carrinho = d.items || [];
+                    cupomAtual = d.cupom || null;
+                } catch(e) {
+                    carrinho = [];
+                    cupomAtual = null;
+                }
+            }
+            gxMigrateCartItems();
+            atualizarBadgeCarrinho();
+            renderizarDrawer();
+        }
+
+        function salvarCarrinho() {
+            gxMigrateCartItems();
+            sessionStorage.setItem('gudyxCarrinho', JSON.stringify({
+                items:carrinho,
+                cupom:cupomAtual,
+                timestamp:Date.now()
+            }));
+            atualizarBadgeCarrinho();
+            renderizarDrawer();
+        }
 
         // 🔥 SWIPE TO CLOSE NO CARRINHO (Mobile)
         let touchStartXDrawer = 0, touchCurrentXDrawer = 0;
@@ -1947,50 +2197,62 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         }
 
         function renderizarDrawer() {
-            const body = document.getElementById('cartDrawerBody'), totalEl = document.getElementById('cartDrawerTotal');
+            const body = document.getElementById('cartDrawerBody');
+            const totalEl = document.getElementById('cartDrawerTotal');
+
             if (!carrinho.length) {
-                body.innerHTML = '<div class="cart-empty"><strong>Seu carrinho está vazio.</strong><br><span>Escolha um item e toque em “Adicionar ao carrinho”.</span></div>';
+                body.innerHTML = '<div class="cart-empty"><strong>Seu carrinho está vazio.</strong><br><span>Escolha um item e toque em “Fazer pedido fácil”.</span></div>';
                 totalEl.textContent = 'R$ 0,00';
                 return;
             }
-            let html = '', total = 0;
+
+            let html = '';
+            let subtotal = 0;
+
             carrinho.forEach(item => {
-                let precoNumerico = parseFloat(String(item.preco || '0').replace(',', '.'));
-                if (isNaN(precoNumerico)) precoNumerico = 0;
-                const sub = precoNumerico * item.quantidade;
-                total += sub;
-                html += `<div class="cart-drawer-item gx-cart-item">
+                const key = gxGetCartItemKey(item);
+                const precoNumerico = gxRefreshCartItemPrice(item);
+                const quantidade = Math.max(1, Number(item.quantidade) || 1);
+                const sub = precoNumerico * quantidade;
+                subtotal += sub;
+
+                html += `<div class="cart-drawer-item gx-cart-item" data-cart-key="${key}">
                     <div class="gx-cart-item-main">
                         <img src="${item.imagem||'https://placehold.co/50'}" class="item-img" loading="lazy" alt="${item.nome}">
                         <div class="item-info">
                             <h4>${item.nome}</h4>
-                            <div class="gx-item-price">R$ ${precoNumerico.toFixed(2).replace('.', ',')} cada</div>
-                            <div class="gx-item-subtotal">Subtotal: R$ ${sub.toFixed(2).replace('.', ',')}</div>
+                            <div class="gx-item-price">${gxMoney(precoNumerico)} cada</div>
+                            <div class="gx-item-subtotal">Subtotal: ${gxMoney(sub)}</div>
                             ${item.observacao ? `<div class="gx-item-note"><i class="fas fa-note-sticky"></i> ${item.observacao}</div>` : ''}
                         </div>
                     </div>
-
                     <div class="gx-cart-controls" aria-label="Quantidade de ${item.nome}">
                         <span class="gx-qty-label">Quantidade</span>
                         <div class="gx-qty-row">
-                            <button type="button" onclick="alterarQtdCarrinho('${item.id}',-1)" aria-label="Diminuir quantidade de ${item.nome}">−</button>
-                            <span class="qtd" aria-live="polite">${item.quantidade}</span>
-                            <button type="button" onclick="alterarQtdCarrinho('${item.id}',1)" aria-label="Aumentar quantidade de ${item.nome}">+</button>
+                            <button type="button" onclick="alterarQtdCarrinho('${key}',-1)">−</button>
+                            <span class="qtd" aria-live="polite">${quantidade}</span>
+                            <button type="button" onclick="alterarQtdCarrinho('${key}',1)">+</button>
                         </div>
-                        <button class="gx-remove-item" type="button" onclick="removerItemCarrinho('${item.id}')" aria-label="Remover ${item.nome} do carrinho">
+                        <button class="gx-remove-item" type="button" onclick="removerItemCarrinho('${key}')">
                             <i class="fas fa-trash"></i> Remover item
                         </button>
                     </div>
                 </div>`;
             });
+
             body.innerHTML = html;
-            if (cupomAtual) {
-                const tipo = cupomAtual.tipo || 'percentual';
-                if (tipo === 'percentual') total *= (1 - parseFloat(cupomAtual.valor || 0) / 100);
-                else total = Math.max(0, total - parseFloat(cupomAtual.valor || 0));
+            const total = gxApplyCoupon(subtotal);
+            totalEl.textContent = gxMoney(total);
+
+            const helper = document.getElementById('gxCartAccountingHelper');
+            if (helper) {
+                if (cupomAtual) {
+                    helper.innerHTML = `<span>Subtotal: <b>${gxMoney(subtotal)}</b></span><span>Desconto aplicado</span>`;
+                    helper.style.display = 'flex';
+                } else {
+                    helper.style.display = 'none';
+                }
             }
-            if (isNaN(total)) total = 0;
-            totalEl.textContent = `R$ ${total.toFixed(2).replace('.', ',')}`;
         }
         
 
@@ -2054,24 +2316,38 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         function easyConfirmAddToCart() {
             const prod = dados.produtos.find(p => p.id === easyOrderState.productId);
             if(!prod) return;
-            easyOrderState.note = document.getElementById('easyOrderNote')?.value.trim() || '';
 
-            const existing = carrinho.find(c => c.id === prod.id && (c.observacao || '') === easyOrderState.note);
+            easyOrderState.note = document.getElementById('easyOrderNote')?.value.trim() || '';
+            const note = easyOrderState.note;
+            const key = gxMakeCartKey(prod.id, note);
+            const existing = carrinho.find(c => gxGetCartItemKey(c) === key);
+
             if(existing) {
                 existing.quantidade += easyOrderState.quantity;
-                salvarCarrinho();
+                gxRefreshCartItemPrice(existing);
             } else {
-                addToCartBase(prod.id, easyOrderState.quantity, prod);
-                const added = [...carrinho].reverse().find(c => c.id === prod.id);
-                if(added) {
-                    added.observacao = easyOrderState.note;
-                    salvarCarrinho();
-                }
+                const item = {
+                    id:prod.id,
+                    cartKey:key,
+                    quantidade:easyOrderState.quantity,
+                    observacao:note,
+                    nome:prod.nome,
+                    imagem:getImagemPrincipal(prod)
+                };
+                gxRefreshCartItemPrice(item);
+                carrinho.push(item);
             }
+
+            salvarCarrinho();
 
             document.querySelectorAll('.easy-step').forEach(s=>s.classList.remove('active'));
             document.getElementById('easyStepDone').classList.add('active');
-            document.querySelectorAll('.easy-order-progress > div').forEach(el=>{el.classList.remove('active');el.classList.add('done');});
+            document.querySelectorAll('.easy-order-progress > div').forEach(el=>{
+                el.classList.remove('active');
+                el.classList.add('done');
+            });
+
+            mostrarToast(`✅ ${prod.nome} adicionado ao pedido.`, 'success');
         }
 
         function easyAddAnotherItem() {
@@ -2108,31 +2384,28 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         }
 
         function addToCartBase(prodId, qtd, prod) {
-            const exist = carrinho.find(c=>c.id===prodId); 
-            let precoUnitario = parseFloat(String(prod.precoMaoObra || prod.preco || '0').replace(',', '.')) || 0;
+            const quantidade = Math.max(1, Number(qtd) || 1);
+            const key = gxMakeCartKey(prodId, '');
+            const exist = carrinho.find(c => gxGetCartItemKey(c) === key);
 
-            if (prod.descontoProgressivo && prod.descontoProgressivo.length > 0) {
-                let precoEncontrado = 0;
-                prod.descontoProgressivo.forEach(regra => {
-                    if (qtd >= regra.min && qtd <= regra.max) {
-                        if (regra.preco_final && regra.preco_final > 0) {
-                            precoEncontrado = regra.preco_final;
-                        }
-                    }
-                });
-                if (precoEncontrado > 0) {
-                    precoUnitario = precoEncontrado;
-                }
+            if(exist) {
+                exist.quantidade += quantidade;
+                gxRefreshCartItemPrice(exist);
+            } else {
+                const item = {
+                    id:prodId,
+                    cartKey:key,
+                    quantidade,
+                    observacao:'',
+                    nome:prod.nome,
+                    imagem:getImagemPrincipal(prod)
+                };
+                gxRefreshCartItemPrice(item);
+                carrinho.push(item);
             }
 
-            const preco = precoUnitario.toFixed(2).replace('.', ',');
-
-            if(exist) { 
-                exist.quantidade+=qtd; 
-            } else carrinho.push({id:prodId,quantidade:qtd,preco,nome:prod.nome,imagem:getImagemPrincipal(prod)}); 
             salvarCarrinho();
-            mostrarToast(`✅ ${prod.nome} foi adicionado. Agora confira a quantidade no carrinho.`, 'success');
-            abrirDrawer();
+            mostrarToast(`✅ ${prod.nome} foi adicionado ao seu pedido.`, 'success');
         }
 
         function addToCartFromModal() {
@@ -2142,22 +2415,26 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
                 abrirPedidoFacil(id, quantidadeModal || 1);
             }
         }
-        function alterarQtdCarrinho(id, delta) {
-            const item = carrinho.find(c=>c.id===id);
+        function alterarQtdCarrinho(key, delta) {
+            const item = carrinho.find(c => gxGetCartItemKey(c) === key);
             if(!item) return;
             const n = item.quantidade + delta;
+
             if(n < 1) {
-                if(confirm(`Remover "${item.nome}" do carrinho?`)) carrinho = carrinho.filter(c=>c.id!==id);
+                if(confirm(`Remover "${item.nome}" do carrinho?`)) {
+                    carrinho = carrinho.filter(c => gxGetCartItemKey(c) !== key);
+                }
             } else {
                 item.quantidade = n;
+                gxRefreshCartItemPrice(item);
             }
             salvarCarrinho();
         }
 
-        function removerItemCarrinho(id) {
-            const item = carrinho.find(c=>c.id===id);
+        function removerItemCarrinho(key) {
+            const item = carrinho.find(c => gxGetCartItemKey(c) === key);
             if(!item) return;
-            carrinho = carrinho.filter(c=>c.id!==id);
+            carrinho = carrinho.filter(c => gxGetCartItemKey(c) !== key);
             salvarCarrinho();
             mostrarToast(`${item.nome} removido do carrinho.`, 'success');
         }
@@ -2717,27 +2994,83 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
         }
 
         function enviarPedidoComAgendamento() {
-            const nome = document.getElementById('clienteNome').value.trim(); const telefone = document.getElementById('clienteWhatsApp').value.trim();
-            const data = document.getElementById('dataRetirada').value; const hora = document.getElementById('horaRetirada').value;
-            if(!nome || !telefone) return alert('Por favor, preencha seu Nome e WhatsApp para agendarmos a retirada.');
-            if(!data || !hora) return alert('Por favor, selecione a data e horário de retirada.');
-            const dataObj = new Date(data + 'T00:00:00'); const diaSemana = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][dataObj.getDay()]; const dataFormatada = `${diaSemana}, ${dataObj.getDate()}/${dataObj.getMonth()+1}/${dataObj.getFullYear()}`;
-            let msg = `*Gudyx Custom - Pedido de ${nome}*\n\n`, total=0; let itensPedido = [];
-            carrinho.forEach(item=>{
-                let val = parseFloat(String(item.preco || '0').replace(',', '.'));
-                if (isNaN(val)) val = 0;
-                const sub = val * item.quantidade;
-                total += sub;
-                msg+=`🛒 *${item.nome}* - ${item.quantidade}x - R$ ${item.preco || '0,00'}\n`;
-                itensPedido.push({nome: item.nome, quantidade: item.quantidade, precoUnitario: item.preco || '0,00', imagem: item.imagem});
-            }); 
-            if(isNaN(total)) total = 0;
-            if(cupomAtual) { if(cupomAtual.tipo==='percentual') total*=(1-cupomAtual.valor/100); else total=Math.max(0,total-cupomAtual.valor); msg+=`💳 Cupom ${cupomAtual.codigo}\n`; } 
-            msg+=`\n💰 *Total: R$ ${total.toFixed(2)}*\n`; msg+=`📅 *Retirada agendada para:* ${dataFormatada} às ${hora}\n`; msg+=`📍 *Local:* Duque de Caxias - RJ\n`; msg+=`📝 *Forma de pagamento:* \n`; msg+=`\nAguardo a confirmação do meu pedido! 😊`;
-            const pedido = { clienteNome: nome, clienteTelefone: telefone, itens: itensPedido, total: total.toFixed(2), dataRetirada: data, horaRetirada: hora, cupom: cupomAtual ? cupomAtual.codigo : null, status: 'Aguardando confirmação', timestamp: firebase.firestore.FieldValue.serverTimestamp() };
-            db.collection('pedidos').add(pedido).then(() => { console.log('Pedido salvo no Firebase!'); limparCarrinho(); }).catch(err => console.error('Erro ao salvar pedido:', err));
-            fecharModalAgendamento(); fecharDrawer();
-            window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank'); playVictorySound(); confetti({particleCount:200,spread:100,origin:{y:0.5}}); 
+            const nome = document.getElementById('clienteNome').value.trim();
+            const telefone = document.getElementById('clienteWhatsApp').value.trim();
+            const data = document.getElementById('dataRetirada').value;
+            const hora = document.getElementById('horaRetirada').value;
+
+            if(!nome || !telefone) return alert('Por favor, preencha seu Nome e WhatsApp.');
+            if(!data || !hora) return alert('Por favor, selecione a data e o horário de retirada.');
+            if(!carrinho.length) return alert('Seu carrinho está vazio.');
+
+            const dataObj = new Date(data + 'T00:00:00');
+            const diaSemana = ['Domingo','Segunda','Terça','Quarta','Quinta','Sexta','Sábado'][dataObj.getDay()];
+            const dataFormatada = `${diaSemana}, ${dataObj.getDate()}/${dataObj.getMonth()+1}/${dataObj.getFullYear()}`;
+
+            let msg = `*Gudyx Custom - Pedido de ${nome}*\n\n`;
+            let subtotal = 0;
+            const itensPedido = [];
+
+            carrinho.forEach(item => {
+                const unit = gxRefreshCartItemPrice(item);
+                const qtd = Math.max(1, Number(item.quantidade) || 1);
+                const sub = unit * qtd;
+                subtotal += sub;
+
+                msg += `🛒 *${item.nome}*\n`;
+                msg += `Quantidade: ${qtd}\n`;
+                msg += `Valor: ${gxMoney(unit)} cada\n`;
+                msg += `Subtotal: ${gxMoney(sub)}\n`;
+                if(item.observacao) msg += `📝 ${item.observacao}\n`;
+                msg += `\n`;
+
+                itensPedido.push({
+                    nome:item.nome,
+                    quantidade:qtd,
+                    precoUnitario:unit.toFixed(2),
+                    subtotal:sub.toFixed(2),
+                    observacao:item.observacao || '',
+                    imagem:item.imagem
+                });
+            });
+
+            const total = gxApplyCoupon(subtotal);
+
+            if(cupomAtual) {
+                msg += `🎟️ Cupom: ${cupomAtual.codigo}\n`;
+                msg += `Subtotal: ${gxMoney(subtotal)}\n`;
+            }
+
+            msg += `\n💰 *Total: ${gxMoney(total)}*\n`;
+            msg += `📅 *Retirada:* ${dataFormatada} às ${hora}\n`;
+            msg += `📍 *Local:* Duque de Caxias - RJ\n`;
+            msg += `\nAguardo a confirmação do meu pedido! 😊`;
+
+            const pedido = {
+                clienteNome:nome,
+                clienteTelefone:telefone,
+                itens:itensPedido,
+                subtotal:Number(subtotal.toFixed(2)),
+                total:Number(total.toFixed(2)),
+                dataRetirada:data,
+                horaRetirada:hora,
+                cupom:cupomAtual ? cupomAtual.codigo : null,
+                status:'Aguardando confirmação',
+                statusPedido:'Novo',
+                statusPagamento:'Pendente',
+                origem:'catalogo',
+                timestamp:firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            db.collection('pedidos').add(pedido)
+                .then(() => limparCarrinho())
+                .catch(err => console.error('Erro ao salvar pedido:', err));
+
+            fecharModalAgendamento();
+            fecharDrawer();
+            window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`,'_blank');
+            playVictorySound();
+            confetti({particleCount:200,spread:100,origin:{y:0.5}});
         }
 
         function abrirComoFunciona() { document.getElementById('comoFuncionaModal').classList.add('active'); }
@@ -3054,3 +3387,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
     </script>
 </body>
 </html>
+index-corrigido.html
+HTML
+
+3
