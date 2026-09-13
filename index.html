@@ -1184,6 +1184,20 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
 }
 .gx-cart-accounting-helper b{color:#fff;}
 
+
+/* GUDYX — QUANTIDADE DIGITÁVEL NO PEDIDO FÁCIL */
+.easy-qty-value{padding:8px 10px}
+.easy-qty-input{
+  width:100%!important;min-width:0!important;height:44px!important;margin:0!important;
+  padding:0 8px!important;border:0!important;outline:none!important;background:transparent!important;
+  color:#fff!important;text-align:center!important;font-family:inherit!important;font-size:1.7rem!important;
+  font-weight:900!important;line-height:1!important;appearance:textfield;-moz-appearance:textfield;
+}
+.easy-qty-input::-webkit-outer-spin-button,.easy-qty-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.easy-qty-input:focus{border-radius:10px!important;box-shadow:0 0 0 2px rgba(0,242,254,.28)!important;background:rgba(0,242,254,.035)!important}
+.easy-qty-value small{margin-top:2px}
+@media(max-width:640px){.easy-qty-input{font-size:1.85rem!important;min-height:48px!important}}
+
 </style>
 </head>
 <body>
@@ -1288,13 +1302,20 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
                     <p class="easy-help">Use os botões abaixo. Você pode ajustar depois no carrinho também.</p>
                     <div class="easy-qty-picker">
                         <button type="button" onclick="easyChangeQty(-1)" aria-label="Diminuir quantidade">−</button>
-                        <div class="easy-qty-value"><span id="easyQtyValue">1</span><small>unidade(s)</small></div>
+                        <div class="easy-qty-value">
+                            <input id="easyQtyInput" class="easy-qty-input" type="number" min="1" step="1"
+                                   inputmode="numeric" pattern="[0-9]*" value="1"
+                                   aria-label="Digite a quantidade desejada"
+                                   oninput="easyQtyInputChanged(this.value)"
+                                   onblur="easyQtyNormalizeInput()">
+                            <small>unidade(s)</small>
+                        </div>
                         <button type="button" onclick="easyChangeQty(1)" aria-label="Aumentar quantidade">+</button>
                     </div>
                     <div class="easy-quick-qty">
                         <button type="button" onclick="easySetQty(1)">1</button><button type="button" onclick="easySetQty(2)">2</button><button type="button" onclick="easySetQty(5)">5</button><button type="button" onclick="easySetQty(10)">10</button>
                     </div>
-                    <div class="easy-nav-buttons"><button type="button" class="easy-secondary" onclick="easyGoToStep(1)"><i class="fas fa-arrow-left"></i> Voltar</button><button type="button" class="easy-primary" onclick="easyGoToStep(3)">Continuar <i class="fas fa-arrow-right"></i></button></div>
+                    <div class="easy-nav-buttons"><button type="button" class="easy-secondary" onclick="easyGoToStep(1)"><i class="fas fa-arrow-left"></i> Voltar</button><button type="button" class="easy-primary" onclick="easyQtyNormalizeInput(); easyGoToStep(3)">Continuar <i class="fas fa-arrow-right"></i></button></div>
                 </section>
                 <section class="easy-step" id="easyStep3">
                     <h3>Quer deixar alguma observação?</h3>
@@ -2174,8 +2195,23 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
             easySyncQty();
         }
         function easySyncQty() {
-            const el=document.getElementById('easyQtyValue');
-            if(el) el.textContent=easyOrderState.quantity;
+            const input = document.getElementById('easyQtyInput');
+            if(input) input.value = easyOrderState.quantity;
+        }
+
+        function easyQtyInputChanged(value) {
+            const parsed = parseInt(value, 10);
+            if(value === '' || Number.isNaN(parsed)) return;
+            easyOrderState.quantity = Math.max(1, parsed);
+        }
+
+        function easyQtyNormalizeInput() {
+            const input = document.getElementById('easyQtyInput');
+            if(!input) return;
+            let parsed = parseInt(input.value, 10);
+            if(Number.isNaN(parsed) || parsed < 1) parsed = 1;
+            easyOrderState.quantity = parsed;
+            input.value = parsed;
         }
 
         function easyUpdateSummary() {
